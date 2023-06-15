@@ -49,3 +49,50 @@ if (document.getElementById('app') != null) {
     app.mount('#app');
 }
 
+
+
+
+
+// Formular adaugare recoltare sange
+const adaugareRecoltareSange = createApp({
+    el: '#adaugareRecoltareSange',
+    data() {
+        return {
+            nrPungi: '',
+            recoltariSangeGrupaId: '',
+            cod: '',
+            tip: '',
+            recoltariSange: [],
+        }
+    },
+    watch: {
+        nrPungi: function () {
+            this.recoltariSange = [];
+            for (var i = 0; i < this.nrPungi; i++) {
+                var recoltareSange = {
+                    recoltariSangeGrupaId: this.recoltariSangeGrupaId,
+                    cod: this.cod,
+                    tip: this.tip,
+                    cantitate: '',
+                }
+                this.recoltariSange[i] = recoltareSange;
+            }
+        },
+        cod: function () {
+            for (var i = 0; i < this.nrPungi; i++) {
+                this.recoltariSange[i].cod = this.cod;
+            }
+        },
+        tip: function () {
+            for (var i = 0; i < this.nrPungi; i++) {
+                this.recoltariSange[i].tip = this.tip;
+            }
+        },
+    },
+    methods: {
+    }
+});
+adaugareRecoltareSange.component('vue-datepicker-next', VueDatepickerNext);
+if (document.getElementById('adaugareRecoltareSange') != null) {
+    adaugareRecoltareSange.mount('#adaugareRecoltareSange');
+}

@@ -49,11 +49,11 @@
                                 <i class="fa-solid fa-house"></i>&nbsp;
                             </a>
                         </li>
-                        {{-- <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/camioane">
-                                <i class="fa-solid fa-truck me-1"></i>Camioane
+                        <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/recoltari-sange">
+                                <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge
                             </a>
-                        </li> --}}
+                        </li>
                         {{-- <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/locuri-operare">
                                 <i class="fa-solid fa-location-dot me-1"></i>Locuri de operare

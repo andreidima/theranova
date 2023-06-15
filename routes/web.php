@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\RecoltareSangeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,4 +22,6 @@ Route::redirect('/', '/acasa');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
+
+    Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari_sange' => 'recoltareSange']);
 });
