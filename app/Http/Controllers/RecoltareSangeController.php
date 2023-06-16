@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\RecoltareSange;
+use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeGrupa;
 
 class RecoltareSangeController extends Controller
@@ -41,9 +42,10 @@ class RecoltareSangeController extends Controller
     {
         $request->session()->get('recoltareSangeReturnUrl') ?? $request->session()->put('recoltareSangeReturnUrl', url()->previous());
 
+        $recoltariSangeProduse = RecoltareSangeProdus::get();
         $recoltariSangeGrupe = RecoltareSangeGrupa::get();
 
-        return view('recoltariSange.create', compact('recoltariSangeGrupe'));
+        return view('recoltariSange.create', compact('recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**
@@ -54,13 +56,7 @@ class RecoltareSangeController extends Controller
      */
     public function store(Request $request)
     {
-        $memento = RecoltareSange::create($this->validateRequest($request));
-        if ($request->dateSelectate) {
-            foreach ($request->dateSelectate as $data){
-                $alerta = new RecoltareSangeAlerta(['data' => $data]);
-                $memento->alerte()->save($alerta);
-            }
-        }
+        $recoltareSange = RecoltareSange::create($this->validateRequest($request));
 
         return redirect($request->session()->get('recoltareSangeReturnUrl') ?? ('/mementouri'))->with('status', 'RecoltareSangeul „' . ($memento->nume ?? '') . '” a fost adăugat cu succes!');
     }

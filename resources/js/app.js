@@ -59,36 +59,37 @@ const adaugareRecoltareSange = createApp({
     data() {
         return {
             nrPungi: '',
-            recoltariSangeGrupaId: '',
-            cod: '',
-            tip: '',
-            recoltariSange: [],
+            // recoltariSangeGrupaId: '',
+            // cod: '',
+            // tip: '',
+            // recoltariSange: [],
+            cantitatiRecoltariSange: [],
         }
     },
-    watch: {
-        nrPungi: function () {
-            this.recoltariSange = [];
-            for (var i = 0; i < this.nrPungi; i++) {
-                var recoltareSange = {
-                    recoltariSangeGrupaId: this.recoltariSangeGrupaId,
-                    cod: this.cod,
-                    tip: this.tip,
-                    cantitate: '',
-                }
-                this.recoltariSange[i] = recoltareSange;
-            }
-        },
-        cod: function () {
-            for (var i = 0; i < this.nrPungi; i++) {
-                this.recoltariSange[i].cod = this.cod;
-            }
-        },
-        tip: function () {
-            for (var i = 0; i < this.nrPungi; i++) {
-                this.recoltariSange[i].tip = this.tip;
-            }
-        },
-    },
+    // watch: {
+    //     nrPungi: function () {
+    //         this.recoltariSange = [];
+    //         for (var i = 0; i < this.nrPungi; i++) {
+    //             var recoltareSange = {
+    //                 recoltariSangeGrupaId: this.recoltariSangeGrupaId,
+    //                 cod: this.cod,
+    //                 tip: this.tip,
+    //                 cantitate: '',
+    //             }
+    //             this.recoltariSange[i] = recoltareSange;
+    //         }
+    //     },
+    //     cod: function () {
+    //         for (var i = 0; i < this.nrPungi; i++) {
+    //             this.recoltariSange[i].cod = this.cod;
+    //         }
+    //     },
+    //     tip: function () {
+    //         for (var i = 0; i < this.nrPungi; i++) {
+    //             this.recoltariSange[i].tip = this.tip;
+    //         }
+    //     },
+    // },
     methods: {
     }
 });

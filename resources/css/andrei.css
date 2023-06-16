@@ -18,6 +18,8 @@
 .culoare2 {
     color: white;
     background-color: #6a6ba0 !important;
+}.culoare2-border {
+    background-color: #6a6ba0 !important;
 }
 .culoare3 {
     color: white;
