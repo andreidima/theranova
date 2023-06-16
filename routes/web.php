@@ -23,5 +23,5 @@ Route::redirect('/', '/acasa');
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
 
-    Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari_sange' => 'recoltareSange']);
+    Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari-sange' => 'recoltareSange']);
 });

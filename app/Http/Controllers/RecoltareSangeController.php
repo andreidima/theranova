@@ -23,10 +23,10 @@ class RecoltareSangeController extends Controller
 
         $query = RecoltareSange::
             // with('alerte')
-            // ->when($searchNume, function ($query, $searchNume) {
-            //     return $query->where('nume', 'like', '%' . $searchNume . '%');
-            // })
-            latest();
+            when($searchCod, function ($query, $searchCod) {
+                return $query->where('cod', 'like', '%' . $searchCod . '%');
+            })
+            ->latest();
 
         $recoltariSange = $query->simplePaginate(25);
 
@@ -56,72 +56,78 @@ class RecoltareSangeController extends Controller
      */
     public function store(Request $request)
     {
-        $recoltareSange = RecoltareSange::create($this->validateRequest($request));
+        $this->validateRequest($request);
 
-        return redirect($request->session()->get('recoltareSangeReturnUrl') ?? ('/mementouri'))->with('status', 'RecoltareSangeul „' . ($memento->nume ?? '') . '” a fost adăugat cu succes!');
+        for ($i = 1; $i <= $request->nrPungi; $i++){
+            $recoltareSange = new RecoltareSange;
+            $recoltareSange->recoltari_sange_produs_id = $request->recoltari_sange_produs_id;
+            $recoltareSange->recoltari_sange_grupa_id = $request->recoltari_sange_grupa_id;
+            $recoltareSange->data = $request->data;
+            $recoltareSange->cod = $request->cod;
+            $recoltareSange->tip = $request->tip;
+            $recoltareSange->cantitate = $request->cantitatiPungiSange[$i];
+            $recoltareSange->save();
+        }
+
+        return redirect($request->session()->get('recoltareSangeReturnUrl') ?? ('/recoltari-sange'))->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost adăugată cu succes!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\RecoltareSange  $memento
+     * @param  \App\RecoltareSange  $recoltareSange
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, RecoltareSange $memento)
+    public function show(Request $request, RecoltareSange $recoltareSange)
     {
         $request->session()->get('recoltareSangeReturnUrl') ?? $request->session()->put('recoltareSangeReturnUrl', url()->previous());
 
-        return view('mementouri.show', compact('memento'));
+        return view('recoltariSange.show', compact('recoltareSange'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\RecoltareSange  $memento
+     * @param  \App\RecoltareSange  $recoltareSange
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, RecoltareSange $memento)
+    public function edit(Request $request, RecoltareSange $recoltareSange)
     {
         $request->session()->get('recoltareSangeReturnUrl') ?? $request->session()->put('recoltareSangeReturnUrl', url()->previous());
 
-        return view('mementouri.edit', compact('memento'));
+        $recoltariSangeProduse = RecoltareSangeProdus::get();
+        $recoltariSangeGrupe = RecoltareSangeGrupa::get();
+// dd($recoltareSange);
+        return view('recoltariSange.edit', compact('recoltareSange', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\RecoltareSange  $memento
+     * @param  \App\RecoltareSange  $recoltareSange
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RecoltareSange $memento)
+    public function update(Request $request, RecoltareSange $recoltareSange)
     {
-        $memento->update($this->validateRequest($request));
+        $recoltareSange->update($this->validateRequest($request));
 
-        $memento->alerte()->delete();
-        if ($request->dateSelectate) {
-            foreach ($request->dateSelectate as $data){
-                $alerta = new RecoltareSangeAlerta(['data' => $data]);
-                $memento->alerte()->save($alerta);
-            }
-        }
-
-        return redirect($request->session()->get('recoltareSangeReturnUrl') ?? ('/mementouri'))->with('status', 'RecoltareSangeul „' . ($memento->nume ?? '') . '” a fost modificat cu succes!');
+        return redirect($request->session()->get('recoltareSangeReturnUrl') ?? ('/recoltari-sange'))->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost modificată cu succes!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\RecoltareSange  $memento
+     * @param  \App\RecoltareSange  $recoltareSange
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, RecoltareSange $memento)
+    public function destroy(Request $request, RecoltareSange $recoltareSange)
     {
-        $memento->alerte()->delete();
+        $recoltareSange->alerte()->delete();
 
-        $memento->delete();
+        $recoltareSange->delete();
 
-        return back()->with('status', 'RecoltareSangeul „' . ($memento->nume ?? '') . '” a fost șters cu succes!');
+        return back()->with('status', 'RecoltareSangeul „' . ($recoltareSange->nume ?? '') . '” a fost șters cu succes!');
     }
 
     /**
@@ -139,13 +145,17 @@ class RecoltareSangeController extends Controller
         // if ($request->isMethod('post')) {
         //     $request->request->add(['cheie_unica' => uniqid()]);
         // }
-
+// dd($request->method());
         return $request->validate(
             [
                 'recoltari_sange_produs_id' => 'required',
-                'data_expirare' => '',
-                'descriere' => 'nullable|max:10000',
-                'observatii' => 'nullable|max:10000',
+                'recoltari_sange_grupa_id' => 'required',
+                'data' => 'required',
+                'cod' => 'required',
+                'tip' => 'required',
+                'cantitate' => ($request->_method === "PATCH") ? 'required|integer' : '',
+                'nrPungi' => $request->isMethod('post') ? 'required|integer|min:1' : '',
+                'cantitatiPungiSange.*' => $request->isMethod('post') ? 'required|integer' : '',
             ],
             [
                 // 'tara_id.required' => 'Câmpul țara este obligatoriu'

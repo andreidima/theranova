@@ -1,12 +1,9 @@
 @csrf
 
-{{-- Doar pentru adaugare --}}
-@if (!str_contains(url()->current(), '/modifica'))
 <script type="application/javascript">
     nrPungi = {!! json_encode(intval(old('nrPungi'))) !!}
-    cantitatiPungiSange={!! json_encode(old('cantitatiPungiSange') ?? []) !!}
+    cantitatiPungiSange={!! json_encode(old('cantitatiPungiSange')) !!}
 </script>
-@endif
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="adaugareRecoltareSange">
     <div class="col-lg-12 px-4 py-2 mb-0">
@@ -16,7 +13,7 @@
                 <select name="recoltari_sange_produs_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
                     <option selected></option>
                     @foreach ($recoltariSangeProduse as $recoltareSangeProdus)
-                        <option value="{{ $recoltareSangeProdus->id }}" {{ ($recoltareSangeProdus->id === intval(old('recoltari_sange_produs_id', $recoltareSange->recoltari_sange_produs_id))) ? 'selected' : '' }}>{{ $recoltareSangeProdus->nume }}</option>
+                        <option value="{{ $recoltareSangeProdus->id }}" {{ ($recoltareSangeProdus->id === intval(old('recoltari_sange_produs_id'))) ? 'selected' : '' }}>{{ $recoltareSangeProdus->nume }}</option>
                     @endforeach
                 </select>
             </div>
@@ -25,7 +22,7 @@
                 <select name="recoltari_sange_grupa_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
                     <option selected></option>
                     @foreach ($recoltariSangeGrupe as $recoltareSangeGrupa)
-                        <option value="{{ $recoltareSangeGrupa->id }}" {{ ($recoltareSangeGrupa->id === intval(old('recoltari_sange_grupa_id', $recoltareSange->recoltari_sange_grupa_id))) ? 'selected' : '' }}>{{ $recoltareSangeGrupa->nume }}</option>
+                        <option value="{{ $recoltareSangeGrupa->id }}" {{ ($recoltareSangeGrupa->id === intval(old('recoltari_sange_grupa_id'))) ? 'selected' : '' }}>{{ $recoltareSangeGrupa->nume }}</option>
                     @endforeach
                 </select>
             </div>
@@ -60,19 +57,6 @@
                     value="{{ old('tip', $recoltareSange->tip) }}"
                     required>
             </div>
-            {{-- Doar pentru adaugare --}}
-            @if (str_contains(url()->current(), '/modifica'))
-                <div class="col-lg-2 mb-4">
-                    <label for="cantitate" class="mb-0 ps-3">Cantitate<span class="text-danger">*</span></label>
-                    <input
-                        type="text"
-                        class="form-control bg-white rounded-3 {{ $errors->has('cantitate') ? 'is-invalid' : '' }}"
-                        name="cantitate"
-                        {{-- v-model="cantitate" --}}
-                        value="{{ old('cantitate', $recoltareSange->cantitate) }}"
-                        required>
-                </div>
-            @endif
         </div>
     </div>
 
@@ -120,8 +104,7 @@
     </div> --}}
 
 
-{{-- Doar pentru adaugare --}}
-@if (!str_contains(url()->current(), '/modifica'))
+
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-2 mb-4">
@@ -151,11 +134,11 @@
                         type="text"
                         class="form-control bg-white rounded-3"
                         :name="'cantitatiPungiSange[' + i + ']'"
-                        v-model="cantitatiPungiSange[i]">
+                        v-model="cantitatiPungiSange[i-1]">
             </div>
         </div>
     </div>
-@endif
+
 
 
     <div class="col-lg-12 px-4 py-2 mb-0">

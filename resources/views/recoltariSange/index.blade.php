@@ -47,8 +47,8 @@
                         <tr class="" style="padding:2rem">
                             <th class="">#</th>
                             <th class="">Produs</th>
-                            <th class="text-center">Grupa</th>
-                            <th class="text-center">Data</th>
+                            <th class="">Grupa</th>
+                            <th class="">Data</th>
                             <th class="">Cod</th>
                             <th class="">Tip</th>
                             <th class="">Cantitate</th>
@@ -68,7 +68,7 @@
                                 <td class="">
                                     {{ $recoltareSange->grupa->nume ?? '' }}
                                 </td>
-                                <td class="text-center">
+                                <td class="">
                                     {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td class="">
@@ -76,6 +76,9 @@
                                 </td>
                                 <td class="">
                                     {{ $recoltareSange->tip }}
+                                </td>
+                                <td class="">
+                                    {{ $recoltareSange->cantitate }}
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end">

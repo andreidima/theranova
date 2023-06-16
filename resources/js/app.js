@@ -58,12 +58,12 @@ const adaugareRecoltareSange = createApp({
     el: '#adaugareRecoltareSange',
     data() {
         return {
-            nrPungi: '',
+            nrPungi: ((typeof nrPungi !== 'undefined') ? nrPungi : ''),
             // recoltariSangeGrupaId: '',
             // cod: '',
             // tip: '',
             // recoltariSange: [],
-            cantitatiRecoltariSange: [],
+            cantitatiPungiSange: ((typeof cantitatiPungiSange !== 'undefined') ? cantitatiPungiSange : []),
         }
     },
     // watch: {

@@ -26,4 +26,14 @@ class RecoltareSange extends Model
     {
         return $this->belongsTo(RecoltareSangeGrupa::class, 'recoltari_sange_grupa_id');
     }
+
+    /**
+     * Get the produs that owns the RecoltareSange
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function produs()
+    {
+        return $this->belongsTo(RecoltareSangeProdus::class, 'recoltari_sange_produs_id');
+    }
 }
