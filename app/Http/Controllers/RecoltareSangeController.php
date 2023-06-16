@@ -142,7 +142,7 @@ class RecoltareSangeController extends Controller
 
         return $request->validate(
             [
-                'nume' => 'required|max:500',
+                'recoltari_sange_produs_id' => 'required',
                 'data_expirare' => '',
                 'descriere' => 'nullable|max:10000',
                 'observatii' => 'nullable|max:10000',
