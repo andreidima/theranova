@@ -7,7 +7,7 @@
             <div class="shadow-lg" style="border-radius: 40px 40px 40px 40px;">
                 <div class="culoare2 border border-secondary p-2" style="border-radius: 40px 40px 0px 0px;">
                     <span class="badge text-light fs-5">
-                        <i class="fa-solid fa-bell me-1"></i>Mementouri / {{ $memento->nume }}
+                        <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge / {{ $recoltareSange->cod }}
                     </span>
                 </div>
 
@@ -22,34 +22,50 @@
                         >
                             <tr>
                                 <td class="pe-4">
-                                    Memento
+                                    Produs
                                 </td>
                                 <td>
-                                    {{ $memento->nume }}
+                                    {{ $recoltareSange->produs->nume ?? '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Dată expirare
+                                    Grupa
                                 </td>
                                 <td>
-                                    {{ $memento->data_expirare ? \Carbon\Carbon::parse($memento->data_expirare)->isoFormat('DD.MM.YYYY') : '' }}
+                                    {{ $recoltareSange->grupa->nume ?? '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Descriere
+                                    Data
                                 </td>
                                 <td>
-                                    {{ $memento->descriere }}
+                                    {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Observații
+                                    Cod
                                 </td>
                                 <td>
-                                    {{ $memento->observatii }}
+                                    {{ $recoltareSange->cod }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Tip
+                                </td>
+                                <td>
+                                    {{ $recoltareSange->tip }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Cantitate
+                                </td>
+                                <td>
+                                    {{ $recoltareSange->cantitate }}
                                 </td>
                             </tr>
                         </table>
@@ -57,7 +73,7 @@
 
                     <div class="form-row mb-2 px-2">
                         <div class="col-lg-12 d-flex justify-content-center">
-                            <a class="btn btn-secondary text-white rounded-3" href="{{ Session::get('mementoReturnUrl') }}">Înapoi</a>
+                            <a class="btn btn-secondary text-white rounded-3" href="{{ Session::get('recoltareSangeReturnUrl') }}">Înapoi</a>
                         </div>
                     </div>
 

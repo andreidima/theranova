@@ -24,4 +24,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
 
     Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari-sange' => 'recoltareSange']);
+    Route::get('/recoltari-sange-rebuturi', [RecoltareSangeController::class, 'rebuturi']);
 });

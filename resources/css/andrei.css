@@ -1,16 +1,20 @@
 * {
-   font-size: 16px;
+    font-size: 16px;
 }
 
-[v-cloak] {display: none  !important;}
+[v-cloak] {
+    display: none !important;
+}
 
 .culoare1 {
     color: white;
     background-color: #ec8575 !important;
 }
+
 .culoare1-border {
     border-color: #ec8575 !important;
 }
+
 /* .culoare2 {
     color: white;
     background-color: #d85c27; */
@@ -18,13 +22,13 @@
 .culoare2 {
     color: white;
     background-color: #6a6ba0 !important;
-}.culoare2-border {
-    background-color: #6a6ba0 !important;
 }
+
 .culoare3 {
     color: white;
     background-color: #141850 !important;
 }
+
 .culoare4 {
     color: white;
     background-color: #f5cac2 !important;

@@ -44,14 +44,19 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item me-3">
+                        {{-- <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/acasa" title="Pagina principală">
                                 <i class="fa-solid fa-house"></i>&nbsp;
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/recoltari-sange">
                                 <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge
+                            </a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/recoltari-sange-rebuturi">
+                                <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
                             </a>
                         </li>
                         {{-- <li class="nav-item me-3">

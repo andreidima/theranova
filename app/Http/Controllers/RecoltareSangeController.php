@@ -123,11 +123,9 @@ class RecoltareSangeController extends Controller
      */
     public function destroy(Request $request, RecoltareSange $recoltareSange)
     {
-        $recoltareSange->alerte()->delete();
-
         $recoltareSange->delete();
 
-        return back()->with('status', 'RecoltareSangeul „' . ($recoltareSange->nume ?? '') . '” a fost șters cu succes!');
+        return back()->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost ștearsă cu succes!');
     }
 
     /**
