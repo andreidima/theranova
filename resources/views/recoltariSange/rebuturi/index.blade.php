@@ -5,7 +5,7 @@
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
             <div class="col-lg-3">
                 <span class="badge culoare1 fs-5">
-                    <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge
+                    <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
                 </span>
             </div>
             <div class="col-lg-6">
@@ -31,9 +31,9 @@
                 </form>
             </div>
             <div class="col-lg-3 text-end">
-                <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
+                {{-- <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
                     <i class="fas fa-plus-square text-white me-1"></i>Adaugă recoltare
-                </a>
+                </a> --}}
             </div>
         </div>
 
@@ -43,14 +43,8 @@
 
             <div class="table-responsive rounded">
                 <table class="table table-striped table-hover rounded">
-                    {{-- <thead class="text-white rounded bg-danger" bgcolor="red"> --}}
                     <thead class="text-white rounded">
                         <tr class="thead-danger" style="padding:2rem">
-
-            {{-- <div class="table-responsive rounded">
-                <table class="table table-striped table-hover rounded">
-                    <thead class="text-white rounded" style="background-color: #69A1B1">
-                        <tr class="" style="padding:2rem"> --}}
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Produs</th>
                             <th class="text-white culoare2">Grupa</th>
@@ -58,7 +52,7 @@
                             <th class="text-white culoare2">Cod</th>
                             <th class="text-white culoare2">Tip</th>
                             <th class="text-white culoare2">Cantitate</th>
-                            {{-- <th class="">Observații</th> --}}
+                            <th class="text-white culoare2">Rebut</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
                     </thead>
@@ -86,24 +80,14 @@
                                 <td class="">
                                     {{ $recoltareSange->cantitate }}
                                 </td>
+                                <td class="">
+                                    {{ $recoltareSange->rebut }}
+                                </td>
                                 <td>
                                     <div class="d-flex justify-content-end">
-                                        <a href="{{ $recoltareSange->path() }}" class="flex me-1">
-                                            <span class="badge bg-success">Vizualizează</span>
+                                        <a href="/recoltari-sange/rebuturi/modifica/{{$recoltareSange->id}}" class="flex me-1">
+                                            <span class="badge bg-warning text-black">Rebut</span>
                                         </a>
-                                        <a href="{{ $recoltareSange->path() }}/modifica" class="flex me-1">
-                                            <span class="badge bg-primary">Modifică</span>
-                                        </a>
-                                        <div style="flex" class="">
-                                            <a
-                                                href="#"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#stergeRecoltareSange{{ $recoltareSange->id }}"
-                                                title="Șterge Recoltare Sânge"
-                                                >
-                                                <span class="badge bg-danger">Șterge</span>
-                                            </a>
-                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -121,37 +105,5 @@
                 </nav>
         </div>
     </div>
-
-    {{-- Modalele pentru stergere recoltareSange --}}
-    @foreach ($recoltariSange as $recoltareSange)
-        <div class="modal fade text-dark" id="stergeRecoltareSange{{ $recoltareSange->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="exampleModalLabel">Recoltare sănge: <b>{{ $recoltareSange->cod }}</b></h5>
-                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="text-align:left;">
-                    Ești sigur ca vrei să ștergi Recoltarea de Sânge?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
-
-                    <form method="POST" action="{{ $recoltareSange->path() }}">
-                        @method('DELETE')
-                        @csrf
-                        <button
-                            type="submit"
-                            class="btn btn-danger text-white"
-                            >
-                            Șterge Recoltarea
-                        </button>
-                    </form>
-
-                </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
 
 @endsection

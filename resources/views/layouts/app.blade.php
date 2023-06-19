@@ -55,7 +55,7 @@
                             </a>
                         </li>
                         <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/recoltari-sange-rebuturi">
+                            <a class="nav-link active" aria-current="page" href="/recoltari-sange/rebuturi">
                                 <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
                             </a>
                         </li>

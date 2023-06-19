@@ -22,9 +22,8 @@ class RecoltareSangeController extends Controller
         $searchCod = $request->searchCod;
 
         $query = RecoltareSange::
-            // with('alerte')
             when($searchCod, function ($query, $searchCod) {
-                return $query->where('cod', 'like', '%' . $searchCod . '%');
+                return $query->where('cod', $searchCod);
             })
             ->latest();
 
@@ -159,5 +158,30 @@ class RecoltareSangeController extends Controller
                 // 'tara_id.required' => 'Câmpul țara este obligatoriu'
             ]
         );
+    }
+
+    public function rebuturi(Request $request)
+    {
+        $request->session()->forget('recoltareSangeRebutReturnUrl');
+
+        $searchCod = $request->searchCod;
+
+        $query = RecoltareSange::
+            when($searchCod, function ($query, $searchCod) {
+                return $query->where('cod', $searchCod);
+            })
+            ->latest();
+
+        $recoltariSange = $query->simplePaginate(25);
+
+        return view('recoltariSange.rebuturi.index', compact('recoltariSange', 'searchCod'));
+    }
+
+    public function rebuturiModifica(Request $request, RecoltareSange $recoltareSange)
+    {
+        $request->session()->get('recoltareSangeRebutReturnUrl') ?? $request->session()->put('recoltareSangeRebutReturnUrl', url()->previous());
+
+dd($recoltareSange);
+        return view('recoltariSange.edit', compact('recoltareSange', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 }
