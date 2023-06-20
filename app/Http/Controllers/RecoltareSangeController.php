@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeGrupa;
+use Carbon\Carbon;
 
 class RecoltareSangeController extends Controller
 {
@@ -165,23 +166,37 @@ class RecoltareSangeController extends Controller
         $request->session()->forget('recoltareSangeRebutReturnUrl');
 
         $searchCod = $request->searchCod;
+        $searchData = $request->searchData;
 
         $query = RecoltareSange::
             when($searchCod, function ($query, $searchCod) {
                 return $query->where('cod', $searchCod);
             })
-            ->latest();
+            ->when($searchData, function ($query, $searchData) {
+                return $query->whereDate('rebut_created_at', $searchData);
+            })
+            ->latest('rebut_created_at');
 
         $recoltariSange = $query->simplePaginate(25);
 
-        return view('recoltariSange.rebuturi.index', compact('recoltariSange', 'searchCod'));
+        return view('recoltariSange.rebuturi.index', compact('recoltariSange', 'searchCod', 'searchData'));
     }
 
     public function rebuturiModifica(Request $request, RecoltareSange $recoltareSange)
     {
         $request->session()->get('recoltareSangeRebutReturnUrl') ?? $request->session()->put('recoltareSangeRebutReturnUrl', url()->previous());
 
-dd($recoltareSange);
-        return view('recoltariSange.edit', compact('recoltareSange', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
+        return view('recoltariSange.rebuturi.formularModificare', compact('recoltareSange'));
+    }
+
+    public function postRebuturiModifica(Request $request, RecoltareSange $recoltareSange)
+    {
+        $request->session()->get('recoltareSangeRebutReturnUrl') ?? $request->session()->put('recoltareSangeRebutReturnUrl', url()->previous());
+
+        $recoltareSange->rebut = $request->rebut;
+        $request->rebut ? ($recoltareSange->rebut_created_at = Carbon::now()) : ($recoltareSange->rebut_created_at = null); // daca se sterge rebut. se sterge si campul rebut_created_at
+        $recoltareSange->save();
+
+        return redirect($request->session()->get('recoltareSangeRebutReturnUrl') ?? ('/recoltari-sange/rebuturi'))->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost modificată cu succes!');
     }
 }
