@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Models\RecoltareSangeComanda;
+use App\Models\RecoltareSange;
+use App\Models\RecoltareSangeProdus;
+use App\Models\RecoltareSangeGrupa;
+use Carbon\Carbon;
+
+class RecoltareSangeComandaController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $request->session()->forget('recoltareSangeComandaReturnUrl');
+
+        // $searchCod = $request->searchCod;
+        // $searchData = $request->searchData;
+
+        $query = RecoltareSangeComanda::with('recoltariSange')
+            // when($searchCod, function ($query, $searchCod) {
+            //     return $query->where('cod', $searchCod);
+            // })
+            ->latest();
+
+        $recoltariSangeComenzi = $query->simplePaginate(25);
+
+        return view('recoltariSangeComenzi.index', compact('recoltariSangeComenzi'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(Request $request)
+    {
+        $request->session()->get('recoltareSangeComandaReturnUrl') ?? $request->session()->put('recoltareSangeComandaReturnUrl', url()->previous());
+
+        $recoltariSange = RecoltareSange::whereNull('rebut')->whereNull('comanda_id')->get();
+
+        return view('recoltariSangeComenzi.create', compact('recoltariSange'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $recoltareSangeComanda = RecoltareSangeComanda::create($this->validateRequest($request));
+
+        // Adaugarea recoltarilor la comanda
+        RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => $recoltareSangeComanda->id]);
+
+        return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->numar ?? '') . '” a fost adăugată cu succes!');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\RecoltareSangeComanda  $recoltareSangeComanda
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
+    {
+        $request->session()->get('recoltareSangeComandaReturnUrl') ?? $request->session()->put('recoltareSangeComandaReturnUrl', url()->previous());
+
+        return view('recoltariSangeComenzi.show', compact('recoltareSangeComanda'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\RecoltareSangeComanda  $recoltareSangeComanda
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
+    {
+        $request->session()->get('recoltareSangeComandaReturnUrl') ?? $request->session()->put('recoltareSangeComandaReturnUrl', url()->previous());
+
+        $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)->with('recoltariSange')->first();
+
+        $recoltariSange = RecoltareSange::whereNull('rebut')
+            ->where(function($query) use ($recoltareSangeComanda) {
+                return $query
+                        ->whereNull('comanda_id')
+                        ->orWhere('comanda_id', $recoltareSangeComanda->id);
+                })
+            ->get();
+
+
+        return view('recoltariSangeComenzi.edit', compact('recoltareSangeComanda', 'recoltariSange'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\RecoltareSangeComanda  $recoltareSangeComanda
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
+    {
+        $recoltareSangeComanda->update($this->validateRequest($request));
+
+        // Scoaterea recoltarilor ce nu mai sunt din comanda
+        // RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => '']);
+        RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
+
+        // Adaugarea recoltarilor la comanda
+        RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => $recoltareSangeComanda->id]);
+
+
+//         $recoltariSangeVechiIduri = $recoltareSangeComanda->recoltariSange->pluck('id');
+// dd($recoltariSangeVechiIduri, $request->recoltariSangeAdaugateLaComanda);
+//         foreach ($recoltareSangeComanda->recoltariSange as $recoltareSange){
+//             $recoltareSangeDB = RecoltareSange::findOrFail($recoltareSange->id);
+//             $recoltareSangeDB->comanda_id = '';
+//             $recoltareSangeDB->save();
+//         }
+
+//         foreach ($request->recoltariSangeAdaugateLaComanda as $recoltareSange){
+//             $recoltareSangeDB = RecoltareSange::findOrFail($recoltareSange);
+//             $recoltareSangeDB->comanda_id = $recoltareSangeComanda->id;
+//             $recoltareSangeDB->save();
+//         }
+
+//         dd('stop');
+
+        return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->numar ?? '') . '” a fost modificată cu succes!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\RecoltareSangeComanda  $recoltareSangeComanda
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
+    {
+        $recoltareSangeComanda->delete();
+
+        return back()->with('status', 'Comanda „' . ($recoltareSangeComanda->numar ?? '') . '” a fost ștearsă cu succes!');
+    }
+
+    /**
+     * Validate the request attributes.
+     *
+     * @return array
+     */
+    protected function validateRequest(Request $request)
+    {
+        // Se adauga userul doar la adaugare, iar la modificare nu se schimba
+        // if ($request->isMethod('post')) {
+        //     $request->request->add(['user_id' => $request->user()->id]);
+        // }
+
+        // if ($request->isMethod('post')) {
+        //     $request->request->add(['cheie_unica' => uniqid()]);
+        // }
+
+        return $request->validate(
+            [
+                'numar' => 'required|numeric',
+                'unitate' => 'required',
+                'localitate' => 'required',
+                'judet' => 'required',
+                'data' => 'required',
+            ],
+            [
+                // 'tara_id.required' => 'Câmpul țara este obligatoriu'
+            ]
+        );
+    }
+}

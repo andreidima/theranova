@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\RecoltareSangeController;
+use App\Http\Controllers\RecoltareSangeComandaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,5 +27,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/recoltari-sange/rebuturi', [RecoltareSangeController::class, 'rebuturi']);
     Route::get('/recoltari-sange/rebuturi/modifica/{recoltareSange}', [RecoltareSangeController::class, 'rebuturiModifica']);
     Route::patch('/recoltari-sange/rebuturi/modifica/{recoltareSange}', [RecoltareSangeController::class, 'postRebuturiModifica']);
+    Route::resource('/recoltari-sange/comenzi', RecoltareSangeComandaController::class)->parameters(['comenzi' => 'recoltareSangeComanda']);
     Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari-sange' => 'recoltareSange']);
 });

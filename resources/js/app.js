@@ -102,3 +102,68 @@ adaugareRecoltareSange.component('vue-datepicker-next', VueDatepickerNext);
 if (document.getElementById('adaugareRecoltareSange') != null) {
     adaugareRecoltareSange.mount('#adaugareRecoltareSange');
 }
+
+
+// Formular comanda recoltare sange
+const recoltareSangeComanda = createApp({
+    el: '#recoltareSangeComanda',
+    data() {
+        return {
+            recoltariSange: ((typeof recoltariSange !== 'undefined') ? recoltariSange : []),
+
+            recoltareSangeCod: '',
+            recoltariSangeCautate: [],
+
+
+            recoltariSangeAdaugateLaComandaIDuriVechi: ((typeof recoltariSangeAdaugateLaComandaIDuriVechi !== 'undefined') ? recoltariSangeAdaugateLaComandaIDuriVechi : []),
+
+            recoltariSangeAdaugateLaComanda: [],
+        }
+    },
+    created: function () {
+        if (this.recoltariSangeAdaugateLaComandaIDuriVechi.length) {
+            for (var i = 0; i < this.recoltariSangeAdaugateLaComandaIDuriVechi.length; i++) {
+                for (var j = 0; j < this.recoltariSange.length; j++) {
+                    if (this.recoltariSangeAdaugateLaComandaIDuriVechi[i] == this.recoltariSange[j].id) {
+                        this.recoltariSangeAdaugateLaComanda.unshift(this.recoltariSange[j]);
+                    }
+                }
+            }
+        }
+    },
+    methods: {
+        cautaRecoltariSange() {
+            this.recoltariSangeCautate = [];
+
+            for (var i = 0; i < this.recoltariSange.length; i++) {
+                if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod)) {
+                    this.recoltariSangeCautate.push(this.recoltariSange[i]);
+                }
+            }
+        },
+        adaugaRecoltareSangeLaComanda: function (recoltareSangeId) {
+            for (var i = 0; i < this.recoltariSangeAdaugateLaComanda.length; i++) {
+                if (this.recoltariSangeAdaugateLaComanda[i].id === recoltareSangeId){
+                    return;
+                }
+            }
+            for (var i = 0; i < this.recoltariSangeCautate.length; i++) {
+                if (this.recoltariSangeCautate[i].id && (this.recoltariSangeCautate[i].id === recoltareSangeId)) {
+                    this.recoltariSangeAdaugateLaComanda.unshift(this.recoltariSangeCautate[i]);
+                }
+            }
+        },
+        stergeRecoltareSangeLaComanda: function (recoltareSangeId) {
+            for (var i = 0; i < this.recoltariSangeAdaugateLaComanda.length; i++) {
+                if (this.recoltariSangeAdaugateLaComanda[i].id === recoltareSangeId) {
+                    this.recoltariSangeAdaugateLaComanda.splice(i, 1);
+                    break;
+                }
+            }
+        },
+    }
+});
+recoltareSangeComanda.component('vue-datepicker-next', VueDatepickerNext);
+if (document.getElementById('recoltareSangeComanda') != null) {
+    recoltareSangeComanda.mount('#recoltareSangeComanda');
+}

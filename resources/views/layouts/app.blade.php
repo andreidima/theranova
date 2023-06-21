@@ -59,6 +59,11 @@
                                 <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
                             </a>
                         </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/recoltari-sange/comenzi">
+                                <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
+                            </a>
+                        </li>
                         {{-- <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/locuri-operare">
                                 <i class="fa-solid fa-location-dot me-1"></i>Locuri de operare
