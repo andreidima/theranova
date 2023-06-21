@@ -21,18 +21,25 @@ class RecoltareSangeComandaController extends Controller
     {
         $request->session()->forget('recoltareSangeComandaReturnUrl');
 
-        // $searchCod = $request->searchCod;
-        // $searchData = $request->searchData;
+        $searchNumar = $request->searchNumar;
+        $searchUnitate = $request->searchUnitate;
+        $searchData = $request->searchData;
 
         $query = RecoltareSangeComanda::with('recoltariSange')
-            // when($searchCod, function ($query, $searchCod) {
-            //     return $query->where('cod', $searchCod);
-            // })
+            ->when($searchNumar, function ($query, $searchNumar) {
+                return $query->where('numar', $searchNumar);
+            })
+            ->when($searchUnitate, function ($query, $searchUnitate) {
+                return $query->where('unitate', $searchUnitate);
+            })
+            ->when($searchdata, function ($query, $searchdata) {
+                return $query->whereDate('data', $searchdata);
+            })
             ->latest();
 
         $recoltariSangeComenzi = $query->simplePaginate(25);
 
-        return view('recoltariSangeComenzi.index', compact('recoltariSangeComenzi'));
+        return view('recoltariSangeComenzi.index', compact('recoltariSangeComenzi', 'searchNumar', 'searchUnitate', 'searchData'));
     }
 
     /**
