@@ -32,8 +32,8 @@ class RecoltareSangeComandaController extends Controller
             ->when($searchUnitate, function ($query, $searchUnitate) {
                 return $query->where('unitate', $searchUnitate);
             })
-            ->when($searchdata, function ($query, $searchdata) {
-                return $query->whereDate('data', $searchdata);
+            ->when($searchData, function ($query, $searchData) {
+                return $query->whereDate('data', $searchData);
             })
             ->latest();
 

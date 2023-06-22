@@ -65,7 +65,7 @@
             <div class="col-lg-12 mb-4 text-center">
                 <h4 class="mb-0 py-1 text-white" style="background-color: rgb(107, 126, 1)">Căutare recoltări sânge</h4>
             </div>
-            <div class="col-lg-8 mb-4">
+            <div class="col-lg-10 mb-4">
                 <div class="input-group mb-0 align-items-center">
                     <span class="input-group-text">Cod recoltare</span>
                     <input

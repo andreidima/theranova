@@ -3,19 +3,33 @@
 @section('content')
 <div class="mx-3 px-3 card" style="border-radius: 40px 40px 40px 40px;">
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
-            <div class="col-lg-3">
+            <div class="col-lg-2">
                 <span class="badge culoare1 fs-5">
                     <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
                 </span>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-7">
                 <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
                     @csrf
-                    {{-- <div class="row mb-1 custom-search-form justify-content-center">
-                        <div class="col-lg-8">
-                            <input type="text" class="form-control rounded-3" id="searchCod" name="searchCod" placeholder="Cod" value="{{ $searchCod }}">
+                    <div class="row mb-1 custom-search-form justify-content-center">
+                        <div class="col-lg-2">
+                            <input type="text" class="form-control rounded-3" id="searchNumar" name="searchNumar" placeholder="Număr" value="{{ $searchNumar }}">
                         </div>
-                    </div> --}}
+                        <div class="col-lg-5">
+                            <input type="text" class="form-control rounded-3" id="searchUnitate" name="searchUnitate" placeholder="Unitate" value="{{ $searchUnitate }}">
+                        </div>
+                        <div class="col-lg-4 d-flex align-items-center" id="datePicker">
+                            <label for="data" class="mb-0 pe-1">Data</label>
+                            <vue-datepicker-next
+                                data-veche="{{ $searchData }}"
+                                nume-camp-db="searchData"
+                                tip="date"
+                                value-type="YYYY-MM-DD"
+                                format="DD.MM.YYYY"
+                                :latime="{ width: '125px' }"
+                            ></vue-datepicker-next>
+                        </div>
+                    </div>
                     <div class="row custom-search-form justify-content-center">
                         <div class="col-lg-4">
                             <button class="btn btn-sm w-100 btn-primary text-white border border-dark rounded-3" type="submit">
