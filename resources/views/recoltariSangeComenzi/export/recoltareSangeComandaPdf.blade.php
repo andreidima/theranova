@@ -127,7 +127,9 @@
                         </td>
                         @foreach ($recoltareSangeGrupe as $recoltareSangeGrupa)
                             <td style="text-align: center">
-                                {{ $recoltariSangeGroupByProdus->where('recoltari_sange_grupa_id', $recoltareSangeGrupa->id)->count() }}
+                                @if (($nrRecoltari = $recoltariSangeGroupByProdus->where('recoltari_sange_grupa_id', $recoltareSangeGrupa->id)->count()) !== 0)
+                                    {{ $nrRecoltari }}
+                                @endif
                             </td>
                         @endforeach
                         <td style="text-align: center">
