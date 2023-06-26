@@ -121,7 +121,6 @@ class RecoltareSangeComandaController extends Controller
         $recoltareSangeComanda->update($this->validateRequest($request));
 
         // Scoaterea recoltarilor ce nu mai sunt din comanda
-        // RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => '']);
         RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
 
         // Adaugarea recoltarilor la comanda
@@ -157,6 +156,9 @@ class RecoltareSangeComandaController extends Controller
     {
         $recoltareSangeComanda->delete();
 
+        // Scoaterea recoltarilor de la comanda
+        RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->update(['comanda_id' => null]);
+
         return back()->with('status', 'Comanda „' . ($recoltareSangeComanda->numar ?? '') . '” a fost ștearsă cu succes!');
     }
 
@@ -188,5 +190,20 @@ class RecoltareSangeComandaController extends Controller
                 // 'tara_id.required' => 'Câmpul țara este obligatoriu'
             ]
         );
+    }
+
+    public function exportPdf(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
+    {
+        $recoltareSangeGrupe = RecoltareSangeGrupa::select('id', 'nume')->get();
+
+        if ($request->view_type === 'export-html') {
+            return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda', 'recoltareSangeGrupe'));
+        } elseif ($request->view_type === 'export-pdf') {
+            $pdf = \PDF::loadView('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda', 'recoltareSangeGrupe'))
+                ->setPaper('a4', 'portrait');
+            $pdf->getDomPDF()->set_option("enable_php", true);
+            // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+            return $pdf->stream();
+        }
     }
 }

@@ -120,22 +120,29 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-end">
-                                        <a href="{{ $recoltareSangeComanda->path() }}" class="flex me-1">
-                                            <span class="badge bg-success">Vizualizează</span>
-                                        </a>
-                                        <a href="{{ $recoltareSangeComanda->path() }}/modifica" class="flex me-1">
-                                            <span class="badge bg-primary">Modifică</span>
-                                        </a>
-                                        <div style="flex" class="">
-                                            <a
-                                                href="#"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#stergeRecoltareSangeComanda{{ $recoltareSangeComanda->id }}"
-                                                title="Șterge Recoltare Sânge Comandă"
-                                                >
-                                                <span class="badge bg-danger">Șterge</span>
+                                    <div>
+                                        <div class="d-flex justify-content-end">
+                                            <a href="{{ $recoltareSangeComanda->path() }}" class="flex me-1">
+                                                <span class="badge bg-success">Vizualizează</span>
                                             </a>
+                                            <a href="{{ $recoltareSangeComanda->path() }}/export-pdf" target="_blank" class="flex">
+                                                <span class="badge bg-warning text-dark">PDF</span>
+                                            </a>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <a href="{{ $recoltareSangeComanda->path() }}/modifica" class="flex me-1">
+                                                <span class="badge bg-primary">Modifică</span>
+                                            </a>
+                                            <div style="flex" class="">
+                                                <a
+                                                    href="#"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#stergeRecoltareSangeComanda{{ $recoltareSangeComanda->id }}"
+                                                    title="Șterge Recoltare Sânge Comandă"
+                                                    >
+                                                    <span class="badge bg-danger">Șterge</span>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

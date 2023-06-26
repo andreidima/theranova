@@ -56,6 +56,7 @@ class RecoltareSangeController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
         $this->validateRequest($request);
 
         for ($i = 1; $i <= $request->nrPungi; $i++){
@@ -146,13 +147,13 @@ class RecoltareSangeController extends Controller
 // dd($request->method());
         return $request->validate(
             [
-                'recoltari_sange_produs_id' => 'required',
+                // 'recoltari_sange_produs_id' => 'required',
                 'recoltari_sange_grupa_id' => 'required',
                 'data' => 'required',
                 'cod' => 'required',
                 'tip' => 'required',
                 'cantitate' => ($request->_method === "PATCH") ? 'required|integer' : '',
-                'nrPungi' => $request->isMethod('post') ? 'required|integer|min:1' : '',
+                // 'nrPungi' => $request->isMethod('post') ? 'required|integer|min:1' : '',
                 'cantitatiPungiSange.*' => $request->isMethod('post') ? 'required|integer' : '',
             ],
             [

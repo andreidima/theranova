@@ -3,7 +3,11 @@
 {{-- Doar pentru adaugare --}}
 @if (!str_contains(url()->current(), '/modifica'))
 <script type="application/javascript">
+    recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
+    tip = {!! json_encode(old('tip')) !!}
     nrPungi = {!! json_encode(intval(old('nrPungi'))) !!}
+    pungi =  {!! json_encode(old('pungi') ?? []) !!}
+    cantitatiPungiSange={!! json_encode(old('cantitatiPungiSange') ?? []) !!}
     cantitatiPungiSange={!! json_encode(old('cantitatiPungiSange') ?? []) !!}
 </script>
 @endif
@@ -11,7 +15,7 @@
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="adaugareRecoltareSange">
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-0 justify-content-center">
-            <div class="col-lg-2 mb-4">
+            {{-- <div class="col-lg-2 mb-4">
                 <label for="recoltari_sange_produs_id" class="mb-0 ps-3">Produs{{ old('nrPungi') }}<span class="text-danger">*</span></label>
                 <select name="recoltari_sange_produs_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
                     <option selected></option>
@@ -19,7 +23,7 @@
                         <option value="{{ $recoltareSangeProdus->id }}" {{ ($recoltareSangeProdus->id === intval(old('recoltari_sange_produs_id', $recoltareSange->recoltari_sange_produs_id))) ? 'selected' : '' }}>{{ $recoltareSangeProdus->nume }}</option>
                     @endforeach
                 </select>
-            </div>
+            </div> --}}
             <div class="col-lg-2 mb-4">
                 <label for="recoltari_sange_grupa_id" class="mb-0 ps-3">Grupa<span class="text-danger">*</span></label>
                 <select name="recoltari_sange_grupa_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
@@ -52,13 +56,13 @@
             </div>
             <div class="col-lg-2 mb-4">
                 <label for="tip" class="mb-0 ps-3">Tip<span class="text-danger">*</span></label>
-                <input
-                    type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('tip') ? 'is-invalid' : '' }}"
-                    name="tip"
-                    {{-- v-model="tip" --}}
-                    value="{{ old('tip', $recoltareSange->tip) }}"
-                    required>
+                <select name="tip" v-model="tip" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                    <option selected></option>
+                    <option value="S" {{ old('tip', $recoltareSange->tip) === 'S' ? 'selected' : '' }}>S</option>
+                    <option value="D" {{ old('tip', $recoltareSange->tip) === 'D' ? 'selected' : '' }}>D</option>
+                    <option value="D1" {{ old('tip', $recoltareSange->tip) === 'D1' ? 'selected' : '' }}>D1</option>
+                    <option value="T" {{ old('tip', $recoltareSange->tip) === 'T' ? 'selected' : '' }}>T</option>
+                </select>
             </div>
             {{-- Doar pentru modificare --}}
             @if (str_contains(url()->current(), '/modifica'))
@@ -137,21 +141,50 @@
         </div>
     </div>
 
-    <div v-if="nrPungi > 0" class="col-lg-8 px-4 py-2 mb-4 rounded-3 mx-auto border border-secondary">
+    <div v-if="pungi.length" class="col-lg-8 px-4 py-2 mb-4 rounded-3 mx-auto border border-secondary">
         <div class="row mb-0">
             <div class="col-lg-12 mb-2 text-center">
                 <span class="fs-5 badge text-white culoare2">
-                    Cantități de sânge
+                    Pungi de sânge
                 </span>
             </div>
-            {{-- <div v-for="i in nrPungi" class="col-lg-3 mb-4 mx-auto"> --}}
-            <div v-for="i in nrPungi" :key="i" class="col-lg-3 mb-4 mx-auto">
-                <label for="cantitatiPungiSange" class="mb-0 ps-3">Punga @{{ i }}<span class="text-danger">*</span></label>
-                    <input
-                        type="text"
-                        class="form-control bg-white rounded-3"
-                        :name="'cantitatiPungiSange[' + i + ']'"
-                        v-model="cantitatiPungiSange[i]">
+            <div class="col-lg-8 mb-0 mx-auto">
+                <div class="row">
+                    <div class="col-lg-4 border border-1 text-center">
+                        {{-- Nr. pungă --}}
+                    </div>
+                    <div class="col-lg-4 border border-1 text-center">
+                        Produs
+                    </div>
+                    <div class="col-lg-4 border border-1 text-center">
+                        Cantitate
+                    </div>
+                </div>
+            </div>
+            <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-8 mb-0 mx-auto">
+                <div class="row">
+                    <div class="col-lg-4 border border-1 d-flex justify-content-center align-items-center">
+                        Punga @{{ index+1 }}
+                    </div>
+                    <div class="col-lg-4 border border-1">
+                        <select :name="'pungi[' + index + '][produs]'" v-model="pungi[index].produs" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                            <option disabled value=""></option>
+                            <option
+                                v-for='recoltare in recoltariSangeProduse'
+                                :value='recoltare.nume'
+                                >
+                                    @{{recoltare.nume}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4 border border-1">
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'pungi[' + index + '][cantitate]'"
+                            v-model="pungi[index].cantitate">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
