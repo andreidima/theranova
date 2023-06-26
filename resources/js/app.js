@@ -63,38 +63,57 @@ const adaugareRecoltareSange = createApp({
     el: '#adaugareRecoltareSange',
     data() {
         return {
-            nrPungi: ((typeof nrPungi !== 'undefined') ? nrPungi : ''),
-            // recoltariSangeGrupaId: '',
-            // cod: '',
-            // tip: '',
-            // recoltariSange: [],
+            recoltariSangeProduse: recoltariSangeProduse,
+
+            tip: ((typeof tip !== 'undefined') ? tip : ''),
+            // nrPungi: ((typeof nrPungi !== 'undefined') ? nrPungi : ''),
+            nrPungi: 0,
+            pungi: [],
             cantitatiPungiSange: ((typeof cantitatiPungiSange !== 'undefined') ? cantitatiPungiSange : []),
         }
     },
-    // watch: {
-    //     nrPungi: function () {
-    //         this.recoltariSange = [];
-    //         for (var i = 0; i < this.nrPungi; i++) {
-    //             var recoltareSange = {
-    //                 recoltariSangeGrupaId: this.recoltariSangeGrupaId,
-    //                 cod: this.cod,
-    //                 tip: this.tip,
-    //                 cantitate: '',
-    //             }
-    //             this.recoltariSange[i] = recoltareSange;
-    //         }
-    //     },
-    //     cod: function () {
-    //         for (var i = 0; i < this.nrPungi; i++) {
-    //             this.recoltariSange[i].cod = this.cod;
-    //         }
-    //     },
-    //     tip: function () {
-    //         for (var i = 0; i < this.nrPungi; i++) {
-    //             this.recoltariSange[i].tip = this.tip;
-    //         }
-    //     },
-    // },
+    watch: {
+        // nrPungi: function () {
+        //     this.recoltariSange = [];
+        //     for (var i = 0; i < this.nrPungi; i++) {
+        //         var recoltareSange = {
+        //             recoltariSangeGrupaId: this.recoltariSangeGrupaId,
+        //             cod: this.cod,
+        //             tip: this.tip,
+        //             cantitate: '',
+        //         }
+        //         this.recoltariSange[i] = recoltareSange;
+        //     }
+        // },
+        // cod: function () {
+        //     for (var i = 0; i < this.nrPungi; i++) {
+        //         this.recoltariSange[i].cod = this.cod;
+        //     }
+        // },
+        tip: function () {
+            // if (this.tip === "S"){
+            //     this.nrPungi = 1
+            // }
+            this.pungi = [];
+            switch (this.tip){
+                case "S":
+                    this.pungi.push({produs: "CUT", cantitate:200});
+                    break;
+                case "D":
+                    this.pungi.push({ produs: "PPC", cantitate: 200 });
+                    this.pungi.push({ produs: "CER", cantitate: 250 });
+                    break;
+                case "D1":
+                    this.pungi.push({ produs: "CER-SL", cantitate: 200 });
+                    break;
+                case "T":
+                    this.pungi.push({ produs: "CER", cantitate: 200 });
+                    this.pungi.push({ produs: "PPC", cantitate: 150 });
+                    this.pungi.push({ produs: "CTS", cantitate: 100 });
+                    break;
+            }
+        },
+    },
     methods: {
     }
 });
