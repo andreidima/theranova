@@ -68,7 +68,7 @@ const adaugareRecoltareSange = createApp({
             tip: ((typeof tip !== 'undefined') ? tip : ''),
             // nrPungi: ((typeof nrPungi !== 'undefined') ? nrPungi : ''),
             nrPungi: 0,
-            pungi: [],
+            pungi: pungi,
             cantitatiPungiSange: ((typeof cantitatiPungiSange !== 'undefined') ? cantitatiPungiSange : []),
         }
     },
