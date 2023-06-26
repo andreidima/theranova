@@ -60,7 +60,7 @@
                     value="{{ old('tip', $recoltareSange->tip) }}"
                     required>
             </div>
-            {{-- Doar pentru adaugare --}}
+            {{-- Doar pentru modificare --}}
             @if (str_contains(url()->current(), '/modifica'))
                 <div class="col-lg-2 mb-4">
                     <label for="cantitate" class="mb-0 ps-3">Cantitate<span class="text-danger">*</span></label>
