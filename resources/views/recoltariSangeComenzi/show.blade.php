@@ -22,34 +22,26 @@
                         >
                             <tr>
                                 <td class="pe-4">
-                                    Număr
+                                    Comanda nr.
                                 </td>
                                 <td>
-                                    {{ $recoltareSangeComanda->numar }}
+                                    {{ $recoltareSangeComanda->comanda_nr }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Unitate
+                                    Aviz nr.
                                 </td>
                                 <td>
-                                    {{ $recoltareSangeComanda->unitate }}
+                                    {{ $recoltareSangeComanda->aviz_nr }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Localitate
+                                    Beneficiar
                                 </td>
                                 <td>
-                                    {{ $recoltareSangeComanda->localitate }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Județ
-                                </td>
-                                <td>
-                                    {{ $recoltareSangeComanda->judet }}
+                                    {{ $recoltareSangeComanda->beneficiar->nume ?? '' }}
                                 </td>
                             </tr>
                             <tr>

@@ -93,7 +93,7 @@
                                     {{ $recoltareSange->cantitate }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSange->rebut }}
+                                    {{ $recoltareSange->rebut->nume ?? ''}}
                                 </td>
                                 <td class="">
                                     {{ $recoltareSange->rebut_created_at ? \Carbon\Carbon::parse($recoltareSange->rebut_created_at)->isoFormat('DD.MM.YYYY') : '' }}

@@ -66,10 +66,9 @@
                     <thead class="text-white rounded" style="background-color: #69A1B1">
                         <tr class="" style="padding:2rem"> --}}
                             <th class="text-white culoare2">#</th>
-                            <th class="text-white culoare2">Număr</th>
-                            <th class="text-white culoare2">Unitate</th>
-                            <th class="text-white culoare2">Localitate</th>
-                            <th class="text-white culoare2">Județ</th>
+                            <th class="text-white culoare2">Comanda nr.</th>
+                            <th class="text-white culoare2">Aviz nr.</th>
+                            <th class="text-white culoare2">Beneficiar</th>
                             <th class="text-white culoare2">Data</th>
                             <th class="text-white culoare2">Recoltări sânge</th>
                             {{-- <th class="">Observații</th> --}}
@@ -83,16 +82,13 @@
                                     {{ ($recoltariSangeComenzi ->currentpage()-1) * $recoltariSangeComenzi ->perpage() + $loop->index + 1 }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->numar }}
+                                    {{ $recoltareSangeComanda->comanda_nr }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->unitate }}
+                                    {{ $recoltareSangeComanda->aviz_nr }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->localitate }}
-                                </td>
-                                <td class="">
-                                    {{ $recoltareSangeComanda->judet }}
+                                    {{ $recoltareSangeComanda->beneficiar->nume ?? '' }}
                                 </td>
                                 <td class="">
                                     {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}

@@ -62,12 +62,12 @@
                                         Rebut:
                                     </div>
                                     <div class="col-md-7 mb-4">
-                                        <input
-                                            type="text"
-                                            class="form-control bg-white rounded-3 {{ $errors->has('rebut') ? 'is-invalid' : '' }}"
-                                            name="rebut"
-                                            value="{{ old('rebut', $recoltareSange->rebut) }}"
-                                            required>
+                                        <select name="recoltari_sange_rebut_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_rebut_id') ? 'is-invalid' : '' }}">
+                                            <option selected></option>
+                                            @foreach ($recoltariSangeRebuturi as $rebut)
+                                                <option value="{{ $rebut->id }}" {{ ($rebut->id === intval(old('rebut_id', $recoltareSange->recoltari_sange_rebut_id ?? ''))) ? 'selected' : '' }}>{{ $rebut->nume }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-lg-12 px-4 py-2 mb-0">
                                         <div class="row">

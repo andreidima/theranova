@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeGrupa;
+use App\Models\RecoltareSangeRebut;
 use Carbon\Carbon;
 
 class RecoltareSangeController extends Controller
@@ -56,17 +57,16 @@ class RecoltareSangeController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
         $this->validateRequest($request);
 
-        for ($i = 1; $i <= $request->nrPungi; $i++){
+        for ($i = 1; $i <= count($request->pungi); $i++){
             $recoltareSange = new RecoltareSange;
-            $recoltareSange->recoltari_sange_produs_id = $request->recoltari_sange_produs_id;
+            $recoltareSange->recoltari_sange_produs_id = $request->pungi[$i]['produs'];
             $recoltareSange->recoltari_sange_grupa_id = $request->recoltari_sange_grupa_id;
             $recoltareSange->data = $request->data;
             $recoltareSange->cod = $request->cod;
             $recoltareSange->tip = $request->tip;
-            $recoltareSange->cantitate = $request->cantitatiPungiSange[$i];
+            $recoltareSange->cantitate = $request->pungi[$i]['cantitate'];
             $recoltareSange->save();
         }
 
@@ -152,8 +152,10 @@ class RecoltareSangeController extends Controller
                 'data' => 'required',
                 'cod' => 'required',
                 'tip' => 'required',
-                'pungi.*.cantitate' => $request->isMethod('post') ? 'required|integer' : '',
+                'pungi.*.produs' => $request->isMethod('post') ? 'required' : '',
+                'pungi.*.cantitate' => $request->isMethod('post') ? 'required|integer|between:1,999' : '',
 
+                'recoltari_sange_produs_id' => ($request->_method === "PATCH") ? 'required' : '',
                 'cantitate' => ($request->_method === "PATCH") ? 'required|integer|between:1,999' : '',
             ],
             [
@@ -169,8 +171,8 @@ class RecoltareSangeController extends Controller
         $searchCod = $request->searchCod;
         $searchData = $request->searchData;
 
-        $query = RecoltareSange::
-            when($searchCod, function ($query, $searchCod) {
+        $query = RecoltareSange::with('produs', 'grupa', 'rebut')
+            ->when($searchCod, function ($query, $searchCod) {
                 return $query->where('cod', $searchCod);
             })
             ->when($searchData, function ($query, $searchData) {
@@ -187,15 +189,17 @@ class RecoltareSangeController extends Controller
     {
         $request->session()->get('recoltareSangeRebutReturnUrl') ?? $request->session()->put('recoltareSangeRebutReturnUrl', url()->previous());
 
-        return view('recoltariSange.rebuturi.formularModificare', compact('recoltareSange'));
+        $recoltariSangeRebuturi = RecoltareSangeRebut::get();
+
+        return view('recoltariSange.rebuturi.formularModificare', compact('recoltareSange', 'recoltariSangeRebuturi'));
     }
 
     public function postRebuturiModifica(Request $request, RecoltareSange $recoltareSange)
     {
         $request->session()->get('recoltareSangeRebutReturnUrl') ?? $request->session()->put('recoltareSangeRebutReturnUrl', url()->previous());
 
-        $recoltareSange->rebut = $request->rebut;
-        $request->rebut ? ($recoltareSange->rebut_created_at = Carbon::now()) : ($recoltareSange->rebut_created_at = null); // daca se sterge rebut. se sterge si campul rebut_created_at
+        $recoltareSange->recoltari_sange_rebut_id = $request->recoltari_sange_rebut_id;
+        $request->recoltari_sange_rebut_id ? ($recoltareSange->rebut_created_at = Carbon::now()) : ($recoltareSange->rebut_created_at = null); // daca se sterge rebut. se sterge si campul rebut_created_at
         $recoltareSange->save();
 
         return redirect($request->session()->get('recoltareSangeRebutReturnUrl') ?? ('/recoltari-sange/rebuturi'))->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost modificată cu succes!');

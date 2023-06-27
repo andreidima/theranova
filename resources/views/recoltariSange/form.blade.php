@@ -1,13 +1,20 @@
 @csrf
 
-{{-- Doar pentru adaugare --}}
-@if (!str_contains(url()->current(), '/modifica'))
 <script type="application/javascript">
     recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
-    tip = {!! json_encode(old('tip')) !!}
-    // nrPungi = {!! json_encode(intval(old('nrPungi'))) !!}
-    nrPungi =  {!! json_encode(old('pungi') ? count(old('pungi')) : 0) !!}
+    tip = {!! json_encode(old('tip', $recoltareSange->tip)) !!}
+    produs = {!! json_encode(old('produs', $recoltareSange->recoltari_sange_produs_id)) !!}
     pungi =  {!! json_encode(old('pungi') ?? []) !!}
+</script>
+
+{{-- Doar pentru adaugare --}}
+@if (str_contains(url()->current(), '/adauga'))
+<script type="application/javascript">
+    // recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
+    // tip = {!! json_encode(old('tip')) !!}
+    // nrPungi = {!! json_encode(intval(old('nrPungi'))) !!}
+    // nrPungi =  {!! json_encode(old('pungi') ? count(old('pungi')) : 0) !!}
+    // pungi =  {!! json_encode(old('pungi') ?? []) !!}
 </script>
 @endif
 
@@ -58,34 +65,53 @@
                     required>
             </div>
             <div class="col-lg-2 mb-4">
-                <label for="tip" class="mb-0 ps-3">Tip<span class="text-danger">*</span></label>
-                <select name="tip" v-model="tip" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
-                    <option selected></option>
-                    <option value="S" {{ old('tip', $recoltareSange->tip) === 'S' ? 'selected' : '' }}>S</option>
-                    <option value="D" {{ old('tip', $recoltareSange->tip) === 'D' ? 'selected' : '' }}>D</option>
-                    <option value="D1" {{ old('tip', $recoltareSange->tip) === 'D1' ? 'selected' : '' }}>D1</option>
-                    <option value="T" {{ old('tip', $recoltareSange->tip) === 'T' ? 'selected' : '' }}>T</option>
+                <label for="tip" class="mb-0 ps-3">Tip{{ $recoltareSange->tip }}{{ old('tip', $recoltareSange->tip) }}<span class="text-danger">*</span></label>
+                <select name="tip"
+                        v-model="tip"
+                        class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                    <option
+                        v-for='tip in tipuri'
+                        :value='tip'
+                        >
+                            @{{tip}}
+                    </option>
                 </select>
             </div>
-            {{-- Doar pentru modificare --}}
-            @if (str_contains(url()->current(), '/modifica'))
-                <div class="col-lg-2 mb-4">
-                    <label for="cantitate" class="mb-0 ps-3">Cantitate<span class="text-danger">*</span></label>
-                    <input
-                        type="text"
-                        class="form-control bg-white rounded-3 {{ $errors->has('cantitate') ? 'is-invalid' : '' }}"
-                        name="cantitate"
-                        {{-- v-model="cantitate" --}}
-                        value="{{ old('cantitate', $recoltareSange->cantitate) }}"
-                        required>
-                </div>
-            @endif
         </div>
+
+        {{-- Doar pentru modificare --}}
+        @if (str_contains(url()->current(), '/modifica'))
+        <div class="row mb-0 justify-content-center">
+            <div class="col-lg-2 mb-4">
+                <label for="cantitate" class="mb-0 ps-3">Produs<span class="text-danger">*</span></label>
+                <select name="recoltari_sange_produs_id"
+                        v-model="produs"
+                        class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                    <option
+                        v-for='produs in recoltariSangeProduse'
+                        :value='produs.id'
+                        >
+                            @{{produs.nume}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-lg-2 mb-4">
+                <label for="cantitate" class="mb-0 ps-3">Cantitate<span class="text-danger">*</span></label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('cantitate') ? 'is-invalid' : '' }}"
+                    name="cantitate"
+                    {{-- v-model="cantitate" --}}
+                    value="{{ old('cantitate', $recoltareSange->cantitate) }}"
+                    required>
+            </div>
+        </div>
+        @endif
     </div>
 
 
 {{-- Doar pentru adaugare --}}
-@if (!str_contains(url()->current(), '/modifica'))
+@if (str_contains(url()->current(), '/adauga'))
     {{-- <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-2 mb-4">
@@ -122,18 +148,17 @@
                 </div>
             </div>
             <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-8 mb-0 mx-auto">
-                <div class="row">
+                <div v-if="index > 0" class="row">
                     <div class="col-lg-4 border border-1 d-flex justify-content-center align-items-center">
-                        Punga @{{ index+1 }}
+                        Punga @{{ index }}
                     </div>
                     <div class="col-lg-4 border border-1">
                         <select :name="'pungi[' + index + '][produs]'" v-model="pungi[index].produs" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
-                            <option disabled value=""></option>
                             <option
-                                v-for='recoltare in recoltariSangeProduse'
-                                :value='recoltare.nume'
+                                v-for='produs in recoltariSangeProduse'
+                                :value='produs.id'
                                 >
-                                    @{{recoltare.nume}}
+                                    @{{produs.nume}}
                             </option>
                         </select>
                     </div>

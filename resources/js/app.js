@@ -63,12 +63,14 @@ const adaugareRecoltareSange = createApp({
     el: '#adaugareRecoltareSange',
     data() {
         return {
-            recoltariSangeProduse: recoltariSangeProduse,
+            recoltariSangeProduse: ((typeof recoltariSangeProduse !== 'undefined') ? recoltariSangeProduse : []),
 
+            tipuri: ['S', 'D', 'D1', 'T'],
             tip: ((typeof tip !== 'undefined') ? tip : ''),
-            // nrPungi: ((typeof nrPungi !== 'undefined') ? nrPungi : ''),
-            nrPungi: nrPungi,
-            pungi: pungi,
+
+            produs: ((typeof produs !== 'undefined') ? produs : ''), // doar pentru adaugare
+
+            pungi: ((typeof pungi !== 'undefined') ? pungi : ''), // doar pentru modificare
         }
     },
     watch: {
@@ -96,22 +98,22 @@ const adaugareRecoltareSange = createApp({
             this.pungi = [];
             switch (this.tip){
                 case "S":
-                    this.pungi.push({ nrPunga: 1, produs: "CUT", cantitate:200});
+                    this.pungi[1] = ({ produs: 15, cantitate:200});
                     break;
                 case "D":
-                    this.pungi.push({ nrPunga: 1, produs: "PPC", cantitate: 200 });
-                    this.pungi.push({ nrPunga: 2, produs: "CER", cantitate: 250 });
+                    this.pungi[1] = ({ produs: 4, cantitate: 200 });
+                    this.pungi[2] = ({ produs: 16, cantitate: 250 });
                     break;
                 case "D1":
-                    this.pungi.push({ nrPunga: 1, produs: "CER-SL", cantitate: 200 });
+                    this.pungi[1] = ({ produs: 17, cantitate: 200 });
                     break;
                 case "T":
-                    this.pungi.push({ nrPunga: 1, produs: "CER", cantitate: 200 });
-                    this.pungi.push({ nrPunga: 2, produs: "PPC", cantitate: 150 });
-                    this.pungi.push({ nrPunga: 3, produs: "CTS", cantitate: 100 });
+                    this.pungi[1] = ({ produs: 16, cantitate: 200 });
+                    this.pungi[2] = ({ produs: 4, cantitate: 150 });
+                    this.pungi[3] = ({ produs: 18, cantitate: 100 });
                     break;
             }
-            this.nrPungi = this.pungi.length;
+            // this.nrPungi = this.pungi.length;
         },
     },
     // created: function () {

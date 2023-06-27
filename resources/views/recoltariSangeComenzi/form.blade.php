@@ -11,40 +11,31 @@
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-2 mb-4">
-                <label for="numar" class="mb-0 ps-3">Număr<span class="text-danger">*</span></label>
+                <label for="comanda_nr" class="mb-0 ps-3">Comanda nr.<span class="text-danger">*</span></label>
                 <input
                     type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('numar') ? 'is-invalid' : '' }}"
-                    name="numar"
-                    value="{{ old('numar', $recoltareSangeComanda->numar) }}"
+                    class="form-control bg-white rounded-3 {{ $errors->has('comanda_nr') ? 'is-invalid' : '' }}"
+                    name="comanda_nr"
+                    value="{{ old('comanda_nr', $recoltareSangeComanda->comanda_nr) }}"
                     required>
             </div>
             <div class="col-lg-2 mb-4">
-                <label for="unitate" class="mb-0 ps-3">Unitate<span class="text-danger">*</span></label>
+                <label for="aviz_nr" class="mb-0 ps-3">Aviz nr.<span class="text-danger">*</span></label>
                 <input
                     type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('unitate') ? 'is-invalid' : '' }}"
-                    name="unitate"
-                    value="{{ old('unitate', $recoltareSangeComanda->unitate) }}"
+                    class="form-control bg-white rounded-3 {{ $errors->has('aviz_nr') ? 'is-invalid' : '' }}"
+                    name="aviz_nr"
+                    value="{{ old('aviz_nr', $recoltareSangeComanda->aviz_nr) }}"
                     required>
             </div>
-            <div class="col-lg-2 mb-4">
-                <label for="localitate" class="mb-0 ps-3">Localitate<span class="text-danger">*</span></label>
-                <input
-                    type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('localitate') ? 'is-invalid' : '' }}"
-                    name="localitate"
-                    value="{{ old('localitate', $recoltareSangeComanda->localitate) }}"
-                    required>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label for="judet" class="mb-0 ps-3">Juteț<span class="text-danger">*</span></label>
-                <input
-                    type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('judet') ? 'is-invalid' : '' }}"
-                    name="judet"
-                    value="{{ old('judet', $recoltareSangeComanda->judet) }}"
-                    required>
+            <div class="col-lg-3 mb-4">
+                <label for="unitate" class="mb-0 ps-3">Beneficiar<span class="text-danger">*</span></label>
+                <select name="recoltari_sange_beneficiar_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_beneficiar_id') ? 'is-invalid' : '' }}">
+                    <option selected></option>
+                    @foreach ($beneficiari as $beneficiar)
+                        <option value="{{ $beneficiar->id }}" {{ ($beneficiar->id === intval(old('recoltari_sange_beneficiar_id', $recoltareSangeComanda->recoltari_sange_beneficiar_id ?? ''))) ? 'selected' : '' }}>{{ $beneficiar->nume }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-lg-2 mb-4 text-center">
                 <label for="data" class="mb-0 ps-0">Data<span class="text-danger">*</span></label>

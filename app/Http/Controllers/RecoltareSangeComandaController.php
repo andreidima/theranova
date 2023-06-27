@@ -8,6 +8,7 @@ use App\Models\RecoltareSangeComanda;
 use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeGrupa;
+use App\Models\RecoltareSangeBeneficiar;
 use Carbon\Carbon;
 
 class RecoltareSangeComandaController extends Controller
@@ -51,9 +52,10 @@ class RecoltareSangeComandaController extends Controller
     {
         $request->session()->get('recoltareSangeComandaReturnUrl') ?? $request->session()->put('recoltareSangeComandaReturnUrl', url()->previous());
 
-        $recoltariSange = RecoltareSange::whereNull('rebut')->whereNull('comanda_id')->get();
+        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $recoltariSange = RecoltareSange::whereNull('recoltari_sange_rebut_id')->whereNull('comanda_id')->get();
 
-        return view('recoltariSangeComenzi.create', compact('recoltariSange'));
+        return view('recoltariSangeComenzi.create', compact('beneficiari', 'recoltariSange'));
     }
 
     /**
@@ -64,7 +66,9 @@ class RecoltareSangeComandaController extends Controller
      */
     public function store(Request $request)
     {
-        $recoltareSangeComanda = RecoltareSangeComanda::create($this->validateRequest($request));
+        $this->validateRequest($request);
+
+        $recoltareSangeComanda = RecoltareSangeComanda::create($request->except('recoltariSangeAdaugateLaComanda', 'date'));
 
         // Adaugarea recoltarilor la comanda
         RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => $recoltareSangeComanda->id]);
@@ -97,7 +101,8 @@ class RecoltareSangeComandaController extends Controller
 
         $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)->with('recoltariSange')->first();
 
-        $recoltariSange = RecoltareSange::whereNull('rebut')
+        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $recoltariSange = RecoltareSange::whereNull('recoltari_sange_rebut_id')
             ->where(function($query) use ($recoltareSangeComanda) {
                 return $query
                         ->whereNull('comanda_id')
@@ -106,7 +111,7 @@ class RecoltareSangeComandaController extends Controller
             ->get();
 
 
-        return view('recoltariSangeComenzi.edit', compact('recoltareSangeComanda', 'recoltariSange'));
+        return view('recoltariSangeComenzi.edit', compact('recoltareSangeComanda', 'beneficiari', 'recoltariSange'));
     }
 
     /**
@@ -118,7 +123,9 @@ class RecoltareSangeComandaController extends Controller
      */
     public function update(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
     {
-        $recoltareSangeComanda->update($this->validateRequest($request));
+        $this->validateRequest($request);
+
+        $recoltareSangeComanda->update($request->except('recoltariSangeAdaugateLaComanda', 'date'));
 
         // Scoaterea recoltarilor ce nu mai sunt din comanda
         RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
@@ -177,14 +184,14 @@ class RecoltareSangeComandaController extends Controller
         // if ($request->isMethod('post')) {
         //     $request->request->add(['cheie_unica' => uniqid()]);
         // }
-
+// dd($request);
         return $request->validate(
             [
-                'numar' => 'required|numeric',
-                'unitate' => 'required',
-                'localitate' => 'required',
-                'judet' => 'required',
+                'comanda_nr' => 'required|numeric|between:1,999999',
+                'aviz_nr' => 'required|numeric|between:1,999999',
+                'recoltari_sange_beneficiar_id' => 'required',
                 'data' => 'required',
+                'recoltariSangeAdaugateLaComanda' => 'required'
             ],
             [
                 // 'tara_id.required' => 'Câmpul țara este obligatoriu'

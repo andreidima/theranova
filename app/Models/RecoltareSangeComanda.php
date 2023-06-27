@@ -38,12 +38,12 @@ class RecoltareSangeComanda extends Model
     }
 
     /**
-     * The recoltariSange that belong to the RecoltareSangeComanda
+     * Get the beneficiar that owns the RecoltareSangeComanda
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    // public function recoltariSange()
-    // {
-    //     return $this->belongsToMany(RecoltareSange::class, 'recoltari_sange', 'comanda_id', 'id');
-    // }
+    public function beneficiar()
+    {
+        return $this->belongsTo(RecoltareSangeBeneficiar::class, 'recoltari_sange_beneficiar_id');
+    }
 }

@@ -36,4 +36,14 @@ class RecoltareSange extends Model
     {
         return $this->belongsTo(RecoltareSangeProdus::class, 'recoltari_sange_produs_id');
     }
+
+    /**
+     * Get the rebut that owns the RecoltareSange
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function rebut()
+    {
+        return $this->belongsTo(RecoltareSangeRebut::class, 'recoltari_sange_rebut_id');
+    }
 }
