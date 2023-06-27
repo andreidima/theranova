@@ -13,12 +13,21 @@
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
                         <div class="col-lg-2">
-                            <input type="text" class="form-control rounded-3" id="searchNumar" name="searchNumar" placeholder="Număr" value="{{ $searchNumar }}">
+                            <input type="text" class="form-control rounded-3" id="searchComandaNr" name="searchComandaNr" placeholder="Comanda nr." value="{{ $searchComandaNr }}">
                         </div>
-                        <div class="col-lg-5">
-                            <input type="text" class="form-control rounded-3" id="searchUnitate" name="searchUnitate" placeholder="Unitate" value="{{ $searchUnitate }}">
+                        <div class="col-lg-2">
+                            <input type="text" class="form-control rounded-3" id="searchAvizNr" name="searchAvizNr" placeholder="Aviz nr." value="{{ $searchAvizNr }}">
                         </div>
-                        <div class="col-lg-4 d-flex align-items-center" id="datePicker">
+                        <div class="col-lg-3">
+                            {{-- <input type="text" class="form-control rounded-3" id="searchUnitate" name="searchUnitate" placeholder="Unitate" value="{{ $searchUnitate }}"> --}}
+                            <select name="searchBeneficiar" class="form-select bg-white rounded-3">
+                                <option selected></option>
+                                @foreach ($beneficiari as $beneficiar)
+                                    <option value="{{ $beneficiar->id }}" {{ ($beneficiar->id === intval($searchBeneficiar)) ? 'selected' : '' }}>{{ $beneficiar->nume }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-3 d-flex align-items-center" id="datePicker">
                             <label for="data" class="mb-0 pe-1">Data</label>
                             <vue-datepicker-next
                                 data-veche="{{ $searchData }}"

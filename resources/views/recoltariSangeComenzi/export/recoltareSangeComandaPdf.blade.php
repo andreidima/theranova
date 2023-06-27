@@ -77,7 +77,8 @@
 
     <main>
 
-        <div style="page-break-after: always">
+        {{-- <div style="page-break-after: always"> --}}
+        <div>
 
             <table style="">
                 <tr valign="" style="">

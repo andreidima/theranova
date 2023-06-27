@@ -22,16 +22,20 @@ class RecoltareSangeComandaController extends Controller
     {
         $request->session()->forget('recoltareSangeComandaReturnUrl');
 
-        $searchNumar = $request->searchNumar;
-        $searchUnitate = $request->searchUnitate;
+        $searchComandaNr = $request->searchComandaNr;
+        $searchAvizNr = $request->searchAvizNr;
+        $searchBeneficiar = $request->searchBeneficiar;
         $searchData = $request->searchData;
 
         $query = RecoltareSangeComanda::with('recoltariSange')
-            ->when($searchNumar, function ($query, $searchNumar) {
-                return $query->where('numar', $searchNumar);
+            ->when($searchComandaNr, function ($query, $searchComandaNr) {
+                return $query->where('comanda_nr', $searchComandaNr);
             })
-            ->when($searchUnitate, function ($query, $searchUnitate) {
-                return $query->where('unitate', $searchUnitate);
+            ->when($searchAvizNr, function ($query, $searchAvizNr) {
+                return $query->where('aviz_nr', $searchAvizNr);
+            })
+            ->when($searchBeneficiar, function ($query, $searchBeneficiar) {
+                return $query->where('recoltari_sange_beneficiar_id', $searchBeneficiar);
             })
             ->when($searchData, function ($query, $searchData) {
                 return $query->whereDate('data', $searchData);
@@ -40,7 +44,9 @@ class RecoltareSangeComandaController extends Controller
 
         $recoltariSangeComenzi = $query->simplePaginate(25);
 
-        return view('recoltariSangeComenzi.index', compact('recoltariSangeComenzi', 'searchNumar', 'searchUnitate', 'searchData'));
+        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+
+        return view('recoltariSangeComenzi.index', compact('recoltariSangeComenzi', 'beneficiari', 'searchComandaNr', 'searchAvizNr', 'searchBeneficiar', 'searchData'));
     }
 
     /**
