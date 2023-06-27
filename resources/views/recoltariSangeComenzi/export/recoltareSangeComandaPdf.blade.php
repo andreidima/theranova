@@ -82,11 +82,11 @@
             <table style="">
                 <tr valign="" style="">
                     <td style="border-width:0px; padding:0rem; margin:0rem; width:50%;">
-                        UNITATEA: {{ $recoltareSangeComanda->unitate }}
+                        UNITATEA: {{ $recoltareSangeComanda->beneficiar->nume ?? '' }}
                         <br>
-                        LOCALITATEA: {{ $recoltareSangeComanda->localitate }}
+                        LOCALITATEA: {{ $recoltareSangeComanda->beneficiar->localitate }}
                         <br>
-                        JUDEȚUL: {{ $recoltareSangeComanda->judet }}
+                        JUDEȚUL: {{ $recoltareSangeComanda->beneficiar->judet }}
                     </td>
                     <td style="border-width:0px; padding:0rem; margin:0rem; width:50%; text-align:right;">
                         DATA COMENZII: {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}
@@ -95,7 +95,7 @@
             </table>
 
             <h3 style="text-align:center">
-                COMANDA NR: {{ $recoltareSangeComanda->numar }}
+                COMANDA NR: {{ $recoltareSangeComanda->comanda_nr }}
                 <br>
                 PRODUSE SANGUINE CĂTRE
                 <br>
@@ -157,12 +157,12 @@
                     <td style="border-width:0px; padding:0rem; margin:0rem; width:50%;">
                         CTS FOCȘANI:
                         <br>
-                        BON DE LIVRARE NR: {{ $recoltareSangeComanda->numar }}
+                        BON DE LIVRARE NR: {{ $recoltareSangeComanda->comanda_nr }}
                         <br>
-                        AVIZ NR:
+                        AVIZ NR: {{ $recoltareSangeComanda->aviz_nr }}
                     </td>
                     <td style="border-width:0px; padding:0rem; margin:0rem; width:50%; text-align:right;">
-                        CĂTRE SPITALUL: {{ $recoltareSangeComanda->unitate }}
+                        CĂTRE SPITALUL: {{ $recoltareSangeComanda->beneficiar->nume ?? '' }}
                     </td>
                 </tr>
             </table>
@@ -189,7 +189,8 @@
                         <td>{{ $recoltareSange->cod }}</td>
                         <td style="text-align:right;">{{ $recoltareSange->cantitate }}</td>
                     @if ($loop->odd) <td style="border-width:0px;"></td> @endif
-                    @if ($loop->even) </tr> @endif
+                    @if ($loop->odd && $loop->last) <td></td><td></td><td></td><td></td><td></td> @endif
+                    @if ($loop->even || $loop->last) </tr> @endif
                 @endforeach
             </table>
 
