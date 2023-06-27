@@ -5,10 +5,9 @@
 <script type="application/javascript">
     recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
     tip = {!! json_encode(old('tip')) !!}
-    nrPungi = {!! json_encode(intval(old('nrPungi'))) !!}
+    // nrPungi = {!! json_encode(intval(old('nrPungi'))) !!}
+    nrPungi =  {!! json_encode(old('pungi') ? count(old('pungi')) : 0) !!}
     pungi =  {!! json_encode(old('pungi') ?? []) !!}
-    cantitatiPungiSange={!! json_encode(old('cantitatiPungiSange') ?? []) !!}
-    cantitatiPungiSange={!! json_encode(old('cantitatiPungiSange') ?? []) !!}
 </script>
 @endif
 
@@ -85,52 +84,9 @@
     </div>
 
 
-
-    {{-- <div class="col-lg-12 px-4 py-2 mb-0">
-        <div class="row px-2 pt-4 pb-1 d-flex justify-content-center" style="background-color:#ddffff; border-left:6px solid; border-color:#2196F3; border-radius: 0px 0px 0px 0px">
-            <div class="col-lg-12 mb-4 text-center">
-                <span class="fs-4 badge text-white" style="background-color:#2196F3;">Pungi de sânge</span>
-            </div>
-            <div class="col-lg-12 mb-4">
-                <div class="row align-items-start mb-2" v-for="(recoltareSange, index) in recoltariSange"
-                    :key="recoltare"
-                    style="border:2px solid #2196F3;">
-                    <div class="col-lg-4 mb-2" style="position:relative;">
-                        <label for="nume" class="mb-0 ps-3">Punga @{{ index+1 }}<span class="text-danger">*</span></label>
-                    </div>
-                    <div class="col-lg-4 mb-2">
-                        <label for="cod" class="mb-0 ps-3">Cod</label>
-                        <input
-                            type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('cod') ? 'is-invalid' : '' }}"
-                            :name="'recoltariSange[' + index + '][cod]'"
-                            v-model="recoltariSange[index].cod">
-                    </div>
-                    <div class="col-lg-4 mb-2">
-                        <label for="tip" class="mb-0 ps-3">Tip</label>
-                        <input
-                            type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('tip') ? 'is-invalid' : '' }}"
-                            :name="'recoltariSange[' + index + '][tip]'"
-                            v-model="recoltariSange[index].tip">
-                    </div>
-                    <div class="col-lg-4 mb-2">
-                        <label for="cantitate" class="mb-0 ps-3">Cantitate</label>
-                        <input
-                            type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('cantitate') ? 'is-invalid' : '' }}"
-                            :name="'recoltariSange[' + index + '][cantitate]'"
-                            v-model="recoltariSange[index].cantitate">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
-
 {{-- Doar pentru adaugare --}}
 @if (!str_contains(url()->current(), '/modifica'))
-    <div class="col-lg-12 px-4 py-2 mb-0">
+    {{-- <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-2 mb-4">
                 <label for="nrPungi" class="mb-0 ps-3">Nr. pungi<span class="text-danger">*</span></label>
@@ -139,13 +95,13 @@
                     class="form-control bg-white rounded-3 {{ $errors->has('nrPungi') ? 'is-invalid' : '' }}"
                     name="nrPungi"
                     v-model.number="nrPungi"
-                    {{-- value="{{ old('nrPungi') }}" --}}
                     required>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <div v-if="pungi.length" class="col-lg-8 px-4 py-2 mb-4 rounded-3 mx-auto border border-secondary">
+    {{-- <div v-if="pungi.length" class="col-lg-8 px-4 py-2 mb-4 rounded-3 mx-auto border border-secondary"> --}}
+    <div v-if="tip" class="col-lg-8 px-4 py-2 mb-4 rounded-3 mx-auto border border-secondary">
         <div class="row mb-0">
             <div class="col-lg-12 mb-2 text-center">
                 <span class="fs-5 badge text-white culoare2">

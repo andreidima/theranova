@@ -67,9 +67,8 @@ const adaugareRecoltareSange = createApp({
 
             tip: ((typeof tip !== 'undefined') ? tip : ''),
             // nrPungi: ((typeof nrPungi !== 'undefined') ? nrPungi : ''),
-            nrPungi: 0,
+            nrPungi: nrPungi,
             pungi: pungi,
-            cantitatiPungiSange: ((typeof cantitatiPungiSange !== 'undefined') ? cantitatiPungiSange : []),
         }
     },
     watch: {
@@ -97,23 +96,27 @@ const adaugareRecoltareSange = createApp({
             this.pungi = [];
             switch (this.tip){
                 case "S":
-                    this.pungi.push({produs: "CUT", cantitate:200});
+                    this.pungi.push({ nrPunga: 1, produs: "CUT", cantitate:200});
                     break;
                 case "D":
-                    this.pungi.push({ produs: "PPC", cantitate: 200 });
-                    this.pungi.push({ produs: "CER", cantitate: 250 });
+                    this.pungi.push({ nrPunga: 1, produs: "PPC", cantitate: 200 });
+                    this.pungi.push({ nrPunga: 2, produs: "CER", cantitate: 250 });
                     break;
                 case "D1":
-                    this.pungi.push({ produs: "CER-SL", cantitate: 200 });
+                    this.pungi.push({ nrPunga: 1, produs: "CER-SL", cantitate: 200 });
                     break;
                 case "T":
-                    this.pungi.push({ produs: "CER", cantitate: 200 });
-                    this.pungi.push({ produs: "PPC", cantitate: 150 });
-                    this.pungi.push({ produs: "CTS", cantitate: 100 });
+                    this.pungi.push({ nrPunga: 1, produs: "CER", cantitate: 200 });
+                    this.pungi.push({ nrPunga: 2, produs: "PPC", cantitate: 150 });
+                    this.pungi.push({ nrPunga: 3, produs: "CTS", cantitate: 100 });
                     break;
             }
+            this.nrPungi = this.pungi.length;
         },
     },
+    // created: function () {
+    //     this.nrPungi = this.pungi.length;
+    // },
     methods: {
     }
 });

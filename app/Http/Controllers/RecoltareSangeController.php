@@ -144,7 +144,7 @@ class RecoltareSangeController extends Controller
         // if ($request->isMethod('post')) {
         //     $request->request->add(['cheie_unica' => uniqid()]);
         // }
-// dd($request->method());
+// dd($request->method(), $request);
         return $request->validate(
             [
                 // 'recoltari_sange_produs_id' => 'required',
@@ -152,9 +152,9 @@ class RecoltareSangeController extends Controller
                 'data' => 'required',
                 'cod' => 'required',
                 'tip' => 'required',
-                'cantitate' => ($request->_method === "PATCH") ? 'required|integer' : '',
-                // 'nrPungi' => $request->isMethod('post') ? 'required|integer|min:1' : '',
-                'cantitatiPungiSange.*' => $request->isMethod('post') ? 'required|integer' : '',
+                'pungi.*.cantitate' => $request->isMethod('post') ? 'required|integer' : '',
+
+                'cantitate' => ($request->_method === "PATCH") ? 'required|integer|between:1,999' : '',
             ],
             [
                 // 'tara_id.required' => 'Câmpul țara este obligatoriu'
