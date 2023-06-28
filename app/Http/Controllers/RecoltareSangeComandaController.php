@@ -107,7 +107,7 @@ class RecoltareSangeComandaController extends Controller
 
         $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)->with('recoltariSange')->first();
 
-        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();;
         $recoltariSange = RecoltareSange::whereNull('recoltari_sange_rebut_id')
             ->where(function($query) use ($recoltareSangeComanda) {
                 return $query

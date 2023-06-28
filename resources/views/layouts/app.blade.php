@@ -60,6 +60,11 @@
                             </a>
                         </li>
                         <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/recoltari-sange/intrari">
+                                <i class="fa-solid fa-clipboard-list me-1"></i>Intrări
+                            </a>
+                        </li>
+                        <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/recoltari-sange/comenzi">
                                 <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
                             </a>

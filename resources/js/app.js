@@ -167,7 +167,7 @@ const recoltareSangeComanda = createApp({
                 }
             }
             if (!this.recoltariSangeCautate.length){
-                this.mesajNegasireRecoltari = "Nu au fost găsite recoltări după criteriile de căutare introduse"
+                this.mesajNegasireRecoltari = "<center>Nu au fost găsite recoltări</center>Criterii căutate: <ul> <li>Cod: " + this.recoltareSangeCod + "</li><li>Cantitate: " + this.recoltareSangeCantitate + "</li></ul>";
             }
         },
         adaugaRecoltareSangeLaComanda: function (recoltareSangeId) {
@@ -190,6 +190,26 @@ const recoltareSangeComanda = createApp({
                 }
             }
         },
+    }
+});
+recoltareSangeComanda.component('vue-datepicker-next', VueDatepickerNext);
+if (document.getElementById('recoltareSangeComanda') != null) {
+    recoltareSangeComanda.mount('#recoltareSangeComanda');
+}
+
+
+// Formular intrare recoltare sange
+const recoltareSangeIntrare = createApp({
+    el: '#recoltareSangeIntrare',
+    data() {
+        return {
+            nrPungi: nrPungi,
+            recoltariSangeAdaugate: recoltariSangeAdaugateLaIntrareVechi,
+        }
+    },
+    created: function () {
+    },
+    methods: {
     }
 });
 recoltareSangeComanda.component('vue-datepicker-next', VueDatepickerNext);

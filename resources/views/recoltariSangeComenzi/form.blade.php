@@ -63,14 +63,18 @@
                         type="text"
                         class="form-control bg-white rounded-3"
                         v-model="recoltareSangeCod"
-                        autocomplete="off">
-                    <span class="input-group-text">Cant.</span>
+                        autocomplete="off"
+                        v-on:keydown.enter.prevent='cautaRecoltariSange()'
+                        >
+                    <span class="input-group-text">Cantitate</span>
                     <input
                         type="text"
                         class="form-control bg-white rounded-3 text-end"
                         size="10"
                         v-model="recoltareSangeCantitate"
-                        autocomplete="off">
+                        autocomplete="off"
+                        v-on:keydown.enter.prevent='cautaRecoltariSange()'
+                        >
                     <button type="button" class="btn btn-primary text-white" @click="cautaRecoltariSange()">Caută</button>
                 </div>
             </div>
@@ -113,8 +117,8 @@
             </div>
         </div>
         <div v-else="mesajNegasireRecoltari" class="row mb-0 justify-content-center">
-            <div class="col-lg-12 mb-0">
-                @{{ mesajNegasireRecoltari }}
+            <div v-html="mesajNegasireRecoltari" class="col-lg-11 mb-0 bg-danger text-white rounded-3">
+                {{-- @{{ mesajNegasireRecoltari }} --}}
             </div>
         </div>
     </div>

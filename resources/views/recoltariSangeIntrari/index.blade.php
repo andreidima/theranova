@@ -5,7 +5,7 @@
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
             <div class="col-lg-2">
                 <span class="badge culoare1 fs-5">
-                    <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
+                    <i class="fa-solid fa-clipboard-list me-1"></i>Intrări
                 </span>
             </div>
             <div class="col-lg-7">
@@ -13,7 +13,7 @@
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
                         <div class="col-lg-2">
-                            <input type="text" class="form-control rounded-3" id="searchComandaNr" name="searchComandaNr" placeholder="Comanda nr." value="{{ $searchComandaNr }}">
+                            <input type="text" class="form-control rounded-3" id="searchBonNr" name="searchBonNr" placeholder="Bon nr." value="{{ $searchBonNr }}">
                         </div>
                         <div class="col-lg-2">
                             <input type="text" class="form-control rounded-3" id="searchAvizNr" name="searchAvizNr" placeholder="Aviz nr." value="{{ $searchAvizNr }}">
@@ -54,7 +54,7 @@
             </div>
             <div class="col-lg-3 text-end">
                 <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
-                    <i class="fas fa-plus-square text-white me-1"></i>Adaugă comandă
+                    <i class="fas fa-plus-square text-white me-1"></i>Adaugă intrare
                 </a>
             </div>
         </div>
@@ -74,7 +74,7 @@
                     <thead class="text-white rounded" style="background-color: #69A1B1">
                         <tr class="" style="padding:2rem"> --}}
                             <th class="text-white culoare2">#</th>
-                            <th class="text-white culoare2">Comanda nr.</th>
+                            <th class="text-white culoare2">Bon nr.</th>
                             <th class="text-white culoare2">Aviz nr.</th>
                             <th class="text-white culoare2">Beneficiar</th>
                             <th class="text-white culoare2">Data</th>
@@ -84,65 +84,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($recoltariSangeComenzi as $recoltareSangeComanda)
+                        @forelse ($recoltariSangeIntrari as $recoltareSangeIntrare)
                             <tr>
                                 <td align="">
-                                    {{ ($recoltariSangeComenzi ->currentpage()-1) * $recoltariSangeComenzi ->perpage() + $loop->index + 1 }}
+                                    {{ ($recoltariSangeIntrari ->currentpage()-1) * $recoltariSangeIntrari ->perpage() + $loop->index + 1 }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->comanda_nr }}
+                                    {{ $recoltareSangeIntrare->bon_nr }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->aviz_nr }}
+                                    {{ $recoltareSangeIntrare->aviz_nr }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->beneficiar->nume ?? '' }}
+                                    {{ $recoltareSangeIntrare->beneficiar->nume ?? '' }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                    {{ $recoltareSangeIntrare->data ? \Carbon\Carbon::parse($recoltareSangeIntrare->data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
-                                {{-- <td class="">
-                                    @if ($recoltareSangeComanda->recoltariSange->count())
-                                        <table class="table table-sm table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Cod</th>
-                                                    <th scope="col" class="text-center">Cantitate</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($recoltareSangeComanda->recoltariSange as $recoltareSange)
-                                                <tr>
-                                                    <td scope="row">{{ $loop->iteration }}
-                                                    <td>{{ $recoltareSange->cod }}</td>
-                                                    <td class="text-center">{{ $recoltareSange->cantitate }}</td>
-                                                <tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    @endif
-                                </td> --}}
                                 <td>
                                     <div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ $recoltareSangeComanda->path() }}/export-pdf" target="_blank" class="flex me-1">
+                                            {{-- <a href="{{ $recoltareSangeIntrare->path() }}/export-pdf" target="_blank" class="flex me-1">
                                                 <span class="badge bg-warning text-dark">Bon de livrare</span>
-                                            </a>
-                                            <a href="{{ $recoltareSangeComanda->path() }}" class="flex me-1">
+                                            </a> --}}
+                                            <a href="{{ $recoltareSangeIntrare->path() }}" class="flex me-1">
                                                 <span class="badge bg-success">Vizualizează</span>
                                             </a>
-                                        {{-- </div>
-                                        <div class="d-flex justify-content-end"> --}}
-                                            <a href="{{ $recoltareSangeComanda->path() }}/modifica" class="flex me-1">
+                                            <a href="{{ $recoltareSangeIntrare->path() }}/modifica" class="flex me-1">
                                                 <span class="badge bg-primary">Modifică</span>
                                             </a>
                                             <div style="flex" class="">
                                                 <a
                                                     href="#"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target="#stergeRecoltareSangeComanda{{ $recoltareSangeComanda->id }}"
-                                                    title="Șterge Recoltare Sânge Comandă"
+                                                    data-bs-target="#stergeRecoltareSangeIntrare{{ $recoltareSangeIntrare->id }}"
+                                                    title="Șterge Recoltare Sânge Intrare"
                                                     >
                                                     <span class="badge bg-danger">Șterge</span>
                                                 </a>
@@ -160,35 +136,35 @@
 
                 <nav>
                     <ul class="pagination justify-content-center">
-                        {{$recoltariSangeComenzi->appends(Request::except('page'))->links()}}
+                        {{$recoltariSangeIntrari->appends(Request::except('page'))->links()}}
                     </ul>
                 </nav>
         </div>
     </div>
 
-    {{-- Modalele pentru stergere recoltareSangeComanda --}}
-    @foreach ($recoltariSangeComenzi as $recoltareSangeComanda)
-        <div class="modal fade text-dark" id="stergeRecoltareSangeComanda{{ $recoltareSangeComanda->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    {{-- Modalele pentru stergere recoltareSangeIntrare --}}
+    @foreach ($recoltariSangeIntrari as $recoltareSangeIntrare)
+        <div class="modal fade text-dark" id="stergeRecoltareSangeIntrare{{ $recoltareSangeIntrare->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="exampleModalLabel">Recoltare sănge comanda: <b>{{ $recoltareSangeComanda->numar }}</b></h5>
+                    <h5 class="modal-title text-white" id="exampleModalLabel">Recoltare sănge intrare: <b>{{ $recoltareSangeIntrare->numar }}</b></h5>
                     <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="text-align:left;">
-                    Ești sigur ca vrei să ștergi Comanda?
+                    Ești sigur ca vrei să ștergi Intrarea?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
-                    <form method="POST" action="{{ $recoltareSangeComanda->path() }}">
+                    <form method="POST" action="{{ $recoltareSangeIntrare->path() }}">
                         @method('DELETE')
                         @csrf
                         <button
                             type="submit"
                             class="btn btn-danger text-white"
                             >
-                            Șterge Comanda
+                            Șterge Intrare
                         </button>
                     </form>
 
