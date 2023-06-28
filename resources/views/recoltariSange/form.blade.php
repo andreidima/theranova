@@ -60,7 +60,7 @@
                     type="text"
                     class="form-control bg-white rounded-3 {{ $errors->has('cod') ? 'is-invalid' : '' }}"
                     name="cod"
-                    {{-- v-model="cod" --}}
+                    autocomplete="off"
                     value="{{ old('cod', $recoltareSange->cod) }}"
                     required>
             </div>

@@ -150,7 +150,7 @@ class RecoltareSangeController extends Controller
                 // 'recoltari_sange_produs_id' => 'required',
                 'recoltari_sange_grupa_id' => 'required',
                 'data' => 'required',
-                'cod' => 'required',
+                'cod' => $request->isMethod('post') ? 'required|unique:recoltari_sange' : 'required',
                 'tip' => 'required',
                 'pungi.*.produs' => $request->isMethod('post') ? 'required' : '',
                 'pungi.*.cantitate' => $request->isMethod('post') ? 'required|integer|between:1,999' : '',

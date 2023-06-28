@@ -19,7 +19,6 @@
                             <input type="text" class="form-control rounded-3" id="searchAvizNr" name="searchAvizNr" placeholder="Aviz nr." value="{{ $searchAvizNr }}">
                         </div>
                         <div class="col-lg-3">
-                            {{-- <input type="text" class="form-control rounded-3" id="searchUnitate" name="searchUnitate" placeholder="Unitate" value="{{ $searchUnitate }}"> --}}
                             <select name="searchBeneficiar" class="form-select bg-white rounded-3">
                                 <option selected></option>
                                 @foreach ($beneficiari as $beneficiar)
@@ -79,7 +78,7 @@
                             <th class="text-white culoare2">Aviz nr.</th>
                             <th class="text-white culoare2">Beneficiar</th>
                             <th class="text-white culoare2">Data</th>
-                            <th class="text-white culoare2">Recoltări sânge</th>
+                            {{-- <th class="text-white culoare2">Recoltări sânge</th> --}}
                             {{-- <th class="">Observații</th> --}}
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
@@ -102,7 +101,7 @@
                                 <td class="">
                                     {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
-                                <td class="">
+                                {{-- <td class="">
                                     @if ($recoltareSangeComanda->recoltariSange->count())
                                         <table class="table table-sm table-bordered">
                                             <thead>
@@ -123,18 +122,18 @@
                                             </tbody>
                                         </table>
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td>
                                     <div>
                                         <div class="d-flex justify-content-end">
+                                            <a href="{{ $recoltareSangeComanda->path() }}/export-pdf" target="_blank" class="flex me-1">
+                                                <span class="badge bg-warning text-dark">Bon de livrare</span>
+                                            </a>
                                             <a href="{{ $recoltareSangeComanda->path() }}" class="flex me-1">
                                                 <span class="badge bg-success">Vizualizează</span>
                                             </a>
-                                            <a href="{{ $recoltareSangeComanda->path() }}/export-pdf" target="_blank" class="flex">
-                                                <span class="badge bg-warning text-dark">PDF</span>
-                                            </a>
-                                        </div>
-                                        <div class="d-flex justify-content-end">
+                                        {{-- </div>
+                                        <div class="d-flex justify-content-end"> --}}
                                             <a href="{{ $recoltareSangeComanda->path() }}/modifica" class="flex me-1">
                                                 <span class="badge bg-primary">Modifică</span>
                                             </a>

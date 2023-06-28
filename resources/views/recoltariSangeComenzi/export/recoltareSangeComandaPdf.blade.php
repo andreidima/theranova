@@ -80,7 +80,7 @@
         {{-- <div style="page-break-after: always"> --}}
         <div>
 
-            <table style="">
+            {{-- <table style="">
                 <tr valign="" style="">
                     <td style="border-width:0px; padding:0rem; margin:0rem; width:50%;">
                         UNITATEA: {{ $recoltareSangeComanda->beneficiar->nume ?? '' }}
@@ -106,8 +106,6 @@
 
             <table>
                 <tr valign="top" style="">
-                    {{-- <td style="padding:2px; margin:0rem; width:50%; border:1px solid black;">
-                    </td> --}}
                     <th rowspan="2">Nr. crt.</th>
                     <th rowspan="2">Tip produse</th>
                     <th colspan="8">CANTITATE (pungi) PE GRUP SANGUIN</th>
@@ -149,9 +147,9 @@
                         AS GARDĂ,
                     </td>
                 </tr>
-            </table>
+            </table> --}}
 
-            <br><br>
+            {{-- <br><br> --}}
 
             <table style="">
                 <tr valign="" style="">
@@ -175,62 +173,55 @@
                     <th>Rh</th>
                     <th>Cod</th>
                     <th>Cant.</th>
-                    <th style="border-width:0px;"></th>
+                    {{-- <th style="border-width:0px;"></th>
                     <th>Fel produs</th>
                     <th>Grupa</th>
                     <th>Rh</th>
                     <th>Cod</th>
-                    <th>Cant.</th>
+                    <th>Cant.</th> --}}
                 </tr>
-                @foreach ($recoltareSangeComanda->recoltariSange->sortBy('recoltari_sange_produs_id')->sortBy('recoltari_sange_grupa_id') as $recoltareSange)
-                    @if ($loop->odd) <tr> @endif
+                @foreach ($recoltareSangeComanda->recoltariSange->sortBy('recoltari_sange_produs_id') as $recoltareSange)
+                    {{-- @if ($loop->odd) <tr> @endif --}}
+                    <tr>
                         <td style="text-align:center;">{{ $recoltareSange->produs->nume ?? '' }}</td>
                         <td style="text-align:center;">{{ substr_replace(($recoltareSange->grupa->nume ?? ''), "", -1) }}</td>
                         <td style="text-align:center;">{{ substr(($recoltareSange->grupa->nume ?? ''), -1) }}</td>
                         <td>{{ $recoltareSange->cod }}</td>
                         <td style="text-align:right;">{{ $recoltareSange->cantitate }}</td>
-                    @if ($loop->odd) <td style="border-width:0px;"></td> @endif
+                    {{-- @if ($loop->odd) <td style="border-width:0px;"></td> @endif
                     @if ($loop->odd && $loop->last) <td></td><td></td><td></td><td></td><td></td> @endif
-                    @if ($loop->even || $loop->last) </tr> @endif
+                    @if ($loop->even || $loop->last) </tr> @endif --}}
+                    </tr>
                 @endforeach
             </table>
 
             <br>
 
-            <table style="">
+            <table style="text-align:center">
                 <tr valign="top" style="">
+                    @foreach ($recoltareSangeComanda->recoltariSange->sortBy('recoltari_sange_produs_id')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
+                    <td style="border-width:0px;">
+                        {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}:
+                        {{ $recoltariSangeGrupateDupaProdus->count() }}
+                    </td>
+                    @endforeach
                     <td style="border-width:0px;">
                         TOTAL: {{ $recoltareSangeComanda->recoltariSange->count() }}
                         <br>
                         <br>
                     </td>
-                    <td style="border-width:0px;">
-                        ST:
-                    </td>
-                    <td style="border-width:0px;">
-                        CE:
-                    </td>
-                    <td style="border-width:0px;">
-                        CT:
-                    </td>
-                    <td style="border-width:0px;">
-                        PPC:
-                    </td>
-                    <td style="border-width:0px;">
-                        PPD:
-                    </td>
-                    <td style="border-width:0px;">
-                        CRIO:
-                    </td>
                 </tr>
+            </table>
+
+            <table style="text-align:center">
                 <tr valign="top" style="">
-                    <td colspan="2" style="border-width:0px;">
+                    <td style="border-width:0px;">
                         EXPEDITOR:
                     </td>
-                    <td colspan="2" style="border-width:0px;">
+                    <td style="border-width:0px;">
                         PRIMITOR:
                     </td>
-                    <td colspan="2" style="border-width:0px; text-align:center;">
+                    <td style="border-width:0px; text-align:center;">
                         DATA:
                         <br>
                         {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}

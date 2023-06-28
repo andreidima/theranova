@@ -56,13 +56,20 @@
             <div class="col-lg-12 mb-4 text-center">
                 <h4 class="mb-0 py-1 text-white" style="background-color: rgb(107, 126, 1)">Căutare recoltări sânge</h4>
             </div>
-            <div class="col-lg-10 mb-4">
+            <div class="col-lg-12 mb-4">
                 <div class="input-group mb-0 align-items-center">
-                    <span class="input-group-text">Cod recoltare</span>
+                    <span class="input-group-text">Cod</span>
                     <input
                         type="text"
-                        class="col-lg-4 form-control bg-white rounded-3 {{ $errors->has('recoltareSangeCod') ? 'is-invalid' : '' }}"
+                        class="form-control bg-white rounded-3"
                         v-model="recoltareSangeCod"
+                        autocomplete="off">
+                    <span class="input-group-text">Cant.</span>
+                    <input
+                        type="text"
+                        class="form-control bg-white rounded-3 text-end"
+                        size="10"
+                        v-model="recoltareSangeCantitate"
                         autocomplete="off">
                     <button type="button" class="btn btn-primary text-white" @click="cautaRecoltariSange()">Caută</button>
                 </div>
@@ -103,6 +110,11 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+        <div v-else="mesajNegasireRecoltari" class="row mb-0 justify-content-center">
+            <div class="col-lg-12 mb-0">
+                @{{ mesajNegasireRecoltari }}
             </div>
         </div>
     </div>

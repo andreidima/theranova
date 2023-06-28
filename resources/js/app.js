@@ -136,12 +136,14 @@ const recoltareSangeComanda = createApp({
             recoltariSange: ((typeof recoltariSange !== 'undefined') ? recoltariSange : []),
 
             recoltareSangeCod: '',
+            recoltareSangeCantitate: '',
             recoltariSangeCautate: [],
-
 
             recoltariSangeAdaugateLaComandaIDuriVechi: ((typeof recoltariSangeAdaugateLaComandaIDuriVechi !== 'undefined') ? recoltariSangeAdaugateLaComandaIDuriVechi : []),
 
             recoltariSangeAdaugateLaComanda: [],
+
+            mesajNegasireRecoltari: '',
         }
     },
     created: function () {
@@ -158,11 +160,14 @@ const recoltareSangeComanda = createApp({
     methods: {
         cautaRecoltariSange() {
             this.recoltariSangeCautate = [];
-
+            this.mesajNegasireRecoltari = "";
             for (var i = 0; i < this.recoltariSange.length; i++) {
-                if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod)) {
+                if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
                     this.recoltariSangeCautate.push(this.recoltariSange[i]);
                 }
+            }
+            if (!this.recoltariSangeCautate.length){
+                this.mesajNegasireRecoltari = "Nu au fost găsite recoltări după criteriile de căutare introduse"
             }
         },
         adaugaRecoltareSangeLaComanda: function (recoltareSangeId) {
