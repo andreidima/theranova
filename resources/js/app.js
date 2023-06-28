@@ -74,27 +74,7 @@ const adaugareRecoltareSange = createApp({
         }
     },
     watch: {
-        // nrPungi: function () {
-        //     this.recoltariSange = [];
-        //     for (var i = 0; i < this.nrPungi; i++) {
-        //         var recoltareSange = {
-        //             recoltariSangeGrupaId: this.recoltariSangeGrupaId,
-        //             cod: this.cod,
-        //             tip: this.tip,
-        //             cantitate: '',
-        //         }
-        //         this.recoltariSange[i] = recoltareSange;
-        //     }
-        // },
-        // cod: function () {
-        //     for (var i = 0; i < this.nrPungi; i++) {
-        //         this.recoltariSange[i].cod = this.cod;
-        //     }
-        // },
         tip: function () {
-            // if (this.tip === "S"){
-            //     this.nrPungi = 1
-            // }
             this.pungi = [];
             switch (this.tip){
                 case "S":
@@ -113,7 +93,6 @@ const adaugareRecoltareSange = createApp({
                     this.pungi[3] = ({ produs: 18, cantitate: 100 });
                     break;
             }
-            // this.nrPungi = this.pungi.length;
         },
     },
     // created: function () {
@@ -212,7 +191,7 @@ const recoltareSangeIntrare = createApp({
     methods: {
     }
 });
-recoltareSangeComanda.component('vue-datepicker-next', VueDatepickerNext);
-if (document.getElementById('recoltareSangeComanda') != null) {
-    recoltareSangeComanda.mount('#recoltareSangeComanda');
+recoltareSangeIntrare.component('vue-datepicker-next', VueDatepickerNext);
+if (document.getElementById('recoltareSangeIntrare') != null) {
+    recoltareSangeIntrare.mount('#recoltareSangeIntrare');
 }
