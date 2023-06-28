@@ -4,6 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
     <title>Comanda</title>
     <style>
         /* html {
@@ -153,9 +154,23 @@
 
             <table style="">
                 <tr valign="" style="">
-                    <td style="border-width:0px; padding:0rem; margin:0rem; width:50%;">
-                        CTS FOCȘANI:
+                    <td style="border-width:0px; text-align:center">
+                        <h3>INSTITUTUL NAȚIONAL DE TRANSFUZIE SANGUINĂ</h3>
+                        CENTRUL DE TRANSFUZIE SANGUINĂ VRANCEA
                         <br>
+                        Str. CUZA VODĂ, Nr. 50-52, FOCȘANI
+                        <br>
+                        Telefon: 0337.401.233 / Fax: 0237.223.220
+                        <hr>
+                </tr>
+            </table>
+
+
+            <table style="">
+                <tr valign="" style="">
+                    <td style="border-width:0px; padding:0rem; margin:0rem; width:50%;">
+                        {{-- CTS FOCȘANI:
+                        <br> --}}
                         BON DE LIVRARE NR: {{ $recoltareSangeComanda->comanda_nr }}
                         <br>
                         AVIZ NR: {{ $recoltareSangeComanda->aviz_nr }}
@@ -165,6 +180,8 @@
                     </td>
                 </tr>
             </table>
+
+            <br>
 
             <table>
                 <tr valign="top" style="">
@@ -213,6 +230,42 @@
                 </tr>
             </table>
 
+            <br>
+
+            <div style="page-break-inside: avoid">
+            <table style="text-align:center">
+                <tr valign="top" style="">
+                    <td style="border-width:1px; text-align:center;">
+                        Data:
+                        <br>
+                        {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}
+                    </td>
+                    <td style="border-width:1px;">
+                        Ora livrare:
+                        <br>
+                        {{ \Carbon\Carbon::now()->isoFormat('HH:mm') }}
+                        <br><br>
+                    </td>
+                    <td style="border-width:1px;">
+                        Ora recepție:
+                        <br><br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border-width:0px;"></td>
+                    <td style="border-width:1px;">
+                        Temperatura la livrare:
+                        <br><br><br>
+                    </td>
+                    <td style="border-width:1px;">
+                        Temperatura la recepție:
+                        <br><br><br>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+
             <table style="text-align:center">
                 <tr valign="top" style="">
                     <td style="border-width:0px;">
@@ -221,17 +274,9 @@
                     <td style="border-width:0px;">
                         PRIMITOR:
                     </td>
-                    <td style="border-width:0px; text-align:center;">
-                        DATA:
-                        <br>
-                        {{ $recoltareSangeComanda->data ? \Carbon\Carbon::parse($recoltareSangeComanda->data)->isoFormat('DD.MM.YYYY') : '' }}
-                    </td>
-                    <td style="border-width:0px;">
-                        ORA:
-                    </td>
                 </tr>
             </table>
-
+            </div>
 
 
         {{-- Here's the magic. This MUST be inside body tag. Page count / total, centered at bottom of page --}}

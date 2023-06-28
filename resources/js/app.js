@@ -183,8 +183,15 @@ const recoltareSangeIntrare = createApp({
     data() {
         return {
             nrPungi: nrPungi,
-            recoltariSangeAdaugate: recoltariSangeAdaugateLaIntrareVechi,
+            pungi: pungi,
         }
+    },
+    watch: {
+        nrPungi: function () {
+            for (var i=0; i<nrPungi; i++){
+                this.pungi[i] = ({ produs: '', cantitate: '' });
+            }
+        },
     },
     created: function () {
     },

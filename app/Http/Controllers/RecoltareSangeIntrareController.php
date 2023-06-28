@@ -59,8 +59,10 @@ class RecoltareSangeIntrareController extends Controller
         $request->session()->get('recoltareSangeIntrareReturnUrl') ?? $request->session()->put('recoltareSangeIntrareReturnUrl', url()->previous());
 
         $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $recoltariSangeProduse = RecoltareSangeProdus::get();
+        $recoltariSangeGrupe = RecoltareSangeGrupa::get();
 
-        return view('recoltariSangeIntrari.create', compact('beneficiari'));
+        return view('recoltariSangeIntrari.create', compact('beneficiari', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**

@@ -1,8 +1,11 @@
 @csrf
 
 <script type="application/javascript">
+    recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
+    recoltariSangeGrupe = {!! json_encode(($recoltariSangeGrupe) ?? []) !!}
+
     nrPungi = {!! json_encode(0) !!}
-    recoltariSangeAdaugateLaIntrareVechi = {!! json_encode(old('recoltariSangeAdaugateLaIntrare', $recoltareSangeIntrare->recoltariSange->pluck('id'))) !!}
+    pungi = {!! json_encode(old('pungi', $recoltareSangeIntrare->recoltariSange->pluck('id'))) !!}
 </script>
 
 <div class="row mb-0 px-3 d-flex justify-content-evenly border-radius: 0px 0px 40px 40px" id="recoltareSangeIntrare">
@@ -61,6 +64,32 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-12 px-4 py-2 mb-0">
+        <div class="row mb-0 justify-content-center">
+            <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-8 mb-0 mx-auto">
+                <div v-if="index > 0" class="row">
+                    <div class="col-lg-4 border border-1 d-flex justify-content-center align-items-center">
+                        Punga @{{ index }}
+                    </div>
+                    <div class="col-lg-4 border border-1">
+                        <select :name="'pungi[' + index + '][produs]'" v-model="pungi[index].produs" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                            <option
+                                v-for='produs in recoltariSangeProduse'
+                                :value='produs.id'
+                                >
+                                    @{{produs.nume}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4 border border-1">
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'pungi[' + index + '][cantitate]'"
+                            v-model="pungi[index].cantitate">
+                    </div>
+                </div>
+            </div>
 
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row">
