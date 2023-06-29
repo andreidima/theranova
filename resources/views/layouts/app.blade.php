@@ -69,24 +69,19 @@
                                 <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
                             </a>
                         </li>
-                        {{-- <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/locuri-operare">
-                                <i class="fa-solid fa-location-dot me-1"></i>Locuri de operare
-                            </a>
-                        </li> --}}
-                        {{-- <li class="nav-item me-3 dropdown">
+                        <li class="nav-item me-3 dropdown">
                             <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-bars me-1"></i>
-                                Utile
+                                Rapoarte
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
+                                {{-- <li>
                                     <a class="dropdown-item" href="{{ route('mesaje-trimise-sms.index') }}">
                                         SMS trimise
                                     </a>
-                                </li>
+                                </li> --}}
                             </ul>
-                        </li> --}}
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
