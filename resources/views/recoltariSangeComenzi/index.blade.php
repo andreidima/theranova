@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-lg-3">
                             <select name="searchBeneficiar" class="form-select bg-white rounded-3">
-                                <option selected>Selectează beneficiar</option>
+                                <option value="" selected>Selectează beneficiar</option>
                                 @foreach ($beneficiari as $beneficiar)
                                     <option value="{{ $beneficiar->id }}" {{ ($beneficiar->id === intval($searchBeneficiar)) ? 'selected' : '' }}>{{ $beneficiar->nume }}</option>
                                 @endforeach

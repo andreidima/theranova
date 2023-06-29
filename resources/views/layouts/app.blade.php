@@ -75,11 +75,11 @@
                                 Rapoarte
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                {{-- <li>
-                                    <a class="dropdown-item" href="{{ route('mesaje-trimise-sms.index') }}">
-                                        SMS trimise
+                                <li>
+                                    <a class="dropdown-item" href="/rapoarte">
+                                        Rapoarte
                                     </a>
-                                </li> --}}
+                                </li>
                             </ul>
                         </li>
                     </ul>

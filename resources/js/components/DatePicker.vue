@@ -20,7 +20,8 @@ export default {
     'doarZiuaA',
     'doarZiuaB',
     'minuteStep',
-    'hours'],
+    'hours',
+    'range'],
   computed: {
     latimePrelucrata() {
       if (this.tip === "time") {
@@ -113,10 +114,16 @@ export default {
         // }
     },
     created() {
-        if (this.dataVeche == "") {
-        }
-        else {
-          this.time = this.dataVeche
+        if (!(this.dataVeche === "")) {
+            if (this.dataVeche.includes(",")){ // inseamna ca este interval
+                var timeArray = [];
+                timeArray[0] = this.dataVeche.substring(0, this.dataVeche.indexOf(","));
+                timeArray[1] = this.dataVeche.slice(this.dataVeche.indexOf(",") + 1);
+                this.time = timeArray;
+            } else {
+                this.time = this.dataVeche;
+            }
+          console.log(this.time);
         }
         // this.dataprogramare('dataProgramareTrimisa');
     },
@@ -142,6 +149,7 @@ export default {
         :disabled-date=notDates
         :style=latime
         :lang="langObject"
+        :range="range"
     >
     </date-picker>
   </div>

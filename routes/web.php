@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RecoltareSangeController;
 use App\Http\Controllers\RecoltareSangeIntrareController;
 use App\Http\Controllers\RecoltareSangeComandaController;
+use App\Http\Controllers\RaportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,4 +37,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/recoltari-sange/comenzi/{recoltareSangeComanda}/{view_type}', [RecoltareSangeComandaController::class, 'exportPdf']);
 
     Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari-sange' => 'recoltareSange']);
+
+    Route::get('/rapoarte', [RaportController::class, 'index']);
 });
