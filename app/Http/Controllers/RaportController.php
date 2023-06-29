@@ -29,6 +29,25 @@ class RaportController extends Controller
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
+
+            case 'rebuturi':
+                $request->validate(['interval' => 'required']);
+                $query = RecoltareSange::
+                    with('rebut', 'produs')
+                    ->whereNotNull('recoltari_sange_rebut_id')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest();
+                $recoltariSange = $query->get();
+
+                return view('rapoarte.export.rebuturi', compact('recoltariSange', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.rebuturi', compact('recoltariSange', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
             default:
                     $query = RecoltareSange::
                         when($interval, function ($query, $interval) {
