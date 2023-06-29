@@ -123,7 +123,6 @@ export default {
             } else {
                 this.time = this.dataVeche;
             }
-          console.log(this.time);
         }
         // this.dataprogramare('dataProgramareTrimisa');
     },

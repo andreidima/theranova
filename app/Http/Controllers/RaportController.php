@@ -11,26 +11,35 @@ class RaportController extends Controller
     public function index(Request $request)
     {
         // $request->session()->forget('raportReturnUrl');
-        // if ($request->interval)
-        $searchInterval = $request->searchInterval;
-        // $searchIntervalArray = explode(",", $searchInterval);
-        // dd($request);
-// echo strtok($searchInterval, ',');
-// echo strtok( '' );
+        $interval = $request->interval;
 
-// dd($searchIntervalArray);
-// echo $searchIntervalArray[0];
-// echo $searchIntervalArray[1];
+        switch ($request->input('action')) {
+            case 'recoltariSangeCtsvToate':
+                $request->validate(['interval' => 'required']);
+                $query = RecoltareSange::
+                    with('produs', 'comanda')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest();
+                $recoltariSange = $query->get();
 
-        $query = RecoltareSange::
-            when($searchInterval, function ($query, $searchInterval) {
-                // dd($searchInterval, strtok($searchInterval, ','), strtok( '' ));
-                return $query->whereBetween('data', [strtok($searchInterval, ','), strtok( '' )]);
-            })
-            ->latest();
-// dd($query);
-        $recoltariSange = $query->get();
-// dd($recoltariSange);
-        return view('rapoarte.index', compact('recoltariSange', 'searchInterval'));
+                $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+            default:
+                    $query = RecoltareSange::
+                        when($interval, function ($query, $interval) {
+                            return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                        })
+                        ->latest();
+
+                    $recoltariSange = $query->get();
+
+                    return view('rapoarte.index', compact('recoltariSange', 'interval'));
+                break;
+        }
     }
 }
