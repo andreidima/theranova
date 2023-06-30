@@ -81,18 +81,7 @@
         {{-- <div style="page-break-after: always"> --}}
         <div>
 
-            <table style="">
-                <tr valign="" style="">
-                    <td style="border-width:0px; text-align:center">
-                        <h3>INSTITUTUL NAȚIONAL DE TRANSFUZIE SANGUINĂ</h3>
-                        CENTRUL DE TRANSFUZIE SANGUINĂ VRANCEA
-                        <br>
-                        Str. CUZA VODĂ, Nr. 50-52, FOCȘANI
-                        <br>
-                        Telefon: 0337.401.233 / Fax: 0237.223.220
-                        <hr>
-                </tr>
-            </table>
+            @include('rapoarte.export.includes.header')
 
 
             <table style="">
@@ -105,37 +94,6 @@
             </table>
 
             <br>
-
-            <p style="margin:0%; text-align: center"><b>G.1. REBUT - CS</b></p>
-            <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                <thead>
-                    <tr>
-                        <th style="text-align:center">Produs</th>
-                        <th style="text-align:center">Pungi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CE</td>
-                        <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
-                    </tr>
-                    {{-- @php
-                        dd($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->groupBy('recoltari_sange_produs_id'))
-                    @endphp --}}
-                    @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
-                    <tr>
-                        <td>{{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}</td>
-                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProdus->count() }}</td>
-                    </tr>
-                    @endforeach
-                    <tr>
-                        <td style="text-align:right"><b>Total<b></td>
-                        <td style="text-align:right"><b>{{ $recoltariSange->count() }}</b></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <br><br>
 
             <p style="margin:0%; text-align: center"><b>G.2. REBUT REPARTIȚIE</b></p>
             <table style="margin:0%; table-layout: fixed; width: 100%; font-size:9px;">

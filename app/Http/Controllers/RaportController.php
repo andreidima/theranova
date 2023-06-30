@@ -31,7 +31,7 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
-            case 'rebuturi':
+            case 'G1Rebut':
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::
                     with('rebut', 'produs')
@@ -43,12 +43,32 @@ class RaportController extends Controller
                     ->get();
                 $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
 
-                // return view('rapoarte.export.rebuturi', compact('recoltariSange', 'rebuturi', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.rebuturi', compact('recoltariSange', 'rebuturi', 'interval'))
+                // return view('rapoarte.export.G1Rebut', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.G1Rebut', compact('recoltariSange', 'rebuturi', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
+
+            case 'G2RebutRepartitie':
+                $request->validate(['interval' => 'required']);
+                $recoltariSange = RecoltareSange::
+                    with('rebut', 'produs')
+                    ->whereNotNull('recoltari_sange_rebut_id')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest()
+                    ->get();
+                $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
+
+                // return view('rapoarte.export.G2RebutRepartitie', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.G2RebutRepartitie', compact('recoltariSange', 'rebuturi', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
 
             default:
                     $query = RecoltareSange::

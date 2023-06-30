@@ -67,8 +67,11 @@
                                 <button type="submit" name="action" value="recoltariSangeCtsvToate" class="list-group-item list-group-item-action" aria-current="true">
                                     Recoltări de sânge la CTSV
                                 </button>
-                                <button type="submit" name="action" value="rebuturi" class="list-group-item list-group-item-action" aria-current="true">
-                                    Rebuturi
+                                <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
+                                    G.1. Rebut
+                                </button>
+                                <button type="submit" name="action" value="G2RebutRepartitie" class="list-group-item list-group-item-action" aria-current="true">
+                                    G.2. Rebut repartiție
                                 </button>
                                 {{-- <a href="/rapoarte/recoltari-sange/export-pdf" target="_blank" class="list-group-item list-group-item-action active" aria-current="true">
                                     Recoltări de sânge
