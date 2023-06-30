@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\RecoltareSange;
+use App\Models\RecoltareSangeRebut;
 
 class RaportController extends Controller
 {
@@ -32,17 +33,18 @@ class RaportController extends Controller
 
             case 'rebuturi':
                 $request->validate(['interval' => 'required']);
-                $query = RecoltareSange::
+                $recoltariSange = RecoltareSange::
                     with('rebut', 'produs')
                     ->whereNotNull('recoltari_sange_rebut_id')
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
-                    ->latest();
-                $recoltariSange = $query->get();
+                    ->latest()
+                    ->get();
+                $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
 
-                return view('rapoarte.export.rebuturi', compact('recoltariSange', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.rebuturi', compact('recoltariSange', 'interval'))
+                // return view('rapoarte.export.rebuturi', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.rebuturi', compact('recoltariSange', 'rebuturi', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');

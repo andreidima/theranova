@@ -106,11 +106,9 @@
 
             <br>
 
-            <table style="width: 50%; margin-left: auto; margin-right: auto;">
+            <p style="margin:0%; text-align: center"><b>G.1. REBUT - CS</b></p>
+            <table style="width: 50%; margin-left:auto; margin-right:auto;">
                 <thead>
-                    <tr>
-                        <th colspan="2" style="text-align:center">G.1. REBUT - CS</th>
-                    </tr>
                     <tr>
                         <th style="text-align:center">Produs</th>
                         <th style="text-align:center">Pungi</th>
@@ -139,39 +137,69 @@
 
             <br><br>
 
-            <table style="margin:0%">
+            <p style="margin:0%; text-align: center"><b>G.2. REBUT REPARTIȚIE</b></p>
+            <table style="margin:0%; table-layout: fixed; width: 100%; font-size:9px;">
                 <thead>
                     <tr>
-                        <th colspan="2" style="text-align:center">G.1. REBUT - CS</th>
-                    </tr>
-                </thead>
-            </table>
-            <table style="margin:0%">
-                <thead>
-                    <tr>
-                        <th style="text-align:center">Tip CS</th>
-                        @foreach ($recoltariSange->sortBy('rebut.nume')->groupBy('recoltari_sange_rebut_id') as $recoltariSangeGrupateDupaRebut)
-                            <th style="text-align:center">{{ $recoltariSangeGrupateDupaRebut->first()->rebut->nume ?? '' }}</th>
+                        <th style="vertical-align: top; text-align: right; padding-right:25px">
+                            <span style="white-space: nowrap; writing-mode: vertical-lr; transform: rotate(-90deg);">
+                                Tip CS
+                            </span>
+                        </th>
+                        @foreach ($rebuturi as $rebut)
+                            {{-- <th style="vertical-align: bottom; text-align: center; width: 10px !important;
+                            "> --}}
+                        {{-- <th style="text-align:center; padding:0%"> --}}
+                        <th style="vertical-align: center; text-align: right; padding-right:25px; height:110px">
+                            <span style="white-space: nowrap; writing-mode: vertical-lr; transform: rotate(-90deg);">
+                                {{ $rebut->nume }}
+                            </span>
+                            </th>
                         @endforeach
+                        <th style="vertical-align: top; text-align: right; padding-right:25px">
+                            <span style="white-space: nowrap; writing-mode: vertical-lr; transform: rotate(-90deg);">
+                                Total rebut
+                            </span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>CE</td>
-                        <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
+                        <td style="vertical-align: top; text-align: right; padding-right:25px; height:40px;">
+                            <span style="white-space: nowrap; writing-mode: vertical-lr; transform: rotate(-90deg);">
+                                CE
+                            </span>
+                        </td>
+                        @foreach ($rebuturi as $rebut)
+                            <th style="text-align: right;">{{ ($recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->where('recoltari_sange_rebut_id', $rebut->id)->count() > 0) ? $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->where('recoltari_sange_rebut_id', $rebut->id)->count() : ''}}</th>
+                        @endforeach
+                        <td style="text-align:right">{{ ($recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() > 0) ? $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() : ''}}</td>
                     </tr>
-                    {{-- @php
-                        dd($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->groupBy('recoltari_sange_produs_id'))
-                    @endphp --}}
                     @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
                     <tr>
-                        <td>{{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}</td>
-                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProdus->count() }}</td>
+                        <td style="vertical-align: top; text-align: right; padding-right:25px; height:40px;">
+                            <span style="white-space: nowrap; writing-mode: vertical-lr; transform: rotate(-90deg);">
+                                {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}
+                            </span>
+                        </td>
+                        @foreach ($rebuturi as $rebut)
+                            <td style="text-align:right">{{ ($recoltariSangeGrupateDupaProdus->where('recoltari_sange_rebut_id', $rebut->id)->count() > 0) ? $recoltariSangeGrupateDupaProdus->where('recoltari_sange_rebut_id', $rebut->id)->count() : '' }}</td>
+                        @endforeach
+                        <td style="text-align:right"><b>{{ $recoltariSangeGrupateDupaProdus->count() }}</b></td>
                     </tr>
                     @endforeach
                     <tr>
-                        <td style="text-align:right"><b>Total<b></td>
-                        <td style="text-align:right">{{ $recoltariSange->count() }}</td>
+                        <td style="vertical-align: top; text-align: right; padding-right:25px; height:40px;">
+                            <span style="white-space: nowrap; writing-mode: vertical-lr; transform: rotate(-90deg);">
+                                <b>Total</b>
+                            </span>
+                        </td>
+                        @foreach ($rebuturi as $rebut)
+                            <td style="text-align: right;"><b>{{ ($recoltariSange->where('recoltari_sange_rebut_id', $rebut->id)->count() > 0) ? $recoltariSange->where('recoltari_sange_rebut_id', $rebut->id)->count() : ''}}</b></td>
+                        @endforeach
+                        <td>
+                            <b>{{ $recoltariSange->count() }}</b>
+                        </td>
                     </tr>
                 </tbody>
             </table>
