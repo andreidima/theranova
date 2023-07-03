@@ -95,9 +95,14 @@
 
             <br>
 
-            <p style="margin:0%; text-align: center"><b>G.1. REBUT - CS</b></p>
+            {{-- <p style="margin:0%; text-align: center"><b>G.1. REBUT - CS</b></p> --}}
             <table style="width: 50%; margin-left:auto; margin-right:auto;">
                 <thead>
+                    <tr>
+                        <th colspan="2" style="text-align:center">
+                            G.1. REBUT - CS
+                        </th>
+                    </tr>
                     <tr>
                         <th style="text-align:center">Produs</th>
                         <th style="text-align:center">Pungi</th>
@@ -105,13 +110,29 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>CE</td>
+                        <td>1.1.a CE (indiferent de tip)</td>
                         <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
+                    </tr>
+                    <tr>
+                        <td>1.1.b CT</td>
+                        <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['CT', 'CTS'])->count() }}</td>
+                    </tr>
+                    <tr>
+                        <td>1.1.c PPC</td>
+                        <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['PC', 'PPC'])->count() }}</td>
+                    </tr>
+                    <tr>
+                        <td>1.1.d CRIO</td>
+                        <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                    </tr>
+                    <tr>
+                        <td>1.1.e CUT-DL</td>
+                        <td style="text-align:right">{{ $recoltariSange->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
                     </tr>
                     {{-- @php
                         dd($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->groupBy('recoltari_sange_produs_id'))
                     @endphp --}}
-                    @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
+                    @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CT', 'CTS', 'PC', 'PPC', 'CRIO', 'CUT-DL'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
                     <tr>
                         <td>{{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}</td>
                         <td style="text-align:right">{{ $recoltariSangeGrupateDupaProdus->count() }}</td>

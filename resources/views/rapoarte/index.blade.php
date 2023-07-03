@@ -73,6 +73,9 @@
                                 <button type="submit" name="action" value="G2RebutRepartitie" class="list-group-item list-group-item-action" aria-current="true">
                                     G.2. Rebut repartiție
                                 </button>
+                                <button type="submit" name="action" value="HUnitatiValidateDonareStandard" class="list-group-item list-group-item-action" aria-current="true">
+                                    H. Număr unități validate donare standard (ST și CS validate/ eliberate din carantină*) + afereză
+                                </button>
                                 {{-- <a href="/rapoarte/recoltari-sange/export-pdf" target="_blank" class="list-group-item list-group-item-action active" aria-current="true">
                                     Recoltări de sânge
                                 </a> --}}
