@@ -95,295 +95,251 @@
 
             <br>
 
-            @foreach ($recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
-                @if ($loop->first)
-                    <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                        <thead>
-                            <tr>
-                                <th colspan="4" style="text-align:center">
-                                    Produs: CE
-                                </th>
-                            </tr>
-                            <tr>
-                                <th style="text-align:left">#</th>
-                                <th style="text-align:center">Grupa</th>
-                                <th style="text-align:center">Cod</th>
-                                <th style="text-align:center">Cantitatea</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                @endif
-                @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
-                            @if ($loop->first)
-                               {{ $recoltareSange->grupa->nume ?? '' }}
-                            @endif
-                        </td>
-                        <td>
-                            {{ $recoltareSange->cod }}
-                        </td>
-                        <td style="text-align:right">
-                            {{ $recoltareSange->cantitate }}
-                        </td>
-                    </tr>
-                    @if ($loop->last)
+            <table style="width: 60%; margin-left:auto; margin-right:auto;">
+                @foreach ($recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                    @if ($loop->first)
                         <tr>
-                            <td colspan="3">
-                                Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
-                            </td>
-                            <td style="text-align:right">
-                                <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
-                            </td>
+                            <th colspan="4" style="text-align:center">
+                                Produs: CE
+                            </th>
                         </tr>
                         <tr>
-                            <td colspan="4" style="border:0px">&nbsp;</td>
+                            <th style="text-align:left">#</th>
+                            <th style="text-align:center">Grupa</th>
+                            <th style="text-align:center">Cod</th>
+                            <th style="text-align:center">Cantitatea</th>
+                        </tr>
+                    @endif
+                    @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
+                        <tr>
+                            <td style="border-width: 0px 0px 0px 1px">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                @if ($loop->first)
+                                {{ $recoltareSange->grupa->nume ?? '' }}
+                                @endif
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                {{ $recoltareSange->cod }}
+                            </td>
+                            <td style="text-align:right; border-width: 0px 1px 0px 0px">
+                                {{ $recoltareSange->cantitate }}
+                            </td>
+                        </tr>
+                        @if ($loop->last)
+                            <tr>
+                                <td colspan="3" style="text-align:left">
+                                    Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
+                                </td>
+                                <td style="text-align:right">
+                                    <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                    @if ($loop->last)
+                        <tr>
+                            <td colspan="4" style="border:0px">&nbsp;<br>&nbsp;<br>&nbsp;</td>
                         </tr>
                     @endif
                 @endforeach
-                @if ($loop->last)
-                        </tbody>
-                    </table>
-                @endif
-            @endforeach
-
-            <br><br>
-
-            @foreach ($recoltariSange->whereIn('produs.nume', ['CT', 'CTS'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
-                @if ($loop->first)
-                    <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                        <thead>
-                            <tr>
-                                <th colspan="4" style="text-align:center">
-                                    Produs: CT
-                                </th>
-                            </tr>
-                            <tr>
-                                <th style="text-align:left">#</th>
-                                <th style="text-align:center">Grupa</th>
-                                <th style="text-align:center">Cod</th>
-                                <th style="text-align:center">Cantitatea</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                @endif
-                @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
-                            @if ($loop->first)
-                               {{ $recoltareSange->grupa->nume ?? '' }}
-                            @endif
-                        </td>
-                        <td>
-                            {{ $recoltareSange->cod }}
-                        </td>
-                        <td style="text-align:right">
-                            {{ $recoltareSange->cantitate }}
-                        </td>
-                    </tr>
-                    @if ($loop->last)
+                @foreach ($recoltariSange->whereIn('produs.nume', ['CT', 'CTS'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                    @if ($loop->first)
                         <tr>
-                            <td colspan="3">
-                                Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
-                            </td>
-                            <td style="text-align:right">
-                                <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
-                            </td>
+                            <th colspan="4" style="text-align:center">
+                                Produs: CT
+                            </th>
                         </tr>
                         <tr>
-                            <td colspan="4" style="border:0px">&nbsp;</td>
+                            <th style="text-align:left">#</th>
+                            <th style="text-align:center">Grupa</th>
+                            <th style="text-align:center">Cod</th>
+                            <th style="text-align:center">Cantitatea</th>
+                        </tr>
+                    @endif
+                    @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
+                        <tr>
+                            <td style="border-width: 0px 0px 0px 1px">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                @if ($loop->first)
+                                {{ $recoltareSange->grupa->nume ?? '' }}
+                                @endif
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                {{ $recoltareSange->cod }}
+                            </td>
+                            <td style="text-align:right; border-width: 0px 1px 0px 0px">
+                                {{ $recoltareSange->cantitate }}
+                            </td>
+                        </tr>
+                        @if ($loop->last)
+                            <tr>
+                                <td colspan="3" style="text-align:left">
+                                    Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
+                                </td>
+                                <td style="text-align:right">
+                                    <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                    @if ($loop->last)
+                        <tr>
+                            <td colspan="4" style="border:0px">&nbsp;<br>&nbsp;<br>&nbsp;</td>
                         </tr>
                     @endif
                 @endforeach
-                @if ($loop->last)
-                        </tbody>
-                    </table>
-                @endif
-            @endforeach
-
-            <br><br>
-
-            @foreach ($recoltariSange->whereIn('produs.nume', ['PC', 'PPC'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
-                @if ($loop->first)
-                    <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                        <thead>
-                            <tr>
-                                <th colspan="4" style="text-align:center">
-                                    Produs: PC
-                                </th>
-                            </tr>
-                            <tr>
-                                <th style="text-align:left">#</th>
-                                <th style="text-align:center">Grupa</th>
-                                <th style="text-align:center">Cod</th>
-                                <th style="text-align:center">Cantitatea</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                @endif
-                @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
-                            @if ($loop->first)
-                               {{ $recoltareSange->grupa->nume ?? '' }}
-                            @endif
-                        </td>
-                        <td>
-                            {{ $recoltareSange->cod }}
-                        </td>
-                        <td style="text-align:right">
-                            {{ $recoltareSange->cantitate }}
-                        </td>
-                    </tr>
-                    @if ($loop->last)
+                @foreach ($recoltariSange->whereIn('produs.nume', ['PC', 'PPC'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                    @if ($loop->first)
                         <tr>
-                            <td colspan="3">
-                                Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
-                            </td>
-                            <td style="text-align:right">
-                                <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
-                            </td>
+                            <th colspan="4" style="text-align:center">
+                                Produs: PC
+                            </th>
                         </tr>
                         <tr>
-                            <td colspan="4" style="border:0px">&nbsp;</td>
+                            <th style="text-align:left">#</th>
+                            <th style="text-align:center">Grupa</th>
+                            <th style="text-align:center">Cod</th>
+                            <th style="text-align:center">Cantitatea</th>
+                        </tr>
+                    @endif
+                    @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
+                        <tr>
+                            <td style="border-width: 0px 0px 0px 1px">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                @if ($loop->first)
+                                {{ $recoltareSange->grupa->nume ?? '' }}
+                                @endif
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                {{ $recoltareSange->cod }}
+                            </td>
+                            <td style="text-align:right; border-width: 0px 1px 0px 0px">
+                                {{ $recoltareSange->cantitate }}
+                            </td>
+                        </tr>
+                        @if ($loop->last)
+                            <tr>
+                                <td colspan="3" style="text-align:left">
+                                    Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
+                                </td>
+                                <td style="text-align:right">
+                                    <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                    @if ($loop->last)
+                        <tr>
+                            <td colspan="4" style="border:0px">&nbsp;<br>&nbsp;<br>&nbsp;</td>
                         </tr>
                     @endif
                 @endforeach
-                @if ($loop->last)
-                        </tbody>
-                    </table>
-                @endif
-            @endforeach
-
-            <br><br>
-
-            @foreach ($recoltariSange->whereIn('produs.nume', ['CRIO'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
-                @if ($loop->first)
-                    <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                        <thead>
-                            <tr>
-                                <th colspan="4" style="text-align:center">
-                                    Produs: CRIO
-                                </th>
-                            </tr>
-                            <tr>
-                                <th style="text-align:left">#</th>
-                                <th style="text-align:center">Grupa</th>
-                                <th style="text-align:center">Cod</th>
-                                <th style="text-align:center">Cantitatea</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                @endif
-                @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
-                            @if ($loop->first)
-                               {{ $recoltareSange->grupa->nume ?? '' }}
-                            @endif
-                        </td>
-                        <td>
-                            {{ $recoltareSange->cod }}
-                        </td>
-                        <td style="text-align:right">
-                            {{ $recoltareSange->cantitate }}
-                        </td>
-                    </tr>
-                    @if ($loop->last)
+                @foreach ($recoltariSange->whereIn('produs.nume', ['CRIO'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                    @if ($loop->first)
                         <tr>
-                            <td colspan="3">
-                                Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
-                            </td>
-                            <td style="text-align:right">
-                                <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
-                            </td>
+                            <th colspan="4" style="text-align:center">
+                                Produs: CRIO
+                            </th>
                         </tr>
                         <tr>
-                            <td colspan="4" style="border:0px">&nbsp;</td>
+                            <th style="text-align:left">#</th>
+                            <th style="text-align:center">Grupa</th>
+                            <th style="text-align:center">Cod</th>
+                            <th style="text-align:center">Cantitatea</th>
+                        </tr>
+                    @endif
+                    @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
+                        <tr>
+                            <td style="border-width: 0px 0px 0px 1px">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                @if ($loop->first)
+                                {{ $recoltareSange->grupa->nume ?? '' }}
+                                @endif
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                {{ $recoltareSange->cod }}
+                            </td>
+                            <td style="text-align:right; border-width: 0px 1px 0px 0px">
+                                {{ $recoltareSange->cantitate }}
+                            </td>
+                        </tr>
+                        @if ($loop->last)
+                            <tr>
+                                <td colspan="3" style="text-align:left">
+                                    Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
+                                </td>
+                                <td style="text-align:right">
+                                    <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                    @if ($loop->last)
+                        <tr>
+                            <td colspan="4" style="border:0px">&nbsp;<br>&nbsp;<br>&nbsp;</td>
                         </tr>
                     @endif
                 @endforeach
-                @if ($loop->last)
-                        </tbody>
-                    </table>
-                @endif
-            @endforeach
-
-            <br><br>
-
-            @foreach ($recoltariSange->whereIn('produs.nume', ['CUT-DL'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
-                @if ($loop->first)
-                    <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                        <thead>
-                            <tr>
-                                <th colspan="4" style="text-align:center">
-                                    Produs: CUT-DL
-                                </th>
-                            </tr>
-                            <tr>
-                                <th style="text-align:left">#</th>
-                                <th style="text-align:center">Grupa</th>
-                                <th style="text-align:center">Cod</th>
-                                <th style="text-align:center">Cantitatea</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                @endif
-                @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
-                            @if ($loop->first)
-                               {{ $recoltareSange->grupa->nume ?? '' }}
-                            @endif
-                        </td>
-                        <td>
-                            {{ $recoltareSange->cod }}
-                        </td>
-                        <td style="text-align:right">
-                            {{ $recoltareSange->cantitate }}
-                        </td>
-                    </tr>
-                    @if ($loop->last)
+                @foreach ($recoltariSange->whereIn('produs.nume', ['CUT-DL'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                    @if ($loop->first)
                         <tr>
-                            <td colspan="3">
-                                Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
-                            </td>
-                            <td style="text-align:right">
-                                <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
-                            </td>
+                            <th colspan="4" style="text-align:center">
+                                Produs: CRIO
+                            </th>
                         </tr>
                         <tr>
-                            <td colspan="4" style="border:0px">&nbsp;</td>
+                            <th style="text-align:left">#</th>
+                            <th style="text-align:center">Grupa</th>
+                            <th style="text-align:center">Cod</th>
+                            <th style="text-align:center">Cantitatea</th>
+                        </tr>
+                    @endif
+                    @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
+                        <tr>
+                            <td style="border-width: 0px 0px 0px 1px">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                @if ($loop->first)
+                                {{ $recoltareSange->grupa->nume ?? '' }}
+                                @endif
+                            </td>
+                            <td style="border-width: 0px 0px 0px 0px">
+                                {{ $recoltareSange->cod }}
+                            </td>
+                            <td style="text-align:right; border-width: 0px 1px 0px 0px">
+                                {{ $recoltareSange->cantitate }}
+                            </td>
+                        </tr>
+                        @if ($loop->last)
+                            <tr>
+                                <td colspan="3" style="text-align:left">
+                                    Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
+                                </td>
+                                <td style="text-align:right">
+                                    <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                    @if ($loop->last)
+                        <tr>
+                            <td colspan="4" style="border:0px">&nbsp;<br>&nbsp;<br>&nbsp;</td>
                         </tr>
                     @endif
                 @endforeach
-                @if ($loop->last)
-                        </tbody>
-                    </table>
-                @endif
-            @endforeach
 
-
-            @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CT', 'CTS', 'PC', 'PPC', 'CRIO', 'CUT-DL'])->groupBy('produs.nume') as $recoltariSangeGrupateDupaProdus)
-            @foreach ($recoltariSangeGrupateDupaProdus->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
-                @if ($loop->first)
-                    <table style="width: 50%; margin-left:auto; margin-right:auto;">
-                        <thead>
+                @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CT', 'CTS', 'PC', 'PPC', 'CRIO', 'CUT-DL'])->groupBy('produs.nume') as $recoltariSangeGrupateDupaProdus)
+                    @foreach ($recoltariSangeGrupateDupaProdus->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                        @if ($loop->first)
                             <tr>
                                 <th colspan="4" style="text-align:center">
                                     Produs: {{ $recoltariSangeGrupateDupaGrupa->first()->produs->nume ?? '' }}
@@ -395,50 +351,46 @@
                                 <th style="text-align:center">Cod</th>
                                 <th style="text-align:center">Cantitatea</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                @endif
-                @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
-                            @if ($loop->first)
-                               {{ $recoltareSange->grupa->nume ?? '' }}
+                        @endif
+                        @foreach ($recoltariSangeGrupateDupaGrupa as $recoltareSange)
+                            <tr>
+                                <td style="border-width: 0px 0px 0px 1px">
+                                    {{ $loop->iteration }}
+                                </td>
+                                <td style="border-width: 0px 0px 0px 0px">
+                                    @if ($loop->first)
+                                    {{ $recoltareSange->grupa->nume ?? '' }}
+                                    @endif
+                                </td>
+                                <td style="border-width: 0px 0px 0px 0px">
+                                    {{ $recoltareSange->cod }}
+                                </td>
+                                <td style="text-align:right; border-width: 0px 1px 0px 0px">
+                                    {{ $recoltareSange->cantitate }}
+                                </td>
+                            </tr>
+                            @if ($loop->last)
+                                <tr>
+                                    <td colspan="3" style="text-align:left">
+                                        Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
+                                    </td>
+                                </tr>
                             @endif
-                        </td>
-                        <td>
-                            {{ $recoltareSange->cod }}
-                        </td>
-                        <td style="text-align:right">
-                            {{ $recoltareSange->cantitate }}
-                        </td>
-                    </tr>
-                    @if ($loop->last)
-                        <tr>
-                            <td colspan="3">
-                                Total <b>{{ $recoltareSange->grupa->nume ?? '' }}</b>
-                            </td>
-                            <td style="text-align:right">
-                                <b>{{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }}</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" style="border:0px">&nbsp;</td>
-                        </tr>
-                    @endif
+                        @endforeach
+                        @if ($loop->last && !$loop->parent->last)
+                            <tr>
+                                <td colspan="4" style="border:0px">&nbsp;<br>&nbsp;<br>&nbsp;</td>
+                            </tr>
+                        @endif
+                    @endforeach
                 @endforeach
-                @if ($loop->last)
-                        </tbody>
-                    </table>
-                @endif
-            @endforeach
-            <br><br>
-            @endforeach
+            </table>
 
 
-            <br><br>
+
 
                     {{-- <tr>
                         <td>1.1.a CE (indiferent de tip)</td>
@@ -484,7 +436,7 @@
                 $font = $fontMetrics->getFont("helvetica");
                 $width = $fontMetrics->get_text_width($text, $font, $size) / 2;
                 $x = ($pdf->get_width() - $width) / 2;
-                $y = $pdf->get_height() - 35;
+                $y = $pdf->get_height() - 20;
                 $pdf->page_text($x, $y, $text, $font, $size);
             }
         </script>

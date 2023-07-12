@@ -88,7 +88,7 @@
                             <tr class="thead-danger" style="padding:2rem">
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">#</th>
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">Cod</th>
-                                <th class="text-white" style="background-color: rgb(107, 126, 1)">Tip</th>
+                                <th class="text-white" style="background-color: rgb(107, 126, 1)">Produs</th>
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">Cantitate</th>
                                 <th class="text-white text-end" style="background-color: rgb(107, 126, 1)">Acțiuni</th>
                             </tr>
@@ -102,7 +102,7 @@
                                     @{{ recoltareSangeCautata.cod }}
                                 </td>
                                 <td class="">
-                                    @{{ recoltareSangeCautata.tip }}
+                                    @{{ recoltareSangeCautata.produs.nume }}
                                 </td>
                                 <td class="">
                                     @{{ recoltareSangeCautata.cantitate }}
@@ -137,7 +137,7 @@
                             <tr class="thead-danger" style="padding:2rem">
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">#</th>
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">Cod</th>
-                                <th class="text-white" style="background-color: rgb(0, 116, 44)">Tip</th>
+                                <th class="text-white" style="background-color: rgb(0, 116, 44)">Produs</th>
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">Cantitate</th>
                                 <th class="text-white text-end" style="background-color: rgb(0, 116, 44)">Acțiuni</th>
                             </tr>
@@ -152,7 +152,7 @@
                                     @{{ recoltareSangeAdaugataLaComanda.cod }}
                                 </td>
                                 <td class="">
-                                    @{{ recoltareSangeAdaugataLaComanda.tip }}
+                                    @{{ recoltareSangeAdaugataLaComanda.produs.nume }}
                                 </td>
                                 <td class="">
                                     @{{ recoltareSangeAdaugataLaComanda.cantitate }}

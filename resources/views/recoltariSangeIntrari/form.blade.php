@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-12 px-4 py-2 mb-0">
+    <div class="col-lg-12 px-4 py-2 mb-4">
         <div class="row mb-0 justify-content-center">
             <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-8 mb-0 mx-auto">
                 <div v-if="index > 0" class="row">
@@ -90,6 +90,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row">
