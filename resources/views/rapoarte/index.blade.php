@@ -47,7 +47,7 @@
 
             <div class="row">
                 <div class="col-lg-5 mx-auto">
-                    <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
+                    <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}" formtarget="_blank" target="_blank">
                         @csrf
                         <div class="row mb-1 custom-search-form justify-content-center">
                             <div class="col-lg-12 mb-5 align-items-center text-center" id="datePicker">
@@ -66,6 +66,9 @@
                             <div class="list-group p-0 list-group-numbered rounded-3">
                                 <button type="submit" name="action" value="recoltariSangeCtsvToate" class="list-group-item list-group-item-action" aria-current="true">
                                     Recoltări de sânge la CTSV
+                                </button>
+                                <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
+                                    Stocuri pungi sânge
                                 </button>
                                 <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
                                     G.1. Rebut

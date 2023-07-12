@@ -31,6 +31,15 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
+            case 'stocuriPungiSange':
+                $recoltariSange = RecoltareSange::with('produs')->get();
+
+                $pdf = \PDF::loadView('rapoarte.export.stocuriPungiSange', compact('recoltariSange'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
             case 'G1Rebut':
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::
