@@ -26,10 +26,10 @@ class RecoltareSangeIntrareController extends Controller
         $searchAvizNr = $request->searchAvizNr;
         $searchBeneficiar = $request->searchBeneficiar;
         $searchData = $request->searchData;
-
+// dd($searchBonNr);
         $query = RecoltareSangeIntrare::with('recoltariSange')
             ->when($searchBonNr, function ($query, $searchBonNr) {
-                return $query->where('comanda_nr', $searchBonNr);
+                return $query->where('bon_nr', $searchBonNr);
             })
             ->when($searchAvizNr, function ($query, $searchAvizNr) {
                 return $query->where('aviz_nr', $searchAvizNr);
@@ -41,6 +41,7 @@ class RecoltareSangeIntrareController extends Controller
                 return $query->whereDate('data', $searchData);
             })
             ->latest();
+            // dd($query);
 
         $recoltariSangeIntrari = $query->simplePaginate(25);
 
@@ -73,14 +74,23 @@ class RecoltareSangeIntrareController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request, $request->pungi);
         $this->validateRequest($request);
+        // dd($request);
+        $recoltareSangeIntrare = RecoltareSangeIntrare::create($request->except('pungi', 'date'));
 
-        $recoltareSangeIntrare = RecoltareSangeIntrare::create($request->except('recoltariSangeAdaugateLaIntrare', 'date'));
+        foreach($request->pungi as $punga){
+            $recoltareSange = RecoltareSange::create();
+            $recoltareSange->data = $punga['data'];
+            $recoltareSange->cod = $punga['cod'];
+            $recoltareSange->recoltari_sange_produs_id = $punga['recoltari_sange_produs_id'];
+            $recoltareSange->recoltari_sange_grupa_id = $punga['recoltari_sange_grupa_id'];
+            $recoltareSange->cantitate = $punga['cantitate'];
+            $recoltareSange->intrare_id = $recoltareSangeIntrare->id;
+            $recoltareSange->save();
+        }
 
-        // Adaugarea recoltarilor la comanda
-        RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaIntrare)->update(['comanda_id' => $recoltareSangeIntrare->id]);
-
-        return redirect($request->session()->get('recoltareSangeIntrareReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Intrare „' . ($recoltareSangeIntrare->numar ?? '') . '” a fost adăugată cu succes!');
+        return redirect($request->session()->get('recoltareSangeIntrareReturnUrl') ?? ('/recoltari-sange/intrari'))->with('status', 'Intrarea „' . ($recoltareSangeIntrare->bon_nr ?? '') . '” a fost adăugată cu succes!');
     }
 
     /**
@@ -109,16 +119,11 @@ class RecoltareSangeIntrareController extends Controller
         $recoltareSangeIntrare = RecoltareSangeIntrare::where('id', $recoltareSangeIntrare->id)->with('recoltariSange')->first();
 
         $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
-        $recoltariSange = RecoltareSange::whereNull('recoltari_sange_rebut_id')
-            ->where(function($query) use ($recoltareSangeIntrare) {
-                return $query
-                        ->whereNull('comanda_id')
-                        ->orWhere('comanda_id', $recoltareSangeIntrare->id);
-                })
-            ->get();
+        $recoltariSangeProduse = RecoltareSangeProdus::get();
+        $recoltariSangeGrupe = RecoltareSangeGrupa::get();
 
 
-        return view('recoltariSangeIntrari.edit', compact('recoltareSangeIntrare', 'beneficiari', 'recoltariSange'));
+        return view('recoltariSangeIntrari.edit', compact('recoltareSangeIntrare', 'beneficiari', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**
@@ -131,33 +136,38 @@ class RecoltareSangeIntrareController extends Controller
     public function update(Request $request, RecoltareSangeIntrare $recoltareSangeIntrare)
     {
         $this->validateRequest($request);
+        // dd($request->pungi);
+        $recoltareSangeIntrare->update($request->except('pungi', 'date'));
 
-        $recoltareSangeIntrare->update($request->except('recoltariSangeAdaugateLaIntrare', 'date'));
+        // Se verifica daca intrarea are recoltariSange in plus, pentru a se sterge
+        $ids = array_filter(array_column($request->pungi, 'id')); // array_column extrage doar coloana id, iar array_filter elimina cele cu id null
+        // dd($ids, RecoltareSange::where('intrare_id', $recoltareSangeIntrare->id)->whereNotIn('id', $ids)->get());
+        RecoltareSange::where('intrare_id', $recoltareSangeIntrare->id)->whereNotIn('id', $ids)->delete();
+        // dd($recoltareSangeIntrare->recoltariSange->whereNotIn('id', $ids)->get());
+        // dd($ids);
 
-        // Scoaterea recoltarilor ce nu mai sunt din comanda
-        RecoltareSange::where('comanda_id', $recoltareSangeIntrare->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaIntrare)->update(['comanda_id' => null]);
+        // Se adauga recoltarile de sange la intrare
+        foreach($request->pungi as $punga){
+            if($punga['id']){
+                $recoltareSange = RecoltareSange::where('id', $punga['id'])->first();
+                // echo $punga['id'] . '<br>';
+            } else {
+                $recoltareSange = RecoltareSange::create();
+            }
+            // echo $punga['id'] .  ' - ' . $recoltareSange . '<br>';
+            // dd('stop');
+            $recoltareSange->data = $punga['data'];
+            $recoltareSange->cod = $punga['cod'];
+            $recoltareSange->recoltari_sange_produs_id = $punga['recoltari_sange_produs_id'];
+            $recoltareSange->recoltari_sange_grupa_id = $punga['recoltari_sange_grupa_id'];
+            $recoltareSange->cantitate = $punga['cantitate'];
+            $recoltareSange->intrare_id = $recoltareSangeIntrare->id;
+            $recoltareSange->save();
+        }
 
-        // Adaugarea recoltarilor la comanda
-        RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaIntrare)->update(['comanda_id' => $recoltareSangeIntrare->id]);
 
-
-//         $recoltariSangeVechiIduri = $recoltareSangeIntrare->recoltariSange->pluck('id');
-// dd($recoltariSangeVechiIduri, $request->recoltariSangeAdaugateLaIntrare);
-//         foreach ($recoltareSangeIntrare->recoltariSange as $recoltareSange){
-//             $recoltareSangeDB = RecoltareSange::findOrFail($recoltareSange->id);
-//             $recoltareSangeDB->comanda_id = '';
-//             $recoltareSangeDB->save();
-//         }
-
-//         foreach ($request->recoltariSangeAdaugateLaIntrare as $recoltareSange){
-//             $recoltareSangeDB = RecoltareSange::findOrFail($recoltareSange);
-//             $recoltareSangeDB->comanda_id = $recoltareSangeIntrare->id;
-//             $recoltareSangeDB->save();
-//         }
-
-//         dd('stop');
-
-        return redirect($request->session()->get('recoltareSangeIntrareReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Intrare „' . ($recoltareSangeIntrare->numar ?? '') . '” a fost modificată cu succes!');
+// dd('stop');
+        return redirect($request->session()->get('recoltareSangeIntrareReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Intrarea „' . ($recoltareSangeIntrare->bon_nr ?? '') . '” a fost modificată cu succes!');
     }
 
     /**
@@ -194,14 +204,31 @@ class RecoltareSangeIntrareController extends Controller
 // dd($request);
         return $request->validate(
             [
-                'comanda_nr' => 'required|numeric|between:1,999999',
+                'bon_nr' => 'required|numeric|between:1,999999',
                 'aviz_nr' => 'required|numeric|between:1,999999',
                 'recoltari_sange_beneficiar_id' => 'required',
                 'data' => 'required',
-                'recoltariSangeAdaugateLaIntrare' => 'required'
+                'pungi' => 'required',
+
+                'pungi.*.id' => '',
+                'pungi.*.data' => 'required',
+                'pungi.*.recoltari_sange_grupa_id' => 'required',
+                'pungi.*.cod' => 'required',
+                'pungi.*.recoltari_sange_produs_id' => 'required',
+                'pungi.*.cantitate' => 'required|integer|between:1,999',
+
+
+
+                // 'recoltariSangeAdaugateLaIntrare' => 'required'
             ],
             [
-                // 'tara_id.required' => 'Câmpul țara este obligatoriu'
+                'pungi.*.data.required' => 'Data pentru punga :position este necesară',
+                'pungi.*.recoltari_sange_grupa_id.required' => 'Grupa pentru punga :position este necesară',
+                'pungi.*.cod.required' => 'Codul pentru punga :position este necesar',
+                'pungi.*.recoltari_sange_produs_id.required' => 'Produsul pentru punga :position este necesar',
+                'pungi.*.cantitate.required' => 'Cantitatea pentru punga :position este necesară',
+                'pungi.*.cantitate.integer' => 'Cantitatea pentru punga :position trebuie să fie un număr',
+                'pungi.*.cantitate.between' => 'Cantitatea pentru punga :position trebuie să fie între 1 și 999',
             ]
         );
     }

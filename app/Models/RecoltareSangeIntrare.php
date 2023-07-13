@@ -18,16 +18,6 @@ class RecoltareSangeIntrare extends Model
     }
 
     /**
-     * The recoltariSange that belong to the RecoltareSangeIntrare
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    // public function recoltariSange()
-    // {
-    //     return $this->belongsToMany(RecoltareSange::class, 'recoltari_sange', 'id', 'comanda_id');
-    // }
-
-    /**
      * Get all of the recoltariSange for the RecoltareSangeIntrare
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

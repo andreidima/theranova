@@ -184,31 +184,29 @@ const recoltareSangeIntrare = createApp({
         return {
             recoltariSangeProduse: recoltariSangeProduse,
             recoltariSangeGrupe: recoltariSangeGrupe,
-            nrPungi: parseInt(nrPungi),
+            // nrPungi: nrPungi,
+            nrPungi: '',
             pungi: pungi,
         }
     },
     watch: {
-        nrPungi: function () {
-            this.nrPungi = parseInt(this.nrPungi);
-
-            for (var i=(this.pungi.length+1); i<=this.nrPungi; i++){
-                this.pungi[i] = ({ data:'', grupa:'', cod:'', produs: '', cantitate: '' });
-            }
-            // for (var i = (parseInt(this.nrPungi)+1); i <= this.pungi.length; i++) {
-            //     delete this.pungi[i];
-            //     console.log(i);
-            // }
-            // console.log(parseInt(this.nrPungi) + 1);
-            // console.log(this.pungi.length);
-            // if ((parseInt(this.nrPungi) + 1) < this.pungi.length){
-            //     this.pungi.splice((parseInt(this.nrPungi) + 1), this.pungi.length);
-            // }
-        },
     },
     created: function () {
     },
     methods: {
+        adaugaPungi() {
+            if (Number.isInteger(parseInt(this.nrPungi))) {
+                if (this.nrPungi < 100){
+                    for (var i = 0; i < this.nrPungi; i++) {
+                        this.pungi.push({ id: '', data: '', recoltari_sange_grupa_id: '', cod: '', recoltari_sange_produs_id: '', cantitate: '' });
+                    }
+                }
+            }
+            this.nrPungi = '';
+        },
+        stergePunga(index) {
+            this.pungi.splice(index, 1);
+        }
     }
 });
 recoltareSangeIntrare.component('vue-datepicker-next', VueDatepickerNext);

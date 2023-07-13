@@ -1,11 +1,15 @@
 @csrf
-
+@php
+    // dd($recoltareSangeIntrare->recoltariSange);
+@endphp
 <script type="application/javascript">
     recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
     recoltariSangeGrupe = {!! json_encode(($recoltariSangeGrupe) ?? []) !!}
 
-    nrPungi = {!! json_encode(0) !!}
-    pungi = {!! json_encode(old('pungi', $recoltareSangeIntrare->recoltariSange->pluck('id'))) !!}
+    // nrPungi = {!! json_encode(old('nrPungi')) !!}
+    // pungi = {!! json_encode(old('pungi', $recoltareSangeIntrare->recoltariSange->pluck('id'))) !!}
+    // pungi = {!! json_encode((array) old('pungi', [])) !!}
+    pungi = {!! json_encode(old('pungi', $recoltareSangeIntrare->recoltariSange) ?? []) !!}
 </script>
 
 <div class="row mb-0 px-3 d-flex justify-content-evenly border-radius: 0px 0px 40px 40px" id="recoltareSangeIntrare">
@@ -51,20 +55,49 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-12 px-4 py-2 mb-0">
-        <div class="row mb-0 justify-content-center">
-            <div class="col-lg-2 mb-4">
-                <label for="nrPungi" class="mb-0 ps-3">Nr. pungi<span class="text-danger">*</span></label>
+    <div class="col-lg-12 px-4 py-2 mb-4">
+        <div class="row mb-2 justify-content-center">
+            <div class="col-auto mb-0 py-2 d-flex align-items-center" style="background-color: rgb(220, 218, 253)">
+                <label for="nrPungi" class="mb-0">Nr. pungi<span class="text-danger">*</span></label>
+            </div>
+            <div class="col-auto mb-0 py-2 d-flex align-items-center" style="background-color: rgb(220, 218, 253)">
                 <input
                     type="text"
                     class="form-control bg-white rounded-3 text-end {{ $errors->has('nrPungi') ? 'is-invalid' : '' }}"
-                    name="nrPungi"
+                    {{-- name="nrPungi" --}}
                     v-model="nrPungi"
+                    style="width: 100px;"
                     required>
             </div>
+            <div class="col-auto mb-0 py-2" style="background-color: rgb(220, 218, 253)">
+                <button type="button" class="btn btn-success text-white rounded-3" @click="adaugaPungi">
+                    Adaugă în listă
+                </button>
+            </div>
         </div>
+        <div v-if="nrPungi > 100" class="row mb-2 justify-content-center">
+            <div class="col-auto mb-0 py-2 d-flex align-items-center">
+                <div>
+                    <div class="alert alert-danger mb-0 text-center" role="alert">
+                        Introduceți un număr de pungi mai mic de 100.
+                        <br>
+                        Dacă aveți totuși de introdus mai multe, introduceți în mai multe rânduri.
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- <div v-else="!Number.isInteger(parseInt(this.nrPungi))" class="row mb-2 justify-content-center">
+            <div class="col-auto mb-0 py-2 d-flex align-items-center">
+                <div>
+                    <div class="alert alert-danger mb-0 text-center" role="alert">
+                        Introduceți cifre
+                    </div>
+                </div>
+            </div>
+        </div> --}}
     </div>
-    <div v-if="nrPungi" class="col-lg-12 px-4 py-2 mb-4">
+    {{-- <div v-if="parseInt(this.nrPungi) > 0" class="col-lg-12 px-4 py-2 mb-4"> --}}
+    <div v-if="pungi" class="col-lg-12 px-4 py-2 mb-4">
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-12 mb-0 mx-auto">
                 <div class="row text-center">
@@ -86,27 +119,38 @@
                     <div class="col-lg-2 border border-1">
                         Cantitate
                     </div>
+                    <div class="col-lg-1 border border-1">
+                        Șterge
+                    </div>
                 </div>
             </div>
-            {{-- <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-12 mb-0 mx-auto"> --}}
-            <div v-for="i in nrPungi" class="col-lg-12 mb-0 mx-auto">
-                <div v-if="i > 0" class="row">
+            <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-12 mb-0 mx-auto">
+            {{-- <div v-for="index in parseInt(nrPungi)" class="col-lg-12 mb-0 mx-auto"> --}}
+                <div class="row">
                     <div class="col-lg-1 border border-1 d-flex justify-content-center align-items-center">
-                        @{{ i }}
+                        <input
+                            type="hidden"
+                            :name="'pungi[' + index + '][id]'"
+                            v-model="pungi[index].id">
+                        @{{ index+1 }}
                     </div>
                     <div class="col-lg-2 border border-1 mb-0 text-center">
-                        {{-- <label for="data" class="mb-0 ps-0">Data<span class="text-danger">*</span></label> --}}
                         <vue-datepicker-next
-                            data-veche="{{ old('data', $recoltareSangeIntrare->data) }}"
-                            :nume-camp-db="'pungi[' + i + '][data]'"
+                            :data-veche="pungi[index].data ?? ''"
+                            :nume-camp-db="'pungi[' + index + '][data]'"
                             tip="date"
                             value-type="YYYY-MM-DD"
                             format="DD.MM.YYYY"
                             :latime="{ width: '125px' }"
                         ></vue-datepicker-next>
+                        {{-- <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'pungi[' + index + '][data]'"
+                            v-model="pungi[index].data"> --}}
                     </div>
                     <div class="col-lg-2 border border-1">
-                        <select :name="'pungi[' + i + '][grupa]'" v-model="pungi[i].grupa" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
+                        <select :name="'pungi[' + index + '][recoltari_sange_grupa_id]'" v-model="pungi[index].recoltari_sange_grupa_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
                             <option
                                 v-for='grupa in recoltariSangeGrupe'
                                 :value='grupa.id'
@@ -119,11 +163,11 @@
                         <input
                             type="text"
                             class="form-control bg-white rounded-3"
-                            :name="'pungi[' + i + '][cod]'"
-                            v-model="pungi[i].cod">
+                            :name="'pungi[' + index + '][cod]'"
+                            v-model="pungi[index].cod">
                     </div>
                     <div class="col-lg-2 border border-1">
-                        <select :name="'pungi[' + i + '][produs]'" v-model="pungi[i].produs" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                        <select :name="'pungi[' + index + '][recoltari_sange_produs_id]'" v-model="pungi[index].recoltari_sange_produs_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
                             <option
                                 v-for='produs in recoltariSangeProduse'
                                 :value='produs.id'
@@ -136,8 +180,13 @@
                         <input
                             type="text"
                             class="form-control bg-white rounded-3"
-                            :name="'pungi[' + i + '][cantitate]'"
-                            v-model="pungi[i].cantitate">
+                            :name="'pungi[' + index + '][cantitate]'"
+                            v-model="pungi[index].cantitate">
+                    </div>
+                    <div class="col-lg-1 border border-1 d-flex justify-content-center align-items-center">
+                        <button type="button" class="btn btn-sm btn-danger text-white rounded-3" @click="stergePunga(index)">
+                            Șterge
+                        </button>
                     </div>
                 </div>
             </div>
