@@ -183,16 +183,27 @@ const recoltareSangeIntrare = createApp({
     data() {
         return {
             recoltariSangeProduse: recoltariSangeProduse,
-            nrPungi: nrPungi,
+            recoltariSangeGrupe: recoltariSangeGrupe,
+            nrPungi: parseInt(nrPungi),
             pungi: pungi,
         }
     },
     watch: {
         nrPungi: function () {
+            this.nrPungi = parseInt(this.nrPungi);
 
-            for (var i=0; i<=this.nrPungi; i++){
-                this.pungi[i] = ({ produs: '', cantitate: '' });
+            for (var i=(this.pungi.length+1); i<=this.nrPungi; i++){
+                this.pungi[i] = ({ data:'', grupa:'', cod:'', produs: '', cantitate: '' });
             }
+            // for (var i = (parseInt(this.nrPungi)+1); i <= this.pungi.length; i++) {
+            //     delete this.pungi[i];
+            //     console.log(i);
+            // }
+            // console.log(parseInt(this.nrPungi) + 1);
+            // console.log(this.pungi.length);
+            // if ((parseInt(this.nrPungi) + 1) < this.pungi.length){
+            //     this.pungi.splice((parseInt(this.nrPungi) + 1), this.pungi.length);
+            // }
         },
     },
     created: function () {

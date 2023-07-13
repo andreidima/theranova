@@ -64,15 +64,66 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-12 px-4 py-2 mb-4">
+    <div v-if="nrPungi" class="col-lg-12 px-4 py-2 mb-4">
         <div class="row mb-0 justify-content-center">
-            <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-8 mb-0 mx-auto">
-                <div v-if="index > 0" class="row">
-                    <div class="col-lg-4 border border-1 d-flex justify-content-center align-items-center">
-                        Punga @{{ index }}
+            <div class="col-lg-12 mb-0 mx-auto">
+                <div class="row text-center">
+                    <div class="col-lg-1 border border-1">
+                        Punga
                     </div>
-                    <div class="col-lg-4 border border-1">
-                        <select :name="'pungi[' + index + '][produs]'" v-model="pungi[index].produs" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                    <div class="col-lg-2 border border-1">
+                        Data
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        Grupa
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        Cod
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        Produs
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        Cantitate
+                    </div>
+                </div>
+            </div>
+            {{-- <div v-for="(punga, index) in pungi" :key="punga" class="col-lg-12 mb-0 mx-auto"> --}}
+            <div v-for="i in nrPungi" class="col-lg-12 mb-0 mx-auto">
+                <div v-if="i > 0" class="row">
+                    <div class="col-lg-1 border border-1 d-flex justify-content-center align-items-center">
+                        @{{ i }}
+                    </div>
+                    <div class="col-lg-2 border border-1 mb-0 text-center">
+                        {{-- <label for="data" class="mb-0 ps-0">Data<span class="text-danger">*</span></label> --}}
+                        <vue-datepicker-next
+                            data-veche="{{ old('data', $recoltareSangeIntrare->data) }}"
+                            :nume-camp-db="'pungi[' + i + '][data]'"
+                            tip="date"
+                            value-type="YYYY-MM-DD"
+                            format="DD.MM.YYYY"
+                            :latime="{ width: '125px' }"
+                        ></vue-datepicker-next>
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        <select :name="'pungi[' + i + '][grupa]'" v-model="pungi[i].grupa" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
+                            <option
+                                v-for='grupa in recoltariSangeGrupe'
+                                :value='grupa.id'
+                                >
+                                    @{{grupa.nume}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'pungi[' + i + '][cod]'"
+                            v-model="pungi[i].cod">
+                    </div>
+                    <div class="col-lg-2 border border-1">
+                        <select :name="'pungi[' + i + '][produs]'" v-model="pungi[i].produs" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
                             <option
                                 v-for='produs in recoltariSangeProduse'
                                 :value='produs.id'
@@ -81,12 +132,12 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-lg-4 border border-1">
+                    <div class="col-lg-2 border border-1">
                         <input
                             type="text"
                             class="form-control bg-white rounded-3"
-                            :name="'pungi[' + index + '][cantitate]'"
-                            v-model="pungi[index].cantitate">
+                            :name="'pungi[' + i + '][cantitate]'"
+                            v-model="pungi[i].cantitate">
                     </div>
                 </div>
             </div>
