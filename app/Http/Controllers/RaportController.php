@@ -95,6 +95,24 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
+            case 'JCerereSiDistributie':
+                $request->validate(['interval' => 'required']);
+                $recoltariSange = RecoltareSange::
+                    with('produs')
+                    ->whereNull('recoltari_sange_rebut_id')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest()
+                    ->get();
+
+                // return view('rapoarte.export.JCerereSiDistributie', compact('recoltariSange', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.JCerereSiDistributie', compact('recoltariSange', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
 
             default:
                     $query = RecoltareSange::

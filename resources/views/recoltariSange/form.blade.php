@@ -65,7 +65,7 @@
                     required>
             </div>
             <div class="col-lg-2 mb-4">
-                <label for="tip" class="mb-0 ps-3">Tip{{ $recoltareSange->tip }}{{ old('tip', $recoltareSange->tip) }}<span class="text-danger">*</span></label>
+                <label for="tip" class="mb-0 ps-3">Tip<span class="text-danger">*</span></label>
                 <select name="tip"
                         v-model="tip"
                         class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
