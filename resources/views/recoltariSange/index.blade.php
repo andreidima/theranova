@@ -58,7 +58,7 @@
                             <th class="text-white culoare2">Cod</th>
                             <th class="text-white culoare2">Tip</th>
                             <th class="text-white culoare2">Cantitate</th>
-                            {{-- <th class="">Observații</th> --}}
+                            <th class="text-white culoare2 text-center">Observații</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
                     </thead>
@@ -85,6 +85,18 @@
                                 </td>
                                 <td class="">
                                     {{ $recoltareSange->cantitate }}
+                                </td>
+                                <td class="text-center">
+                                    @if($recoltareSange->intrare_id)
+                                        <span class="badge bg-light text-dark border border-2 border-success">Intrare</span>
+                                    @endif
+                                    @if($recoltareSange->comanda_id)
+                                        <span class="badge bg-light text-dark border border-2 border-primary">Comanda</span>
+
+                                    @endif
+                                    @if($recoltareSange->recoltari_sange_rebut_id)
+                                        <span class="badge bg-light text-dark border border-2 border-danger">Rebut</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end">
