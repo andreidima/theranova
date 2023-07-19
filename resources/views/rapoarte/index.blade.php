@@ -47,7 +47,7 @@
 
             <div class="row">
                 <div class="col-lg-5 mx-auto">
-                    <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}" formtarget="_blank" target="_blank">
+                    <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
                         @csrf
                         <div class="row mb-1 custom-search-form justify-content-center">
                             <div class="col-lg-12 mb-5 align-items-center text-center" id="datePicker">

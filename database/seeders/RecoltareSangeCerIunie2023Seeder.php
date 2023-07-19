@@ -1,0 +1,561 @@
+<?php
+
+namespace Database\Seeders;
+
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class RecoltareSangeCerIunie2023Seeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        DB::table('recoltari_sange')->insert([
+
+            [
+                'recoltari_sange_produs_id' => 16,
+                'recoltari_sange_grupa_id' => 1,
+            'cod' => 23502541,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502544,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502763,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502764,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502770,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502780,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502781,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502783,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+            'cod' => 23502799,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502806,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502808,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502811,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502820,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502829,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502831,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502832,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502833,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502835,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502838,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502839,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502842,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502844,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502845,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502846,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502849,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502851,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502857,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502859,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502860,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502867,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502870,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502876,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 1,
+        'cod' => 23502879,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502850,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502853,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502863,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502865,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502866,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502868,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502872,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502873,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+            'cod' => 23502874,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+        'cod' => 23502875,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+        'cod' => 23502878,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+        'cod' => 23502880,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+        'cod' => 23502881,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 2,
+        'cod' => 23502885,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502774,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502775,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502784,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502797,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502803,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502804,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502809,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502825,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+            'cod' => 23502855,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 3,
+        'cod' => 23502882,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502552,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502554,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502566,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502609,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502728,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502752,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502762,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502795,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+            'cod' => 23502852,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+        'cod' => 23502883,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 4,
+        'cod' => 23502887,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502681,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502699,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502711,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502734,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502753,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502754,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502782,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502817,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+            'cod' => 23502830,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+        'cod' => 23502854,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 5,
+        'cod' => 23502864,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 6,
+            'cod' => 23502785,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 6,
+            'cod' => 23502834,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 6,
+            'cod' => 23502856,
+            'cantitate' => 200,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 6,
+            'cod' => 23502886,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 7,
+            'cod' => 23502736,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 7,
+            'cod' => 23502758,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 7,
+            'cod' => 23502765,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 7,
+            'cod' => 23502767,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 7,
+            'cod' => 23502801,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 8,
+            'cod' => 23502580,
+            'cantitate' => 250,
+        ],
+        [
+            'recoltare_sange_produs_id' => 16,
+            'recoltare_sange_grupa_id' => 8,
+            'cod' => 23502604,
+            'cantitate' => 250,
+        ],
+        ]);
+
+    }
+}

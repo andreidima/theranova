@@ -32,12 +32,23 @@ class RaportController extends Controller
                 return $pdf->stream();
 
             case 'stocuriPungiSange':
-                $recoltariSange = RecoltareSange::with('produs')->get();
+                $recoltariSange = RecoltareSange::with('produs', 'grupa')->get();
 
+                return view('rapoarte.export.stocuriPungiSange', compact('recoltariSange'));
                 $pdf = \PDF::loadView('rapoarte.export.stocuriPungiSange', compact('recoltariSange'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
-                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                // return $pdf->download('Stocuri pungi sange.pdf');
+                return $pdf->stream();
+
+            case 'situatiaSangeluiSiAProduselorDinSange':
+                $recoltariSange = RecoltareSange::with('produs')->get();
+
+                return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange'));
+                $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Stocuri pungi sange.pdf');
                 return $pdf->stream();
 
             case 'G1Rebut':

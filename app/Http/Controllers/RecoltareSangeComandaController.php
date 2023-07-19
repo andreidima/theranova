@@ -27,7 +27,7 @@ class RecoltareSangeComandaController extends Controller
         $searchBeneficiar = $request->searchBeneficiar;
         $searchData = $request->searchData;
 
-        $query = RecoltareSangeComanda::with('recoltariSange')
+        $query = RecoltareSangeComanda::with('recoltariSange', 'beneficiar')
             ->when($searchComandaNr, function ($query, $searchComandaNr) {
                 return $query->where('comanda_nr', $searchComandaNr);
             })
