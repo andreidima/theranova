@@ -42,8 +42,21 @@ class RaportController extends Controller
                 return $pdf->stream();
 
             case 'situatiaSangeluiSiAProduselorDinSange':
-                $recoltariSange = RecoltareSange::with('produs')->get();
+                $request->validate(['interval' => 'required']);
+                $query = RecoltareSange::with('produs')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest();
+                $recoltariSange = $query->get();
+                $query = RecoltareSange::with('produs')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereDate('data', '<', [strtok($interval, ',')]);
+                    })
+                    ->latest();
+                $recoltariSangeInitiale = $query->get();
 
+                dd($recoltariSange, $recoltariSangeInitiale);
                 return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange'));
                 $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange'))
                     ->setPaper('a4', 'portrait');

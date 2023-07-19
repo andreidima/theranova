@@ -70,6 +70,9 @@
                                 <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
                                     Stocuri pungi sânge
                                 </button>
+                                <button type="submit" name="action" value="situatiaSangeluiSiAProduselorDinSange" class="list-group-item list-group-item-action" aria-current="true">
+                                    Situația sângelui și a produselor din sânge
+                                </button>
                                 <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
                                     G.1. Rebut
                                 </button>
