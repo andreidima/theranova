@@ -81,19 +81,7 @@
         {{-- <div style="page-break-after: always"> --}}
         <div>
 
-            <table style="">
-                <tr valign="" style="">
-                    <td style="border-width:0px; text-align:center">
-                        <h3>INSTITUTUL NAȚIONAL DE TRANSFUZIE SANGUINĂ</h3>
-                        CENTRUL DE TRANSFUZIE SANGUINĂ VRANCEA
-                        <br>
-                        Str. CUZA VODĂ, Nr. 50-52, FOCȘANI
-                        <br>
-                        Telefon: 0337.401.233 / Fax: 0237.223.220
-                        <hr>
-                </tr>
-            </table>
-
+            @include('rapoarte.export.includes.header')
 
             <table style="">
                 <tr valign="" style="">
@@ -106,129 +94,113 @@
 
             <br>
 
-            <table>
-                <tr>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Donatori</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1. Donatori toți</td>
-                                    <td style="text-align:center">{{ $recoltariSange->unique('cod')->count() }}</td>
-                                </tr>
-                                <tr>
-                                    <td>2. Donatori noi</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>3. Donatori ocazionali</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>4. Donatori permanenți</td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-
-                        </table>
-                    </td>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Livrări</th>
-                                    <th>Pungi</th>
-                                    <th>Litri</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{-- @php
-                                    dd($recoltariSange->where('comanda.beneficiar.judet', "Vrancea"));
-                                @endphp --}}
-                                <tr>
-                                    <td style="">în Vrancea</td>
-                                    <td style="text-align:right">{{ $recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', "Vrancea")->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="">în alte județe</td>
-                                    <td style="text-align:right">{{ $recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', '<>', "Vrancea")->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', '<>', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:right"><b>Total</b></td>
-                                    <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('comanda_id')->count() }}</b></td>
-                                    <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('comanda_id')->sum('cantitate') / 1000, 2) }}</b></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
+            <table style="width:50%; margin-left: auto; margin-right: auto;">
+                <thead>
+                    <tr>
+                        <th>Donatori</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Donatori toți</td>
+                        <td style="text-align:center">{{ $recoltariSange->unique('cod')->count() }}</td>
+                    </tr>
+                    <tr>
+                        <td>2. Donatori noi</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>3. Donatori ocazionali</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>4. Donatori permanenți</td>
+                        <td></td>
+                    </tr>
+                </tbody>
             </table>
 
             <br>
 
-            <table>
-                <tr>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table style="">
-                            <thead>
-                                <tr>
-                                    <th>Sânge recoltat</th>
-                                    <th>Pungi</th>
-                                    <th>Litri</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                                <tr>
-                                    <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                                    <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                @endforeach
-                                <tr>
-                                    <td style="text-align:right"><b>Total</b></td>
-                                    <td style="text-align:right"><b>{{ $recoltariSange->count() }}</b></td>
-                                    <td style="text-align:right"><b>{{ number_format($recoltariSange->sum('cantitate') / 1000, 2 ) }}</b></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table style="">
-                            <thead>
-                                <tr>
-                                    <th>Sânge rebutat</th>
-                                    <th>Pungi</th>
-                                    <th>Litri</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                                <tr>
-                                    <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                                    <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                @endforeach
-                                <tr>
-                                    <td style="text-align:right"><b>Total</b></td>
-                                    <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('recoltari_sange_rebut_id')->count() }}</b></td>
-                                    <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sum('cantitate') / 1000, 2) }}</b></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
+            <table style="width:50%; margin-left: auto; margin-right: auto;">
+                <thead>
+                    <tr>
+                        <th>Sânge recoltat</th>
+                        <th>Pungi</th>
+                        <th>Litri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                    <tr>
+                        <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    @endforeach
+                    <tr>
+                        <td style="text-align:right"><b>Total</b></td>
+                        <td style="text-align:right"><b>{{ $recoltariSange->count() }}</b></td>
+                        <td style="text-align:right"><b>{{ number_format($recoltariSange->sum('cantitate') / 1000, 2 ) }}</b></td>
+                    </tr>
+                </tbody>
             </table>
 
             <br>
+
+            <table style="width:50%; margin-left: auto; margin-right: auto;">
+                <thead>
+                    <tr>
+                        <th>Livrări</th>
+                        <th>Pungi</th>
+                        <th>Litri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="">în Vrancea</td>
+                        <td style="text-align:right">{{ $recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', "Vrancea")->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="">în alte județe</td>
+                        <td style="text-align:right">{{ $recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', '<>', "Vrancea")->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', '<>', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right"><b>Total</b></td>
+                        <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('comanda_id')->count() }}</b></td>
+                        <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('comanda_id')->sum('cantitate') / 1000, 2) }}</b></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br>
+
+            <table style="width:50%; margin-left: auto; margin-right: auto;">
+                <thead>
+                    <tr>
+                        <th>Sânge rebutat</th>
+                        <th>Pungi</th>
+                        <th>Litri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                    <tr>
+                        <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    @endforeach
+                    <tr>
+                        <td style="text-align:right"><b>Total</b></td>
+                        <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('recoltari_sange_rebut_id')->count() }}</b></td>
+                        <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sum('cantitate') / 1000, 2) }}</b></td>
+                    </tr>
+                </tbody>
+            </table>
 
             </div>
 

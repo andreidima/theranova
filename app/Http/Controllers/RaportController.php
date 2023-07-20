@@ -14,6 +14,7 @@ class RaportController extends Controller
     {
         // $request->session()->forget('raportReturnUrl');
         $interval = $request->interval;
+        $produse = RecoltareSangeProdus::all();
 
         switch ($request->input('action')) {
             case 'recoltariSangeCtsvToate':
@@ -36,9 +37,21 @@ class RaportController extends Controller
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::with('produs', 'grupa')
                     ->when($interval, function ($query, $interval) {
-                        return $query->whereDate('data', '<=', [strtok($interval, ',')]);
+                        return $query->whereDate('data', '<', [strtok($interval, ',')]);
+                    })
+                    ->where(function($query) use ($interval){
+                        $query->whereDoesntHave('comanda')
+                            ->orWhereHas('comanda', function ($query) use ($interval) {
+                                $query->whereDate('data', '>', [strtok($interval, ',')]);
+                            });
+                    })
+                    ->where(function($query) use ($interval){
+                        $query->whereNull('rebut_created_at')
+                            ->orwhereDate('rebut_created_at',  '>', [strtok($interval, ',')]);
                     })
                     ->get();
+
+                return view('rapoarte.stocuriPungiSange', compact('recoltariSange', 'interval'));
 
                 return view('rapoarte.export.stocuriPungiSange', compact('recoltariSange', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.stocuriPungiSange', compact('recoltariSange', 'interval'))
@@ -84,8 +97,6 @@ class RaportController extends Controller
                     ->whereNull('comanda_id')
                     ->whereNull('recoltari_sange_rebut_id')
                     ->get();
-
-                $produse = RecoltareSangeProdus::all();
 
                 // $recoltariSange = RecoltareSange::with('produs')
                 //     ->whereNotNull('comanda_id')
@@ -197,8 +208,38 @@ class RaportController extends Controller
 
                     $recoltariSange = $query->get();
 
-                    return view('rapoarte.index', compact('recoltariSange', 'interval'));
+                    return view('rapoarte.index', compact('recoltariSange', 'interval', 'produse'));
                 break;
         }
+    }
+
+    public function stocuriPungiSange(Request $request)
+    {
+        $interval = $request->interval;
+
+        $request->validate(['interval' => 'required']);
+        $recoltariSange = RecoltareSange::with('produs', 'grupa')
+            ->when($interval, function ($query, $interval) {
+                return $query->whereDate('data', '<', [strtok($interval, ',')]);
+            })
+            ->where(function($query) use ($interval){
+                $query->whereDoesntHave('comanda')
+                    ->orWhereHas('comanda', function ($query) use ($interval) {
+                        $query->whereDate('data', '>', [strtok($interval, ',')]);
+                    });
+            })
+            ->where(function($query) use ($interval){
+                $query->whereNull('rebut_created_at')
+                    ->orwhereDate('rebut_created_at',  '>', [strtok($interval, ',')]);
+            })
+            ->where('recoltari_sange_produs_id', $request->produsId)
+            ->get();
+
+        return view('rapoarte.export.stocuriPungiSange', compact('recoltariSange', 'interval'));
+        $pdf = \PDF::loadView('rapoarte.export.stocuriPungiSange', compact('recoltariSange', 'interval'))
+            ->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->set_option("enable_php", true);
+        // return $pdf->download('Stocuri pungi sange.pdf');
+        return $pdf->stream();
     }
 }

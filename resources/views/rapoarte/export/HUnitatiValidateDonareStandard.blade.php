@@ -99,236 +99,228 @@
 
             <br>
 
-            <table>
+            <table style="width:45%; margin-left: auto; margin-right: auto;">
                 <tr>
-                    <td style="border-width:0px; width:45%; vertical-align::top">
-                        <table style="">
-                            <tr>
-                                <th colspan="2">
-                                    H.1. Donare standard ST
-                                </th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.a. STUA
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.b. STUA-DL
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.c. CER
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSange->whereIn('produs.nume', ['CER'])->count() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.d. CER-SL
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSange->whereIn('produs.nume', ['CER-SL'])->count() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.e. CER-DL
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSange->whereIn('produs.nume', ['CER-DL'])->count() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.f. CER-DV-COVID
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.g. CT
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSange->whereIn('produs.nume', ['CTS'])->count() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.h. PPC
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSange->whereIn('produs.nume', ['PPC'])->count() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.i. PPC*
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.j. PPC-DV-COVID
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.k. CRIO
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.l. CRIO*
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.m. PPC-DC
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.n. PPC-DC*
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.o. ST-UP
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.p. STUP-DL
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.r. CER-UP
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1.s. CEUP-DL
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right">
-                                    <b>Total</b>
-                                </td>
-                                <td style="text-align: right">
-                                    <b>{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CRIO'])->count() }}</b>
-                                </td>
-                            </tr>
-                        </table>
+                    <th colspan="2">
+                        H.1. Donare standard ST
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        1.a. STUA
                     </td>
-                    <td style="border-width:0px; width: 10%;">
-                        &nbsp;
+                    <td style="text-align: right">
+                        0
                     </td>
-                    <td style="border-width:0px; width:45%; vertical-align::top">
-                        <table>
-                            <tr>
-                                <th colspan="2">
-                                    H.2. Afereză
-                                </th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2.a. CERAF-DL
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2.b. CUT-DL
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSange->whereIn('produs.nume', ['CUT'])->count() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2.c. CGA
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2.d. PPC-A
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2.e. PPC-A*
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2.f. PPC-A-DV-COVID
-                                </td>
-                                <td style="text-align: right">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right">
-                                    <b>Total</b>
-                                </td>
-                                <td style="text-align: right">
-                                    <b>{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->count() }}</b>
-                                </td>
-                            </tr>
-                        </table>
+                </tr>
+                <tr>
+                    <td>
+                        1.b. STUA-DL
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.c. CER
+                    </td>
+                    <td style="text-align: right">
+                        {{ $recoltariSange->whereIn('produs.nume', ['CER'])->count() }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.d. CER-SL
+                    </td>
+                    <td style="text-align: right">
+                        {{ $recoltariSange->whereIn('produs.nume', ['CER-SL'])->count() }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.e. CER-DL
+                    </td>
+                    <td style="text-align: right">
+                        {{ $recoltariSange->whereIn('produs.nume', ['CER-DL'])->count() }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.f. CER-DV-COVID
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.g. CT
+                    </td>
+                    <td style="text-align: right">
+                        {{ $recoltariSange->whereIn('produs.nume', ['CTS'])->count() }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.h. PPC
+                    </td>
+                    <td style="text-align: right">
+                        {{ $recoltariSange->whereIn('produs.nume', ['PPC'])->count() }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.i. PPC*
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.j. PPC-DV-COVID
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.k. CRIO
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.l. CRIO*
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.m. PPC-DC
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.n. PPC-DC*
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.o. ST-UP
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.p. STUP-DL
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.r. CER-UP
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        1.s. CEUP-DL
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right">
+                        <b>Total</b>
+                    </td>
+                    <td style="text-align: right">
+                        <b>{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CRIO'])->count() }}</b>
+                    </td>
+                </tr>
+            </table>
+
+            <br><br>
+
+            <table style="width:45%; margin-left: auto; margin-right: auto;">
+                <tr>
+                    <th colspan="2">
+                        H.2. Afereză
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        2.a. CERAF-DL
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2.b. CUT-DL
+                    </td>
+                    <td style="text-align: right">
+                        {{ $recoltariSange->whereIn('produs.nume', ['CUT'])->count() }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2.c. CGA
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2.d. PPC-A
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2.e. PPC-A*
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2.f. PPC-A-DV-COVID
+                    </td>
+                    <td style="text-align: right">
+                        0
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right">
+                        <b>Total</b>
+                    </td>
+                    <td style="text-align: right">
+                        <b>{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->count() }}</b>
                     </td>
                 </tr>
             </table>

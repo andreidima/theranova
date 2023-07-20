@@ -39,4 +39,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/recoltari-sange', RecoltareSangeController::class)->parameters(['recoltari-sange' => 'recoltareSange']);
 
     Route::get('/rapoarte', [RaportController::class, 'index']);
+    Route::get('/rapoarte/stocuri-pungi-sange', [RaportController::class, 'stocuriPungiSange']);
+    Route::get('/rapoarte/stocuri-pungi-sange/export-pdf', [RaportController::class, 'stocuriPungiSangeExportPdf']);
 });

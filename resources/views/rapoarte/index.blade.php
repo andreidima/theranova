@@ -65,13 +65,13 @@
                             <span class="py-1 px-3 rounded-3 culoare2 text-center">Alege raportul dorit</span>
                             <div class="list-group p-0 list-group-numbered rounded-3">
                                 <button type="submit" name="action" value="recoltariSangeCtsvToate" class="list-group-item list-group-item-action" aria-current="true">
-                                    Recoltări de sânge la CTSV
+                                    Raport Director
                                 </button>
                                 <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
                                     Stocuri pungi sânge (se va descărca stocul până la prima dată aleasă din interval)
                                 </button>
                                 <button type="submit" name="action" value="situatiaSangeluiSiAProduselorDinSange" class="list-group-item list-group-item-action" aria-current="true">
-                                    Situația sângelui și a produselor din sânge
+                                    Situația sângelui și a produselor din sânge (CONTABILITATE)
                                 </button>
                                 <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
                                     G.1. Rebut
