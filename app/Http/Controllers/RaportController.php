@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeRebut;
+use App\Models\RecoltareSangeProdus;
 
 class RaportController extends Controller
 {
@@ -79,14 +80,16 @@ class RaportController extends Controller
                     ->whereNull('recoltari_sange_rebut_id')
                     ->get();
 
+                $produse = RecoltareSangeProdus::all();
+
                 // $recoltariSange = RecoltareSange::with('produs')
                 //     ->whereNotNull('comanda_id')
                 //     ->whereNotNull('recoltari_sange_rebut_id')
                 //     ->get();
                 // dd($recoltariSange);
 
-                // return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange', 'recoltariSangeInitiale', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSangeInterval', 'recoltariSangeInitiale', 'recoltariSangeRebutate', 'recoltariSangeLivrate', 'recoltariSangeStocFinal', 'interval'))
+                // return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSangeInterval', 'recoltariSangeInitiale', 'recoltariSangeRebutate', 'recoltariSangeLivrate', 'recoltariSangeStocFinal', 'produse', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSangeInterval', 'recoltariSangeInitiale', 'recoltariSangeRebutate', 'recoltariSangeLivrate', 'recoltariSangeStocFinal', 'produse', 'interval'))
                     ->setPaper('a4', 'landscape');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Stocuri pungi sange.pdf');
