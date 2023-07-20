@@ -43,23 +43,51 @@ class RaportController extends Controller
 
             case 'situatiaSangeluiSiAProduselorDinSange':
                 $request->validate(['interval' => 'required']);
-                $query = RecoltareSange::with('produs')
+                $recoltariSangeInterval = RecoltareSange::with('produs')
+                    // ->select('id', 'recoltari_sange_produs_id', 'cantitate')
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
-                    ->latest();
-                $recoltariSange = $query->get();
-                $query = RecoltareSange::with('produs')
+                    ->get();
+                $recoltariSangeInitiale = RecoltareSange::with('produs')
                     ->when($interval, function ($query, $interval) {
                         return $query->whereDate('data', '<', [strtok($interval, ',')]);
                     })
-                    ->latest();
-                $recoltariSangeInitiale = $query->get();
+                    ->where(function($query) use ($interval){
+                        $query->whereDoesntHave('comanda')
+                            ->orWhereHas('comanda', function ($query) use ($interval) {
+                                $query->whereDate('data', '>', [strtok($interval, ',')]);
+                            });
+                    })
+                    ->where(function($query) use ($interval){
+                        $query->whereNull('rebut_created_at')
+                            ->orwhereDate('rebut_created_at',  '>', [strtok($interval, ',')]);
+                    })
+                    ->get();
+                $recoltariSangeRebutate = RecoltareSange::with('produs')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('rebut_created_at', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+                $recoltariSangeLivrate = RecoltareSange::with('produs', 'comanda')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+                $recoltariSangeStocFinal = RecoltareSange::with('produs')
+                    ->whereNull('comanda_id')
+                    ->whereNull('recoltari_sange_rebut_id')
+                    ->get();
 
-                dd($recoltariSange, $recoltariSangeInitiale);
-                return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange'));
-                $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange'))
-                    ->setPaper('a4', 'portrait');
+                // $recoltariSange = RecoltareSange::with('produs')
+                //     ->whereNotNull('comanda_id')
+                //     ->whereNotNull('recoltari_sange_rebut_id')
+                //     ->get();
+                // dd($recoltariSange);
+
+                // return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSange', 'recoltariSangeInitiale', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSangeInterval', 'recoltariSangeInitiale', 'recoltariSangeRebutate', 'recoltariSangeLivrate', 'recoltariSangeStocFinal', 'interval'))
+                    ->setPaper('a4', 'landscape');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Stocuri pungi sange.pdf');
                 return $pdf->stream();

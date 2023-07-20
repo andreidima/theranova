@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Recoltări Sânge CTSV</title>
+    <title>Situația Sângelui și a produselor din sânge</title>
     <style>
         /* html {
             margin: 0px 0px;
@@ -81,24 +81,13 @@
         {{-- <div style="page-break-after: always"> --}}
         <div>
 
-            <table style="">
-                <tr valign="" style="">
-                    <td style="border-width:0px; text-align:center">
-                        <h3>INSTITUTUL NAȚIONAL DE TRANSFUZIE SANGUINĂ</h3>
-                        CENTRUL DE TRANSFUZIE SANGUINĂ VRANCEA
-                        <br>
-                        Str. CUZA VODĂ, Nr. 50-52, FOCȘANI
-                        <br>
-                        Telefon: 0337.401.233 / Fax: 0237.223.220
-                        <hr>
-                </tr>
-            </table>
+            @include('rapoarte.export.includes.header')
 
 
             <table style="">
                 <tr valign="" style="">
                     <td style="border-width:0px; text-align:center;">
-                        <h3 style="margin: 0">RAPORT</h3>
+                        <h3 style="margin: 0">Situația Sângelui și a produselor din sânge</h3>
                         Perioada: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }} - {{ \Carbon\Carbon::parse(strtok(''))->isoFormat('DD.MM.YYYY')}}
                     </td>
                 </tr>
@@ -107,130 +96,141 @@
             <br>
 
             <table>
-                <tr>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Donatori</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1. Donatori toți</td>
-                                    <td style="text-align:center">{{ $recoltariSange->unique('cod')->count() }}</td>
-                                </tr>
-                                <tr>
-                                    <td>2. Donatori noi</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>3. Donatori ocazionali</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>4. Donatori permanenți</td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-
-                        </table>
-                    </td>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Livrări</th>
-                                    <th>Pungi</th>
-                                    <th>Litri</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{-- @php
-                                    dd($recoltariSange->where('comanda.beneficiar.judet', "Vrancea"));
-                                @endphp --}}
-                                <tr>
-                                    <td style="">în Vrancea</td>
-                                    <td style="text-align:right">{{ $recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', "Vrancea")->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="">în alte județe</td>
-                                    <td style="text-align:right">{{ $recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', '<>', "Vrancea")->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSange->whereNotNull('comanda_id')->where('comanda.beneficiar.judet', '<>', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:right"><b>Total</b></td>
-                                    <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('comanda_id')->count() }}</b></td>
-                                    <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('comanda_id')->sum('cantitate') / 1000, 2) }}</b></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th rowspan="2">
+                        <th colspan="2" style="text-align: center">CE</th>
+                        <th colspan="2" style="text-align: center">PPC</th>
+                        <th colspan="2" style="text-align: center">CT</th>
+                        <th colspan="2" style="text-align: center">CRIO</th>
+                        <th colspan="2" style="text-align: center">CER-SL</th>
+                        <th colspan="2" style="text-align: center">CER-DL</th>
+                        <th colspan="2" style="text-align: center">CUT</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>STOC INIȚIAL</th>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['CER'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['CER'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['PPC'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['PPC'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['CTS'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['CTS'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['CRIO'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['CER-SL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['CER-SL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['CER-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInitiale->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInitiale->whereIn('produs.nume', ['CUT-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>RECOLTARE</th>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CER'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CER'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['PPC'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['PPC'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CTS'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CTS'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CRIO'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CER-SL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CER-SL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CER-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNull('intrare_id')->whereIn('produs.nume', ['CUT-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>PRIMITE</th>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CER'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CER'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['PPC'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['PPC'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CTS'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CTS'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CRIO'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CER-SL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CER-SL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CER-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeInterval->whereNotNull('intrare_id')->whereIn('produs.nume', ['CUT-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>REBUT</th>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['CER'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['CER'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['PPC'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['PPC'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['CTS'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['CTS'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['CRIO'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['CER-SL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['CER-SL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['CER-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeRebutate->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeRebutate->whereIn('produs.nume', ['CUT-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>LIVRARE</th>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['CER'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['CER'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['PPC'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['PPC'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['CTS'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['CTS'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['CRIO'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['CER-SL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['CER-SL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['CER-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeLivrate->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeLivrate->whereIn('produs.nume', ['CUT-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>STOC FINAL</th>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['CER'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CER'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['PPC'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['PPC'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['CTS'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CTS'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['CRIO'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CRIO'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['CER-SL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CER-SL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['CER-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="text-align:right">{{ $recoltariSangeStocFinal->whereIn('produs.nume', ['CUT-DL'])->count() }}</td>
+                        <td style="text-align:right">{{ number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CUT-DL'])->sum('cantitate') / 1000, 2) }}</td>
+                    </tr>
+                </tbody>
             </table>
 
-            <br>
-
-            <table>
-                <tr>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table style="">
-                            <thead>
-                                <tr>
-                                    <th>Sânge recoltat</th>
-                                    <th>Pungi</th>
-                                    <th>Litri</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                                <tr>
-                                    <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                                    <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                @endforeach
-                                <tr>
-                                    <td style="text-align:right"><b>Total</b></td>
-                                    <td style="text-align:right"><b>{{ $recoltariSange->count() }}</b></td>
-                                    <td style="text-align:right"><b>{{ number_format($recoltariSange->sum('cantitate') / 1000, 2 ) }}</b></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                    <td style="border-width:0px; width:50%; vertical-align::top">
-                        <table style="">
-                            <thead>
-                                <tr>
-                                    <th>Sânge rebutat</th>
-                                    <th>Pungi</th>
-                                    <th>Litri</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                                <tr>
-                                    <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                                    <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                                    <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
-                                </tr>
-                                @endforeach
-                                <tr>
-                                    <td style="text-align:right"><b>Total</b></td>
-                                    <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('recoltari_sange_rebut_id')->count() }}</b></td>
-                                    <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sum('cantitate') / 1000, 2) }}</b></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-
-            <br>
-
-            </div>
+        </div>
 
 
         {{-- Here's the magic. This MUST be inside body tag. Page count / total, centered at bottom of page --}}
