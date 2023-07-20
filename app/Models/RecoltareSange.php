@@ -56,4 +56,14 @@ class RecoltareSange extends Model
     {
         return $this->belongsTo(RecoltareSangeComanda::class, 'comanda_id');
     }
+
+    /**
+     * Get the comanda that owns the RecoltareSange
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function intrare()
+    {
+        return $this->belongsTo(RecoltareSangeIntrare::class, 'intrare_id');
+    }
 }

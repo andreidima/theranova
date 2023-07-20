@@ -152,17 +152,31 @@ class RaportController extends Controller
 
             case 'JCerereSiDistributie':
                 $request->validate(['interval' => 'required']);
-                $recoltariSange = RecoltareSange::
-                    with('produs')
-                    ->whereNull('recoltari_sange_rebut_id')
-                    ->when($interval, function ($query, $interval) {
-                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                $recoltariSangeDistribuite = RecoltareSange::with('produs')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
-                    ->latest()
+                    ->get();
+                $recoltariSangeDistribuiteInJudet = RecoltareSange::with('produs')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereIn('recoltari_sange_beneficiar_id', [1,2,3])
+                            ->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+                $recoltariSangeDistribuiteCatreAlteCts = RecoltareSange::with('produs')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereNotIn('recoltari_sange_beneficiar_id', [1,2,3])
+                            ->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+                $recoltariSangePrimite = RecoltareSange::with('produs')
+                    ->whereHas('intrare', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
                     ->get();
 
                 // return view('rapoarte.export.JCerereSiDistributie', compact('recoltariSange', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.JCerereSiDistributie', compact('recoltariSange', 'interval'))
+                $pdf = \PDF::loadView('rapoarte.export.JCerereSiDistributie', compact('recoltariSangeDistribuite', 'recoltariSangeDistribuiteInJudet', 'recoltariSangeDistribuiteCatreAlteCts', 'recoltariSangePrimite', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');

@@ -83,7 +83,7 @@
                                     H. Număr unități validate donare standard (ST și CS validate/ eliberate din carantină*) + afereză
                                 </button>
                                 <button type="submit" name="action" value="JCerereSiDistributie" class="list-group-item list-group-item-action" aria-current="true">
-                                    H. Cerere și Distribuție
+                                    J. Cerere și Distribuție
                                 </button>
                                 {{-- <a href="/rapoarte/recoltari-sange/export-pdf" target="_blank" class="list-group-item list-group-item-action active" aria-current="true">
                                     Recoltări de sânge
