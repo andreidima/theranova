@@ -33,10 +33,15 @@ class RaportController extends Controller
                 return $pdf->stream();
 
             case 'stocuriPungiSange':
-                $recoltariSange = RecoltareSange::with('produs', 'grupa')->get();
+                $request->validate(['interval' => 'required']);
+                $recoltariSange = RecoltareSange::with('produs', 'grupa')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereDate('data', '<=', [strtok($interval, ',')]);
+                    })
+                    ->get();
 
-                return view('rapoarte.export.stocuriPungiSange', compact('recoltariSange'));
-                $pdf = \PDF::loadView('rapoarte.export.stocuriPungiSange', compact('recoltariSange'))
+                return view('rapoarte.export.stocuriPungiSange', compact('recoltariSange', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.stocuriPungiSange', compact('recoltariSange', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Stocuri pungi sange.pdf');

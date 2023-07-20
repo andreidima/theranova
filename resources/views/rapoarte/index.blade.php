@@ -68,7 +68,7 @@
                                     Recoltări de sânge la CTSV
                                 </button>
                                 <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
-                                    Stocuri pungi sânge
+                                    Stocuri pungi sânge (se va descărca stocul până la prima dată aleasă din interval)
                                 </button>
                                 <button type="submit" name="action" value="situatiaSangeluiSiAProduselorDinSange" class="list-group-item list-group-item-action" aria-current="true">
                                     Situația sângelui și a produselor din sânge

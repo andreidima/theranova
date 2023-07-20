@@ -88,7 +88,7 @@
                 <tr valign="" style="">
                     <td style="border-width:0px; text-align:center;">
                         <h3 style="margin: 0">Stocuri pungi sânge</h3>
-                        Data: {{ \Carbon\Carbon::now()->isoFormat('DD.MM.YYYY')}}
+                        Data: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }}
                     </td>
                 </tr>
             </table>
