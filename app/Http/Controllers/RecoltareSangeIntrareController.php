@@ -178,12 +178,11 @@ class RecoltareSangeIntrareController extends Controller
      */
     public function destroy(Request $request, RecoltareSangeIntrare $recoltareSangeIntrare)
     {
+        $recoltareSangeIntrare->recoltariSange()->delete();
+
         $recoltareSangeIntrare->delete();
 
-        // Scoaterea recoltarilor de la comanda
-        RecoltareSange::where('comanda_id', $recoltareSangeIntrare->id)->update(['comanda_id' => null]);
-
-        return back()->with('status', 'Intrare „' . ($recoltareSangeIntrare->numar ?? '') . '” a fost ștearsă cu succes!');
+        return back()->with('status', 'Intrarea „' . ($recoltareSangeIntrare->bon_nr ?? '') . '” a fost ștearsă cu succes!');
     }
 
     /**

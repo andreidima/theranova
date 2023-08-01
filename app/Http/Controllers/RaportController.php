@@ -144,7 +144,8 @@ class RaportController extends Controller
 
                 // return view('rapoarte.export.G2RebutRepartitie', compact('recoltariSange', 'rebuturi', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.G2RebutRepartitie', compact('recoltariSange', 'rebuturi', 'interval'))
-                    ->setPaper('a4', 'portrait');
+                    // ->setPaper('a4', 'portrait');
+                    ->setPaper('a4', 'landscape');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
