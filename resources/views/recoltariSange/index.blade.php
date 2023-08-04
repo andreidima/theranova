@@ -12,8 +12,19 @@
                 <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
-                        <div class="col-lg-8">
+                        <div class="col-lg-6">
                             <input type="text" class="form-control rounded-3" id="searchCod" name="searchCod" placeholder="Cod" value="{{ $searchCod }}">
+                        </div>
+                        <div class="col-lg-6 d-flex align-items-center" id="datePicker">
+                            <label for="data" class="mb-0 pe-1">Data</label>
+                            <vue-datepicker-next
+                                data-veche="{{ $searchData }}"
+                                nume-camp-db="searchData"
+                                tip="date"
+                                value-type="YYYY-MM-DD"
+                                format="DD.MM.YYYY"
+                                :latime="{ width: '125px' }"
+                            ></vue-datepicker-next>
                         </div>
                     </div>
                     <div class="row custom-search-form justify-content-center">

@@ -22,17 +22,21 @@ class RecoltareSangeController extends Controller
         $request->session()->forget('recoltareSangeReturnUrl');
 
         $searchCod = $request->searchCod;
+        $searchData = $request->searchData;
 
         $query = RecoltareSange::
             with('produs:id,nume', 'grupa:id,nume')
             ->when($searchCod, function ($query, $searchCod) {
                 return $query->where('cod', $searchCod);
             })
+            ->when($searchData, function ($query, $searchData) {
+                return $query->whereDate('data', $searchData);
+            })
             ->latest();
 
-        $recoltariSange = $query->simplePaginate(25);
+        $recoltariSange = $query->simplePaginate(50);
 
-        return view('recoltariSange.index', compact('recoltariSange', 'searchCod'));
+        return view('recoltariSange.index', compact('recoltariSange', 'searchCod', 'searchData'));
     }
 
     /**
