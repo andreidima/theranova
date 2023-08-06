@@ -67,6 +67,9 @@
                                 <button type="submit" name="action" value="recoltariSangeCtsvToate" class="list-group-item list-group-item-action" aria-current="true">
                                     Raport Director
                                 </button>
+                                <button type="submit" name="action" value="recoltariSangeCtsvToateDetaliatPeZile" class="list-group-item list-group-item-action" aria-current="true">
+                                    Raport Director detaliat pe zile
+                                </button>
                                 <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
                                     Stocuri pungi sânge (se va descărca stocul până la prima dată aleasă din interval)
                                 </button>
