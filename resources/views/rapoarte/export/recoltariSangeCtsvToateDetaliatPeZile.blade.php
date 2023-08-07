@@ -97,20 +97,32 @@
             <table style="width:50%; margin-left: auto; margin-right: auto;">
                 <thead>
                     <tr>
-                        <th>Data</th>
-                        <th>Donatori toți</th>
-
+                        <th rowspan="2">Data</th>
+                        <th rowspan="2">Nr. Pungi</th>
+                        @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                            <th colspan="2">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</th>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                            <th>Pungi</th>
+                            <th>Litri</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($recoltariSange->groupBy('data') as $recoltariSangeGrupateDupaData)
+                    @foreach($recoltariSange->sortBy('data')->groupBy('data') as $recoltariSangeGrupateDupaData)
                         <tr>
                             <td>
                                 {{ \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->data ?? '')->isoFormat('DD.MM.YYYY') }}
                             </td>
                             <td style="text-align:center">
-                                {{ $recoltariSangeGrupateDupaData->unique('cod')->count() }}
+                                {{ $recoltariSangeGrupateDupaData->count() }}
                             </td>
+                            @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                                <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->where('data', $recoltariSangeGrupateDupaData->first()->data)->count() }}</td>
+                                <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->where('data', $recoltariSangeGrupateDupaData->first()->data)->sum('cantitate') / 1000, 2) }}</td>
+                            @endforeach
                         </tr>
                     @endforeach
                 </tbody>
