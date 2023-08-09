@@ -181,9 +181,9 @@ class RecoltareSangeController extends Controller
                 return $query->where('cod', $searchCod);
             })
             ->when($searchData, function ($query, $searchData) {
-                return $query->whereDate('rebut_created_at', $searchData);
+                return $query->whereDate('rebut_data', $searchData);
             })
-            ->latest('rebut_created_at');
+            ->latest('rebut_data');
 
         $recoltariSange = $query->simplePaginate(25);
 
@@ -204,7 +204,8 @@ class RecoltareSangeController extends Controller
         $request->session()->get('recoltareSangeRebutReturnUrl') ?? $request->session()->put('recoltareSangeRebutReturnUrl', url()->previous());
 
         $recoltareSange->recoltari_sange_rebut_id = $request->recoltari_sange_rebut_id;
-        $request->recoltari_sange_rebut_id ? ($recoltareSange->rebut_created_at = Carbon::now()) : ($recoltareSange->rebut_created_at = null); // daca se sterge rebut. se sterge si campul rebut_created_at
+        $recoltareSange->rebut_data = $request->rebut_data;
+        $request->recoltari_sange_rebut_id ?? $recoltareSange->rebut_data = null; // daca se sterge rebut. se sterge si campul rebut_created_at
         $recoltareSange->save();
 
         return redirect($request->session()->get('recoltareSangeRebutReturnUrl') ?? ('/recoltari-sange/rebuturi'))->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost modificată cu succes!');

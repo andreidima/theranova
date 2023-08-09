@@ -59,6 +59,19 @@
                                         <b>{{ $recoltareSange->cantitate }}</b>
                                     </div>
                                     <div class="col-md-5 mb-1">
+                                        Data rebut:
+                                    </div>
+                                    <div class="col-md-7 mb-4" id="datePicker">
+                                        <vue-datepicker-next
+                                            data-veche="{{ old('rebut_data', $recoltareSange->rebut_data) }}"
+                                            nume-camp-db="rebut_data"
+                                            tip="date"
+                                            value-type="YYYY-MM-DD"
+                                            format="DD.MM.YYYY"
+                                            :latime="{ width: '125px' }"
+                                        ></vue-datepicker-next>
+                                    </div>
+                                    <div class="col-md-5 mb-1">
                                         Rebut:
                                     </div>
                                     <div class="col-md-7 mb-4">
