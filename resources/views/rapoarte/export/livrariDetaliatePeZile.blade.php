@@ -94,36 +94,78 @@
 
             <br>
 
-            <table style="width:50%; margin-left: auto; margin-right: auto;">
-                <thead>
+            <table style="margin-left: auto; margin-right: auto;">
+                {{-- <thead> --}}
                     <tr>
-                        <th>Donatori</th>
-                        <th>Total</th>
+                        <th>Data</th>
+                        <th>Comanda nr.</th>
+                        <th>Cod</th>
+                        <th>Produs</th>
+                        <th>Grupa</th>
+                        <th>Cantitate</th>
+                        {{-- <th>Pungi</th> --}}
                     </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1. Donatori toți</td>
-                        <td style="text-align:center">{{ $recoltariSange->unique('cod')->count() }}</td>
-                    </tr>
-                    <tr>
-                        <td>2. Donatori noi</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>3. Donatori ocazionali</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>4. Donatori permanenți</td>
-                        <td></td>
-                    </tr>
-                </tbody>
+                {{-- </thead> --}}
+                {{-- <tbody> --}}
+                    @foreach($comenzi->groupBy('data') as $comenziGrupateDupaData)
+                        @foreach($comenziGrupateDupaData as $comanda)
+                            @foreach ($comanda->recoltariSange->sortBy('produs.nume') as $recoltareSange)
+                                @if($loop->first)
+                                    <tr>
+                                        <td>
+                                            {{ $comanda->data ? \Carbon\Carbon::parse($comanda->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                        </td>
+                                        <td>
+                                            {{ $comanda->comanda_nr }}
+                                        </td>
+                                        <td>{{ $recoltareSange->cod }}</td>
+                                        <td>{{ $recoltareSange->produs->nume ?? '' }}</td>
+                                        <td>{{ $recoltareSange->grupa->nume ?? '' }}</td>
+                                        <td>{{ $recoltareSange->cantitate }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td style="border:0px"></td>
+                                        <td style="border:0px"></td>
+                                        <td>{{ $recoltareSange->cod }}</td>
+                                        <td>{{ $recoltareSange->produs->nume ?? '' }}</td>
+                                        <td>{{ $recoltareSange->grupa->nume ?? '' }}</td>
+                                        <td>{{ $recoltareSange->cantitate }}</td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                                    <tr>
+                                        <td style="border:0px"></td>
+                                        <td style="border:0px"></td>
+                                        <td colspan="3" style="text-align:center">
+                                            <b>Total: {{ $comanda->recoltariSange->count() }} pungi</b>
+                                        </td>
+                                        <td style="text-align:center">
+                                            <b>{{ $comanda->recoltariSange->sum('cantitate') }}</b>
+                                        </td>
+                                    </tr>
+                                            {{-- <tr>
+                                                <td colspan="3" style="text-align:center">
+                                                    <b>Total: {{ $comanda->recoltariSange->count() }} pungi</b>
+                                                </td>
+                                                <td>
+                                                    <b>{{ $comanda->recoltariSange->sum('cantitate') }}</b>
+                                                </td>
+                                            </tr> --}}
+                                @if($loop->parent->last && $loop->last)
+                                @else
+                                    <tr>
+                                        <td colspan="6" style="border:0px">&nbsp;</td>
+                                    </tr>
+                                @endif
+                        @endforeach
+                    @endforeach
+                {{-- </tbody> --}}
             </table>
 
             <br>
 
-            <table style="width:50%; margin-left: auto; margin-right: auto;">
+            {{-- <table style="width:50%; margin-left: auto; margin-right: auto;">
                 <thead>
                     <tr>
                         <th>Sânge recoltat</th>
@@ -145,62 +187,8 @@
                         <td style="text-align:right"><b>{{ number_format($recoltariSange->sum('cantitate') / 1000, 2 ) }}</b></td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
 
-            <br>
-
-            <table style="width:50%; margin-left: auto; margin-right: auto;">
-                <thead>
-                    <tr>
-                        <th>Livrări</th>
-                        <th>Pungi</th>
-                        <th>Litri</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="">în Vrancea</td>
-                        <td style="text-align:right">{{ $livrari->where('comanda.beneficiar.judet', "Vrancea")->count() }}</td>
-                        <td style="text-align:right">{{ number_format($livrari->where('comanda.beneficiar.judet', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="">în alte județe</td>
-                        <td style="text-align:right">{{ $livrari->where('comanda.beneficiar.judet', '<>', "Vrancea")->count() }}</td>
-                        <td style="text-align:right">{{ number_format($livrari->where('comanda.beneficiar.judet', '<>', "Vrancea")->sum('cantitate') / 1000, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:right"><b>Total</b></td>
-                        <td style="text-align:right"><b>{{ $livrari->count() }}</b></td>
-                        <td style="text-align:right"><b>{{ number_format($livrari->sum('cantitate') / 1000, 2) }}</b></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <br>
-
-            <table style="width:50%; margin-left: auto; margin-right: auto;">
-                <thead>
-                    <tr>
-                        <th>Sânge rebutat</th>
-                        <th>Pungi</th>
-                        <th>Litri</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                    <tr>
-                        <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                        <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
-                    </tr>
-                    @endforeach
-                    <tr>
-                        <td style="text-align:right"><b>Total</b></td>
-                        <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('recoltari_sange_rebut_id')->count() }}</b></td>
-                        <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sum('cantitate') / 1000, 2) }}</b></td>
-                    </tr>
-                </tbody>
-            </table>
 
             </div>
 
@@ -213,7 +201,7 @@
                 $font = $fontMetrics->getFont("helvetica");
                 $width = $fontMetrics->get_text_width($text, $font, $size) / 2;
                 $x = ($pdf->get_width() - $width) / 2;
-                $y = $pdf->get_height() - 35;
+                $y = $pdf->get_height() - 20;
                 $pdf->page_text($x, $y, $text, $font, $size);
             }
         </script>

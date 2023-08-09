@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeRebut;
 use App\Models\RecoltareSangeProdus;
+use App\Models\RecoltareSangeComanda;
 
 class RaportController extends Controller
 {
@@ -27,7 +28,14 @@ class RaportController extends Controller
                     ->latest();
                 $recoltariSange = $query->get();
 
-                $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'interval'))
+                $livrari = RecoltareSange::with('comanda.beneficiar')
+                    ->whereHas('comanda', function ($query) use($interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                // return view('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'livrari', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'livrari', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
@@ -45,6 +53,31 @@ class RaportController extends Controller
 
                 // return view('rapoarte.export.recoltariSangeCtsvToateDetaliatPeZile', compact('recoltariSange', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToateDetaliatPeZile', compact('recoltariSange', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
+            case 'livrariDetaliatePeZile':
+                $request->validate(['interval' => 'required']);
+                $query = RecoltareSange::
+                    whereHas('comanda', function ($query) use($interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->sum('cantitate');
+                // $recoltariSange = $query->get();
+                dd($query);
+
+                $query = RecoltareSangeComanda::
+                    with('recoltariSange.produs')
+                    ->whereBetween('data', [strtok($interval, ','), strtok( '' )])
+                    ->orderBy('data');
+                $comenzi = $query->get();
+
+
+
+                // return view('rapoarte.export.livrariDetaliatePeZile', compact('comenzi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.livrariDetaliatePeZile', compact('comenzi', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
