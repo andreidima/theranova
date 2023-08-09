@@ -19,10 +19,10 @@
                             <input type="text" class="form-control rounded-3" id="searchAvizNr" name="searchAvizNr" placeholder="Aviz nr." value="{{ $searchAvizNr }}">
                         </div>
                         <div class="col-lg-3">
-                            <select name="searchBeneficiar" class="form-select bg-white rounded-3">
-                                <option selected value="">Selectează beneficiar</option>
-                                @foreach ($beneficiari as $beneficiar)
-                                    <option value="{{ $beneficiar->id }}" {{ ($beneficiar->id === intval($searchBeneficiar)) ? 'selected' : '' }}>{{ $beneficiar->nume }}</option>
+                            <select name="searchExpeditor" class="form-select bg-white rounded-3">
+                                <option selected value="">Selectează expeditor</option>
+                                @foreach ($expeditori as $expeditor)
+                                    <option value="{{ $expeditor->id }}" {{ ($expeditor->id === intval($searchExpeditor)) ? 'selected' : '' }}>{{ $expeditor->nume }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -76,7 +76,7 @@
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Bon nr.</th>
                             <th class="text-white culoare2">Aviz nr.</th>
-                            <th class="text-white culoare2">Beneficiar</th>
+                            <th class="text-white culoare2">Expeditor</th>
                             <th class="text-white culoare2">Data</th>
                             {{-- <th class="text-white culoare2">Recoltări sânge</th> --}}
                             {{-- <th class="">Observații</th> --}}
@@ -96,7 +96,7 @@
                                     {{ $recoltareSangeIntrare->aviz_nr }}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSangeIntrare->beneficiar->nume ?? '' }}
+                                    {{ $recoltareSangeIntrare->expeditor->nume ?? '' }}
                                 </td>
                                 <td class="">
                                     {{ $recoltareSangeIntrare->data ? \Carbon\Carbon::parse($recoltareSangeIntrare->data)->isoFormat('DD.MM.YYYY') : '' }}

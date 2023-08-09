@@ -38,10 +38,10 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Beneficiar
+                                    Expeditor
                                 </td>
                                 <td>
-                                    {{ $recoltareSangeIntrare->beneficiar->nume ?? '' }}
+                                    {{ $recoltareSangeIntrare->expeditor->nume ?? '' }}
                                 </td>
                             </tr>
                             <tr>

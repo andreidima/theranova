@@ -203,7 +203,7 @@ const recoltareSangeIntrare = createApp({
             if (Number.isInteger(parseInt(this.nrPungi))) {
                 if (this.nrPungi < 100){
                     for (var i = 0; i < this.nrPungi; i++) {
-                        this.pungi.push({ id: '', data: '', recoltari_sange_grupa_id: '', cod: '', recoltari_sange_produs_id: '', cantitate: '' });
+                        this.pungi.push({ id: '', data_expirare: '', recoltari_sange_grupa_id: '', cod: '', recoltari_sange_produs_id: '', cantitate: '' });
                     }
                 }
             }

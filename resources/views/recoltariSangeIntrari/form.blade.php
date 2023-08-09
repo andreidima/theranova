@@ -34,11 +34,11 @@
                     required>
             </div>
             <div class="col-lg-3 mb-4">
-                <label for="recoltari_sange_beneficiar_id" class="mb-0 ps-3">Beneficiar<span class="text-danger">*</span></label>
-                <select name="recoltari_sange_beneficiar_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_beneficiar_id') ? 'is-invalid' : '' }}">
+                <label for="recoltari_sange_expeditor_id" class="mb-0 ps-3">Expeditor<span class="text-danger">*</span></label>
+                <select name="recoltari_sange_expeditor_id" class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_expeditor_id') ? 'is-invalid' : '' }}">
                     <option selected></option>
-                    @foreach ($beneficiari as $beneficiar)
-                        <option value="{{ $beneficiar->id }}" {{ ($beneficiar->id === intval(old('recoltari_sange_beneficiar_id', $recoltareSangeIntrare->recoltari_sange_beneficiar_id ?? ''))) ? 'selected' : '' }}>{{ $beneficiar->nume }}</option>
+                    @foreach ($expeditori as $expeditor)
+                        <option value="{{ $expeditor->id }}" {{ ($expeditor->id === intval(old('recoltari_sange_expeditor_id', $recoltareSangeIntrare->recoltari_sange_expeditor_id ?? ''))) ? 'selected' : '' }}>{{ $expeditor->nume }}</option>
                     @endforeach
                 </select>
             </div>
@@ -105,7 +105,7 @@
                         Punga
                     </div>
                     <div class="col-lg-2 border border-1">
-                        Data
+                        Data expirare
                     </div>
                     <div class="col-lg-2 border border-1">
                         Grupa
@@ -136,8 +136,8 @@
                     </div>
                     <div class="col-lg-2 border border-1 mb-0 text-center">
                         <vue-datepicker-next
-                            :data-veche="pungi[index].data ?? ''"
-                            :nume-camp-db="'pungi[' + index + '][data]'"
+                            :data-veche="pungi[index].data_expirare ?? ''"
+                            :nume-camp-db="'pungi[' + index + '][data_expirare]'"
                             tip="date"
                             value-type="YYYY-MM-DD"
                             format="DD.MM.YYYY"

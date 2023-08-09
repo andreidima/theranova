@@ -8,7 +8,7 @@ use App\Models\RecoltareSangeIntrare;
 use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeGrupa;
-use App\Models\RecoltareSangeBeneficiar;
+use App\Models\RecoltareSangeExpeditor;
 use Carbon\Carbon;
 
 class RecoltareSangeIntrareController extends Controller
@@ -24,7 +24,7 @@ class RecoltareSangeIntrareController extends Controller
 
         $searchBonNr = $request->searchBonNr;
         $searchAvizNr = $request->searchAvizNr;
-        $searchBeneficiar = $request->searchBeneficiar;
+        $searchExpeditor = $request->searchExpeditor;
         $searchData = $request->searchData;
 // dd($searchBonNr);
         $query = RecoltareSangeIntrare::with('recoltariSange')
@@ -34,8 +34,8 @@ class RecoltareSangeIntrareController extends Controller
             ->when($searchAvizNr, function ($query, $searchAvizNr) {
                 return $query->where('aviz_nr', $searchAvizNr);
             })
-            ->when($searchBeneficiar, function ($query, $searchBeneficiar) {
-                return $query->where('recoltari_sange_beneficiar_id', $searchBeneficiar);
+            ->when($searchExpeditor, function ($query, $searchExpeditor) {
+                return $query->where('recoltari_sange_expeditor_id', $searchExpeditor);
             })
             ->when($searchData, function ($query, $searchData) {
                 return $query->whereDate('data', $searchData);
@@ -45,9 +45,9 @@ class RecoltareSangeIntrareController extends Controller
 
         $recoltariSangeIntrari = $query->simplePaginate(25);
 
-        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $expeditori = RecoltareSangeExpeditor::select('id', 'nume')->orderBy('nume')->get();
 
-        return view('recoltariSangeIntrari.index', compact('recoltariSangeIntrari', 'beneficiari', 'searchBonNr', 'searchAvizNr', 'searchBeneficiar', 'searchData'));
+        return view('recoltariSangeIntrari.index', compact('recoltariSangeIntrari', 'expeditori', 'searchBonNr', 'searchAvizNr', 'searchExpeditor', 'searchData'));
     }
 
     /**
@@ -59,11 +59,11 @@ class RecoltareSangeIntrareController extends Controller
     {
         $request->session()->get('recoltareSangeIntrareReturnUrl') ?? $request->session()->put('recoltareSangeIntrareReturnUrl', url()->previous());
 
-        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $expeditori = RecoltareSangeExpeditor::select('id', 'nume')->orderBy('nume')->get();
         $recoltariSangeProduse = RecoltareSangeProdus::get();
         $recoltariSangeGrupe = RecoltareSangeGrupa::get();
 
-        return view('recoltariSangeIntrari.create', compact('beneficiari', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
+        return view('recoltariSangeIntrari.create', compact('expeditori', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**
@@ -81,7 +81,7 @@ class RecoltareSangeIntrareController extends Controller
 
         foreach($request->pungi as $punga){
             $recoltareSange = RecoltareSange::create();
-            $recoltareSange->data = $punga['data'];
+            $recoltareSange->data_expirare = $punga['data_expirare'];
             $recoltareSange->cod = $punga['cod'];
             $recoltareSange->recoltari_sange_produs_id = $punga['recoltari_sange_produs_id'];
             $recoltareSange->recoltari_sange_grupa_id = $punga['recoltari_sange_grupa_id'];
@@ -118,12 +118,12 @@ class RecoltareSangeIntrareController extends Controller
 
         $recoltareSangeIntrare = RecoltareSangeIntrare::where('id', $recoltareSangeIntrare->id)->with('recoltariSange')->first();
 
-        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
+        $expeditori = RecoltareSangeExpeditor::select('id', 'nume')->orderBy('nume')->get();
         $recoltariSangeProduse = RecoltareSangeProdus::get();
         $recoltariSangeGrupe = RecoltareSangeGrupa::get();
 
 
-        return view('recoltariSangeIntrari.edit', compact('recoltareSangeIntrare', 'beneficiari', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
+        return view('recoltariSangeIntrari.edit', compact('recoltareSangeIntrare', 'expeditori', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**
@@ -156,7 +156,7 @@ class RecoltareSangeIntrareController extends Controller
             }
             // echo $punga['id'] .  ' - ' . $recoltareSange . '<br>';
             // dd('stop');
-            $recoltareSange->data = $punga['data'];
+            $recoltareSange->data_expirare = $punga['data_expirare'];
             $recoltareSange->cod = $punga['cod'];
             $recoltareSange->recoltari_sange_produs_id = $punga['recoltari_sange_produs_id'];
             $recoltareSange->recoltari_sange_grupa_id = $punga['recoltari_sange_grupa_id'];
@@ -205,12 +205,12 @@ class RecoltareSangeIntrareController extends Controller
             [
                 'bon_nr' => 'required|numeric|between:1,999999',
                 'aviz_nr' => 'required|numeric|between:1,999999',
-                'recoltari_sange_beneficiar_id' => 'required',
+                'recoltari_sange_expeditor_id' => 'required',
                 'data' => 'required',
                 'pungi' => 'required',
 
                 'pungi.*.id' => '',
-                'pungi.*.data' => 'required',
+                'pungi.*.data_expirare' => 'required',
                 'pungi.*.recoltari_sange_grupa_id' => 'required',
                 'pungi.*.cod' => 'required',
                 'pungi.*.recoltari_sange_produs_id' => 'required',
@@ -221,7 +221,7 @@ class RecoltareSangeIntrareController extends Controller
                 // 'recoltariSangeAdaugateLaIntrare' => 'required'
             ],
             [
-                'pungi.*.data.required' => 'Data pentru punga :position este necesară',
+                'pungi.*.data_expirare.required' => 'Data pentru punga :position este necesară',
                 'pungi.*.recoltari_sange_grupa_id.required' => 'Grupa pentru punga :position este necesară',
                 'pungi.*.cod.required' => 'Codul pentru punga :position este necesar',
                 'pungi.*.recoltari_sange_produs_id.required' => 'Produsul pentru punga :position este necesar',

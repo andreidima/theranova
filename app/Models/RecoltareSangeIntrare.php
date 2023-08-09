@@ -28,12 +28,12 @@ class RecoltareSangeIntrare extends Model
     }
 
     /**
-     * Get the beneficiar that owns the RecoltareSangeIntrare
+     * Get the expeditor that owns the RecoltareSangeIntrare
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function beneficiar()
+    public function expeditor()
     {
-        return $this->belongsTo(RecoltareSangeBeneficiar::class, 'recoltari_sange_beneficiar_id');
+        return $this->belongsTo(RecoltareSangeExpeditor::class, 'recoltari_sange_expeditor_id');
     }
 }

@@ -79,7 +79,7 @@ class RecoltareSangeComandaController extends Controller
         // Adaugarea recoltarilor la comanda
         RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => $recoltareSangeComanda->id]);
 
-        return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->numar ?? '') . '” a fost adăugată cu succes!');
+        return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->comanda_nr ?? '') . '” a fost adăugată cu succes!');
     }
 
     /**
@@ -157,7 +157,7 @@ class RecoltareSangeComandaController extends Controller
 
 //         dd('stop');
 
-        return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->numar ?? '') . '” a fost modificată cu succes!');
+        return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->comanda_nr ?? '') . '” a fost modificată cu succes!');
     }
 
     /**
