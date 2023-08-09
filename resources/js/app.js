@@ -122,7 +122,7 @@ const recoltareSangeComanda = createApp({
 
             recoltariSangeAdaugateLaComanda: [],
 
-            mesajNegasireRecoltari: '',
+            mesajCautareRecoltari: '',
         }
     },
     created: function () {
@@ -138,16 +138,21 @@ const recoltareSangeComanda = createApp({
     },
     methods: {
         cautaRecoltariSange() {
-            this.recoltariSangeCautate = [];
-            this.mesajNegasireRecoltari = "";
+            // this.recoltariSangeCautate = [];
+            // this.mesajCautareRecoltari = "";
             for (var i = 0; i < this.recoltariSange.length; i++) {
                 if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
                     this.recoltariSangeCautate.push(this.recoltariSange[i]);
                 }
             }
             if (!this.recoltariSangeCautate.length){
-                this.mesajNegasireRecoltari = "<center>Nu au fost găsite recoltări</center>Criterii căutate: <ul> <li>Cod: " + this.recoltareSangeCod + "</li><li>Cantitate: " + this.recoltareSangeCantitate + "</li></ul>";
+                this.mesajCautareRecoltari = "<div class='bg-danger text-white rouded-3'><center>Nu au fost găsite recoltări</center>Criterii căutate: <ul> <li>Cod: " + this.recoltareSangeCod + "</li><li>Cantitate: " + this.recoltareSangeCantitate + "</li></ul></div>";
             }
+        },
+        cautaRecoltariSangeCuDelay() {
+            this.mesajCautareRecoltari = "<div class='bg-info text-white rouded-3'><center>Se caută recoltări</center></div>";
+            this.recoltariSangeCautate = [];
+            setTimeout(() => this.cautaRecoltariSange(), 500);
         },
         adaugaRecoltareSangeLaComanda: function (recoltareSangeId) {
             for (var i = 0; i < this.recoltariSangeAdaugateLaComanda.length; i++) {

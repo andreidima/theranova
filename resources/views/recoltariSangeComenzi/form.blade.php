@@ -64,7 +64,7 @@
                         class="form-control bg-white rounded-3"
                         v-model="recoltareSangeCod"
                         autocomplete="off"
-                        v-on:keydown.enter.prevent='cautaRecoltariSange()'
+                        v-on:keydown.enter.prevent='cautaRecoltariSangeCuDelay()'
                         >
                     <span class="input-group-text">Cantitate</span>
                     <input
@@ -73,9 +73,9 @@
                         size="10"
                         v-model="recoltareSangeCantitate"
                         autocomplete="off"
-                        v-on:keydown.enter.prevent='cautaRecoltariSange()'
+                        v-on:keydown.enter.prevent='cautaRecoltariSangeCuDelay()'
                         >
-                    <button type="button" class="btn btn-primary text-white" @click="cautaRecoltariSange()">Caută</button>
+                    <button type="button" class="btn btn-primary text-white" @click="cautaRecoltariSangeCuDelay()">Caută</button>
                 </div>
             </div>
         </div>
@@ -89,6 +89,7 @@
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">#</th>
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">Cod</th>
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">Produs</th>
+                                <th class="text-white" style="background-color: rgb(107, 126, 1)">Grupa</th>
                                 <th class="text-white" style="background-color: rgb(107, 126, 1)">Cantitate</th>
                                 <th class="text-white text-end" style="background-color: rgb(107, 126, 1)">Acțiuni</th>
                             </tr>
@@ -105,6 +106,9 @@
                                     @{{ recoltareSangeCautata.produs.nume }}
                                 </td>
                                 <td class="">
+                                    @{{ recoltareSangeCautata.grupa.nume }}
+                                </td>
+                                <td class="">
                                     @{{ recoltareSangeCautata.cantitate }}
                                 </td>
                                 <td class="text-end">
@@ -116,8 +120,9 @@
                 </div>
             </div>
         </div>
-        <div v-else="mesajNegasireRecoltari" class="row mb-0 justify-content-center">
-            <div v-html="mesajNegasireRecoltari" class="col-lg-11 mb-0 bg-danger text-white rounded-3">
+        <div v-else="mesajCautareRecoltari" class="row mb-0 justify-content-center">
+            {{-- <div v-html="mesajCautareRecoltari" class="col-lg-11 mb-0 bg-danger text-white rounded-3"> --}}
+            <div v-html="mesajCautareRecoltari" class="col-lg-11 mb-0 rounded-3">
                 {{-- @{{ mesajNegasireRecoltari }} --}}
             </div>
         </div>
@@ -138,6 +143,7 @@
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">#</th>
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">Cod</th>
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">Produs</th>
+                                <th class="text-white" style="background-color: rgb(0, 116, 44)">Grupa</th>
                                 <th class="text-white" style="background-color: rgb(0, 116, 44)">Cantitate</th>
                                 <th class="text-white text-end" style="background-color: rgb(0, 116, 44)">Acțiuni</th>
                             </tr>
@@ -153,6 +159,9 @@
                                 </td>
                                 <td class="">
                                     @{{ recoltareSangeAdaugataLaComanda.produs.nume }}
+                                </td>
+                                <td class="">
+                                    @{{ recoltareSangeAdaugataLaComanda.grupa.nume }}
                                 </td>
                                 <td class="">
                                     @{{ recoltareSangeAdaugataLaComanda.cantitate }}
