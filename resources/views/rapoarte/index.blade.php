@@ -73,6 +73,9 @@
                                 <button type="submit" name="action" value="livrariDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
                                     Raport Livrări (comenzi) detaliat pe zile
                                 </button>
+                                <button type="submit" name="action" value="rebuturiDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
+                                    Raport rebuturi detaliat pe zile
+                                </button>
                                 <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
                                     Stocuri pungi sânge (se va descărca stocul până la prima dată aleasă din interval)
                                 </button>

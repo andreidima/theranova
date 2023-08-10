@@ -83,15 +83,16 @@ class RaportController extends Controller
             case 'rebuturiDetaliatePeZile':
                 $request->validate(['interval' => 'required']);
 
-                $rebuturi = RecoltareSange::with('rebut')
+                $recoltariSange = RecoltareSange::with('rebut')
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
                     })
                     ->get();
+                $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
 
-                // return view('rapoarte.export.rebuturiDetaliatePeZile', compact('rebuturi', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.rebuturiDetaliatePeZile', compact('rebuturi', 'interval'))
-                    ->setPaper('a4', 'portrait');
+                // return view('rapoarte.export.rebuturiDetaliatePeZile', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.rebuturiDetaliatePeZile', compact('recoltariSange', 'rebuturi', 'interval'))
+                    ->setPaper('a4', 'landscape');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();

@@ -130,6 +130,7 @@
                         <th colspan="3" style="width: 60px; padding:0px">Rebut procesare</th>
                         <th colspan="7" style="width: 140px;">Rebut control laborator</th>
                         <th colspan="5" style="width: 100px;">Rebut stoc</th>
+                        <th style="width: 20px;"></th>
                         <th rowspan="2" class="rotate" style="height: 20px">
                             <div>
                                 Total rebut
@@ -184,8 +185,15 @@
                                                 </div>
                                             </th>
                                             @break
-                                        @default
+                                        @case ("L > 11 000")
                                             <th class='rotate' style="height: 80px">
+                                                <div>
+                                                    L > 11 000
+                                                </div>
+                                            </th>
+                                            @break
+                                        @default
+                                            <th class='rotate' style="height: 100px">
                                                 <div>
                                                     {{ $rebut->nume }}
                                                 </div>
@@ -195,86 +203,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="">
-                            1. Unit. eritrocitare (indiferent de tip)
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
-                        @endforeach
-                        <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
-                    </tr>
-                    <tr>
-                        <td style="">
-                            2. Unit. trombocitare (CT)
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CTS'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
-                        @endforeach
-                        <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CTS'])->count() }}</td>
-                    </tr>
-                    <tr>
-                        <td style="">
-                            3. Unit. Plasma
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['PPC'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
-                        @endforeach
-                        <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['PPC'])->count() }}</td>
-                    </tr>
-                    <tr>
-                        <td style="">
-                            4. Unit. PPC-DV-COVID
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">0</td>
-                        @endforeach
-                        <td style="text-align:center">0</td>
-                    </tr>
-                    <tr>
-                        <td style="">
-                            5. Unit. CRIO
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">0</td>
-                        @endforeach
-                        <td style="text-align:center">0</td>
-                    </tr>
-                    <tr>
-                        <td style="">
-                            6. Unit. afereză CUT-DL
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
-                        @endforeach
-                        <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->count() }}</td>
-                    </tr>
-                    <tr>
-                        <td style="">
-                            7. Unit. PPC-A-DV-COVID
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">0</td>
-                        @endforeach
-                        <td style="text-align:center">0</td>
-                    </tr>
-                    @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CUT'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
-                    <tr>
-                        <td>
-                            {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}
-                        </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align:center">{{ $recoltariSangeGrupateDupaProdus->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
-                        @endforeach
-                        <td style="text-align:center"><b>{{ $recoltariSangeGrupateDupaProdus->count() }}</b></td>
-                    </tr>
+                    @foreach($recoltariSange->groupBy('data') as $recoltariSangeGrupateDupaData)
+                        <tr>
+                            <td style="">
+                                {{ $recoltariSangeGrupateDupaData->first()->rebut_data ? \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->rebut_data)->isoFormat('DD.MM.YYYY') : '' }}
+                            </td>
+                            @foreach ($rebuturi as $rebut)
+                                <td style="text-align: center;">{{ $recoltariSangeGrupateDupaData->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
+                            @endforeach
+                            <td style="text-align:center"><b>{{ $recoltariSangeGrupateDupaData->count() }}</b></td>
+                        </tr>
                     @endforeach
                     <tr>
-                        <td>
+                        <td style="text-align: center">
                             <b>Total</b>
                         </td>
                         @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">{{ $recoltariSange->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
+                            <td style="text-align: center;"><b>{{ $recoltariSange->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</b></td>
                         @endforeach
                         <td style="text-align: center;">
                             <b>{{ $recoltariSange->count() }}</b>
