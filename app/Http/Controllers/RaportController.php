@@ -68,7 +68,7 @@ class RaportController extends Controller
                 $request->validate(['interval' => 'required']);
 
                 $query = RecoltareSangeComanda::
-                    with('recoltariSange.produs')
+                    with('recoltariSange.produs', 'recoltariSange.grupa')
                     ->whereBetween('data', [strtok($interval, ','), strtok( '' )])
                     ->orderBy('data');
                 $comenzi = $query->get();
