@@ -187,17 +187,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                    @foreach ($rebutari->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $rebutariGrupateDupaProduse)
                     <tr>
-                        <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                        <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
+                        <td style="">{{ $rebutariGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
+                        <td style="text-align:right">{{ $rebutariGrupateDupaProduse->count() }}</td>
+                        <td style="text-align:right">{{ number_format($rebutariGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
                     </tr>
                     @endforeach
                     <tr>
                         <td style="text-align:right"><b>Total</b></td>
-                        <td style="text-align:right"><b>{{ $recoltariSange->whereNotNull('recoltari_sange_rebut_id')->count() }}</b></td>
-                        <td style="text-align:right"><b>{{ number_format($recoltariSange->whereNotNull('recoltari_sange_rebut_id')->sum('cantitate') / 1000, 2) }}</b></td>
+                        <td style="text-align:right"><b>{{ $rebutari->count() }}</b></td>
+                        <td style="text-align:right"><b>{{ number_format($rebutari->sum('cantitate') / 1000, 2) }}</b></td>
                     </tr>
                 </tbody>
             </table>

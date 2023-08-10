@@ -50,7 +50,7 @@
         }
 
         th, td {
-            padding: 1px 10px;
+            padding: 1px 5px;
             border-width: 1px;
             border-style: solid;
 
@@ -98,7 +98,8 @@
                 <thead>
                     <tr>
                         <th rowspan="2">Data</th>
-                        <th rowspan="2">Nr. Pungi</th>
+                        <th rowspan="2">Nr. donatori</th>
+                        <th rowspan="2">Nr. pungi</th>
                         @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
                             <th colspan="2">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</th>
                         @endforeach
@@ -115,6 +116,9 @@
                         <tr>
                             <td>
                                 {{ \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->data ?? '')->isoFormat('DD.MM.YYYY') }}
+                            </td>
+                            <td style="text-align:center">
+                                {{ $recoltariSangeGrupateDupaData->unique('cod')->count() }}
                             </td>
                             <td style="text-align:center">
                                 {{ $recoltariSangeGrupateDupaData->count() }}

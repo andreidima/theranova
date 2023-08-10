@@ -67,6 +67,10 @@ class RecoltareSangeController extends Controller
         for ($i = 1; $i <= count($request->pungi); $i++){
             $recoltareSange = new RecoltareSange;
             $recoltareSange->recoltari_sange_produs_id = $request->pungi[$i]['produs'];
+            if (intval($request->pungi[$i]['produs']) === 7){ // id-ul 7 inseamna ca este rebutat din cauza cantitatii direct de la recoltare, asa ca i se adauga si atributele de rebutat
+                $recoltareSange->recoltari_sange_rebut_id = 1; // id-ul 1 este pentru „Rebut recoltare”
+                $recoltareSange->rebut_data = $request->data;
+            }
             $recoltareSange->recoltari_sange_grupa_id = $request->recoltari_sange_grupa_id;
             $recoltareSange->data = $request->data;
             $recoltareSange->cod = $request->cod;
@@ -116,6 +120,16 @@ class RecoltareSangeController extends Controller
      */
     public function update(Request $request, RecoltareSange $recoltareSange)
     {
+        // Se verifica daca produs_id = 7 (rebut de recoltare/cantitate), si se actualizeaza campurile de rebut daca acesta s-a modificat
+        if ((intval($recoltareSange->recoltari_sange_produs_id) === 7) && (intval($request->recoltari_sange_produs_id) !== 7)){ // a fost scos de la rebut de colectare
+            $recoltareSange->recoltari_sange_rebut_id = null;
+            $recoltareSange->rebut_data = null;
+        } elseif ((intval($recoltareSange->recoltari_sange_produs_id) !== 7) && (intval($request->recoltari_sange_produs_id) === 7)) { // a fost trecut acum ca rebut de colectare
+            $recoltareSange->recoltari_sange_rebut_id = 1; // id-ul 1 este pentru „Rebut recoltare”
+            $recoltareSange->rebut_data = $request->data;
+        }
+
+        // Se actualizeaza si cu restul datelor din $request
         $recoltareSange->update($this->validateRequest($request));
 
         return redirect($request->session()->get('recoltareSangeReturnUrl') ?? ('/recoltari-sange'))->with('status', 'Recoltarea de sânge „' . ($recoltareSange->cod ?? '') . '” a fost modificată cu succes!');

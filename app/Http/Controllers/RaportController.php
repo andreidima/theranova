@@ -34,8 +34,14 @@ class RaportController extends Controller
                     })
                     ->get();
 
-                // return view('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'livrari', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'livrari', 'interval'))
+                $rebutari = RecoltareSange::with('produs')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                // return view('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'livrari', 'rebutari', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToate', compact('recoltariSange', 'livrari', 'rebutari', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
@@ -96,8 +102,8 @@ class RaportController extends Controller
                             });
                     })
                     ->where(function($query) use ($interval){
-                        $query->whereNull('rebut_created_at')
-                            ->orwhereDate('rebut_created_at',  '>', [strtok($interval, ',')]);
+                        $query->whereNull('rebut_data')
+                            ->orwhereDate('rebut_data',  '>', [strtok($interval, ',')]);
                     })
                     ->get();
 
@@ -129,13 +135,13 @@ class RaportController extends Controller
                             });
                     })
                     ->where(function($query) use ($interval){
-                        $query->whereNull('rebut_created_at')
-                            ->orwhereDate('rebut_created_at',  '>', [strtok($interval, ',')]);
+                        $query->whereNull('rebut_data')
+                            ->orwhereDate('rebut_data',  '>', [strtok($interval, ',')]);
                     })
                     ->get();
                 $recoltariSangeRebutate = RecoltareSange::with('produs')
                     ->when($interval, function ($query, $interval) {
-                        return $query->whereBetween('rebut_created_at', [strtok($interval, ','), strtok( '' )]);
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
                     })
                     ->get();
                 $recoltariSangeLivrate = RecoltareSange::with('produs', 'comanda')

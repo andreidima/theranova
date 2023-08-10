@@ -96,7 +96,7 @@
                                     {{ $recoltareSange->rebut->nume ?? ''}}
                                 </td>
                                 <td class="">
-                                    {{ $recoltareSange->rebut_created_at ? \Carbon\Carbon::parse($recoltareSange->rebut_created_at)->isoFormat('DD.MM.YYYY') : '' }}
+                                    {{ $recoltareSange->rebut_data ? \Carbon\Carbon::parse($recoltareSange->rebut_data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end">
