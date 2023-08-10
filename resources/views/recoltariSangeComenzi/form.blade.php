@@ -64,7 +64,7 @@
                         class="form-control bg-white rounded-3"
                         v-model="recoltareSangeCod"
                         autocomplete="off"
-                        v-on:keydown.enter.prevent='cautaRecoltariSangeCuDelay()'
+                        v-on:keydown.enter.prevent=''
                         >
                     <span class="input-group-text">Cantitate</span>
                     <input

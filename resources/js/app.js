@@ -138,12 +138,24 @@ const recoltareSangeComanda = createApp({
     },
     methods: {
         cautaRecoltariSange() {
+            // console.log(this.recoltareSangeCod);
+            this.recoltareSangeCod = this.recoltareSangeCod.replaceAll("A", ""); // daca se lucreaza cu cititorul de barcode, acesta va pune un „A” in fata codului si un „A” la final
+            // console.log(this.recoltareSangeCod.slice(0, -1));
             // this.recoltariSangeCautate = [];
             // this.mesajCautareRecoltari = "";
             for (var i = 0; i < this.recoltariSange.length; i++) {
-                if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
+                if (this.recoltariSange[i].data === '2023-06-30') { // la recoltarile vechi lipsea ultimul caracter din barcod
+                    // recoltari din import -> se cauta fara ultimul caracter
+                    // console.log(this.recoltareSangeCod.slice(0, -1));
+                    if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod.slice(0, -1)) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
+                        this.recoltariSangeCautate.push(this.recoltariSange[i]);
+                    }
+                // recoltari din aplicatia noua -> se cauta normal
+                } else if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
+                    // console.log(this.recoltareSangeCod);
                     this.recoltariSangeCautate.push(this.recoltariSange[i]);
                 }
+
             }
             if (!this.recoltariSangeCautate.length){
                 this.mesajCautareRecoltari = "<div class='bg-danger text-white rouded-3'><center>Nu au fost găsite recoltări</center>Criterii căutate: <ul> <li>Cod: " + this.recoltareSangeCod + "</li><li>Cantitate: " + this.recoltareSangeCantitate + "</li></ul></div>";
