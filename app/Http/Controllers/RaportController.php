@@ -66,21 +66,12 @@ class RaportController extends Controller
 
             case 'livrariDetaliatePeZile':
                 $request->validate(['interval' => 'required']);
-                $query = RecoltareSange::
-                    whereHas('comanda', function ($query) use($interval) {
-                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
-                    })
-                    ->sum('cantitate');
-                // $recoltariSange = $query->get();
-                dd($query);
 
                 $query = RecoltareSangeComanda::
                     with('recoltariSange.produs')
                     ->whereBetween('data', [strtok($interval, ','), strtok( '' )])
                     ->orderBy('data');
                 $comenzi = $query->get();
-
-
 
                 // return view('rapoarte.export.livrariDetaliatePeZile', compact('comenzi', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.livrariDetaliatePeZile', compact('comenzi', 'interval'))
