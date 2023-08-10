@@ -144,15 +144,27 @@ const recoltareSangeComanda = createApp({
             // this.recoltariSangeCautate = [];
             // this.mesajCautareRecoltari = "";
             for (var i = 0; i < this.recoltariSange.length; i++) {
-                if (this.recoltariSange[i].data === '2023-06-30') { // la recoltarile vechi lipsea ultimul caracter din barcod
+                // if (this.recoltariSange[i].data === '2023-06-30') { // la recoltarile vechi lipsea ultimul caracter din barcod
+                // if (this.recoltareSangeCod.length < 9) { // la recoltarile vechi lipsea ultimul caracter din barcod
                     // recoltari din import -> se cauta fara ultimul caracter
                     // console.log(this.recoltareSangeCod.slice(0, -1));
-                    if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod.slice(0, -1)) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
-                        this.recoltariSangeCautate.push(this.recoltariSange[i]);
-                    }
+                    // if (i < 5){
+                    //     console.log(this.recoltariSange[i].cod.substring(0, this.recoltareSangeCod.length));
+                    // }
+
+                // la recoltarile vechi lipsea ultimul caracter din barcod
+                // if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod.substring(0, this.recoltareSangeCod.length) === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
+                //     this.recoltariSangeCautate.push(this.recoltariSange[i]);
+                // }
+
                 // recoltari din aplicatia noua -> se cauta normal
-                } else if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
+                // } else if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
                     // console.log(this.recoltareSangeCod);
+                    // this.recoltariSangeCautate.push(this.recoltariSange[i]);
+                // }
+
+                // la recoltarile vechi lipsea ultimul caracter din barcod, asa ca daca barcodul este mai scurt, se cauta doar cat este el
+                if (this.recoltariSange[i].cod && (this.recoltariSange[i].cod === this.recoltareSangeCod.substring(0, this.recoltariSange[i].cod.length)) && (this.recoltariSange[i].cantitate == this.recoltareSangeCantitate)) {
                     this.recoltariSangeCautate.push(this.recoltariSange[i]);
                 }
 
