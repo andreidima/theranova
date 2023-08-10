@@ -131,6 +131,7 @@ class RaportController extends Controller
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
+                    ->whereNull('intrare_id')
                     ->get();
                 $recoltariSangeInitiale = RecoltareSange::with('produs')
                     ->when($interval, function ($query, $interval) {

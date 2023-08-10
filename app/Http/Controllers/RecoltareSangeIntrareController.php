@@ -81,6 +81,7 @@ class RecoltareSangeIntrareController extends Controller
 
         foreach($request->pungi as $punga){
             $recoltareSange = RecoltareSange::create();
+            $recoltareSange->data = $recoltareSangeIntrare->data; // i se adauga pungii automat data la care a intrat la CTS Focsani
             $recoltareSange->data_expirare = $punga['data_expirare'];
             $recoltareSange->cod = $punga['cod'];
             $recoltareSange->recoltari_sange_produs_id = $punga['recoltari_sange_produs_id'];
@@ -156,6 +157,7 @@ class RecoltareSangeIntrareController extends Controller
             }
             // echo $punga['id'] .  ' - ' . $recoltareSange . '<br>';
             // dd('stop');
+            $recoltareSange->data = $recoltareSangeIntrare->data; // i se adauga pungii automat data la care a intrat la CTS Focsani
             $recoltareSange->data_expirare = $punga['data_expirare'];
             $recoltareSange->cod = $punga['cod'];
             $recoltareSange->recoltari_sange_produs_id = $punga['recoltari_sange_produs_id'];
