@@ -80,6 +80,22 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
+            case 'rebuturiDetaliatePeZile':
+                $request->validate(['interval' => 'required']);
+
+                $rebuturi = RecoltareSange::with('rebut')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                // return view('rapoarte.export.rebuturiDetaliatePeZile', compact('rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.rebuturiDetaliatePeZile', compact('rebuturi', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
             case 'stocuriPungiSange':
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::with('produs', 'grupa')
@@ -277,8 +293,8 @@ class RaportController extends Controller
                     });
             })
             ->where(function($query) use ($interval){
-                $query->whereNull('rebut_created_at')
-                    ->orwhereDate('rebut_created_at',  '>', [strtok($interval, ',')]);
+                $query->whereNull('rebut_data')
+                    ->orwhereDate('rebut_data',  '>', [strtok($interval, ',')]);
             })
             ->where('recoltari_sange_produs_id', $request->produsId)
             ->get();
