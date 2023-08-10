@@ -179,11 +179,9 @@ class RaportController extends Controller
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::
                     with('rebut', 'produs')
-                    ->whereNotNull('recoltari_sange_rebut_id')
                     ->when($interval, function ($query, $interval) {
-                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
                     })
-                    ->latest()
                     ->get();
                 $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
 
@@ -198,9 +196,8 @@ class RaportController extends Controller
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::
                     with('rebut', 'produs')
-                    ->whereNotNull('recoltari_sange_rebut_id')
                     ->when($interval, function ($query, $interval) {
-                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
                     })
                     ->latest()
                     ->get();
