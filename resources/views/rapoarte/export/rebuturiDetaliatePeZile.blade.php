@@ -112,7 +112,7 @@
 
             <br>
 
-            <p style="margin:0%; text-align: center"><b>G.2. REBUT REPARTIȚIE</b></p>
+            <p style="margin:0%; text-align: center"><b>Raport rebuturi detaliat pe zile</b></p>
             <table style="margin:0%; width: 100%; font-size:9px;">
                 <thead>
                     <tr>
