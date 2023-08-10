@@ -22,6 +22,7 @@ class RaportController extends Controller
                 $request->validate(['interval' => 'required']);
                 $query = RecoltareSange::
                     with('produs', 'comanda')
+                    ->whereNull('intrare_id')
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
