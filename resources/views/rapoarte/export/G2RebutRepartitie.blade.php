@@ -214,7 +214,7 @@
                             1. Unit. eritrocitare (indiferent de tip)
                         </td>
                         @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
-                                <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
+                                <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'REBUT'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
                         <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
@@ -279,7 +279,9 @@
                         <td style="text-align: center;">0</td>
                         <td style="text-align:center">0</td>
                     </tr>
-                    @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CUT'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
+
+                    {{-- Daca nu a fost in cele de mai sus, sau daca nu a fost la REBUT, atunci se afiseaza separat --}}
+                    @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CUT', 'REBUT'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
                     <tr>
                         <td>
                             {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}
