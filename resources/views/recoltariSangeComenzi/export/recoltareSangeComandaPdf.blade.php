@@ -197,7 +197,7 @@
                     <th>Cod</th>
                     <th>Cant.</th> --}}
                 </tr>
-                @foreach ($recoltareSangeComanda->recoltariSange->sortBy('recoltari_sange_produs_id') as $recoltareSange)
+                @foreach ($recoltareSangeComanda->recoltariSange as $recoltareSange)
                     {{-- @if ($loop->odd) <tr> @endif --}}
                     <tr>
                         <td style="text-align:center;">{{ $recoltareSange->produs->nume ?? '' }}</td>

@@ -184,6 +184,16 @@
                                                 </div>
                                             </th>
                                             @break
+                                        @case ("r. L > 11 000")
+
+                                            {{-- Acestea se bagă tot la punctul „p. Inform. postdonare” --}}
+
+                                            {{-- <th class='rotate' style="height: 80px">
+                                                <div>
+                                                    r. L > 11 000
+                                                </div>
+                                            </th> --}}
+                                            @break
                                         @default
                                             <th class='rotate' style="height: 100px">
                                                 <div>
@@ -194,68 +204,79 @@
                         @endforeach
                     </tr>
                 </thead>
+
+
+                {{-- Rebut id 16 si 17 se pun la un loc --}}
+
                 <tbody>
                     <tr>
                         <td style="">
                             1. Unit. eritrocitare (indiferent de tip)
                         </td>
-                        @foreach ($rebuturi as $rebut)
-                            <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
+                                <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
+                        <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
                     </tr>
                     <tr>
                         <td style="">
                             2. Unit. trombocitare (CT)
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CTS'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
+                        <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CTS'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CTS'])->count() }}</td>
                     </tr>
                     <tr>
                         <td style="">
                             3. Unit. Plasma
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['PPC'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
+                        <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['PPC'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['PPC'])->count() }}</td>
                     </tr>
                     <tr>
                         <td style="">
                             4. Unit. PPC-DV-COVID
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">0</td>
                         @endforeach
+                        <td style="text-align: center;">0</td>
                         <td style="text-align:center">0</td>
                     </tr>
                     <tr>
                         <td style="">
                             5. Unit. CRIO
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">0</td>
                         @endforeach
+                        <td style="text-align: center;">0</td>
                         <td style="text-align:center">0</td>
                     </tr>
                     <tr>
                         <td style="">
                             6. Unit. afereză CUT-DL
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
+                        <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CUT'])->count() }}</td>
                     </tr>
                     <tr>
                         <td style="">
                             7. Unit. PPC-A-DV-COVID
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">0</td>
                         @endforeach
+                        <td style="text-align: center;">0</td>
                         <td style="text-align:center">0</td>
                     </tr>
                     @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CUT'])->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
@@ -263,19 +284,21 @@
                         <td>
                             {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align:center">{{ $recoltariSangeGrupateDupaProdus->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
+                        <td style="text-align: center;">{{ $recoltariSangeGrupateDupaProdus->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align:center"><b>{{ $recoltariSangeGrupateDupaProdus->count() }}</b></td>
                     </tr>
                     @endforeach
                     <tr>
-                        <td>
+                        <td style="text-align:center">
                             <b>Total</b>
                         </td>
-                        @foreach ($rebuturi as $rebut)
+                        @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                             <td style="text-align: center;">{{ $recoltariSange->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
+                        <td style="text-align: center;">{{ $recoltariSange->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
                         <td style="text-align: center;">
                             <b>{{ $recoltariSange->count() }}</b>
                         </td>

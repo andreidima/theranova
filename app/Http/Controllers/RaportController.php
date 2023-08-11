@@ -52,6 +52,7 @@ class RaportController extends Controller
                 $request->validate(['interval' => 'required']);
                 $query = RecoltareSange::
                     with('produs', 'comanda')
+                    ->whereNull('intrare_id')
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
@@ -68,14 +69,21 @@ class RaportController extends Controller
             case 'livrariDetaliatePeZile':
                 $request->validate(['interval' => 'required']);
 
-                $query = RecoltareSangeComanda::
-                    with('recoltariSange.produs', 'recoltariSange.grupa')
-                    ->whereBetween('data', [strtok($interval, ','), strtok( '' )])
-                    ->orderBy('data');
-                $comenzi = $query->get();
+                // $query = RecoltareSangeComanda::
+                //     with('recoltariSange.produs', 'recoltariSange.grupa')
+                //     ->whereBetween('data', [strtok($interval, ','), strtok( '' )])
+                //     ->orderBy('data');
+                // $comenzi = $query->get();
 
-                // return view('rapoarte.export.livrariDetaliatePeZile', compact('comenzi', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.livrariDetaliatePeZile', compact('comenzi', 'interval'))
+                $recoltariSange = RecoltareSange::with('produs', 'comanda')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    // ->orderBy('comanda.data')
+                    ->get();
+
+                // return view('rapoarte.export.livrariDetaliatePeZile', compact('recoltariSange', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.livrariDetaliatePeZile', compact('recoltariSange', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
@@ -88,6 +96,7 @@ class RaportController extends Controller
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
                     })
+                    ->orderBy('rebut_data')
                     ->get();
                 $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
 

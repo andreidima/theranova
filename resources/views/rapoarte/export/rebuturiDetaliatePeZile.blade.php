@@ -203,7 +203,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($recoltariSange->groupBy('data') as $recoltariSangeGrupateDupaData)
+                    @foreach($recoltariSange->groupBy('rebut_data') as $recoltariSangeGrupateDupaData)
                         <tr>
                             <td style="">
                                 {{ $recoltariSangeGrupateDupaData->first()->rebut_data ? \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->rebut_data)->isoFormat('DD.MM.YYYY') : '' }}

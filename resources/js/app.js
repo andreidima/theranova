@@ -130,7 +130,8 @@ const recoltareSangeComanda = createApp({
             for (var i = 0; i < this.recoltariSangeAdaugateLaComandaIDuriVechi.length; i++) {
                 for (var j = 0; j < this.recoltariSange.length; j++) {
                     if (this.recoltariSangeAdaugateLaComandaIDuriVechi[i] == this.recoltariSange[j].id) {
-                        this.recoltariSangeAdaugateLaComanda.unshift(this.recoltariSange[j]);
+                        // this.recoltariSangeAdaugateLaComanda.unshift(this.recoltariSange[j]);
+                        this.recoltariSangeAdaugateLaComanda.push(this.recoltariSange[j]);
                     }
                 }
             }
@@ -186,7 +187,8 @@ const recoltareSangeComanda = createApp({
             }
             for (var i = 0; i < this.recoltariSangeCautate.length; i++) {
                 if (this.recoltariSangeCautate[i].id && (this.recoltariSangeCautate[i].id === recoltareSangeId)) {
-                    this.recoltariSangeAdaugateLaComanda.unshift(this.recoltariSangeCautate[i]);
+                    // this.recoltariSangeAdaugateLaComanda.unshift(this.recoltariSangeCautate[i]);
+                    this.recoltariSangeAdaugateLaComanda.push(this.recoltariSangeCautate[i]);
                 }
             }
         },

@@ -129,6 +129,21 @@
                             @endforeach
                         </tr>
                     @endforeach
+                        <tr>
+                            <td style="text-align: center">
+                                <b>Total</b>
+                            </td>
+                            <td style="text-align:center">
+                                <b>{{ $recoltariSange->unique('cod')->count() }}</b>
+                            </td>
+                            <td style="text-align:center">
+                                <b>{{ $recoltariSange->count() }}</b>
+                            </td>
+                            @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
+                                <td style="text-align:right"><b>{{ $recoltariSangeGrupateDupaProduse->count() }}</b></td>
+                                <td style="text-align:right"><b>{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</b></td>
+                            @endforeach
+                        </tr>
                 </tbody>
             </table>
 

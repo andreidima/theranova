@@ -75,9 +75,10 @@ class RecoltareSangeComandaController extends Controller
         $this->validateRequest($request);
 
         $recoltareSangeComanda = RecoltareSangeComanda::create($request->except('recoltariSangeAdaugateLaComanda', 'date'));
-
         // Adaugarea recoltarilor la comanda
-        RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => $recoltareSangeComanda->id]);
+        foreach ($request->recoltariSangeAdaugateLaComanda as $key=>$recoltareSange){
+            RecoltareSange::where('id', $recoltareSange)->update(['comanda_id' => $recoltareSangeComanda->id, 'comanda_ordine_recoltari' => $key+1]);
+        }
 
         return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->comanda_nr ?? '') . '” a fost adăugată cu succes!');
     }
@@ -105,7 +106,11 @@ class RecoltareSangeComandaController extends Controller
     {
         $request->session()->get('recoltareSangeComandaReturnUrl') ?? $request->session()->put('recoltareSangeComandaReturnUrl', url()->previous());
 
-        $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)->with('recoltariSange')->first();
+        $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)
+            ->with('recoltariSange', function($query){
+                $query->orderBy('comanda_ordine_recoltari');
+            })
+            ->first();
 
         $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();;
         $recoltariSange = RecoltareSange::with('grupa', 'produs')
@@ -138,7 +143,9 @@ class RecoltareSangeComandaController extends Controller
         RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
 
         // Adaugarea recoltarilor la comanda
-        RecoltareSange::whereIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => $recoltareSangeComanda->id]);
+        foreach ($request->recoltariSangeAdaugateLaComanda as $key=>$recoltareSange){
+            RecoltareSange::where('id', $recoltareSange)->update(['comanda_id' => $recoltareSangeComanda->id, 'comanda_ordine_recoltari' => $key+1]);
+        }
 
 
 //         $recoltariSangeVechiIduri = $recoltareSangeComanda->recoltariSange->pluck('id');
@@ -208,12 +215,22 @@ class RecoltareSangeComandaController extends Controller
 
     public function exportPdf(Request $request, RecoltareSangeComanda $recoltareSangeComanda)
     {
-        $recoltareSangeGrupe = RecoltareSangeGrupa::select('id', 'nume')->get();
+        // $recoltareSangeGrupe = RecoltareSangeGrupa::select('id', 'nume')->get();
+
+        $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)
+            ->with('recoltariSange.produs', 'recoltariSange.grupa')
+            ->with('recoltariSange', function($query){
+                $query->orderBy('comanda_ordine_recoltari');
+            })
+            ->first();
+
+        // dd($recoltareSangeComanda);
 
         if ($request->view_type === 'export-html') {
-            return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda', 'recoltareSangeGrupe'));
+            return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'));
         } elseif ($request->view_type === 'export-pdf') {
-            $pdf = \PDF::loadView('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda', 'recoltareSangeGrupe'))
+            return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'));
+            $pdf = \PDF::loadView('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'))
                 ->setPaper('a4', 'portrait');
             $pdf->getDomPDF()->set_option("enable_php", true);
             // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');

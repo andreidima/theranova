@@ -68,7 +68,7 @@
                                     Raport Director
                                 </button>
                                 <button type="submit" name="action" value="recoltariSangeCtsvToateDetaliatPeZile" class="list-group-item list-group-item-action" aria-current="true">
-                                    Raport Director detaliat pe zile
+                                    Raport recoltări detaliat pe zile
                                 </button>
                                 <button type="submit" name="action" value="livrariDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
                                     Raport Livrări (comenzi) detaliat pe zile
