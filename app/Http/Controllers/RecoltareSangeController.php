@@ -32,7 +32,8 @@ class RecoltareSangeController extends Controller
             ->when($searchData, function ($query, $searchData) {
                 return $query->whereDate('data', $searchData);
             })
-            ->latest();
+            ->orderBy('id', 'desc');
+            // ->latest();
 
         $recoltariSange = $query->simplePaginate(50);
 
