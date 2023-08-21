@@ -802,7 +802,7 @@
                         <b>Total</b>
                     </td>
                     <td style="width:15%; text-align:center;">
-                        0
+                        {{ $recoltariSangeDistribuiteCatreAlteCts->count() }}
                     </td>
                 </tr>
                 <tr>

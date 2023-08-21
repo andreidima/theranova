@@ -53,7 +53,7 @@
                             <div class="col-lg-12 mb-5 align-items-center text-center" id="datePicker">
                                 <label for="interval" class="mb-1 py-1 px-3 culoare2 rounded-3">Alege intervalul</label>
                                 <vue-datepicker-next
-                                    data-veche="{{ $interval }}"
+                                    data-veche="{{ $interval ?? (\Carbon\Carbon::today()->subMonthNoOverflow()->startOfMonth()->format('Y-m-d') . "," . \Carbon\Carbon::today()->subMonthNoOverflow()->endOfMonth()->format('Y-m-d')) }}"
                                     nume-camp-db="interval"
                                     tip="date"
                                     range="range"
@@ -82,6 +82,9 @@
                                 <button type="submit" name="action" value="situatiaSangeluiSiAProduselorDinSange" class="list-group-item list-group-item-action" aria-current="true">
                                     Situația sângelui și a produselor din sânge (CONTABILITATE)
                                 </button>
+                                <button type="submit" name="action" value="DProcesare" class="list-group-item list-group-item-action" aria-current="true">
+                                    D. Procesare
+                                </button>
                                 <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
                                     G.1. Rebut
                                 </button>
@@ -93,6 +96,9 @@
                                 </button>
                                 <button type="submit" name="action" value="JCerereSiDistributie" class="list-group-item list-group-item-action" aria-current="true">
                                     J. Cerere și Distribuție
+                                </button>
+                                <button type="submit" name="action" value="MIncidenteDeaLungulActivitatiiDinCts" class="list-group-item list-group-item-action" aria-current="true">
+                                    M. Incidente (număr) de-a lungul activității din CTS
                                 </button>
                                 {{-- <a href="/rapoarte/recoltari-sange/export-pdf" target="_blank" class="list-group-item list-group-item-action active" aria-current="true">
                                     Recoltări de sânge

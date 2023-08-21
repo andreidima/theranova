@@ -6,6 +6,7 @@ use App\Http\Controllers\RecoltareSangeController;
 use App\Http\Controllers\RecoltareSangeIntrareController;
 use App\Http\Controllers\RecoltareSangeComandaController;
 use App\Http\Controllers\RaportController;
+use App\Http\Controllers\RecoltareSangeValidareController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,4 +42,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/rapoarte', [RaportController::class, 'index']);
     Route::get('/rapoarte/stocuri-pungi-sange', [RaportController::class, 'stocuriPungiSange']);
     Route::get('/rapoarte/stocuri-pungi-sange/export-pdf', [RaportController::class, 'stocuriPungiSangeExportPdf']);
+
+    // Validarea recoltarilor de sange ce ajung in laborator
+    Route::get('/recoltari-sange-validare-inregistrari-in-laborator', [RecoltareSangeValidareController::class, 'validare']);
+    Route::post('/recoltari-sange-validare-inregistrari-in-laborator/axios-cauta-punga', [RecoltareSangeValidareController::class, 'axiosCautaPunga']);
+    Route::post('/recoltari-sange-validare-inregistrari-in-laborator/valideaza-invalideaza-punga', [RecoltareSangeValidareController::class, 'axiosValideazaInvalideazaPunga']);
 });

@@ -185,6 +185,37 @@ class RaportController extends Controller
                 // return $pdf->download('Stocuri pungi sange.pdf');
                 return $pdf->stream();
 
+            case 'DProcesare':
+                $request->validate(['interval' => 'required']);
+                $recoltariSangeFaraRebutRecoltare = RecoltareSange::
+                    with('rebut', 'produs')
+                    ->whereNull('intrare_id')
+                    ->where(function($query) {
+                        $query->whereNull('recoltari_sange_rebut_id')
+                            ->orwhere('recoltari_sange_rebut_id', '<>', 1);
+                    })
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest()
+                    ->get();
+                $recoltariSangeRebutProcesareAspectChilos = RecoltareSange::
+                    with('rebut', 'produs')
+                    ->whereNull('intrare_id')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->where('recoltari_sange_rebut_id', 3) // Rebuturi de procesare - Aspect chilos
+                    ->latest()
+                    ->get();
+
+                // return view('rapoarte.export.DProcesare', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.DProcesare', compact('recoltariSangeFaraRebutRecoltare', 'recoltariSangeRebutProcesareAspectChilos', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
             case 'G1Rebut':
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::
@@ -224,15 +255,28 @@ class RaportController extends Controller
             case 'HUnitatiValidateDonareStandard':
                 $request->validate(['interval' => 'required']);
                 $recoltariSange = RecoltareSange::
-                    whereNull('recoltari_sange_rebut_id')
+                    whereNull('intrare_id')
+                    ->where('recoltari_sange_produs_id', '<>', 7) // 7 este id-ul pentru REBUT
+                    // ->where(function($query) use ($interval){
+                    //     $query->whereNull('rebut_data')
+                    //         ->orWhereNotBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
+                    // })
                     ->when($interval, function ($query, $interval) {
                         return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
                     ->latest()
                     ->get();
 
+                $rebuturi = RecoltareSange::
+                    whereNull('intrare_id')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->latest()
+                    ->get();
+
                 // return view('rapoarte.export.HUnitatiValidateDonareStandard', compact('recoltariSange', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.HUnitatiValidateDonareStandard', compact('recoltariSange', 'interval'))
+                $pdf = \PDF::loadView('rapoarte.export.HUnitatiValidateDonareStandard', compact('recoltariSange', 'rebuturi', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
@@ -265,6 +309,22 @@ class RaportController extends Controller
 
                 // return view('rapoarte.export.JCerereSiDistributie', compact('recoltariSange', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.JCerereSiDistributie', compact('recoltariSangeDistribuite', 'recoltariSangeDistribuiteInJudet', 'recoltariSangeDistribuiteCatreAlteCts', 'recoltariSangePrimite', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
+            case 'MIncidenteDeaLungulActivitatiiDinCts':
+                $request->validate(['interval' => 'required']);
+                $numarRebuturiCantitate = RecoltareSange::
+                    where('recoltari_sange_rebut_id', 1) // Rebut recoltare, rebut cantitate
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->count();
+
+                // return view('rapoarte.export.G1Rebut', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.MIncidenteDeaLungulActivitatiiDinCts', compact('numarRebuturiCantitate', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');

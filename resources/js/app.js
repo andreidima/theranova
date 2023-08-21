@@ -244,3 +244,74 @@ recoltareSangeIntrare.component('vue-datepicker-next', VueDatepickerNext);
 if (document.getElementById('recoltareSangeIntrare') != null) {
     recoltareSangeIntrare.mount('#recoltareSangeIntrare');
 }
+
+
+// Validare inregistrari in laborator
+const validareInregistrareInLaborator = createApp({
+    el: '#validareInregistrareInLaborator',
+    data() {
+        return {
+            cod: '',
+            recoltariSangeGasite: [],
+            mesajCautareRecoltari: ''
+        }
+    },
+    mounted() {
+        this.$nextTick(() => this.$refs.focusMe.focus())
+    },
+    methods: {
+        axiosCautaPungaCuDelay() {
+            this.mesajCautareRecoltari = "<div class='bg-info text-white text-center rounded-3 h4 py-1'>Se caută recoltări</div>";
+            this.recoltariSangeGasite = [];
+            setTimeout(() => this.axiosCautaPunga(), 500);
+        },
+        axiosCautaPunga() {
+            axios
+                .post('/recoltari-sange-validare-inregistrari-in-laborator/axios-cauta-punga',
+                    {
+                        cod: this.cod
+                    },
+                    {
+                        params: {
+                            // request: 'actualizareSuma',
+                        }
+                    })
+                .then(response => {
+                    this.recoltariSangeGasite = response.data.recoltariSangeGasite;
+
+                    // Daca nu se gasesc recoltari, se afiseaza mesaj de atentionare
+                    if (this.recoltariSangeGasite.length === 0) {
+                        this.mesajCautareRecoltari = "<div class='bg-warning text-center rounded-3 h4 py-1'>Codul <span class='h4 fw-bold'>" + this.cod + "</span> nu există în baza de date</div>";
+                    } else {
+                        this.mesajCautareRecoltari = "";
+                    }
+
+                    // Se goleste campul cod, si se pune prompterul in inputul cod
+                    this.cod = '';
+                    this.$nextTick(() => this.$refs.focusMe.focus());
+                });
+        },
+        valideazaInvalideaza(actiune,recoltareSangeId) {
+            // console.log(actiune, recoltareSangeId);
+            axios
+                .post('/recoltari-sange-validare-inregistrari-in-laborator/valideaza-invalideaza-punga',
+                    {
+                        actiune: actiune,
+                        recoltareSangeId: recoltareSangeId
+                    },
+                    {
+                        params: {
+                            // request: 'actualizareSuma',
+                        }
+                    })
+                .then(response => {
+                    this.recoltariSangeGasite = response.data.recoltariSangeGasite;
+                    // console.log(response);
+                });
+            this.$nextTick(() => this.$refs.focusMe.focus())
+        },
+    }
+});
+if (document.getElementById('validareInregistrareInLaborator') != null) {
+    validareInregistrareInLaborator.mount('#validareInregistrareInLaborator');
+}

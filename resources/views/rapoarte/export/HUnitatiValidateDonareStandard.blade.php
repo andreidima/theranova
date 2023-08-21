@@ -126,7 +126,7 @@
                         1.c. CER
                     </td>
                     <td style="text-align: right">
-                        {{ $recoltariSange->whereIn('produs.nume', ['CER'])->count() }}
+                        {{ $recoltariSange->whereIn('produs.nume', ['CER'])->count() - $rebuturi->whereIn('produs.nume', ['CER'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -134,7 +134,7 @@
                         1.d. CER-SL
                     </td>
                     <td style="text-align: right">
-                        {{ $recoltariSange->whereIn('produs.nume', ['CER-SL'])->count() }}
+                        {{ $recoltariSange->whereIn('produs.nume', ['CER-SL'])->count() - $rebuturi->whereIn('produs.nume', ['CER-SL'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -142,7 +142,7 @@
                         1.e. CER-DL
                     </td>
                     <td style="text-align: right">
-                        {{ $recoltariSange->whereIn('produs.nume', ['CER-DL'])->count() }}
+                        {{ $recoltariSange->whereIn('produs.nume', ['CER-DL'])->count() - $rebuturi->whereIn('produs.nume', ['CER-DL'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -158,7 +158,7 @@
                         1.g. CT
                     </td>
                     <td style="text-align: right">
-                        {{ $recoltariSange->whereIn('produs.nume', ['CTS'])->count() }}
+                        {{ $recoltariSange->whereIn('produs.nume', ['CTS'])->count() - $rebuturi->whereIn('produs.nume', ['CTS'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -166,7 +166,7 @@
                         1.h. PPC
                     </td>
                     <td style="text-align: right">
-                        {{ $recoltariSange->whereIn('produs.nume', ['PPC'])->count() }}
+                        {{ $recoltariSange->whereIn('produs.nume', ['PPC'])->count() - $rebuturi->whereIn('produs.nume', ['PPC'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -254,7 +254,7 @@
                         <b>Total</b>
                     </td>
                     <td style="text-align: right">
-                        <b>{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CRIO'])->count() }}</b>
+                        <b>{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CRIO'])->count() - $rebuturi->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CTS', 'PPC', 'CRIO'])->count() }}</b>
                     </td>
                 </tr>
             </table>

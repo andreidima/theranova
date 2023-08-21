@@ -69,6 +69,11 @@
                                 <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
                             </a>
                         </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/recoltari-sange-validare-inregistrari-in-laborator">
+                                <i class="fa-solid fa-clipboard-check me-1"></i></i>Validări
+                            </a>
+                        </li>
                         <li class="nav-item me-3 dropdown">
                             <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-bars me-1"></i>
