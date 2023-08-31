@@ -124,7 +124,7 @@
                                     {{ $recoltariSangePerProdusPerGrupa->count() }}
                                 </td>
                                 <td style="text-align: right">
-                                    {{ $recoltariSangePerProdusPerGrupa->sum('cantitate') }}
+                                    {{ number_format((float)($recoltariSangePerProdusPerGrupa->sum('cantitate') / 1000), 2, '.', '') }}
                                 </td>
                             </tr>
                         @endforeach
