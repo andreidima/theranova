@@ -31,7 +31,7 @@
                             <button class="btn btn-primary" type="submit">
                                 {{ $recoltariSangeGrupateDupaGrupa->first()->produs->nume }}:
                                 {{ $recoltariSangeGrupateDupaGrupa->count() }} pungi /
-                                {{ $recoltariSangeGrupateDupaGrupa->sum('cantitate') }} litri
+                                {{ number_format((float)($recoltariSangeGrupateDupaGrupa->sum('cantitate') / 1000), 2, '.', '') }} litri
                             </button>
                         </form>
                         <br>
