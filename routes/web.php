@@ -47,4 +47,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/recoltari-sange-validare-inregistrari-in-laborator', [RecoltareSangeValidareController::class, 'validare']);
     Route::post('/recoltari-sange-validare-inregistrari-in-laborator/axios-cauta-punga', [RecoltareSangeValidareController::class, 'axiosCautaPunga']);
     Route::post('/recoltari-sange-validare-inregistrari-in-laborator/valideaza-invalideaza-punga', [RecoltareSangeValidareController::class, 'axiosValideazaInvalideazaPunga']);
+    Route::post('/recoltari-sange-validare-inregistrari-in-laborator/modifica-rebut-punga', [RecoltareSangeValidareController::class, 'axiosModificaRebutPunga']);
 });

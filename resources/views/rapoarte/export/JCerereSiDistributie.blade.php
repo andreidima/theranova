@@ -675,7 +675,7 @@
             <table>
                 <tr>
                     <td style="width:50%; border-bottom: 0px;">
-                        J.6. Număr unități CS <b>distribuite către spitalele din afara județului</b>
+                        J.8. Număr unități CS <b>distribuite către spitalele din afara județului</b>
                     </td>
                     <td style="width:35%; text-align: right">
                         <b>Total</b>
@@ -796,7 +796,7 @@
                 </tr>
                 <tr>
                     <td style="width:50%; border-bottom: 0px;">
-                        J.7. Număr unități CS <b>distribuite către alte CTS*</b>
+                        J.9. Număr unități CS <b>distribuite către alte CTS*</b>
                     </td>
                     <td style="width:35%; text-align: right">
                         <b>Total</b>

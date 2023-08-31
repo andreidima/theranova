@@ -348,7 +348,7 @@
                 </table>
             @endif
 
-            <table>
+            {{-- <table>
                 <tr>
                     <td style="text-align: left">
                         <b>Total</b> Număr unități validate donare standard (ST și CS validate/ eliberate din carantină*) + afereză
@@ -357,7 +357,7 @@
                         <b>{{ $recoltariSange->count() }}</b>
                     </td>
                 </tr>
-            </table>
+            </table> --}}
 
         </div>
 

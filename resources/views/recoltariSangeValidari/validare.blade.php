@@ -1,5 +1,10 @@
 @extends ('layouts.app')
 
+<script type="application/javascript">
+    rebuturi = {!! json_encode($rebuturi) !!}
+    dataRebut = {!! json_encode(\Carbon\Carbon::today()->isoFormat('DD.MM.YYYY')) !!}
+</script>
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -18,12 +23,12 @@
                 >
 
                     <div class="row mb-0 px-3 d-flex justify-content-evenly border-radius: 0px 0px 40px 40px" id="validareInregistrareInLaborator">
-                        <div class="col-lg-7 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(247, 255, 209)">
+                        <div class="col-lg-12 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(247, 255, 209)">
                             <div class="row mb-0 justify-content-center">
                                 <div class="col-lg-12 mb-4 text-center">
                                     <h4 class="mb-0 py-1 text-white" style="background-color: rgb(107, 126, 1)">Scanează o pungă de sânge</h4>
                                 </div>
-                                <div class="col-lg-12 mb-4">
+                                <div class="col-lg-4 mb-4">
                                     <div class="input-group mb-0 align-items-center">
                                         <span class="input-group-text">Cod</span>
                                         <input
@@ -41,7 +46,13 @@
                                 </div>
                             </div>
 
-                            <div v-if="recoltariSangeGasite.length" class="row mb-0 justify-content-center">
+
+                            <div v-if="axiosMesajModificareRebut" class="row mb-0 justify-content-center">
+                                <div v-html="axiosMesajModificareRebut" class="col-lg-11 mb-1 py-2 rounded-3 bg-danger text-white text-center">
+                                </div>
+                            </div>
+
+                            <div v-if="recoltariSangeGasite && recoltariSangeGasite.length" class="row mb-0 justify-content-center">
                                 <div class="col-lg-12 mb-0">
                                     <div class="table-responsive rounded">
                                         <table class="table table-striped table-hover rounded">
@@ -53,8 +64,12 @@
                                                     <th class="text-white text-center" style="background-color: rgb(107, 126, 1)">Grupa</th>
                                                     <th class="text-white text-center" style="background-color: rgb(107, 126, 1)">Cantitate</th>
                                                     <th class="text-white text-center" style="background-color: rgb(107, 126, 1)">Validată</th>
-                                                    <th class="text-white text-end" style="background-color: rgb(107, 126, 1)">Acțiuni</th>
-                                                    {{-- <th class="text-white text-end" style="background-color: rgb(107, 126, 1)">@{{ recoltariSangeGasite.length }}</th> --}}
+                                                    <th class="text-white text-center" style="background-color: rgb(107, 126, 1)">Acțiuni</th>
+                                                    <th class="text-white text-center" style="background-color: rgb(107, 126, 1)" v-if="afisareInterfataRebut != 0">Rebut data</th>
+                                                    <th class="text-white text-center" style="background-color: rgb(107, 126, 1)" v-if="afisareInterfataRebut != 0">Rebut tip</th>
+                                                    {{-- <th class="text-white text-center" style="background-color: rgb(107, 126, 1)" v-if="afisareInterfataRebut != 0">Rebutează data</th>
+                                                    <th class="text-white text-end" style="background-color: rgb(107, 126, 1)" v-if="afisareInterfataRebut != 0">Rebutează tip</th> --}}
+                                                    <th class="text-white text-center" style="background-color: rgb(107, 126, 1)" v-if="afisareInterfataRebut != 0">Rebutează data/ tip</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -62,7 +77,7 @@
                                                     <td align="text-center">
                                                         @{{ index+1 }}
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="">
                                                         @{{ recoltareSange.cod }}
                                                     </td>
                                                     <td class="text-center">
@@ -80,11 +95,47 @@
                                                         <span v-if="recoltareSange.validat === 0" class="text-danger"><b>NU</b></span>
                                                         <span v-else="recoltareSange.validat === 1" class="text-success"><b>DA</b></span>
                                                     </td>
-                                                    <td class="text-end">
-                                                        <button type="button" v-if="recoltareSange.validat === 0" class="btn btn-success btn-sm text-white" @click="valideazaInvalideaza('valideaza',recoltareSange.id)">Validează</button>
-                                                        <button type="button" v-if="recoltareSange.validat === 1" class="btn btn-danger btn-sm text-white" @click="valideazaInvalideaza('invalideaza',recoltareSange.id)">Invalidează</button>
+                                                    <td class="text-center">
+                                                        <button type="button" v-if="recoltareSange.validat === 0" class="btn btn-success btn-sm text-white me-1" @click="valideazaInvalideaza('valideaza',recoltareSange.id)">Validează</button>
+                                                        <button type="button" v-if="recoltareSange.validat === 1" class="btn btn-danger btn-sm text-white me-1" @click="valideazaInvalideaza('invalideaza',recoltareSange.id)">Invalidează</button>
+                                                        <button type="button" class="btn btn-warning btn-sm text-white"
+                                                            @click="(afisareInterfataRebut === recoltareSange.id) ? (afisareInterfataRebut = 0) : (afisareInterfataRebut = recoltareSange.id)">
+                                                            Rebut
+                                                        </button>
+                                                    </td>
+                                                    <td v-if="recoltareSange.id == afisareInterfataRebut" class="text-center">
+                                                        {{-- Formatarea datei in romana. Folosind split(',')[0] ramane doar data, fara timp --}}
+                                                        @{{ recoltareSange.rebut_data ? new Date(recoltareSange.rebut_data).toLocaleString('ro-RO').split(',')[0] : '' }}
+                                                    </td>
+                                                    <td v-if="recoltareSange.id == afisareInterfataRebut" class="text-center">
+                                                        @{{ recoltareSange.rebut ? recoltareSange.rebut.nume : 'NU' }}
+                                                    </td>
+                                                    <td v-if="recoltareSange.id == afisareInterfataRebut">
+                                                        <div class="d-flex justify-content-center">
+                                                            <input
+                                                                type="text"
+                                                                class="form-control bg-white rounded-3 {{ $errors->has('dataRebut') ? 'is-invalid' : '' }}"
+                                                                style="width:120px"
+                                                                name="dataRebut"
+                                                                v-model="recoltareSange.dataRebut">
+                                                            <select name="rebuturi" class="form-select bg-white rounded-3 {{ $errors->has('rebuturi') ? 'is-invalid' : '' }}"
+                                                                style="width:120px"
+                                                                v-model="idRebut"
+                                                                {{-- @change="modificaRebutPunga(recoltareSange.id, recoltareSange.dataRebut, $event.target.value)" --}}
+                                                                >
+                                                                <option selected></option>
+                                                                @foreach ($rebuturi as $rebut)
+                                                                    <option value="{{ $rebut->id }}">{{ $rebut->nume }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn btn-primary btn-sm text-white"
+                                                                @click="modificaRebutPunga(recoltareSange.id, recoltareSange.dataRebut, idRebut)">
+                                                                OK
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
+
                                             </tbody>
                                         </table>
                                     </div>
