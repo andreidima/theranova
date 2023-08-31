@@ -216,8 +216,8 @@
                         @foreach ($rebuturi->whereNotIn('id', [16,17]) as $rebut)
                                 <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'REBUT'])->where('recoltari_sange_rebut_id', $rebut->id)->count() }}</td>
                         @endforeach
-                        <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
-                        <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}</td>
+                        <td style="text-align: center;">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'REBUT'])->whereIn('recoltari_sange_rebut_id', [16,17])->count() }}</td>
+                        <td style="text-align:center">{{ $recoltariSange->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'REBUT'])->count() }}</td>
                     </tr>
                     <tr>
                         <td style="">

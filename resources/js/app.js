@@ -253,7 +253,27 @@ const validareInregistrareInLaborator = createApp({
         return {
             cod: '',
             recoltariSangeGasite: [],
-            mesajCautareRecoltari: ''
+            mesajCautareRecoltari: '',
+
+            afisareInterfataRebut: 0,
+            dataRebut: dataRebut,
+            idRebut: '',
+            axiosMesajModificareRebut: '',
+        }
+    },
+    watch: {
+        recoltariSangeGasite: function () {
+            // cand se reincarca recoltarile, se sterge mesajul de eroare de modificare rebut
+            this.axiosMesajModificareRebut = '';
+
+            // Se pune la fiecare recoltare data din baza de data, sau daca nu exista se pune data curenta
+            for(var i = 0; i< this.recoltariSangeGasite.length; i++) {
+                if (this.recoltariSangeGasite[i].rebut_data) {
+                    this.recoltariSangeGasite[i].dataRebut = new Date(this.recoltariSangeGasite[i].rebut_data).toLocaleString('ro-RO').split(',')[0];
+                } else {
+                    this.recoltariSangeGasite[i].dataRebut = new Date().toLocaleString('ro-RO').split(',')[0];
+                }
+            }
         }
     },
     mounted() {
@@ -310,6 +330,31 @@ const validareInregistrareInLaborator = createApp({
                 });
             this.$nextTick(() => this.$refs.focusMe.focus())
         },
+        modificaRebutPunga(recoltareSangeId, dataRebut, rebutId){
+            // console.log(recoltareSangeId, rebutId);
+            // console.log(actiune, recoltareSangeId);
+            axios
+                .post('/recoltari-sange-validare-inregistrari-in-laborator/modifica-rebut-punga',
+                    {
+                        recoltareSangeId: recoltareSangeId,
+                        rebutId: rebutId,
+                        dataRebut: dataRebut,
+                    },
+                    {
+                        params: {
+                            // request: 'actualizareSuma',
+                        }
+                    })
+                .then(response => {
+                    if (response.data.mesaj === "succes"){
+                        this.recoltariSangeGasite = response.data.recoltariSangeGasite;
+                    } else {
+                        this.axiosMesajModificareRebut = response.data.mesaj;
+                    }
+                    // console.log(response);
+                });
+            this.$nextTick(() => this.$refs.focusMe.focus())
+        }
     }
 });
 if (document.getElementById('validareInregistrareInLaborator') != null) {
