@@ -348,6 +348,24 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
+            case 'livrariPerProdusPerGrupa':
+                $request->validate(['interval' => 'required']);
+
+                $recoltariSange = RecoltareSange::with('produs', 'grupa', 'comanda')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                $recoltariSange = $recoltariSange->sortBy('grupa.nume')->sortBy('produs.nume');
+
+                // return view('rapoarte.export.livrariDetaliatePeZile', compact('recoltariSange', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.livrariPerProdusPerGrupa', compact('recoltariSange', 'interval'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
 
             default:
                     $query = RecoltareSange::
