@@ -65,6 +65,7 @@
                         v-model="recoltareSangeCod"
                         autocomplete="off"
                         v-on:keydown.enter.prevent=''
+                        v-on:keyup.enter="this.$refs.focusCantitate.focus();"
                         >
                     <span class="input-group-text">Cantitate</span>
                     <input
@@ -72,6 +73,7 @@
                         class="form-control bg-white rounded-3 text-end"
                         size="10"
                         v-model="recoltareSangeCantitate"
+                        ref='focusCantitate'
                         autocomplete="off"
                         v-on:keydown.enter.prevent='cautaRecoltariSangeCuDelay()'
                         >

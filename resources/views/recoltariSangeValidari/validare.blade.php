@@ -18,7 +18,7 @@
                 >
 
                     <div class="row mb-0 px-3 d-flex justify-content-evenly border-radius: 0px 0px 40px 40px" id="validareInregistrareInLaborator">
-                        <div class="col-lg-5 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(247, 255, 209)">
+                        <div class="col-lg-7 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(247, 255, 209)">
                             <div class="row mb-0 justify-content-center">
                                 <div class="col-lg-12 mb-4 text-center">
                                     <h4 class="mb-0 py-1 text-white" style="background-color: rgb(107, 126, 1)">Scanează o pungă de sânge</h4>
