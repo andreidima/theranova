@@ -46,7 +46,7 @@
             @include ('errors')
 
             <div class="row">
-                <div class="col-lg-5 mx-auto">
+                <div class="col-lg-12 mx-auto">
                     <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
                         @csrf
                         <div class="row mb-1 custom-search-form justify-content-center">
@@ -63,46 +63,54 @@
                                 ></vue-datepicker-next>
                             </div>
                             <span class="py-1 px-3 rounded-3 culoare2 text-center">Alege raportul dorit</span>
-                            <div class="list-group p-0 list-group-numbered rounded-3">
-                                <button type="submit" name="action" value="recoltariSangeCtsvToate" class="list-group-item list-group-item-action" aria-current="true">
-                                    Raport Director
-                                </button>
-                                <button type="submit" name="action" value="recoltariSangeCtsvToateDetaliatPeZile" class="list-group-item list-group-item-action" aria-current="true">
-                                    Raport recoltări detaliat pe zile
-                                </button>
-                                <button type="submit" name="action" value="livrariDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
-                                    Raport Livrări (comenzi) detaliat pe zile
-                                </button>
-                                <button type="submit" name="action" value="rebuturiDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
-                                    Raport rebuturi detaliat pe zile
-                                </button>
-                                <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
-                                    Stocuri pungi sânge (se va descărca stocul până la prima dată aleasă din interval)
-                                </button>
-                                <button type="submit" name="action" value="situatiaSangeluiSiAProduselorDinSange" class="list-group-item list-group-item-action" aria-current="true">
-                                    Situația sângelui și a produselor din sânge (CONTABILITATE)
-                                </button>
-                                <button type="submit" name="action" value="DProcesare" class="list-group-item list-group-item-action" aria-current="true">
-                                    D. Procesare
-                                </button>
-                                <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
-                                    G.1. Rebut
-                                </button>
-                                <button type="submit" name="action" value="G2RebutRepartitie" class="list-group-item list-group-item-action" aria-current="true">
-                                    G.2. Rebut repartiție
-                                </button>
-                                <button type="submit" name="action" value="HUnitatiValidateDonareStandard" class="list-group-item list-group-item-action" aria-current="true">
-                                    H. Număr unități validate donare standard (ST și CS validate/ eliberate din carantină*) + afereză
-                                </button>
-                                <button type="submit" name="action" value="JCerereSiDistributie" class="list-group-item list-group-item-action" aria-current="true">
-                                    J. Cerere și Distribuție
-                                </button>
-                                <button type="submit" name="action" value="MIncidenteDeaLungulActivitatiiDinCts" class="list-group-item list-group-item-action" aria-current="true">
-                                    M. Incidente (număr) de-a lungul activității din CTS
-                                </button>
-                                {{-- <a href="/rapoarte/recoltari-sange/export-pdf" target="_blank" class="list-group-item list-group-item-action active" aria-current="true">
-                                    Recoltări de sânge
-                                </a> --}}
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="list-group p-0 list-group-numbered rounded-3">
+                                        <button type="submit" name="action" value="recoltariSangeCtsvToate" class="list-group-item list-group-item-action" aria-current="true">
+                                            Raport Director
+                                        </button>
+                                        <button type="submit" name="action" value="recoltariSangeCtsvToateDetaliatPeZile" class="list-group-item list-group-item-action" aria-current="true">
+                                            Raport recoltări detaliat pe zile
+                                        </button>
+                                        <button type="submit" name="action" value="livrariDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
+                                            Raport Livrări (comenzi) detaliat pe zile
+                                        </button>
+                                        <button type="submit" name="action" value="rebuturiDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
+                                            Raport rebuturi detaliat pe zile
+                                        </button>
+                                        <button type="submit" name="action" value="recoltariNevalidate" class="list-group-item list-group-item-action" aria-current="true">
+                                            Raport recoltări nevalidate
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="list-group p-0 list-group-numbered rounded-3">
+                                        <button type="submit" name="action" value="stocuriPungiSange" class="list-group-item list-group-item-action" aria-current="true">
+                                            Stocuri pungi sânge (se va descărca stocul până la prima dată aleasă din interval)
+                                        </button>
+                                        <button type="submit" name="action" value="situatiaSangeluiSiAProduselorDinSange" class="list-group-item list-group-item-action" aria-current="true">
+                                            Situația sângelui și a produselor din sânge (CONTABILITATE)
+                                        </button>
+                                        <button type="submit" name="action" value="DProcesare" class="list-group-item list-group-item-action" aria-current="true">
+                                            D. Procesare
+                                        </button>
+                                        <button type="submit" name="action" value="G1Rebut" class="list-group-item list-group-item-action" aria-current="true">
+                                            G.1. Rebut
+                                        </button>
+                                        <button type="submit" name="action" value="G2RebutRepartitie" class="list-group-item list-group-item-action" aria-current="true">
+                                            G.2. Rebut repartiție
+                                        </button>
+                                        <button type="submit" name="action" value="HUnitatiValidateDonareStandard" class="list-group-item list-group-item-action" aria-current="true">
+                                            H. Număr unități validate donare standard (ST și CS validate/ eliberate din carantină*) + afereză
+                                        </button>
+                                        <button type="submit" name="action" value="JCerereSiDistributie" class="list-group-item list-group-item-action" aria-current="true">
+                                            J. Cerere și Distribuție
+                                        </button>
+                                        <button type="submit" name="action" value="MIncidenteDeaLungulActivitatiiDinCts" class="list-group-item list-group-item-action" aria-current="true">
+                                            M. Incidente (număr) de-a lungul activității din CTS
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
