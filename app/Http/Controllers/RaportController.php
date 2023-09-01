@@ -167,12 +167,12 @@ class RaportController extends Controller
                     ->where(function($query) use ($interval){
                         $query->whereDoesntHave('comanda')
                             ->orWhereHas('comanda', function ($query) use ($interval) {
-                                $query->whereDate('data', '>', [strtok($interval, ',')]);
+                                $query->whereDate('data', '>=', [strtok($interval, ',')]);
                             });
                     })
                     ->where(function($query) use ($interval){
                         $query->whereNull('rebut_data')
-                            ->orwhereDate('rebut_data',  '>', [strtok($interval, ',')]);
+                            ->orwhereDate('rebut_data',  '>=', [strtok($interval, ',')]);
                     })
                     ->get();
                 $recoltariSangeRebutate = RecoltareSange::with('produs')
@@ -393,12 +393,12 @@ class RaportController extends Controller
             ->where(function($query) use ($interval){
                 $query->whereDoesntHave('comanda')
                     ->orWhereHas('comanda', function ($query) use ($interval) {
-                        $query->whereDate('data', '>', [strtok($interval, ',')]);
+                        $query->whereDate('data', '>=', [strtok($interval, ',')]);
                     });
             })
             ->where(function($query) use ($interval){
                 $query->whereNull('rebut_data')
-                    ->orwhereDate('rebut_data',  '>', [strtok($interval, ',')]);
+                    ->orwhereDate('rebut_data',  '>=', [strtok($interval, ',')]);
             })
             ->where('recoltari_sange_produs_id', $request->produsId)
             ->get();
