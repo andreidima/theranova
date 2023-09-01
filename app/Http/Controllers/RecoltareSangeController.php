@@ -25,7 +25,7 @@ class RecoltareSangeController extends Controller
         $searchData = $request->searchData;
 
         $query = RecoltareSange::
-            with('produs:id,nume', 'grupa:id,nume')
+            with('produs:id,nume', 'grupa:id,nume', 'comanda')
             ->when($searchCod, function ($query, $searchCod) {
                 return $query->where('cod', $searchCod);
             })

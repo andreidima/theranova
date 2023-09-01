@@ -102,7 +102,7 @@
                                         <span class="badge bg-light text-dark border border-2 border-success">Intrare</span>
                                     @endif
                                     @if($recoltareSange->comanda_id)
-                                        <span class="badge bg-light text-dark border border-2 border-primary">Comanda</span>
+                                        <span class="badge bg-light text-dark border border-2 border-primary">Comanda nr. {{ $recoltareSange->comanda->comanda_nr }}</span>
 
                                     @endif
                                     @if($recoltareSange->recoltari_sange_rebut_id)
