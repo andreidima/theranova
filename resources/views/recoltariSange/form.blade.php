@@ -61,6 +61,7 @@
                     class="form-control bg-white rounded-3 {{ $errors->has('cod') ? 'is-invalid' : '' }}"
                     name="cod"
                     autocomplete="off"
+                    v-on:keydown.enter.prevent=''
                     value="{{ old('cod', $recoltareSange->cod) }}"
                     required>
             </div>

@@ -12,7 +12,7 @@
         } */
         /** Define the margins of your page **/
         @page {
-            margin: 0px 0px;
+            margin: 30px 0px;
         }
 
         /* header {
@@ -27,10 +27,10 @@
             font-family: DejaVu Sans, sans-serif;
             /* font-family: Arial, Helvetica, sans-serif; */
             font-size: 12px;
-            margin-top: 10px;
+            /* margin-top: 10px; */
             margin-left: 1cm;
             margin-right: 1cm;
-            margin-bottom: 1cm;
+            /* margin-bottom: 1cm; */
         }
 
         * {
@@ -90,47 +90,85 @@
                         Perioada: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }} - {{ \Carbon\Carbon::parse(strtok(''))->isoFormat('DD.MM.YYYY')}}
                         <br>
                         <br>
-                        <h3 style="margin: 0">Recoltări nevalidate</h3>
+                        <h3 style="margin: 0">Raport livrări</h3>
                     </td>
                 </tr>
             </table>
 
             <br>
 
-            <table style="width:50%; margin-left: auto; margin-right: auto;">
-                <thead>
-                    <tr>
-                        <th>Produs</th>
-                        <th>Grupa</th>
-                        <th>Pungi</th>
-                        <th>Litri</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($recoltariSange->groupBy('produs') as $recoltariSangePerProdus)
-                        @foreach($recoltariSangePerProdus->groupBy('grupa') as $recoltariSangePerProdusPerGrupa)
+            @foreach($recoltariSange->sortBy('comanda.beneficiar.id')->groupBy('comanda.beneficiar') as $recoltariSangePerBeneficiar)
+                <div style="page-break-inside:avoid; margin-bottom:30px;">
+                    <table style="width:70%; margin-left: auto; margin-right: auto;">
+                        <thead>
                             <tr>
-                                {{-- @if ($loop->first) --}}
-                                    <td>
-                                        {{ $recoltariSangePerProdusPerGrupa->first()->produs->nume }}
-                                    </td>
-                                {{-- @else
-                                    <td></td>
-                                @endif --}}
-                                <td>
-                                    {{ $recoltariSangePerProdusPerGrupa->first()->grupa->nume }}
-                                </td>
-                                <td style="text-align: right">
-                                    {{ $recoltariSangePerProdusPerGrupa->count() }}
-                                </td>
-                                <td style="text-align: right">
-                                    {{ number_format((float)($recoltariSangePerProdusPerGrupa->sum('cantitate') / 1000), 2, '.', '') }}
-                                </td>
+                                <th colspan="5">
+                                    {{ $recoltariSangePerBeneficiar->first()->comanda->beneficiar->nume ?? '' }}
+                                </th>
                             </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
+                            <tr>
+                                <th>#</th>
+                                <th>Produs</th>
+                                <th>Grupa</th>
+                                <th>Pungi</th>
+                                <th>Litri</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $nrCrt = 1;
+                            @endphp
+                            @foreach($recoltariSangePerBeneficiar->groupBy('produs') as $recoltariSangePerProdus)
+                                @foreach($recoltariSangePerProdus->groupBy('grupa') as $recoltariSangePerProdusPerGrupa)
+                                    <tr>
+                                        <td>
+                                            {{ $nrCrt++ }}
+                                        </td>
+                                        {{-- @if ($loop->first) --}}
+                                            <td>
+                                                {{ $recoltariSangePerProdusPerGrupa->first()->produs->nume }}
+                                            </td>
+                                        {{-- @else
+                                            <td></td>
+                                        @endif --}}
+                                        <td>
+                                            {{ $recoltariSangePerProdusPerGrupa->first()->grupa->nume }}
+                                        </td>
+                                        <td style="text-align: right">
+                                            {{ $recoltariSangePerProdusPerGrupa->count() }}
+                                        </td>
+                                        <td style="text-align: right">
+                                            {{ number_format((float)($recoltariSangePerProdusPerGrupa->sum('cantitate') / 1000), 2, '.', '') }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endforeach
+                                    <tr>
+                                        <th colspan="5" style="">
+                                            TOTAL:
+                                            @if ($numarRecoltariCE = $recoltariSangePerBeneficiar->whereIn('produs.nume', ['CER', 'CER-DL', 'CER-SL'])->count())
+                                                CE={{ $numarRecoltariCE }} |
+                                            @endif
+                                            @if ($numarRecoltariCTS = $recoltariSangePerBeneficiar->whereIn('produs.nume', ['CTS'])->count())
+                                                CTS={{ $numarRecoltariCTS }} |
+                                            @endif
+                                            @if ($numarRecoltariPPC = $recoltariSangePerBeneficiar->whereIn('produs.nume', ['PPC'])->count())
+                                                PPC={{ $numarRecoltariPPC }} |
+                                            @endif
+
+                                            @foreach ($recoltariSangePerBeneficiar->whereNotIn('produs.nume', ['CER', 'CER-DL', 'CER-SL', 'CTS', 'PPC'])->groupBy('produs') as $recoltariSangePerBeneficiarPerProdus)
+                                                {{ $recoltariSangePerBeneficiarPerProdus->first()->produs->nume ?? '' }}: {{ $recoltariSangePerBeneficiarPerProdus->count() }} |
+                                            @endforeach
+                                        </th>
+                                    </tr>
+                        </tbody>
+                    </table>
+
+                    {{-- Afisare totaluri la sfarsit --}}
+                    <p style="margin:0px 150px">
+                    </p>
+                </div>
+            @endforeach
 
             <br>
 

@@ -351,7 +351,7 @@ class RaportController extends Controller
             case 'livrariPerProdusPerGrupa':
                 $request->validate(['interval' => 'required']);
 
-                $recoltariSange = RecoltareSange::with('produs', 'grupa', 'comanda')
+                $recoltariSange = RecoltareSange::with('produs', 'grupa', 'comanda.beneficiar')
                     ->whereHas('comanda', function ($query) use ($interval) {
                         $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })

@@ -12,7 +12,7 @@
         } */
         /** Define the margins of your page **/
         @page {
-            margin: 0px 0px;
+            margin: 30px 0px;
         }
 
         /* header {
@@ -26,7 +26,7 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             /* font-family: Arial, Helvetica, sans-serif; */
-            font-size: 12px;
+            font-size: 14px;
             margin-top: 10px;
             margin-left: 1cm;
             margin-right: 1cm;
@@ -184,48 +184,59 @@
             <br>
 
             <table>
-                <tr valign="top" style="">
-                    <th>Fel produs</th>
-                    <th>Grupa</th>
-                    <th>Rh</th>
-                    <th>Cod</th>
-                    <th>Cant.</th>
-                    {{-- <th style="border-width:0px;"></th>
-                    <th>Fel produs</th>
-                    <th>Grupa</th>
-                    <th>Rh</th>
-                    <th>Cod</th>
-                    <th>Cant.</th> --}}
-                </tr>
-                @foreach ($recoltareSangeComanda->recoltariSange as $recoltareSange)
-                    {{-- @if ($loop->odd) <tr> @endif --}}
-                    <tr>
-                        <td style="text-align:center;">{{ $recoltareSange->produs->nume ?? '' }}</td>
-                        <td style="text-align:center;">{{ substr_replace(($recoltareSange->grupa->nume ?? ''), "", -1) }}</td>
-                        <td style="text-align:center;">{{ substr(($recoltareSange->grupa->nume ?? ''), -1) }}</td>
-                        <td>{{ $recoltareSange->cod }}</td>
-                        <td style="text-align:right;">{{ $recoltareSange->cantitate }}</td>
-                    {{-- @if ($loop->odd) <td style="border-width:0px;"></td> @endif
-                    @if ($loop->odd && $loop->last) <td></td><td></td><td></td><td></td><td></td> @endif
-                    @if ($loop->even || $loop->last) </tr> @endif --}}
+                <thead>
+                    <tr valign="top" style="">
+                        <th>#</th>
+                        <th>Fel produs</th>
+                        <th>Grupa</th>
+                        <th>Rh</th>
+                        <th>Cod</th>
+                        <th>Cant.</th>
+                        {{-- <th style="border-width:0px;"></th>
+                        <th>Fel produs</th>
+                        <th>Grupa</th>
+                        <th>Rh</th>
+                        <th>Cod</th>
+                        <th>Cant.</th> --}}
                     </tr>
-                @endforeach
+                </thead>
+                <tbody>
+                    @foreach ($recoltareSangeComanda->recoltariSange->sortBy('produs.nume') as $recoltareSange)
+                        {{-- @if ($loop->odd) <tr> @endif --}}
+                        <tr>
+                            <td style="text-align:center;">{{ $loop->iteration }}</td>
+                            <td style="text-align:center;">{{ $recoltareSange->produs->nume ?? '' }}</td>
+                            <td style="text-align:center;">{{ substr_replace(($recoltareSange->grupa->nume ?? ''), "", -1) }}</td>
+                            <td style="text-align:center;">{{ substr(($recoltareSange->grupa->nume ?? ''), -1) }}</td>
+                            <td>{{ $recoltareSange->cod }}</td>
+                            <td style="text-align:right;">{{ $recoltareSange->cantitate }}</td>
+                        {{-- @if ($loop->odd) <td style="border-width:0px;"></td> @endif
+                        @if ($loop->odd && $loop->last) <td></td><td></td><td></td><td></td><td></td> @endif
+                        @if ($loop->even || $loop->last) </tr> @endif --}}
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
 
             <br>
 
             <table style="text-align:center">
                 <tr valign="top" style="">
-                    @foreach ($recoltareSangeComanda->recoltariSange->sortBy('recoltari_sange_produs_id')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
+                    @foreach ($recoltareSangeComanda->recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
                     <td style="border-width:0px;">
                         {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume ?? '' }}:
-                        {{ $recoltariSangeGrupateDupaProdus->count() }}
+                        <br>
+                        {{ $recoltariSangeGrupateDupaProdus->count() }} pungi
+                        <br>
+                        {{ number_format((float)($recoltariSangeGrupateDupaProdus->sum('cantitate') / 1000), 2, '.', '') }} litri
                     </td>
                     @endforeach
                     <td style="border-width:0px;">
-                        TOTAL: {{ $recoltareSangeComanda->recoltariSange->count() }}
+                        TOTAL:
                         <br>
+                        {{ $recoltareSangeComanda->recoltariSange->count() }} pungi
                         <br>
+                        {{ number_format((float)($recoltareSangeComanda->recoltariSange->sum('cantitate') / 1000), 2, '.', '') }} litri
                     </td>
                 </tr>
             </table>

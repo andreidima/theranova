@@ -229,7 +229,7 @@ class RecoltareSangeComandaController extends Controller
         if ($request->view_type === 'export-html') {
             return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'));
         } elseif ($request->view_type === 'export-pdf') {
-            return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'));
+            // return view('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'));
             $pdf = \PDF::loadView('recoltariSangeComenzi.export.recoltareSangeComandaPdf', compact('recoltareSangeComanda'))
                 ->setPaper('a4', 'portrait');
             $pdf->getDomPDF()->set_option("enable_php", true);

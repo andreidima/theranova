@@ -191,6 +191,13 @@ const recoltareSangeComanda = createApp({
                     this.recoltariSangeAdaugateLaComanda.push(this.recoltariSangeCautate[i]);
                 }
             }
+
+            // Se golesc campurile, si se pune prompterul in inputul cod
+            this.mesajCautareRecoltari = '',
+            this.recoltareSangeCod = '',
+            this.recoltareSangeCantitate = '',
+            this.recoltariSangeCautate = [],
+            this.$nextTick(() => this.$refs.focusCod.focus());
         },
         stergeRecoltareSangeLaComanda: function (recoltareSangeId) {
             for (var i = 0; i < this.recoltariSangeAdaugateLaComanda.length; i++) {

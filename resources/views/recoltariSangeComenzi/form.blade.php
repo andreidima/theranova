@@ -64,6 +64,7 @@
                         class="form-control bg-white rounded-3"
                         v-model="recoltareSangeCod"
                         autocomplete="off"
+                        ref='focusCod'
                         v-on:keydown.enter.prevent=''
                         v-on:keyup.enter="this.$refs.focusCantitate.focus();"
                         >

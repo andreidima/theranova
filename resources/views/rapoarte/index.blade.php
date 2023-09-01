@@ -110,7 +110,7 @@
                                             M. Incidente (număr) de-a lungul activității din CTS
                                         </button>
                                         <button type="submit" name="action" value="livrariPerProdusPerGrupa" class="list-group-item list-group-item-action" aria-current="true">
-                                            Raport livrări grupate după produs și după grupa sanguină
+                                            Raport livrări grupate după CTS, produs și grupa sanguină
                                         </button>
                                     </div>
                                 </div>
