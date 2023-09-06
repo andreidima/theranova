@@ -61,7 +61,7 @@ class RaportController extends Controller
 
                 // return view('rapoarte.export.recoltariSangeCtsvToateDetaliatPeZile', compact('recoltariSange', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.recoltariSangeCtsvToateDetaliatPeZile', compact('recoltariSange', 'interval'))
-                    ->setPaper('a4', 'portrait');
+                    ->setPaper('a4', 'landscape');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
@@ -84,7 +84,7 @@ class RaportController extends Controller
 
                 // return view('rapoarte.export.livrariDetaliatePeZile', compact('recoltariSange', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.livrariDetaliatePeZile', compact('recoltariSange', 'interval'))
-                    ->setPaper('a4', 'portrait');
+                    ->setPaper('a4', 'landscape');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
