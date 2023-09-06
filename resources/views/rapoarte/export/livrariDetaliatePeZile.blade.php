@@ -50,7 +50,7 @@
         }
 
         th, td {
-            padding: 1px 10px;
+            padding: 1px 5px;
             border-width: 1px;
             border-style: solid;
 

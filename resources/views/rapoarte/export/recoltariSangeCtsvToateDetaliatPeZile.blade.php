@@ -185,7 +185,7 @@
                 $font = $fontMetrics->getFont("helvetica");
                 $width = $fontMetrics->get_text_width($text, $font, $size) / 2;
                 $x = ($pdf->get_width() - $width) / 2;
-                $y = $pdf->get_height() - 35;
+                $y = $pdf->get_height() - 20;
                 $pdf->page_text($x, $y, $text, $font, $size);
             }
         </script>
