@@ -295,7 +295,7 @@
                         </tr>
                     @endif
                 @endforeach
-                @foreach ($recoltariSange->whereIn('produs.nume', ['CUT-DL'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
+                @foreach ($recoltariSange->whereIn('produs.nume', ['CUT'])->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
                     @if ($loop->first)
                         <tr>
                             <th colspan="4" style="text-align:center">
@@ -344,7 +344,7 @@
                     @endif
                 @endforeach
 
-                @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CT', 'CTS', 'PC', 'PPC', 'CRIO', 'CUT-DL'])->groupBy('produs.nume') as $recoltariSangeGrupateDupaProdus)
+                @foreach ($recoltariSange->whereNotIn('produs.nume', ['CER', 'CER-SL', 'CER-DL', 'CT', 'CTS', 'PC', 'PPC', 'CRIO', 'CUT'])->groupBy('produs.nume') as $recoltariSangeGrupateDupaProdus)
                     @foreach ($recoltariSangeGrupateDupaProdus->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaGrupa)
                         @if ($loop->first)
                             <tr>

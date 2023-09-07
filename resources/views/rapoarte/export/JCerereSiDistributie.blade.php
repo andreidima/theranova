@@ -476,7 +476,7 @@
                         d. CUT-DL
                     </td>
                     <td style="text-align:center;">
-                        {{ $recoltariSangePrimite->whereIn('produs.nume', ['CUT', 'CUD-DL'])->count() }}
+                        {{ $recoltariSangePrimite->whereIn('produs.nume', ['CUT'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -597,7 +597,7 @@
                         d. CUT-DL
                     </td>
                     <td style="text-align:center;">
-                        {{ $recoltariSangeDistribuiteInJudet->whereIn('produs.nume', ['CUT', 'CUD-DL'])->count() }}
+                        {{ $recoltariSangeDistribuiteInJudet->whereIn('produs.nume', ['CUT'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -846,7 +846,7 @@
                         d. CUT-DL
                     </td>
                     <td style="text-align:center;">
-                        {{ $recoltariSangeDistribuiteCatreAlteCts->whereIn('produs.nume', ['CUT', 'CUD-DL'])->count() }}
+                        {{ $recoltariSangeDistribuiteCatreAlteCts->whereIn('produs.nume', ['CUT'])->count() }}
                     </td>
                 </tr>
                 <tr>
