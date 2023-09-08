@@ -186,15 +186,41 @@ class RaportController extends Controller
                     })
                     ->get();
                 $recoltariSangeStocFinal = RecoltareSange::with('produs')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereDate('data', '<=', explode(',', $interval, 2)[1]);
+                    })
                     ->whereNull('comanda_id')
                     ->whereNull('recoltari_sange_rebut_id')
                     ->get();
 
-                // $recoltariSange = RecoltareSange::with('produs')
-                //     ->whereNotNull('comanda_id')
-                //     ->whereNotNull('recoltari_sange_rebut_id')
-                //     ->get();
-                // dd($recoltariSange);
+                $produseIds = [];
+                foreach ($recoltariSangeInterval as $recoltare){
+                    if (!in_array($recoltare->produs->id, $produseIds)){
+                        array_push($produseIds, $recoltare->produs->id);
+                    }
+                }
+                foreach ($recoltariSangeInitiale as $recoltare){
+                    if (!in_array($recoltare->produs->id, $produseIds)){
+                        array_push($produseIds, $recoltare->produs->id);
+                    }
+                }
+                foreach ($recoltariSangeRebutate as $recoltare){
+                    if (!in_array($recoltare->produs->id, $produseIds)){
+                        array_push($produseIds, $recoltare->produs->id);
+                    }
+                }
+                foreach ($recoltariSangeLivrate as $recoltare){
+                    if (!in_array($recoltare->produs->id, $produseIds)){
+                        array_push($produseIds, $recoltare->produs->id);
+                    }
+                }
+                foreach ($recoltariSangeStocFinal as $recoltare){
+                    if (!in_array($recoltare->produs->id, $produseIds)){
+                        array_push($produseIds, $recoltare->produs->id);
+                    }
+                }
+                $produse = RecoltareSangeProdus::whereIn('id', $produseIds)->where('nume', '<>', 'REBUT')->orderBy('nume')->get();
+                // dd($produse);
 
                 // return view('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSangeInterval', 'recoltariSangeInitiale', 'recoltariSangeRebutate', 'recoltariSangeLivrate', 'recoltariSangeStocFinal', 'produse', 'interval'));
                 $pdf = \PDF::loadView('rapoarte.export.situatiaSangeluiSiAProduselorDinSange', compact('recoltariSangeInterval', 'recoltariSangeInitiale', 'recoltariSangeRebutate', 'recoltariSangeLivrate', 'recoltariSangeStocFinal', 'produse', 'interval'))

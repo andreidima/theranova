@@ -95,7 +95,7 @@
 
             <br>
 
-            <table>
+            {{-- <table>
                 <thead>
                     <tr>
                         <th rowspan="2"></th>
@@ -329,6 +329,206 @@
                         <td colspan="2" style="text-align:right">{{ ($val6 = str_replace(',', '', number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CER-DL'])->sum('cantitate') * ($produse->whereIn('nume', ['CER-DL'])->first()->pret ?? 0)))) === "0" ? '' : $val6 }}</td>
                         <td colspan="2" style="text-align:right">{{ ($val7 = str_replace(',', '', number_format($recoltariSangeStocFinal->whereIn('produs.nume', ['CUT'])->sum('cantitate') * ($produse->whereIn('nume', ['CUT'])->first()->pret ?? 0)))) === "0" ? '' : $val7 }}</td>
                         <td style="text-align:right">{{ $val1 + $val2 + $val3 + $val4 + $val5 + $val6 + $val7 }}</td>
+                    </tr>
+                </tbody>
+            </table> --}}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2"></th>
+                        @foreach ($produse as $produs)
+                        <th colspan="2" style="text-align: center">
+                            {{ $produs->nume }}
+                        </th>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        @foreach ($produse as $produs)
+                        <td style="text-align: center">NR.P</td>
+                        <td style="text-align: center">ML</td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>STOC INIȚIAL</th>
+                        @foreach ($produse as $produs)
+                            <td style="text-align: right">
+                                {{ ($val =$recoltariSangeInitiale->where('recoltari_sange_produs_id', $produs->id)->count()) === 0 ? '' : $val }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ ($val = number_format($recoltariSangeInitiale->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') / 1000, 2)) === "0.00" ? '' : $val }}
+                            </td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <th>RECOLTARE</th>
+                        @foreach ($produse as $produs)
+                            <td style="text-align: right">
+                                {{ ($val =$recoltariSangeInterval->whereNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->count()) === 0 ? '' : $val }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ ($val = number_format($recoltariSangeInterval->whereNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') / 1000, 2)) === "0.00" ? '' : $val }}
+                            </td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <th>PRIMITE</th>
+                        @foreach ($produse as $produs)
+                            <td style="text-align: right">
+                                {{ ($val =$recoltariSangeInterval->whereNotNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->count()) === 0 ? '' : $val }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ ($val = number_format($recoltariSangeInterval->whereNotNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') / 1000, 2)) === "0.00" ? '' : $val }}
+                            </td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <th>REBUT</th>
+                        @foreach ($produse as $produs)
+                            <td style="text-align: right">
+                                {{ ($val =$recoltariSangeRebutate->where('recoltari_sange_produs_id', $produs->id)->count()) === 0 ? '' : $val }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ ($val = number_format($recoltariSangeRebutate->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') / 1000, 2)) === "0.00" ? '' : $val }}
+                            </td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <th>LIVRARE</th>
+                        @foreach ($produse as $produs)
+                            <td style="text-align: right">
+                                {{ ($val =$recoltariSangeLivrate->where('recoltari_sange_produs_id', $produs->id)->count()) === 0 ? '' : $val }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ ($val = number_format($recoltariSangeLivrate->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') / 1000, 2)) === "0.00" ? '' : $val }}
+                            </td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <th>STOC FINAL</th>
+                        @foreach ($produse as $produs)
+                            <td style="text-align: right">
+                                {{ ($val =$recoltariSangeStocFinal->where('recoltari_sange_produs_id', $produs->id)->count()) === 0 ? '' : $val }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ ($val = number_format($recoltariSangeStocFinal->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') / 1000, 2)) === "0.00" ? '' : $val }}
+                            </td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <td style="border-width: 0px;">&nbsp;</td>
+                        @foreach ($produse as $produs)
+                            <td style="border-width: 0px;"></td>
+                            <td style="border-width: 0px;"></td>
+                        @endforeach
+                        <td style="border-width: 0px;"></td>
+                    </tr>
+                    <tr>
+                        <th style="border-width: 0px;"></th>
+                        @foreach ($produse as $produs)
+                            <th colspan="2" style="text-align: center">VAL</th>
+                        @endforeach
+                        <tH>VALOARE</tH>
+                    </tr>
+                    <tr>
+                        <th>STOC INIȚIAL</th>
+                        @php
+                            $total = 0
+                        @endphp
+                        @foreach ($produse as $produs)
+                            <td colspan="2" style="text-align:right">
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInitiale->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                @php
+                                    $total += $val;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">{{ $total }}</td>
+                    </tr>
+                    <tr>
+                        <th>RECOLTARE</th>
+                        @php
+                            $total = 0
+                        @endphp
+                        @foreach ($produse as $produs)
+                            <td colspan="2" style="text-align:right">
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInterval->whereNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                @php
+                                    $total += $val;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">{{ $total }}</td>
+                    </tr>
+                    <tr>
+                        <th>PRIMITE</th>
+                        @php
+                            $total = 0
+                        @endphp
+                        @foreach ($produse as $produs)
+                            <td colspan="2" style="text-align:right">
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInterval->whereNotNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                @php
+                                    $total += $val;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">{{ $total }}</td>
+                    </tr>
+                    <tr>
+                        <th>REBUT</th>
+                        @php
+                            $total = 0
+                        @endphp
+                        @foreach ($produse as $produs)
+                            <td colspan="2" style="text-align:right">
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeRebutate->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                @php
+                                    $total += $val;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">{{ $total }}</td>
+                    </tr>
+                    <tr>
+                        <th>LIVRARE</th>
+                        @php
+                            $total = 0
+                        @endphp
+                        @foreach ($produse as $produs)
+                            <td colspan="2" style="text-align:right">
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeLivrate->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                @php
+                                    $total += $val;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">{{ $total }}</td>
+                    </tr>
+                    <tr>
+                        <th>STOC FINAL</th>
+                        @php
+                            $total = 0
+                        @endphp
+                        @foreach ($produse as $produs)
+                            <td colspan="2" style="text-align:right">
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeStocFinal->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                @php
+                                    $total += $val;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">{{ $total }}</td>
                     </tr>
                 </tbody>
             </table>
