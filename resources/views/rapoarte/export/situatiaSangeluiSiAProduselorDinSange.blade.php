@@ -447,7 +447,7 @@
                         @endphp
                         @foreach ($produse as $produs)
                             <td colspan="2" style="text-align:right">
-                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInitiale->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInitiale->where('recoltari_sange_produs_id', $produs->id)->count() * ($produs->pret ?? 0), 2))) === "0.00" ? '' : $val }}
                                 @php
                                     $total += $val;
                                 @endphp
@@ -462,7 +462,7 @@
                         @endphp
                         @foreach ($produse as $produs)
                             <td colspan="2" style="text-align:right">
-                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInterval->whereNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInterval->whereNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->count() * ($produs->pret ?? 0), 2))) === "0.00" ? '' : $val }}
                                 @php
                                     $total += $val;
                                 @endphp
@@ -477,7 +477,7 @@
                         @endphp
                         @foreach ($produse as $produs)
                             <td colspan="2" style="text-align:right">
-                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInterval->whereNotNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeInterval->whereNotNull('intrare_id')->where('recoltari_sange_produs_id', $produs->id)->count() * ($produs->pret ?? 0), 2))) === "0.00" ? '' : $val }}
                                 @php
                                     $total += $val;
                                 @endphp
@@ -492,7 +492,7 @@
                         @endphp
                         @foreach ($produse as $produs)
                             <td colspan="2" style="text-align:right">
-                                {{ ($val = str_replace(',', '', number_format($recoltariSangeRebutate->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeRebutate->where('recoltari_sange_produs_id', $produs->id)->count() * ($produs->pret ?? 0), 2))) === "0.00" ? '' : $val }}
                                 @php
                                     $total += $val;
                                 @endphp
@@ -507,7 +507,7 @@
                         @endphp
                         @foreach ($produse as $produs)
                             <td colspan="2" style="text-align:right">
-                                {{ ($val = str_replace(',', '', number_format($recoltariSangeLivrate->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeLivrate->where('recoltari_sange_produs_id', $produs->id)->count() * ($produs->pret ?? 0), 2))) === "0.00" ? '' : $val }}
                                 @php
                                     $total += $val;
                                 @endphp
@@ -522,7 +522,7 @@
                         @endphp
                         @foreach ($produse as $produs)
                             <td colspan="2" style="text-align:right">
-                                {{ ($val = str_replace(',', '', number_format($recoltariSangeStocFinal->where('recoltari_sange_produs_id', $produs->id)->sum('cantitate') * ($produs->pret ?? 0)))) === "0" ? '' : $val }}
+                                {{ ($val = str_replace(',', '', number_format($recoltariSangeStocFinal->where('recoltari_sange_produs_id', $produs->id)->count() * ($produs->pret ?? 0), 2))) === "0.00" ? '' : $val }}
                                 @php
                                     $total += $val;
                                 @endphp

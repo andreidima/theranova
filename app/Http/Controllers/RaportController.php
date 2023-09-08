@@ -189,8 +189,16 @@ class RaportController extends Controller
                     ->when($interval, function ($query, $interval) {
                         return $query->whereDate('data', '<=', explode(',', $interval, 2)[1]);
                     })
-                    ->whereNull('comanda_id')
-                    ->whereNull('recoltari_sange_rebut_id')
+                    ->where(function($query) use ($interval){
+                        $query->whereDoesntHave('comanda')
+                            ->orWhereHas('comanda', function ($query) use ($interval) {
+                                $query->whereDate('data', '>', explode(',', $interval, 2)[1]);
+                            });
+                    })
+                    ->where(function($query) use ($interval){
+                        $query->whereNull('rebut_data')
+                            ->orwhereDate('rebut_data',  '>', explode(',', $interval, 2)[1]);
+                    })
                     ->get();
 
                 $produseIds = [];
