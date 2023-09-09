@@ -66,20 +66,29 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
-            case 'livrariDetaliatePeZile':
+            case 'intrariDetaliatePeZile':
                 $request->validate(['interval' => 'required']);
 
-                // $query = RecoltareSangeComanda::
-                //     with('recoltariSange.produs', 'recoltariSange.grupa')
-                //     ->whereBetween('data', [strtok($interval, ','), strtok( '' )])
-                //     ->orderBy('data');
-                // $comenzi = $query->get();
+                $recoltariSange = RecoltareSange::with('produs', 'intrare')
+                    ->whereHas('intrare', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                // return view('rapoarte.export.intrariDetaliatePeZile', compact('recoltariSange', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.intrariDetaliatePeZile', compact('recoltariSange', 'interval'))
+                    ->setPaper('a4', 'landscape');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
+            case 'livrariDetaliatePeZile':
+                $request->validate(['interval' => 'required']);
 
                 $recoltariSange = RecoltareSange::with('produs', 'comanda')
                     ->whereHas('comanda', function ($query) use ($interval) {
                         $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
                     })
-                    // ->orderBy('comanda.data')
                     ->get();
 
                 // return view('rapoarte.export.livrariDetaliatePeZile', compact('recoltariSange', 'interval'));

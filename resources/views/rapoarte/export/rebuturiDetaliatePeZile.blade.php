@@ -104,15 +104,12 @@
             <table style="">
                 <tr valign="" style="">
                     <td style="border-width:0px; text-align:center;">
-                        <h3 style="margin: 0">RAPORT</h3>
+                        <p style="margin:0%; text-align: center"><b>Raport REBUTURI detaliat pe zile</b></p>
                         Perioada: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }} - {{ \Carbon\Carbon::parse(strtok(''))->isoFormat('DD.MM.YYYY')}}
                     </td>
                 </tr>
             </table>
 
-            <br>
-
-            <p style="margin:0%; text-align: center"><b>Raport rebuturi detaliat pe zile</b></p>
             <table style="margin:0%; width: 100%; font-size:9px;">
                 <thead>
                     <tr>

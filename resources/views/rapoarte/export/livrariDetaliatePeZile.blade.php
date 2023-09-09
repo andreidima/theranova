@@ -86,75 +86,11 @@
             <table style="">
                 <tr valign="" style="">
                     <td style="border-width:0px; text-align:center;">
-                        <h3 style="margin: 0">RAPORT</h3>
+                        <p style="margin:0%; text-align: center"><b>Raport LIVRĂRI (COMENZI) detaliat pe zile</b></p>
                         Perioada: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }} - {{ \Carbon\Carbon::parse(strtok(''))->isoFormat('DD.MM.YYYY')}}
                     </td>
                 </tr>
             </table>
-
-            <br>
-
-            {{-- <table style="margin-left: auto; margin-right: auto;">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Comanda nr.</th>
-                        <th>Cod</th>
-                        <th>Produs</th>
-                        <th>Grupa</th>
-                        <th>Cantitate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($comenzi->groupBy('data') as $comenziGrupateDupaData)
-                        @foreach($comenziGrupateDupaData as $comanda)
-                            @foreach ($comanda->recoltariSange->sortBy('produs.nume') as $recoltareSange)
-                                @if($loop->first)
-                                    <tr>
-                                        <td>
-                                            {{ $comanda->data ? \Carbon\Carbon::parse($comanda->data)->isoFormat('DD.MM.YYYY') : '' }}
-                                        </td>
-                                        <td>
-                                            {{ $comanda->comanda_nr }}
-                                        </td>
-                                        <td>{{ $recoltareSange->cod }}</td>
-                                        <td>{{ $recoltareSange->produs->nume ?? '' }}</td>
-                                        <td>{{ $recoltareSange->grupa->nume ?? '' }}</td>
-                                        <td>{{ $recoltareSange->cantitate }}</td>
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td style="border:0px"></td>
-                                        <td style="border:0px"></td>
-                                        <td>{{ $recoltareSange->cod }}</td>
-                                        <td>{{ $recoltareSange->produs->nume ?? '' }}</td>
-                                        <td>{{ $recoltareSange->grupa->nume ?? '' }}</td>
-                                        <td>{{ $recoltareSange->cantitate }}</td>
-                                    </tr>
-                                @endif
-                            @endforeach
-                                    <tr>
-                                        <td style="border:0px"></td>
-                                        <td style="border:0px"></td>
-                                        <td colspan="3" style="text-align:center">
-                                            <b>Total: {{ $comanda->recoltariSange->count() }} pungi</b>
-                                        </td>
-                                        <td style="text-align:center">
-                                            <b>{{ $comanda->recoltariSange->sum('cantitate') }}</b>
-                                        </td>
-                                    </tr>
-                                @if($loop->parent->last && $loop->last)
-                                @else
-                                    <tr>
-                                        <td colspan="6" style="border:0px">&nbsp;</td>
-                                    </tr>
-                                @endif
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table> --}}
-
-
 
             <table style="width:50%; margin-left: auto; margin-right: auto;">
                 <thead>

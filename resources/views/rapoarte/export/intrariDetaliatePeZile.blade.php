@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Recoltări Sânge CTSV</title>
+    <title>Intrări Sânge CTSV</title>
     <style>
         /* html {
             margin: 0px 0px;
@@ -86,18 +86,16 @@
             <table style="">
                 <tr valign="" style="">
                     <td style="border-width:0px; text-align:center;">
-                        <p style="margin:0%; text-align: center"><b>Raport RECOLTĂRI SÂNGE CTSV detaliat pe zile</b></p>
+                        <p style="margin:0%; text-align: center"><b>Raport INTRĂRI detaliat pe zile</b></p>
                         Perioada: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }} - {{ \Carbon\Carbon::parse(strtok(''))->isoFormat('DD.MM.YYYY')}}
                     </td>
                 </tr>
             </table>
 
-
             <table style="width:50%; margin-left: auto; margin-right: auto;">
                 <thead>
                     <tr>
                         <th rowspan="2">Data</th>
-                        <th rowspan="2">Nr. donatori</th>
                         <th rowspan="2">Nr. pungi</th>
                         @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
                             <th colspan="2">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</th>
@@ -111,29 +109,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($recoltariSange->sortBy('data')->groupBy('data') as $recoltariSangeGrupateDupaData)
+                    @foreach($recoltariSange->sortBy('comanda.data')->groupBy('comanda.data') as $recoltariSangeGrupateDupaData)
                         <tr>
                             <td>
-                                {{ \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->data ?? '')->isoFormat('DD.MM.YYYY') }}
-                            </td>
-                            <td style="text-align:center">
-                                {{ $recoltariSangeGrupateDupaData->unique('cod')->count() }}
+                                {{ \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->comanda->data ?? '')->isoFormat('DD.MM.YYYY') }}
                             </td>
                             <td style="text-align:center">
                                 {{ $recoltariSangeGrupateDupaData->count() }}
                             </td>
                             @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                                <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->where('data', $recoltariSangeGrupateDupaData->first()->data)->count() }}</td>
-                                <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->where('data', $recoltariSangeGrupateDupaData->first()->data)->sum('cantitate') / 1000, 2) }}</td>
+                                <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->where('comanda.data', $recoltariSangeGrupateDupaData->first()->comanda->data)->count() }}</td>
+                                <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->where('comanda.data', $recoltariSangeGrupateDupaData->first()->comanda->data)->sum('cantitate') / 1000, 2) }}</td>
                             @endforeach
                         </tr>
                     @endforeach
                         <tr>
                             <td style="text-align: center">
                                 <b>Total</b>
-                            </td>
-                            <td style="text-align:center">
-                                <b>{{ $recoltariSange->unique('cod')->count() }}</b>
                             </td>
                             <td style="text-align:center">
                                 <b>{{ $recoltariSange->count() }}</b>
@@ -148,29 +140,6 @@
 
             <br>
 
-            {{-- <table style="width:50%; margin-left: auto; margin-right: auto;">
-                <thead>
-                    <tr>
-                        <th>Sânge recoltat</th>
-                        <th>Pungi</th>
-                        <th>Litri</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($recoltariSange->sortBy('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProduse)
-                    <tr>
-                        <td style="">{{ $recoltariSangeGrupateDupaProduse->first()->produs->nume ?? '' }}</td>
-                        <td style="text-align:right">{{ $recoltariSangeGrupateDupaProduse->count() }}</td>
-                        <td style="text-align:right">{{ number_format($recoltariSangeGrupateDupaProduse->sum('cantitate') / 1000, 2) }}</td>
-                    </tr>
-                    @endforeach
-                    <tr>
-                        <td style="text-align:right"><b>Total</b></td>
-                        <td style="text-align:right"><b>{{ $recoltariSange->count() }}</b></td>
-                        <td style="text-align:right"><b>{{ number_format($recoltariSange->sum('cantitate') / 1000, 2 ) }}</b></td>
-                    </tr>
-                </tbody>
-            </table> --}}
 
 
             </div>

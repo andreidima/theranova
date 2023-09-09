@@ -72,8 +72,11 @@
                                         <button type="submit" name="action" value="recoltariSangeCtsvToateDetaliatPeZile" class="list-group-item list-group-item-action" aria-current="true">
                                             Raport recoltări detaliat pe zile
                                         </button>
+                                        <button type="submit" name="action" value="intrariDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
+                                            Raport intrări detaliat pe zile
+                                        </button>
                                         <button type="submit" name="action" value="livrariDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
-                                            Raport Livrări (comenzi) detaliat pe zile
+                                            Raport livrări (comenzi) detaliat pe zile
                                         </button>
                                         <button type="submit" name="action" value="rebuturiDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
                                             Raport rebuturi detaliat pe zile
