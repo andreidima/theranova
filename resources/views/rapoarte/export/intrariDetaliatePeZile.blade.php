@@ -112,7 +112,7 @@
                     @foreach($recoltariSange->sortBy('comanda.data')->groupBy('comanda.data') as $recoltariSangeGrupateDupaData)
                         <tr>
                             <td>
-                                {{ \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->comanda->data ?? '')->isoFormat('DD.MM.YYYY') }}
+                                {{ \Carbon\Carbon::parse($recoltariSangeGrupateDupaData->first()->intrare->data ?? '')->isoFormat('DD.MM.YYYY') }}
                             </td>
                             <td style="text-align:center">
                                 {{ $recoltariSangeGrupateDupaData->count() }}
@@ -140,6 +140,10 @@
 
             <br>
 
+                                @foreach ($recoltariSange as $recoltareSange)
+                                    {{ $recoltareSange->data }} - {{ $recoltareSange->cod }}
+                                    <br>
+                                @endforeach
 
 
             </div>
