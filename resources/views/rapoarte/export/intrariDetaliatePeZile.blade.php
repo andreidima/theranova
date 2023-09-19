@@ -140,12 +140,6 @@
 
             <br>
 
-                                @foreach ($recoltariSange as $recoltareSange)
-                                    {{ $recoltareSange->data }} - {{ $recoltareSange->cod }}
-                                    <br>
-                                @endforeach
-
-
             </div>
 
 
