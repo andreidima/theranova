@@ -44,54 +44,38 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        {{-- <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/acasa" title="Pagina principală">
-                                <i class="fa-solid fa-house"></i>&nbsp;
-                            </a>
-                        </li> --}}
-                        <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/recoltari-sange">
-                                <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge
-                            </a>
-                        </li>
-                        <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/recoltari-sange/rebuturi">
-                                <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
-                            </a>
-                        </li>
-                        <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/recoltari-sange/intrari">
-                                <i class="fa-solid fa-clipboard-list me-1"></i>Intrări
-                            </a>
-                        </li>
-                        <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/recoltari-sange/comenzi">
-                                <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
-                            </a>
-                        </li>
-                        <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/recoltari-sange-validare-inregistrari-in-laborator">
-                                <i class="fa-solid fa-clipboard-check me-1"></i>Validări
-                            </a>
-                        </li>
-                        {{-- <li class="nav-item me-3 dropdown">
-                            <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-bars me-1"></i>
-                                Rapoarte
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="/rapoarte">
-                                        Rapoarte
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
-                        <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/rapoarte">
-                                <i class="fas fa-bars me-1"></i>Rapoarte
-                            </a>
-                        </li>
+                        @if (!(auth()->user()->name == "Contabilitate"))
+                            <li class="nav-item me-3">
+                                <a class="nav-link active" aria-current="page" href="/recoltari-sange">
+                                    <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge
+                                </a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link active" aria-current="page" href="/recoltari-sange/rebuturi">
+                                    <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
+                                </a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link active" aria-current="page" href="/recoltari-sange/intrari">
+                                    <i class="fa-solid fa-clipboard-list me-1"></i>Intrări
+                                </a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link active" aria-current="page" href="/recoltari-sange/comenzi">
+                                    <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
+                                </a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link active" aria-current="page" href="/recoltari-sange-validare-inregistrari-in-laborator">
+                                    <i class="fa-solid fa-clipboard-check me-1"></i>Validări
+                                </a>
+                            </li>
+                        @endif
+                            <li class="nav-item me-3">
+                                <a class="nav-link active" aria-current="page" href="/rapoarte">
+                                    <i class="fas fa-bars me-1"></i>Rapoarte
+                                </a>
+                            </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

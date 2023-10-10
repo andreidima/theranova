@@ -11,7 +11,7 @@
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-2 mb-4">
-                <label for="comanda_nr" class="mb-0 ps-3">Comanda nr.<span class="text-danger">*</span></label>
+                <label for="comanda_nr" class="mb-0 ps-3">Comanda nr.</label>
                 <input
                     type="text"
                     class="form-control bg-white rounded-3 {{ $errors->has('comanda_nr') ? 'is-invalid' : '' }}"

@@ -23,10 +23,8 @@ Auth::routes(['register' => false, 'password.request' => false, 'reset' => false
 
 Route::redirect('/', '/acasa');
 
-
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
-
 
     Route::get('/recoltari-sange/rebuturi', [RecoltareSangeController::class, 'rebuturi']);
     Route::get('/recoltari-sange/rebuturi/modifica/{recoltareSange}', [RecoltareSangeController::class, 'rebuturiModifica']);
@@ -49,3 +47,4 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/recoltari-sange-validare-inregistrari-in-laborator/valideaza-invalideaza-punga', [RecoltareSangeValidareController::class, 'axiosValideazaInvalideazaPunga']);
     Route::post('/recoltari-sange-validare-inregistrari-in-laborator/modifica-rebut-punga', [RecoltareSangeValidareController::class, 'axiosModificaRebutPunga']);
 });
+

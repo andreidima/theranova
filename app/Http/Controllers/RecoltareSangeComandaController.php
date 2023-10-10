@@ -201,7 +201,7 @@ class RecoltareSangeComandaController extends Controller
 // dd($request);
         return $request->validate(
             [
-                'comanda_nr' => 'required|numeric|between:1,999999',
+                'comanda_nr' => 'nullable|numeric|between:1,999999',
                 'aviz_nr' => 'required|numeric|between:1,999999',
                 'recoltari_sange_beneficiar_id' => 'required',
                 'data' => 'required',

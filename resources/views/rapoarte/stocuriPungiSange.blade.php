@@ -17,43 +17,39 @@
             @include ('errors')
 
             <div class="row">
-                <div class="col-lg-5 mx-auto text-center">
+                <div class="col-lg-12 mx-auto text-center">
                     <h3 style="margin: 0">Stocuri pungi sânge</h3>
                     Până la data: {{ \Carbon\Carbon::parse(strtok($interval, ','))->isoFormat('DD.MM.YYYY') }}
 
                     <br>
                     <br>
-                    @foreach ($recoltariSange->sortby('produs.id')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaGrupa)
+                    @foreach ($recoltariSange->sortby('produs.nume')->groupBy('recoltari_sange_produs_id') as $recoltariSangeGrupateDupaProdus)
                         <form class="needs-validation" novalidate method="GET" action="/rapoarte/stocuri-pungi-sange">
                             @csrf
                             <input type="hidden" name="interval" value="{{ $interval }}">
-                            <input type="hidden" name="produsId" value="{{ $recoltariSangeGrupateDupaGrupa->first()->produs->id }}">
+                            <input type="hidden" name="produsId" value="{{ $recoltariSangeGrupateDupaProdus->first()->produs->id }}">
 
-                            {{-- PPC-urile sunt foarte multe, asa ca se sparg in 2 fisiere separate --}}
-                            @if($recoltariSangeGrupateDupaGrupa->first()->produs->nume === "PPC")
-                                {{ $recoltariSangeGrupateDupaGrupa->first()->produs->nume }}:
-                                {{ $recoltariSangeGrupateDupaGrupa->count() }} pungi /
-                                {{ number_format((float)($recoltariSangeGrupateDupaGrupa->sum('cantitate') / 1000), 2, '.', '') }} litri
-                                @php
-                                    dd($recoltariSangeGrupateDupaGrupa)->take(5)->get();
-                                @endphp
-                                <button class="btn btn-primary" type="submit" name="action" value="doarGrupePozitive">
-                                    0+ ({{ $recoltariSangeGrupateDupaGrupa->where('recoltari_sange_grupa_id' == 1)->count() }} pungi)
+                            {{-- Daca sunt mai mult de 1000 de pungi, se sparg recoltarile in mai multe fisiere pe fiecare grupa in parte --}}
+                            @if($recoltariSangeGrupateDupaProdus->count() > 1000)
+                                {{-- <span class="px-2 rounded-3" style="font-weight:bold; background-color: rgb(195, 235, 254)"> --}}
+                                    {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume }}:
+                                    {{ $recoltariSangeGrupateDupaProdus->count() }} pungi /
+                                    {{ number_format((float)($recoltariSangeGrupateDupaProdus->sum('cantitate') / 1000), 2, '.', '') }} litri
+                                {{-- </span> --}}
+                                    <br>
+                                @foreach ($recoltariSangeGrupateDupaProdus->sortby('grupa.id')->groupBy('recoltari_sange_grupa_id') as $recoltariSangeGrupateDupaProdusGrupateDupaGrupa)
+                                <button class="btn btn-primary mb-1" type="submit" name="action" value="{{ $recoltariSangeGrupateDupaProdusGrupateDupaGrupa->first()->grupa->id }}">
+                                    {{-- {{ $recoltariSangeGrupateDupaProdusGrupateDupaGrupa->first()->produs->nume }} --}}
+                                    {{ $recoltariSangeGrupateDupaProdusGrupateDupaGrupa->first()->grupa->nume }}:
+                                    {{ $recoltariSangeGrupateDupaProdusGrupateDupaGrupa->count() }} pungi /
+                                    {{ number_format((float)($recoltariSangeGrupateDupaProdusGrupateDupaGrupa->sum('cantitate') / 1000), 2, '.', '') }} litri
                                 </button>
-                                <button class="btn btn-primary" type="submit" name="action" value="doarGrupePozitive">
-                                    A+ ({{ $recoltariSangeGrupateDupaGrupa->where('recoltari_sange_grupa_id' == 2)->count() }} pungi)
-                                </button>
-                                <button class="btn btn-primary" type="submit" name="action" value="doarGrupePozitive">
-                                    AB+ ({{ $recoltariSangeGrupateDupaGrupa->where('recoltari_sange_grupa_id' == 3)->count() }} pungi)
-                                </button>
-                                <button class="btn btn-primary" type="submit" name="action" value="doarGrupeNegative">
-                                    -
-                                </button>
+                                @endforeach
                             @else
                                 <button class="btn btn-primary" type="submit">
-                                    {{ $recoltariSangeGrupateDupaGrupa->first()->produs->nume }}:
-                                    {{ $recoltariSangeGrupateDupaGrupa->count() }} pungi /
-                                    {{ number_format((float)($recoltariSangeGrupateDupaGrupa->sum('cantitate') / 1000), 2, '.', '') }} litri
+                                    {{ $recoltariSangeGrupateDupaProdus->first()->produs->nume }}:
+                                    {{ $recoltariSangeGrupateDupaProdus->count() }} pungi /
+                                    {{ number_format((float)($recoltariSangeGrupateDupaProdus->sum('cantitate') / 1000), 2, '.', '') }} litri
                                 </button>
                             @endif
                         </form>
