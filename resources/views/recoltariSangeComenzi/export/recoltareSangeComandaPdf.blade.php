@@ -208,20 +208,22 @@
                             <td style="text-align:right;">{{ $recoltareSange->cantitate }}</td>
                             <td style="text-align:right;">{{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->isoFormat('DD.MM.YYYY') : ''}}</td>
                             <td style="text-align:right;">
-                                @switch($recoltareSange->produs->nume ?? '')
-                                    @case ('CTS')
-                                    @case ('CUT')
-                                        {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->addDays(5)->isoFormat('DD.MM.YYYY') : ''}}
-                                        @break
-                                    @case ('CER')
-                                    @case ('CER-SL')
-                                    @case ('CER-DL')
-                                        {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->addDays(42)->isoFormat('DD.MM.YYYY') : ''}}
-                                        @break
-                                    @case ('PPC')
-                                        {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->addYears(1)->isoFormat('DD.MM.YYYY') : ''}}
-                                        @break
-                                @endswitch
+                                @if ($recoltareSange->data !== "2023-06-30")
+                                    @switch($recoltareSange->produs->nume ?? '')
+                                        @case ('CTS')
+                                        @case ('CUT')
+                                            {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->addDays(5)->isoFormat('DD.MM.YYYY') : ''}}
+                                            @break
+                                        @case ('CER')
+                                        @case ('CER-SL')
+                                        @case ('CER-DL')
+                                            {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->addDays(42)->isoFormat('DD.MM.YYYY') : ''}}
+                                            @break
+                                        @case ('PPC')
+                                            {{ $recoltareSange->data ? \Carbon\Carbon::parse($recoltareSange->data)->addYears(1)->isoFormat('DD.MM.YYYY') : ''}}
+                                            @break
+                                    @endswitch
+                                @endif
                             </td>
                         {{-- @if ($loop->odd) <td style="border-width:0px;"></td> @endif
                         @if ($loop->odd && $loop->last) <td></td><td></td><td></td><td></td><td></td> @endif
