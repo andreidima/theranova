@@ -53,6 +53,9 @@
                                             <button type="submit" name="action" value="rebuturiDetaliatePeZile" class="list-group-item list-group-item-action" aria-current="true">
                                                 Raport rebuturi detaliat pe zile
                                             </button>
+                                            <button type="submit" name="action" value="rebuturiDetaliatePeZileGrupatePerProdus" class="list-group-item list-group-item-action" aria-current="true">
+                                                Raport rebuturi detaliat pe zile - grupate per produs
+                                            </button>
                                             <button type="submit" name="action" value="recoltariNevalidate" class="list-group-item list-group-item-action" aria-current="true">
                                                 Raport recoltări nevalidate
                                             </button>

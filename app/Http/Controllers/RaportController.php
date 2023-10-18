@@ -116,6 +116,42 @@ class RaportController extends Controller
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
                 return $pdf->stream();
 
+            case 'rebuturiDetaliatePeZileGrupatePerProdus':
+                $request->validate(['interval' => 'required']);
+
+                $recoltariSange = RecoltareSange::with('rebut', 'produs')
+                    ->when($interval, function ($query, $interval) {
+                        return $query->whereBetween('rebut_data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->orderBy('rebut_data')
+                    ->get();
+                $rebuturi = RecoltareSangeRebut::select('id', 'nume')->orderBy('nume')->get();
+
+                foreach($recoltariSange as $recoltare){
+                    if (str_contains(($recoltare->produs->nume ?? ''), "CE")){
+                        $recoltare->categorieProdus = "CE";
+                    }elseif (str_contains(($recoltare->produs->nume ?? ''), "CTS")){
+                        $recoltare->categorieProdus = "CTS";
+                    }elseif (str_contains(($recoltare->produs->nume ?? ''), "PPC")){
+                        $recoltare->categorieProdus = "PPC";
+                    }elseif (str_contains(($recoltare->produs->nume ?? ''), "REBUT")){
+                        $recoltare->categorieProdus = "Rebut recoltare";
+                    }else {
+                        $recoltare->categorieProdus = "Rebuturi alte produse";
+                    }
+                }
+
+                $recoltariSange = $recoltariSange->sortBy('categorieProdus');
+
+                $recoltariSangeGrupatePerCategorieProdus = $recoltariSange->groupBy('categorieProdus');
+
+                // return view('rapoarte.export.rebuturiDetaliatePeZile', compact('recoltariSange', 'rebuturi', 'interval'));
+                $pdf = \PDF::loadView('rapoarte.export.rebuturiDetaliatePeZileGrupatePerProdus', compact('recoltariSangeGrupatePerCategorieProdus', 'rebuturi', 'interval'))
+                    ->setPaper('a4', 'landscape');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+                // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');
+                return $pdf->stream();
+
             case 'recoltariNevalidate':
                 $request->validate(['interval' => 'required']);
 
