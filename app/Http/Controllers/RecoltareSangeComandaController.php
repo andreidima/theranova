@@ -61,7 +61,10 @@ class RecoltareSangeComandaController extends Controller
         $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
         $recoltariSange = RecoltareSange::with('grupa', 'produs')->whereNull('recoltari_sange_rebut_id')->whereNull('comanda_id')->get();
 
-        return view('recoltariSangeComenzi.create', compact('beneficiari', 'recoltariSange'));
+        $recoltariSangeProduse = RecoltareSangeProdus::get();
+        $recoltariSangeGrupe = RecoltareSangeGrupa::get();
+
+        return view('recoltariSangeComenzi.create', compact('beneficiari', 'recoltariSange', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**

@@ -3,6 +3,9 @@
 <script type="application/javascript">
     recoltariSange = {!! json_encode($recoltariSange) !!}
     recoltariSangeAdaugateLaComandaIDuriVechi = {!! json_encode(old('recoltariSangeAdaugateLaComanda', $recoltareSangeComanda->recoltariSange->pluck('id'))) !!}
+
+    recoltariSangeGrupe = {!! json_encode(($recoltariSangeGrupe) ?? []) !!}
+    recoltariSangeProduse = {!! json_encode(($recoltariSangeProduse) ?? []) !!}
 </script>
 @php
     // echo old('recoltareSangeAdaugataLaComanda');
@@ -50,6 +53,50 @@
             </div>
         </div>
     </div>
+
+    <div class="col-lg-12 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(209, 233, 255)">
+        <div class="row mb-0 justify-content-center">
+            <div class="col-lg-12 mb-4 text-center">
+                <h4 class="mb-0 py-1 text-white" style="background-color: rgb(107, 126, 1)">Cerere sânge</h4>
+            </div>
+            <div class="col-lg-12 mb-4">
+                <div class="input-group mb-0 align-items-center">
+                    <label for="recoltari_sange_grupa_id" class="mb-0 ps-3">Grupa<span class="text-danger">*</span></label>
+                    <select name="recoltari_sange_grupa_id"
+                            v-model="cerereGrupa"
+                            class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
+                        <option
+                            v-for='grupa in recoltariSangeGrupe'
+                            :value='grupa.id'
+                            >
+                                @{{grupa.nume}}
+                        </option>
+                    </select>
+                    <label for="recoltari_sange_produs_id" class="mb-0 ps-3">Produs<span class="text-danger">*</span></label>
+                    <select name="recoltari_sange_produs_id"
+                            v-model="cerereProdus"
+                            class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
+                        <option
+                            v-for='produs in recoltariSangeProduse'
+                            :value='produs.id'
+                            >
+                                @{{produs.nume}}
+                        </option>
+                    </select>
+                    <span class="input-group-text">Cantitate</span>
+                    <input
+                        type="text"
+                        class="form-control bg-white rounded-3 text-end"
+                        size="10"
+                        v-model="cerereCantitate"
+                        ref='focusCerereCantitate'
+                        autocomplete="off"
+                        v-on:keydown.enter.prevent='cerereAdauga()'
+                        >
+                    <button type="button" class="btn btn-primary text-white" @click="cerereAdauga()">Adaugă</button>
+                </div>
+            </div>
+        </div>
 
     <div class="col-lg-5 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(247, 255, 209)">
         <div class="row mb-0 justify-content-center">

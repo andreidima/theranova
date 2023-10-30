@@ -123,6 +123,13 @@ const recoltareSangeComanda = createApp({
             recoltariSangeAdaugateLaComanda: [],
 
             mesajCautareRecoltari: '',
+
+            recoltariSangeGrupe: ((typeof recoltariSangeGrupe !== 'undefined') ? recoltariSangeGrupe : []),
+            recoltariSangeProduse: ((typeof recoltariSangeProduse !== 'undefined') ? recoltariSangeProduse : []),
+            cerereGrupa: '',
+            cerereProdus: '',
+            cerereCantitate: '',
+            cerereSange: [],
         }
     },
     created: function () {
@@ -138,6 +145,15 @@ const recoltareSangeComanda = createApp({
         }
     },
     methods: {
+        cerereAdauga() {
+            // var cerere = [];
+            // cerere.grupa = this.cerereGrupa;
+            // cerere.produs = this.cerereProdus;
+            // cerere.cantitate = this.cerereCantitate;
+            // this.pungi.push({ id: '', data_expirare: '', recoltari_sange_grupa_id: '', cod: '', recoltari_sange_produs_id: '', cantitate: '' });
+            this.cerereSange.push({ grupa: this.cerereGrupa, produs: this.cerereProdus, cantitate: this.cerereCantitate });
+            // console.log(this.cerereSange);
+        },
         cautaRecoltariSange() {
             // console.log(this.recoltareSangeCod);
             this.recoltareSangeCod = this.recoltareSangeCod.replaceAll("A", ""); // daca se lucreaza cu cititorul de barcode, acesta va pune un „A” in fata codului si un „A” la final
