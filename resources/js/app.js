@@ -129,7 +129,7 @@ const recoltareSangeComanda = createApp({
             cerereGrupa: '',
             cerereProdus: '',
             cerereCantitate: '',
-            cerereSange: [],
+            cereriSange: [],
         }
     },
     created: function () {
@@ -146,13 +146,10 @@ const recoltareSangeComanda = createApp({
     },
     methods: {
         cerereAdauga() {
-            // var cerere = [];
-            // cerere.grupa = this.cerereGrupa;
-            // cerere.produs = this.cerereProdus;
-            // cerere.cantitate = this.cerereCantitate;
-            // this.pungi.push({ id: '', data_expirare: '', recoltari_sange_grupa_id: '', cod: '', recoltari_sange_produs_id: '', cantitate: '' });
-            this.cerereSange.push({ grupa: this.cerereGrupa, produs: this.cerereProdus, cantitate: this.cerereCantitate });
-            // console.log(this.cerereSange);
+            this.cereriSange.push({ grupa: this.cerereGrupa, produs: this.cerereProdus, cantitate: this.cerereCantitate });
+            this.cerereGrupa = '';
+            this.cerereProdus = '';
+            this.cerereCantitate = '';
         },
         cautaRecoltariSange() {
             // console.log(this.recoltareSangeCod);

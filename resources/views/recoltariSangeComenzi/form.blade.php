@@ -55,23 +55,49 @@
     </div>
 
     <div class="col-lg-12 px-3 py-3 mb-4 rounded-3" style="background-color: rgb(209, 233, 255)">
+        <div v-if="cereriSange.length" class="row mb-0 justify-content-center">
+            <div class="col-lg-12 mb-4">
+                <div class="table-responsive rounded">
+                    <table class="table table-striped table-hover rounded">
+                        <thead class="text-white rounded">
+                            <tr class="thead-danger" style="padding:2rem">
+                                <th class="text-white" style="background-color: rgb(0, 116, 44)">#</th>
+                                <th class="text-white" style="background-color: rgb(0, 116, 44)">Produs</th>
+                                <th class="text-white" style="background-color: rgb(0, 116, 44)">Grupa</th>
+                                <th class="text-white" style="background-color: rgb(0, 116, 44)">Cantitate</th>
+                                <th class="text-white text-end" style="background-color: rgb(0, 116, 44)">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(cerereSange, index) in cereriSange">
+                                <td align="">
+                                    {{-- <input type="hidden" name="cereriSange[]" :value=.id> --}}
+                                    @{{ index+1 }}
+                                </td>
+                                <td class="">
+                                    @{{ recoltariSangeProduse[cerereSange.produs].nume }}
+                                </td>
+                                <td class="">
+                                    {{-- @{{ recoltariSangeGrupe[cerereSange.grupa].nume }} --}}
+                                </td>
+                                <td class="">
+                                    @{{ cerereSange.cantitate }}
+                                </td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-danger btn-sm text-white" @click="stergeRecoltareSangeLaComanda(recoltareSangeAdaugataLaComanda.id)">Șterge</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <div class="row mb-0 justify-content-center">
             <div class="col-lg-12 mb-4 text-center">
                 <h4 class="mb-0 py-1 text-white" style="background-color: rgb(107, 126, 1)">Cerere sânge</h4>
             </div>
             <div class="col-lg-12 mb-4">
                 <div class="input-group mb-0 align-items-center">
-                    <label for="recoltari_sange_grupa_id" class="mb-0 ps-3">Grupa<span class="text-danger">*</span></label>
-                    <select name="recoltari_sange_grupa_id"
-                            v-model="cerereGrupa"
-                            class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
-                        <option
-                            v-for='grupa in recoltariSangeGrupe'
-                            :value='grupa.id'
-                            >
-                                @{{grupa.nume}}
-                        </option>
-                    </select>
                     <label for="recoltari_sange_produs_id" class="mb-0 ps-3">Produs<span class="text-danger">*</span></label>
                     <select name="recoltari_sange_produs_id"
                             v-model="cerereProdus"
@@ -81,6 +107,17 @@
                             :value='produs.id'
                             >
                                 @{{produs.nume}}
+                        </option>
+                    </select>
+                    <label for="recoltari_sange_grupa_id" class="mb-0 ps-3">Grupa<span class="text-danger">*</span></label>
+                    <select name="recoltari_sange_grupa_id"
+                            v-model="cerereGrupa"
+                            class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
+                        <option
+                            v-for='grupa in recoltariSangeGrupe'
+                            :value='grupa.id'
+                            >
+                                @{{grupa.nume}}
                         </option>
                     </select>
                     <span class="input-group-text">Cantitate</span>
