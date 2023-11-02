@@ -75,7 +75,8 @@
                                     @{{ index+1 }}
                                 </td>
                                 <td class="">
-                                    @{{ recoltariSangeProduse[cerereSange.produs].nume }}
+                                    {{-- @{{ recoltariSangeProduse[cerereSange.produs].nume }} --}}
+                                    @{{ recoltariSangeProduse.find((produs) => produs.id==cerereSange.produs).nume }}
                                 </td>
                                 <td class="">
                                     {{-- @{{ recoltariSangeGrupe[cerereSange.grupa].nume }} --}}
