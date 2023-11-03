@@ -46,4 +46,14 @@ class RecoltareSangeComanda extends Model
     {
         return $this->belongsTo(RecoltareSangeBeneficiar::class, 'recoltari_sange_beneficiar_id');
     }
+
+    /**
+     * Get all of the recoltariSangeCerere for the RecoltareSangeComanda
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function cereri()
+    {
+        return $this->hasMany(RecoltareSangeCerere::class, 'comanda_id', 'id');
+    }
 }

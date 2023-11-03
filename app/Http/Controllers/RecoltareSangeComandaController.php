@@ -9,6 +9,7 @@ use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeGrupa;
 use App\Models\RecoltareSangeBeneficiar;
+use App\Models\RecoltareSangeCerere;
 use Carbon\Carbon;
 
 class RecoltareSangeComandaController extends Controller
@@ -77,7 +78,19 @@ class RecoltareSangeComandaController extends Controller
     {
         $this->validateRequest($request);
 
-        $recoltareSangeComanda = RecoltareSangeComanda::create($request->except('recoltariSangeAdaugateLaComanda', 'date'));
+        $recoltareSangeComanda = RecoltareSangeComanda::create($request->except('cereriSange', 'recoltariSangeAdaugateLaComanda', 'date'));
+
+        // Adaugarea cererilor la comanda
+        foreach($request->cereriSange as $key=>$cerere){
+            $recoltareSangeCerere = new RecoltareSangeCerere;
+            $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['produs'];
+            $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['grupa'];
+            $recoltareSangeCerere->cantitate = $cerere['cantitate'];
+            $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
+            $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
+            $recoltareSangeCerere->save();
+        }
+
         // Adaugarea recoltarilor la comanda
         foreach ($request->recoltariSangeAdaugateLaComanda as $key=>$recoltareSange){
             RecoltareSange::where('id', $recoltareSange)->update(['comanda_id' => $recoltareSangeComanda->id, 'comanda_ordine_recoltari' => $key+1]);
@@ -110,6 +123,9 @@ class RecoltareSangeComandaController extends Controller
         $request->session()->get('recoltareSangeComandaReturnUrl') ?? $request->session()->put('recoltareSangeComandaReturnUrl', url()->previous());
 
         $recoltareSangeComanda = RecoltareSangeComanda::where('id', $recoltareSangeComanda->id)
+            ->with('cereri', function($query){
+                $query->orderBy('comanda_ordine_cerere');
+            })
             ->with('recoltariSange', function($query){
                 $query->orderBy('comanda_ordine_recoltari');
             })
@@ -208,10 +224,17 @@ class RecoltareSangeComandaController extends Controller
                 'aviz_nr' => 'required|numeric|between:1,999999',
                 'recoltari_sange_beneficiar_id' => 'required',
                 'data' => 'required',
+                'cereriSange.*.produs' => 'required',
+                'cereriSange.*.grupa' => 'required',
+                'cereriSange.*.cantitate' => 'required|numeric|between:1,999999',
                 'recoltariSangeAdaugateLaComanda' => 'required'
             ],
             [
-                // 'tara_id.required' => 'Câmpul țara este obligatoriu'
+                'cereriSange.*.produs.required' => 'Produsul pentru cererea :position este necesar',
+                'cereriSange.*.grupa.required' => 'Grupa pentru cererea :position este necesară',
+                'cereriSange.*.cantitate.required' => 'Cantitatea pentru cererea :position este necesară',
+                'cereriSange.*.cantitate.numeric' => 'Cantitatea pentru cererea :position trebuie sa fie un număr',
+                'cereriSange.*.cantitate.between' => 'Cantitatea pentru cererea :position trebuie să fie un număr între 1 și 999999',
             ]
         );
     }
