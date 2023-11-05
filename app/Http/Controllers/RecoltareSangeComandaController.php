@@ -160,16 +160,35 @@ class RecoltareSangeComandaController extends Controller
 
         $recoltareSangeComanda->update($request->except('recoltariSangeAdaugateLaComanda', 'cereriSange', 'date'));
 
-        // dd($request);
-        dd($request->cereriSange);
-        // Scoaterea cererilor ce nu mai sunt in comanda
-        RecoltareSangeCerere::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
 
-        // Adaugarea recoltarilor la comanda
-        foreach ($request->recoltariSangeAdaugateLaComanda as $key=>$recoltareSange){
-            RecoltareSange::where('id', $recoltareSange)->update(['comanda_id' => $recoltareSangeComanda->id, 'comanda_ordine_recoltari' => $key+1]);
+        // Gestionarea cererilor
+        $cereriSange = collect($request->cereriSange); // creare colectie din array pentru a lucra mai usor cu datele
+
+        // Scoaterea cererilor ce nu mai sunt in comanda
+        RecoltareSangeCerere::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $cereriSange->whereNotNull('id')->pluck('id'))->delete();
+
+        // Se verifica cererile care sunt deja la comanda daca nu cumva s-a schimbat ordinea, si de actualizat cu noul numar de ordine daca este cazul
+        foreach ($cereriSange->whereNotNull('id') as $key=>$cerere){
+            $recoltareSangeCerere = RecoltareSangeCerere::where('id', $cerere['id'])->first();
+            if ($recoltareSangeCerere->comanda_ordine_cerere !== ($key+1)){
+                $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
+                $recoltareSangeCerere->save();
+            }
         }
 
+        // Adaugarea cererilor noi la comanda
+        foreach ($cereriSange->whereNull('id') as $key=>$cerere){
+            $recoltareSangeCerere = new RecoltareSangeCerere;
+            $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
+            $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
+            $recoltareSangeCerere->cantitate = $cerere['cantitate'];
+            $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
+            $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
+            $recoltareSangeCerere->save();
+        }
+
+
+        // Gestionarea recoltarilor
         // Scoaterea recoltarilor ce nu mai sunt din comanda
         RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
 
@@ -177,23 +196,6 @@ class RecoltareSangeComandaController extends Controller
         foreach ($request->recoltariSangeAdaugateLaComanda as $key=>$recoltareSange){
             RecoltareSange::where('id', $recoltareSange)->update(['comanda_id' => $recoltareSangeComanda->id, 'comanda_ordine_recoltari' => $key+1]);
         }
-
-
-//         $recoltariSangeVechiIduri = $recoltareSangeComanda->recoltariSange->pluck('id');
-// dd($recoltariSangeVechiIduri, $request->recoltariSangeAdaugateLaComanda);
-//         foreach ($recoltareSangeComanda->recoltariSange as $recoltareSange){
-//             $recoltareSangeDB = RecoltareSange::findOrFail($recoltareSange->id);
-//             $recoltareSangeDB->comanda_id = '';
-//             $recoltareSangeDB->save();
-//         }
-
-//         foreach ($request->recoltariSangeAdaugateLaComanda as $recoltareSange){
-//             $recoltareSangeDB = RecoltareSange::findOrFail($recoltareSange);
-//             $recoltareSangeDB->comanda_id = $recoltareSangeComanda->id;
-//             $recoltareSangeDB->save();
-//         }
-
-//         dd('stop');
 
         return redirect($request->session()->get('recoltareSangeComandaReturnUrl') ?? ('/recoltari-sange/comenzi'))->with('status', 'Comanda „' . ($recoltareSangeComanda->comanda_nr ?? '') . '” a fost modificată cu succes!');
     }

@@ -64,7 +64,8 @@
                     <div class="col-lg-12 mb-4">
                         <div class="input-group mb-0 align-items-center">
                             <label for="recoltari_sange_produs_id" class="mb-0 ps-3">Produs<span class="text-danger">*</span></label>
-                            <select name="recoltari_sange_produs_id"
+                            <select
+                                    {{-- name="recoltari_sange_produs_id" --}}
                                     v-model="cerereProdus"
                                     class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_produs_id') ? 'is-invalid' : '' }}">
                                 <option
@@ -75,7 +76,8 @@
                                 </option>
                             </select>
                             <label for="recoltari_sange_grupa_id" class="mb-0 ps-3">Grupa<span class="text-danger">*</span></label>
-                            <select name="recoltari_sange_grupa_id"
+                            <select
+                                    {{-- name="recoltari_sange_grupa_id" --}}
                                     v-model="cerereGrupa"
                                     class="form-select bg-white rounded-3 {{ $errors->has('recoltari_sange_grupa_id') ? 'is-invalid' : '' }}">
                                 <option
@@ -113,6 +115,8 @@
                                 <tbody>
                                     <tr v-for="(cerereSange, index) in cereriSange">
                                         <td align="">
+                                            {{-- La modificare, se trimite si id-ul in request, ca sa se verifice daca existau deja sau sunt nou adaugate --}}
+                                            <input type="hidden" :name="'cereriSange[' + index + '][id]'" :value="cerereSange.id">
                                             @{{ index+1 }}
                                         </td>
                                         <td class="">

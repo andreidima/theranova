@@ -54,6 +54,35 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
+                                    Cerere sânge
+                                </td>
+                                <td>
+                                    @if ($recoltareSangeComanda->cereri->count())
+                                        <table class="table table-sm table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Produs</th>
+                                                    <th scope="col">Grupa</th>
+                                                    <th scope="col">Cantitate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($recoltareSangeComanda->cereri as $cerere)
+                                                <tr>
+                                                    <td scope="row">{{ $loop->iteration }}
+                                                    <td>{{ $cerere->produs->nume ?? '' }}</td>
+                                                    <td>{{ $cerere->grupa->nume ?? '' }}</td>
+                                                    <td>{{ $cerere->cantitate }}</td>
+                                                <tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
                                     Recoltări sânge
                                 </td>
                                 <td>
