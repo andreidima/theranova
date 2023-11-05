@@ -85,7 +85,7 @@
                                         @{{grupa.nume}}
                                 </option>
                             </select>
-                            <span class="input-group-text">Cantitate</span>
+                            <label for="cerereCantitate" class="mb-0 ps-3">Cantitate<span class="text-danger">*</span></label>
                             <input
                                 type="text"
                                 class="form-control bg-white rounded-3 text-end"
@@ -98,7 +98,7 @@
                             <button type="button" class="btn btn-primary text-white" @click="cerereAdauga()">Adaugă</button>
                         </div>
                     </div>
-                    <div v-cloak v-if="cereriSange.length" class="col-lg-8 mb-4">
+                    <div v-cloak v-if="cereriSange.length" class="col-lg-8 mb-0">
                         <div class="table-responsive rounded">
                             <table class="table table-striped table-hover rounded">
                                 <thead class="text-white rounded">
@@ -113,23 +113,21 @@
                                 <tbody>
                                     <tr v-for="(cerereSange, index) in cereriSange">
                                         <td align="">
-                                            {{-- <input type="hidden" name="cereriSange[]" :value=JSON.stringify(cerereSange)> --}}
                                             @{{ index+1 }}
                                         </td>
                                         <td class="">
-                                            <input type="hidden" :name="'cereriSange[' + index + '][produs]'" :value="cerereSange.produs">
-                                            @{{ recoltariSangeProduse.find((produs) => produs.id==cerereSange.produs).nume }}
+                                            <input type="hidden" :name="'cereriSange[' + index + '][recoltari_sange_produs_id]'" :value="cerereSange.recoltari_sange_produs_id">
+                                            @{{ recoltariSangeProduse.find((produs) => produs.id==cerereSange.recoltari_sange_produs_id).nume }}
                                         </td>
                                         <td class="">
-                                            <input type="hidden" :name="'cereriSange[' + index + '][grupa]'" :value="cerereSange.grupa">
-                                            @{{ recoltariSangeGrupe.find((grupa) => grupa.id==cerereSange.grupa).nume }}
+                                            <input type="hidden" :name="'cereriSange[' + index + '][recoltari_sange_grupa_id]'" :value="cerereSange.recoltari_sange_grupa_id">
+                                            @{{ recoltariSangeGrupe.find((grupa) => grupa.id==cerereSange.recoltari_sange_grupa_id).nume }}
                                         </td>
                                         <td class="">
                                             <input type="hidden" :name="'cereriSange[' + index + '][cantitate]'" :value="cerereSange.cantitate">
                                             @{{ cerereSange.cantitate }}
                                         </td>
                                         <td class="text-end">
-                                            {{-- <button type="button" class="btn btn-danger btn-sm text-white" @click="stergeCerere(recoltareSangeAdaugataLaComanda.id)">Șterge</button> --}}
                                             <button type="button" class="btn btn-danger btn-sm text-white" @click="cereriSange.splice(index,1)">Șterge</button>
                                         </td>
                                     </tr>

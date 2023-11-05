@@ -147,7 +147,7 @@ const recoltareSangeComanda = createApp({
     methods: {
         cerereAdauga() {
             if (this.cerereGrupa && this.cerereProdus && this.cerereCantitate) {
-                this.cereriSange.push({ grupa: this.cerereGrupa, produs: this.cerereProdus, cantitate: this.cerereCantitate });
+                this.cereriSange.push({ recoltari_sange_grupa_id: this.cerereGrupa, recoltari_sange_produs_id: this.cerereProdus, cantitate: this.cerereCantitate });
                 this.cerereGrupa = '';
                 this.cerereProdus = '';
                 this.cerereCantitate = '';

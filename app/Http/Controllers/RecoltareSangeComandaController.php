@@ -83,8 +83,8 @@ class RecoltareSangeComandaController extends Controller
         // Adaugarea cererilor la comanda
         foreach($request->cereriSange as $key=>$cerere){
             $recoltareSangeCerere = new RecoltareSangeCerere;
-            $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['produs'];
-            $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['grupa'];
+            $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
+            $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
             $recoltareSangeCerere->cantitate = $cerere['cantitate'];
             $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
             $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
@@ -141,8 +141,10 @@ class RecoltareSangeComandaController extends Controller
                 })
             ->get();
 
+        $recoltariSangeProduse = RecoltareSangeProdus::get();
+        $recoltariSangeGrupe = RecoltareSangeGrupa::get();
 
-        return view('recoltariSangeComenzi.edit', compact('recoltareSangeComanda', 'beneficiari', 'recoltariSange'));
+        return view('recoltariSangeComenzi.edit', compact('recoltareSangeComanda', 'beneficiari', 'recoltariSange', 'recoltariSangeProduse', 'recoltariSangeGrupe'));
     }
 
     /**
@@ -156,7 +158,17 @@ class RecoltareSangeComandaController extends Controller
     {
         $this->validateRequest($request);
 
-        $recoltareSangeComanda->update($request->except('recoltariSangeAdaugateLaComanda', 'date'));
+        $recoltareSangeComanda->update($request->except('recoltariSangeAdaugateLaComanda', 'cereriSange', 'date'));
+
+        // dd($request);
+        dd($request->cereriSange);
+        // Scoaterea cererilor ce nu mai sunt in comanda
+        RecoltareSangeCerere::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
+
+        // Adaugarea recoltarilor la comanda
+        foreach ($request->recoltariSangeAdaugateLaComanda as $key=>$recoltareSange){
+            RecoltareSange::where('id', $recoltareSange)->update(['comanda_id' => $recoltareSangeComanda->id, 'comanda_ordine_recoltari' => $key+1]);
+        }
 
         // Scoaterea recoltarilor ce nu mai sunt din comanda
         RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $request->recoltariSangeAdaugateLaComanda)->update(['comanda_id' => null]);
@@ -224,14 +236,14 @@ class RecoltareSangeComandaController extends Controller
                 'aviz_nr' => 'required|numeric|between:1,999999',
                 'recoltari_sange_beneficiar_id' => 'required',
                 'data' => 'required',
-                'cereriSange.*.produs' => 'required',
-                'cereriSange.*.grupa' => 'required',
+                'cereriSange.*.recoltari_sange_produs_id' => 'required',
+                'cereriSange.*.recoltari_sange_grupa_id' => 'required',
                 'cereriSange.*.cantitate' => 'required|numeric|between:1,999999',
                 'recoltariSangeAdaugateLaComanda' => 'required'
             ],
             [
-                'cereriSange.*.produs.required' => 'Produsul pentru cererea :position este necesar',
-                'cereriSange.*.grupa.required' => 'Grupa pentru cererea :position este necesară',
+                'cereriSange.*.recoltari_sange_produs_id.required' => 'Produsul pentru cererea :position este necesar',
+                'cereriSange.*.recoltari_sange_grupa_id.required' => 'Grupa pentru cererea :position este necesară',
                 'cereriSange.*.cantitate.required' => 'Cantitatea pentru cererea :position este necesară',
                 'cereriSange.*.cantitate.numeric' => 'Cantitatea pentru cererea :position trebuie sa fie un număr',
                 'cereriSange.*.cantitate.between' => 'Cantitatea pentru cererea :position trebuie să fie un număr între 1 și 999999',
