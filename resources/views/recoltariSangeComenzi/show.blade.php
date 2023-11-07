@@ -64,7 +64,7 @@
                                                     <th scope="col">#</th>
                                                     <th scope="col">Produs</th>
                                                     <th scope="col">Grupa</th>
-                                                    <th scope="col">Cantitate</th>
+                                                    <th scope="col">Nr pungi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -73,7 +73,7 @@
                                                     <td scope="row">{{ $loop->iteration }}
                                                     <td>{{ $cerere->produs->nume ?? '' }}</td>
                                                     <td>{{ $cerere->grupa->nume ?? '' }}</td>
-                                                    <td>{{ $cerere->cantitate }}</td>
+                                                    <td>{{ $cerere->nr_pungi }}</td>
                                                 <tr>
                                                 @endforeach
                                             </tbody>

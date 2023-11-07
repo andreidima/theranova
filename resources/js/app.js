@@ -128,7 +128,7 @@ const recoltareSangeComanda = createApp({
             recoltariSangeProduse: ((typeof recoltariSangeProduse !== 'undefined') ? recoltariSangeProduse : []),
             cerereGrupa: '',
             cerereProdus: '',
-            cerereCantitate: '',
+            cerereNrPungi: '',
             cereriSange: ((typeof cereriSangeVechi !== 'undefined') ? cereriSangeVechi : []),
         }
     },
@@ -146,11 +146,11 @@ const recoltareSangeComanda = createApp({
     },
     methods: {
         cerereAdauga() {
-            if (this.cerereGrupa && this.cerereProdus && this.cerereCantitate) {
-                this.cereriSange.push({ recoltari_sange_grupa_id: this.cerereGrupa, recoltari_sange_produs_id: this.cerereProdus, cantitate: this.cerereCantitate });
+            if (this.cerereGrupa && this.cerereProdus && this.cerereNrPungi) {
+                this.cereriSange.push({ recoltari_sange_grupa_id: this.cerereGrupa, recoltari_sange_produs_id: this.cerereProdus, nr_pungi: this.cerereNrPungi });
                 this.cerereGrupa = '';
                 this.cerereProdus = '';
-                this.cerereCantitate = '';
+                this.cerereNrPungi = '';
             }
         },
         cautaRecoltariSange() {

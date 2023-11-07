@@ -87,13 +87,13 @@
                                         @{{grupa.nume}}
                                 </option>
                             </select>
-                            <label for="cerereCantitate" class="mb-0 ps-3">Cantitate<span class="text-danger">*</span></label>
+                            <label for="cerereNrPungi" class="mb-0 ps-3">Nr pungi<span class="text-danger">*</span></label>
                             <input
                                 type="text"
                                 class="form-control bg-white rounded-3 text-end"
                                 size="10"
-                                v-model="cerereCantitate"
-                                ref='focusCerereCantitate'
+                                v-model="cerereNrPungi"
+                                ref='focusCerereNrPungi'
                                 autocomplete="off"
                                 v-on:keydown.enter.prevent='cerereAdauga()'
                                 >
@@ -128,8 +128,8 @@
                                             @{{ recoltariSangeGrupe.find((grupa) => grupa.id==cerereSange.recoltari_sange_grupa_id).nume }}
                                         </td>
                                         <td class="">
-                                            <input type="hidden" :name="'cereriSange[' + index + '][cantitate]'" :value="cerereSange.cantitate">
-                                            @{{ cerereSange.cantitate }}
+                                            <input type="hidden" :name="'cereriSange[' + index + '][nr_pungi]'" :value="cerereSange.nr_pungi">
+                                            @{{ cerereSange.nr_pungi }}
                                         </td>
                                         <td class="text-end">
                                             <button type="button" class="btn btn-danger btn-sm text-white" @click="cereriSange.splice(index,1)">Șterge</button>
@@ -208,7 +208,7 @@
                                             @{{ recoltareSangeCautata.grupa.nume }}
                                         </td>
                                         <td class="">
-                                            @{{ recoltareSangeCautata.cantitate }}
+                                            @{{ recoltareSangeCautata.nr_pungi }}
                                         </td>
                                         <td class="text-end">
                                             <button type="button" class="btn btn-primary btn-sm text-white" @click="adaugaRecoltareSangeLaComanda(recoltareSangeCautata.id)">Adaugă</button>
@@ -263,7 +263,7 @@
                                             @{{ recoltareSangeAdaugataLaComanda.grupa.nume }}
                                         </td>
                                         <td class="">
-                                            @{{ recoltareSangeAdaugataLaComanda.cantitate }}
+                                            @{{ recoltareSangeAdaugataLaComanda.nr_pungi }}
                                         </td>
                                         <td class="text-end">
                                             <button type="button" class="btn btn-danger btn-sm text-white" @click="stergeRecoltareSangeLaComanda(recoltareSangeAdaugataLaComanda.id)">Șterge</button>

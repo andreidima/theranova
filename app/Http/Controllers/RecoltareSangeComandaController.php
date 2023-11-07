@@ -85,7 +85,7 @@ class RecoltareSangeComandaController extends Controller
             $recoltareSangeCerere = new RecoltareSangeCerere;
             $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
             $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
-            $recoltareSangeCerere->cantitate = $cerere['cantitate'];
+            $recoltareSangeCerere->nr_pungi = $cerere['nr_pungi'];
             $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
             $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
             $recoltareSangeCerere->save();
@@ -131,7 +131,7 @@ class RecoltareSangeComandaController extends Controller
             })
             ->first();
 
-        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();;
+        $beneficiari = RecoltareSangeBeneficiar::select('id', 'nume')->get();
         $recoltariSange = RecoltareSange::with('grupa', 'produs')
             ->whereNull('recoltari_sange_rebut_id')
             ->where(function($query) use ($recoltareSangeComanda) {
@@ -181,7 +181,7 @@ class RecoltareSangeComandaController extends Controller
             $recoltareSangeCerere = new RecoltareSangeCerere;
             $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
             $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
-            $recoltareSangeCerere->cantitate = $cerere['cantitate'];
+            $recoltareSangeCerere->nr_pungi = $cerere['nr_pungi'];
             $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
             $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
             $recoltareSangeCerere->save();
@@ -240,15 +240,15 @@ class RecoltareSangeComandaController extends Controller
                 'data' => 'required',
                 'cereriSange.*.recoltari_sange_produs_id' => 'required',
                 'cereriSange.*.recoltari_sange_grupa_id' => 'required',
-                'cereriSange.*.cantitate' => 'required|numeric|between:1,999999',
+                'cereriSange.*.nr_pungi' => 'required|numeric|between:1,999999',
                 'recoltariSangeAdaugateLaComanda' => 'required'
             ],
             [
                 'cereriSange.*.recoltari_sange_produs_id.required' => 'Produsul pentru cererea :position este necesar',
                 'cereriSange.*.recoltari_sange_grupa_id.required' => 'Grupa pentru cererea :position este necesară',
-                'cereriSange.*.cantitate.required' => 'Cantitatea pentru cererea :position este necesară',
-                'cereriSange.*.cantitate.numeric' => 'Cantitatea pentru cererea :position trebuie sa fie un număr',
-                'cereriSange.*.cantitate.between' => 'Cantitatea pentru cererea :position trebuie să fie un număr între 1 și 999999',
+                'cereriSange.*.nr_pungi.required' => 'Cantitatea pentru cererea :position este necesară',
+                'cereriSange.*.nr_pungi.numeric' => 'Cantitatea pentru cererea :position trebuie sa fie un număr',
+                'cereriSange.*.nr_pungi.between' => 'Cantitatea pentru cererea :position trebuie să fie un număr între 1 și 999999',
             ]
         );
     }
