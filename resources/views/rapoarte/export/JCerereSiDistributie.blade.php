@@ -115,7 +115,8 @@
                         <b>Total</b>
                     </td>
                     <td style="width:15%; text-align:center;">
-                        {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}
+                        {{-- {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }} --}}
+                        {{ $cereri->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->sum('nr_pungi') + $recoltariSangeDeLaComenziFaraCereriAdaugate->whereIn('produs.nume', ['CER', 'CER-SL', 'CER-DL'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -187,7 +188,8 @@
                         <b>Total</b>
                     </td>
                     <td style="text-align:center;">
-                        {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['CTS', 'CUT'])->count() }}
+                        {{-- {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['CTS', 'CUT'])->count() }} --}}
+                        {{ $cereri->whereIn('produs.nume', ['CTS', 'CUT'])->sum('nr_pungi') + $recoltariSangeDeLaComenziFaraCereriAdaugate->whereIn('produs.nume', ['CTS', 'CUT'])->count() }}
                     </td>
                 </tr>
 
@@ -237,7 +239,8 @@
                         <b>Total</b>
                     </td>
                     <td style="text-align:center;">
-                        {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['PPC'])->count() }}
+                        {{-- {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['PPC'])->count() }} --}}
+                        {{ $cereri->whereIn('produs.nume', ['PPC'])->sum('nr_pungi') + $recoltariSangeDeLaComenziFaraCereriAdaugate->whereIn('produs.nume', ['PPC'])->count() }}
                     </td>
                 </tr>
                 <tr>
@@ -350,7 +353,8 @@
                         <b>Total</b>
                     </td>
                     <td style="text-align:center;">
-                        {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['CRIOP'])->count() }}
+                        {{-- {{ $recoltariSangeDistribuite->whereIn('produs.nume', ['CRIOP'])->count() }} --}}
+                        {{ $cereri->whereIn('produs.nume', ['CRIOP'])->sum('nr_pungi') + $recoltariSangeDeLaComenziFaraCereriAdaugate->whereIn('produs.nume', ['CRIOP'])->count() }}
                     </td>
                 </tr>
 

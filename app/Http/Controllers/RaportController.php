@@ -8,6 +8,8 @@ use App\Models\RecoltareSange;
 use App\Models\RecoltareSangeRebut;
 use App\Models\RecoltareSangeProdus;
 use App\Models\RecoltareSangeComanda;
+use App\Models\RecoltareSangeCerere;
+
 
 class RaportController extends Controller
 {
@@ -381,6 +383,21 @@ class RaportController extends Controller
 
             case 'JCerereSiDistributie':
                 $request->validate(['interval' => 'required']);
+                $cereri = RecoltareSangeCerere::with('produs')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                $recoltariSangeDeLaComenziFaraCereriAdaugate = RecoltareSange::with('produs')
+                    ->whereHas('comanda', function ($query) use ($interval) {
+                        $query->whereDoesntHave('cereri')
+                            ->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
+                    })
+                    ->get();
+
+                // dd($cereri->sum('nr_pungi'));
+
                 $recoltariSangeDistribuite = RecoltareSange::with('produs')
                     ->whereHas('comanda', function ($query) use ($interval) {
                         $query->whereBetween('data', [strtok($interval, ','), strtok( '' )]);
@@ -405,7 +422,7 @@ class RaportController extends Controller
                     ->get();
 
                 // return view('rapoarte.export.JCerereSiDistributie', compact('recoltariSange', 'interval'));
-                $pdf = \PDF::loadView('rapoarte.export.JCerereSiDistributie', compact('recoltariSangeDistribuite', 'recoltariSangeDistribuiteInJudet', 'recoltariSangeDistribuiteCatreAlteCts', 'recoltariSangePrimite', 'interval'))
+                $pdf = \PDF::loadView('rapoarte.export.JCerereSiDistributie', compact('cereri', 'recoltariSangeDeLaComenziFaraCereriAdaugate', 'recoltariSangeDistribuite', 'recoltariSangeDistribuiteInJudet', 'recoltariSangeDistribuiteCatreAlteCts', 'recoltariSangePrimite', 'interval'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
                 // return $pdf->download('Contract ' . $comanda->transportator_contract . '.pdf');

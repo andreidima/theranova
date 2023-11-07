@@ -31,4 +31,14 @@ class RecoltareSangeCerere extends Model
     {
         return $this->belongsTo(RecoltareSangeProdus::class, 'recoltari_sange_produs_id');
     }
+
+    /**
+     * Get the comanda that owns the RecoltareSange
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function comanda()
+    {
+        return $this->belongsTo(RecoltareSangeComanda::class, 'comanda_id');
+    }
 }
