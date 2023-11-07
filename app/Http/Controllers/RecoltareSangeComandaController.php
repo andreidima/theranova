@@ -210,6 +210,9 @@ class RecoltareSangeComandaController extends Controller
     {
         $recoltareSangeComanda->delete();
 
+        // Stergerea cererilor de la comanda
+        RecoltareSangeCerere::where('comanda_id', $recoltareSangeComanda->id)->delete();
+
         // Scoaterea recoltarilor de la comanda
         RecoltareSange::where('comanda_id', $recoltareSangeComanda->id)->update(['comanda_id' => null]);
 
