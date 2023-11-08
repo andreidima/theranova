@@ -208,7 +208,7 @@
                                             @{{ recoltareSangeCautata.grupa.nume }}
                                         </td>
                                         <td class="">
-                                            @{{ recoltareSangeCautata.nr_pungi }}
+                                            @{{ recoltareSangeCautata.cantitate }}
                                         </td>
                                         <td class="text-end">
                                             <button type="button" class="btn btn-primary btn-sm text-white" @click="adaugaRecoltareSangeLaComanda(recoltareSangeCautata.id)">Adaugă</button>
@@ -263,7 +263,7 @@
                                             @{{ recoltareSangeAdaugataLaComanda.grupa.nume }}
                                         </td>
                                         <td class="">
-                                            @{{ recoltareSangeAdaugataLaComanda.nr_pungi }}
+                                            @{{ recoltareSangeAdaugataLaComanda.cantitate }}
                                         </td>
                                         <td class="text-end">
                                             <button type="button" class="btn btn-danger btn-sm text-white" @click="stergeRecoltareSangeLaComanda(recoltareSangeAdaugataLaComanda.id)">Șterge</button>

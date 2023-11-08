@@ -81,14 +81,16 @@ class RecoltareSangeComandaController extends Controller
         $recoltareSangeComanda = RecoltareSangeComanda::create($request->except('cereriSange', 'recoltariSangeAdaugateLaComanda', 'date'));
 
         // Adaugarea cererilor la comanda
-        foreach($request->cereriSange as $key=>$cerere){
-            $recoltareSangeCerere = new RecoltareSangeCerere;
-            $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
-            $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
-            $recoltareSangeCerere->nr_pungi = $cerere['nr_pungi'];
-            $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
-            $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
-            $recoltareSangeCerere->save();
+        if ($request->cereriSange){
+            foreach($request->cereriSange as $key=>$cerere){
+                $recoltareSangeCerere = new RecoltareSangeCerere;
+                $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
+                $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
+                $recoltareSangeCerere->nr_pungi = $cerere['nr_pungi'];
+                $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
+                $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
+                $recoltareSangeCerere->save();
+            }
         }
 
         // Adaugarea recoltarilor la comanda
@@ -162,29 +164,31 @@ class RecoltareSangeComandaController extends Controller
 
 
         // Gestionarea cererilor
-        $cereriSange = collect($request->cereriSange); // creare colectie din array pentru a lucra mai usor cu datele
+        if ($request->cereriSange){
+            $cereriSange = collect($request->cereriSange); // creare colectie din array pentru a lucra mai usor cu datele
 
-        // Scoaterea cererilor ce nu mai sunt in comanda
-        RecoltareSangeCerere::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $cereriSange->whereNotNull('id')->pluck('id'))->delete();
+            // Scoaterea cererilor ce nu mai sunt in comanda
+            RecoltareSangeCerere::where('comanda_id', $recoltareSangeComanda->id)->whereNotIn('id', $cereriSange->whereNotNull('id')->pluck('id'))->delete();
 
-        // Se verifica cererile care sunt deja la comanda daca nu cumva s-a schimbat ordinea, si de actualizat cu noul numar de ordine daca este cazul
-        foreach ($cereriSange->whereNotNull('id') as $key=>$cerere){
-            $recoltareSangeCerere = RecoltareSangeCerere::where('id', $cerere['id'])->first();
-            if ($recoltareSangeCerere->comanda_ordine_cerere !== ($key+1)){
+            // Se verifica cererile care sunt deja la comanda daca nu cumva s-a schimbat ordinea, si de actualizat cu noul numar de ordine daca este cazul
+            foreach ($cereriSange->whereNotNull('id') as $key=>$cerere){
+                $recoltareSangeCerere = RecoltareSangeCerere::where('id', $cerere['id'])->first();
+                if ($recoltareSangeCerere->comanda_ordine_cerere !== ($key+1)){
+                    $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
+                    $recoltareSangeCerere->save();
+                }
+            }
+
+            // Adaugarea cererilor noi la comanda
+            foreach ($cereriSange->whereNull('id') as $key=>$cerere){
+                $recoltareSangeCerere = new RecoltareSangeCerere;
+                $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
+                $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
+                $recoltareSangeCerere->nr_pungi = $cerere['nr_pungi'];
+                $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
                 $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
                 $recoltareSangeCerere->save();
             }
-        }
-
-        // Adaugarea cererilor noi la comanda
-        foreach ($cereriSange->whereNull('id') as $key=>$cerere){
-            $recoltareSangeCerere = new RecoltareSangeCerere;
-            $recoltareSangeCerere->recoltari_sange_produs_id = $cerere['recoltari_sange_produs_id'];
-            $recoltareSangeCerere->recoltari_sange_grupa_id = $cerere['recoltari_sange_grupa_id'];
-            $recoltareSangeCerere->nr_pungi = $cerere['nr_pungi'];
-            $recoltareSangeCerere->comanda_id = $recoltareSangeComanda->id;
-            $recoltareSangeCerere->comanda_ordine_cerere = $key+1;
-            $recoltareSangeCerere->save();
         }
 
 
