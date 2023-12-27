@@ -44,38 +44,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        @if (!(auth()->user()->name == "Contabilitate"))
-                            <li class="nav-item me-3">
-                                <a class="nav-link active" aria-current="page" href="/recoltari-sange">
-                                    <i class="fa-solid fa-syringe me-1"></i>Recoltări sânge
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link active" aria-current="page" href="/recoltari-sange/rebuturi">
-                                    <i class="fa-solid fa-trash-can me-1"></i>Rebuturi
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link active" aria-current="page" href="/recoltari-sange/intrari">
-                                    <i class="fa-solid fa-clipboard-list me-1"></i>Intrări
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link active" aria-current="page" href="/recoltari-sange/comenzi">
-                                    <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link active" aria-current="page" href="/recoltari-sange-validare-inregistrari-in-laborator">
-                                    <i class="fa-solid fa-clipboard-check me-1"></i>Validări
-                                </a>
-                            </li>
-                        @endif
-                            <li class="nav-item me-3">
-                                <a class="nav-link active" aria-current="page" href="/rapoarte">
-                                    <i class="fas fa-bars me-1"></i>Rapoarte
-                                </a>
-                            </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/pacienti">
+                                <i class="fa-solid fa-person-cane me-1"></i>Pacienți
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
