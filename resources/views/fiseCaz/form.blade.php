@@ -2,7 +2,7 @@
 
 <script type="application/javascript">
     pacienti = {!! json_encode($pacienti) !!}
-    pacientIdVechi = {!! json_encode(old('pacient_id', ($camion->pacient_id ?? "")) ?? "") !!}
+    pacientIdVechi = {!! json_encode(old('pacient_id', ($fisaCaz->pacient_id ?? "")) ?? "") !!}
 </script>
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="client">
@@ -57,16 +57,16 @@
                 <small v-if="!pacient_id" class="ps-3">* Selectați un pacient</small>
                 <small v-else class="ps-3 text-success">* Ați selectat un pacient</small>
             </div>
-            {{-- <div class="col-lg-4 mb-4">
-                <label for="nume" class="mb-0 ps-3">Nume<span class="text-danger">*</span></label>
+            <div class="col-lg-4 mb-4">
+                <label for="greutate" class="mb-0 ps-3">Greutate</label>
                 <input
                     type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('nume') ? 'is-invalid' : '' }}"
-                    name="nume"
+                    class="form-control bg-white rounded-3 {{ $errors->has('greutate') ? 'is-invalid' : '' }}"
+                    name="greutate"
                     placeholder=""
-                    value="{{ old('nume', $pacient->nume) }}"
+                    value="{{ old('greutate', $fisaCaz->greutate) }}"
                     required>
-            </div> --}}
+            </div>
             {{-- <div class="col-lg-2 mb-4 text-center" id="datePicker">
                 <label for="data" class="mb-0 ps-0">Data nașterii</label>
                 <vue-datepicker-next

@@ -19,7 +19,7 @@
                     <form  class="needs-validation" novalidate method="POST" action="/fise-caz">
 
                             @include ('fiseCaz.form', [
-                                'fisaCaz' => new App\Models\FisaCaz,
+                                // 'fisaCaz' => new App\Models\FisaCaz,
                                 'buttonText' => 'Adaugă Fișă Caz'
                             ])
                     </form>

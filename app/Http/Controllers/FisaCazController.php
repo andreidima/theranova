@@ -40,7 +40,7 @@ class FisaCazController extends Controller
             // })
             latest()
             ->simplePaginate(25);
-
+// dd(session()->getOldInput());
         return view('fiseCaz.index', compact('fiseCaz', 'searchNume', 'searchPrenume', 'searchTelefon'));
     }
 
@@ -52,22 +52,27 @@ class FisaCazController extends Controller
     public function create(Request $request)
     {
         // Daca a fost adaugat un pacient din fisaCaz, se revine in formularul fisaCaz si campurile trebuie sa se recompleteze automat
-        if ($request->session()->exists('fisaCazRequest')) {
-            session()->put('_old_input', $request->session()->pull('fisaCazRequest', 'default'));
-            if ($request->session()->exists('fisaCazPacientId')) {
-                session()->put('_old_input.firma_id', $request->session()->pull('fisaCazPacientId', ''));
-            }
-            $request->session()->forget(['fisaCazRequest', 'fisaCazPacientId']);
-            // Session::forget('key');
-            dd($request->session(), session()->getOldInput());
-        }
-
-
-        $pacienti = Pacient::select('id', 'nume', 'prenume')->get();
+        // dd($request->session()->get('fisaCazRequest', ''));
+        // $request->session()->forget('_old_input');
+        // if ($request->session()->exists('fisaCazRequest')) {
+        //     session()->put('_old_input', $request->session()->pull('fisaCazRequest', 'default'));
+        //     if ($request->session()->exists('fisaCazPacientId')) {
+        //         session()->put('_old_input.pacient_id', $request->session()->pull('fisaCazPacientId', ''));
+        //     }
+        // }
+        $fisaCaz = new FisaCaz;
+        // if ($request->session()->exists('fisaCazRequest')) {
+            $fisaCaz->fill($request->session()->pull('fisaCazRequest', []));
+        //     if ($request->session()->exists('fisaCazPacientId')) {
+        //         $fisaCaz->pacient_id = $request->session()->pull('fisaCazPacientId', '');
+        //     }
+        // }
+// dd(session()->getOldInput(), $request->session()->pull('fisaCazPacientId', ''));
+        $pacienti = Pacient::select('id', 'nume', 'prenume', 'data_nastere', 'localitate')->get();
 
         $request->session()->get('fisaCazReturnUrl') ?? $request->session()->put('fisaCazReturnUrl', url()->previous());
 
-        return view('fiseCaz.create', compact('pacienti'));
+        return view('fiseCaz.create', compact('fisaCaz', 'pacienti'));
     }
 
     /**
@@ -80,7 +85,8 @@ class FisaCazController extends Controller
     {
         $fisaCaz = FisaCaz::create($this->validateRequest($request));
 
-        return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'FisaCazul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost adăugat cu succes!');
+        // return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'FisaCazul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost adăugat cu succes!');
+        return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'));
     }
 
     /**
@@ -154,17 +160,17 @@ class FisaCazController extends Controller
 
         return $request->validate(
             [
-                'nume' => 'required|max:200',
+                'pacient_id' => 'required',
                 'prenume' => 'required|max:200',
-                'data_nastere' => '',
-                'sex' => '',
-                'adresa' => 'nullable|max:500',
-                'localitate' => 'nullable|max:200',
-                'judet' => 'nullable|max:200',
-                'cod_postal' => 'nullable|max:200',
-                'telefon' => 'nullable|max:200',
-                'email' => 'nullable|max:200|email:rfc,dns',
-                'observatii' => 'nullable|max:2000',
+                // 'data_nastere' => '',
+                // 'sex' => '',
+                // 'adresa' => 'nullable|max:500',
+                // 'localitate' => 'nullable|max:200',
+                // 'judet' => 'nullable|max:200',
+                // 'cod_postal' => 'nullable|max:200',
+                // 'telefon' => 'nullable|max:200',
+                // 'email' => 'nullable|max:200|email:rfc,dns',
+                // 'observatii' => 'nullable|max:2000',
             ],
             [
 

@@ -72,7 +72,7 @@ const pacientAutocomplete = createApp({
         if (this.pacient_id) {
             for (var i = 0; i < this.pacienti.length; i++) {
                 if (this.pacienti[i].id == this.pacient_id) {
-                    this.pacient_nume = this.pacienti[i].nume + this.pacienti[i].nume;
+                    this.pacient_nume = this.pacienti[i].nume + ' ' + this.pacienti[i].prenume;
                     break;
                 }
             }
