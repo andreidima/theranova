@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PacientController;
+use App\Http\Controllers\FisaCazController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,5 +24,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
 
     Route::resource('/pacienti', PacientController::class)->parameters(['pacienti' => 'pacient']);
+    Route::resource('/fise-caz', FisaCazController::class)->parameters(['fise-caz' => 'fisaCaz']);
+    Route::any('/fise-caz/adauga-resursa/{resursa}', [FisaCazController::class, 'fisaCazAdaugaResursa']);
 });
 

@@ -9,7 +9,7 @@
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
             <div class="col-lg-3">
                 <span class="badge culoare1 fs-5">
-                    <i class="fa-solid fa-person-cane me-1"></i>Pacienți
+                    <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz
                 </span>
             </div>
             <div class="col-lg-6">
@@ -38,7 +38,7 @@
             </div>
             <div class="col-lg-3 text-end">
                 <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
-                    <i class="fas fa-plus-square text-white me-1"></i>Adaugă Pacient
+                    <i class="fas fa-plus-square text-white me-1"></i>Adaugă Fișă Caz
                 </a>
             </div>
         </div>
@@ -53,48 +53,39 @@
                         <tr class="" style="padding:2rem">
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Nume</th>
-                            <th class="text-white culoare2">Vârsta</th>
+                            {{-- <th class="text-white culoare2">Vârsta</th>
                             <th class="text-white culoare2">Telefon</th>
                             <th class="text-white culoare2">Email</th>
-                            <th class="text-white culoare2">Localitatea</th>
+                            <th class="text-white culoare2">Localitatea</th> --}}
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pacienti as $pacient)
+                        @forelse ($fiseCaz as $fisaCaz)
                             <tr>
                                 <td align="">
-                                    {{ ($pacienti ->currentpage()-1) * $pacienti ->perpage() + $loop->index + 1 }}
+                                    {{ ($fiseCaz ->currentpage()-1) * $fiseCaz ->perpage() + $loop->index + 1 }}
                                 </td>
                                 <td class="">
-                                    {{ $pacient->nume }} {{ $pacient->prenume }}
+                                    {{-- {{ $fisaCaz->nume }} {{ $fisaCaz->prenume }} --}}
                                 </td>
                                 <td class="">
-                                    {{ $pacient->data_nastere ? Carbon::now()->diffInYears($pacient->data_nastere) : '' }}
-                                </td>
-                                <td class="">
-                                    {{ $pacient->telefon }}
-                                </td>
-                                <td class="">
-                                    {{ $pacient->email }}
-                                </td>
-                                <td class="">
-                                    {{ $pacient->localitate }}
+                                    {{-- {{ $pacient->data_nastere ? Carbon::now()->diffInYears($pacient->data_nastere) : '' }} --}}
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end">
-                                        <a href="{{ $pacient->path() }}" class="flex me-1">
+                                        <a href="{{ $fisaCaz->path() }}" class="flex me-1">
                                             <span class="badge bg-success">Vizualizează</span>
                                         </a>
-                                        <a href="{{ $pacient->path() }}/modifica" class="flex me-1">
+                                        <a href="{{ $fisaCaz->path() }}/modifica" class="flex me-1">
                                             <span class="badge bg-primary">Modifică</span>
                                         </a>
                                         <div style="flex" class="">
                                             <a
                                                 href="#"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#stergePacient{{ $pacient->id }}"
-                                                title="Șterge pacient"
+                                                data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
+                                                title="Șterge fișă caz"
                                                 >
                                                 <span class="badge bg-danger">Șterge</span>
                                             </a>
@@ -110,35 +101,35 @@
 
                 <nav>
                     <ul class="pagination justify-content-center">
-                        {{$pacienti->appends(Request::except('page'))->links()}}
+                        {{$fiseCaz->appends(Request::except('page'))->links()}}
                     </ul>
                 </nav>
         </div>
     </div>
 
-    {{-- Modalele pentru stergere pacient --}}
-    @foreach ($pacienti as $pacient)
-        <div class="modal fade text-dark" id="stergePacient{{ $pacient->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    {{-- Modalele pentru stergere fisa caz --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        <div class="modal fade text-dark" id="stergeFisaCaz{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="exampleModalLabel">Pacient: <b>{{ $pacient->nume }} {{ $pacient->prenume }}</b></h5>
+                    {{-- <h5 class="modal-title text-white" id="exampleModalLabel">FisaCaz: <b>{{ $pacient->nume }} {{ $pacient->prenume }}</b></h5> --}}
                     <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="text-align:left;">
-                    Ești sigur ca vrei să ștergi pacientul?
+                    Ești sigur ca vrei să ștergi Fișa Caz?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
-                    <form method="POST" action="{{ $pacient->path() }}">
+                    <form method="POST" action="{{ $fisaCaz->path() }}">
                         @method('DELETE')
                         @csrf
                         <button
                             type="submit"
                             class="btn btn-danger text-white"
                             >
-                            Șterge Pacientul
+                            Șterge Fișa Caz
                         </button>
                     </form>
 

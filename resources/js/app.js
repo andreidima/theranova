@@ -58,4 +58,43 @@ if (document.getElementById('datePicker') != null) {
 }
 
 
+const pacientAutocomplete = createApp({
+    el: '#pacientAutocomplete',
+    data() {
+        return {
+            pacient_id: pacientIdVechi,
+            pacient_nume: '',
+            pacienti: pacienti,
+            pacientiListaAutocomplete: []
+        }
+    },
+    created: function () {
+        if (this.pacient_id) {
+            for (var i = 0; i < this.pacienti.length; i++) {
+                if (this.pacienti[i].id == this.pacient_id) {
+                    this.pacient_nume = this.pacienti[i].nume + this.pacienti[i].nume;
+                    break;
+                }
+            }
+        }
+    },
+    methods: {
+        autocompletePacienti() {
+            this.pacientiListaAutocomplete = [];
+
+            for (var i = 0; i < this.pacienti.length; i++) {
+                if (this.pacienti[i].nume || this.pacienti[i].prenume){
+                    var nume = this.pacienti[i].nume + ' ' + this.pacienti[i].prenume;
+                    if (nume.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(this.pacient_nume.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, ""))){
+                        this.pacientiListaAutocomplete.push(this.pacienti[i]);
+                    }
+                }
+            }
+        },
+    }
+});
+if (document.getElementById('pacientAutocomplete') != null) {
+    pacientAutocomplete.mount('#pacientAutocomplete');
+}
+
 

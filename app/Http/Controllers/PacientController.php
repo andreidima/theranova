@@ -65,6 +65,11 @@ class PacientController extends Controller
     {
         $pacient = Pacient::create($this->validateRequest($request));
 
+        // Daca pacientul a fost adaugat din formularul FisaCaz, se trimite in sesiune, pentru a fi folosita in fisaCaz
+        if ($request->session()->exists('fisaCazRequest')) {
+            $request->session()->put('fisaCazPacientId', $pacient->id);
+        }
+
         return redirect($request->session()->get('pacientReturnUrl') ?? ('/pacienti'))->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost adăugat cu succes!');
     }
 
