@@ -62,7 +62,7 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Localiate
+                                    Localitatea
                                 </td>
                                 <td>
                                     {{ $pacient->localitate }}

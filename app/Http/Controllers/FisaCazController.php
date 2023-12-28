@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\FisaCaz;
+use App\Models\User;
 use App\Models\Pacient;
 
 class FisaCazController extends Controller
@@ -19,29 +20,43 @@ class FisaCazController extends Controller
         $request->session()->forget('fisaCazReturnUrl');
 
         $searchNume = $request->searchNume;
-        $searchPrenume = $request->searchPrenume;
-        $searchTelefon = $request->searchTelefon;
+        $searchUserVanzari = $request->searchUserVanzari;
+        $searchUserComercial = $request->searchUserComercial;
+        $searchUserTehnic = $request->searchUserTehnic;
 
-        $fiseCaz = FisaCaz::
-            // when($searchNume, function ($query, $searchNume) {
-            //     foreach (explode(" ", $searchNume) as $cuvant){
-            //         $query->where(function ($query) use($cuvant) {
-            //             return $query->where('nume', 'like', '%' . $cuvant . '%')
-            //                     ->orWhere('prenume', 'like', '%' . $cuvant . '%');
-            //         });
-            //     }
-            //     return $query;
-            // })
-            // ->when($searchPrenume, function ($query, $searchPrenume) {
-            //     return $query->where('nume', 'like', '%' . $searchPrenume . '%');
-            // })
-            // ->when($searchTelefon, function ($query, $searchTelefon) {
-            //     return $query->where('telefon', 'like', '%' . $searchTelefon . '%');
-            // })
-            latest()
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic')
+            ->when($searchNume, function ($query, $searchNume) {
+                foreach (explode(" ", $searchNume) as $cuvant){
+                    $query->whereHas('pacient', function ($query) use($cuvant) {
+                        $query->where(function ($query) use($cuvant) {
+                            return $query->where('nume', 'like', '%' . $cuvant . '%')
+                                    ->orWhere('prenume', 'like', '%' . $cuvant . '%');
+                        });
+                    });
+                }
+                return $query;
+            })
+            ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
+                $query->whereHas('userVanzari', function ($query) use ($searchUserVanzari) {
+                    return $query->where('id', $searchUserVanzari);
+                });
+            })
+            ->when($searchUserComercial, function ($query, $searchUserComercial) {
+                $query->whereHas('userComercial', function ($query) use ($searchUserComercial) {
+                    return $query->where('id', $searchUserComercial);
+                });
+            })
+            ->when($searchUserTehnic, function ($query, $searchUserTehnic) {
+                $query->whereHas('userTehnic', function ($query) use ($searchUserTehnic) {
+                    return $query->where('id', $searchUserTehnic);
+                });
+            })
+            ->latest()
             ->simplePaginate(25);
-// dd(session()->getOldInput());
-        return view('fiseCaz.index', compact('fiseCaz', 'searchNume', 'searchPrenume', 'searchTelefon'));
+
+        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
+
+        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
     }
 
     /**
@@ -51,28 +66,17 @@ class FisaCazController extends Controller
      */
     public function create(Request $request)
     {
-        // Daca a fost adaugat un pacient din fisaCaz, se revine in formularul fisaCaz si campurile trebuie sa se recompleteze automat
-        // dd($request->session()->get('fisaCazRequest', ''));
-        // $request->session()->forget('_old_input');
-        // if ($request->session()->exists('fisaCazRequest')) {
-        //     session()->put('_old_input', $request->session()->pull('fisaCazRequest', 'default'));
-        //     if ($request->session()->exists('fisaCazPacientId')) {
-        //         session()->put('_old_input.pacient_id', $request->session()->pull('fisaCazPacientId', ''));
-        //     }
-        // }
         $fisaCaz = new FisaCaz;
-        // if ($request->session()->exists('fisaCazRequest')) {
-            $fisaCaz->fill($request->session()->pull('fisaCazRequest', []));
-        //     if ($request->session()->exists('fisaCazPacientId')) {
-        //         $fisaCaz->pacient_id = $request->session()->pull('fisaCazPacientId', '');
-        //     }
-        // }
-// dd(session()->getOldInput(), $request->session()->pull('fisaCazPacientId', ''));
+
+        // Daca a fost adaugat un pacient din fisaCaz, se revine in formularul fisaCaz si campurile trebuie sa se recompleteze automat
+        $fisaCaz->fill($request->session()->pull('fisaCazRequest', []));
+
+        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
         $pacienti = Pacient::select('id', 'nume', 'prenume', 'data_nastere', 'localitate')->get();
 
         $request->session()->get('fisaCazReturnUrl') ?? $request->session()->put('fisaCazReturnUrl', url()->previous());
 
-        return view('fiseCaz.create', compact('fisaCaz', 'pacienti'));
+        return view('fiseCaz.create', compact('fisaCaz', 'useri', 'pacienti'));
     }
 
     /**
@@ -83,10 +87,9 @@ class FisaCazController extends Controller
      */
     public function store(Request $request)
     {
-        $fisaCaz = FisaCaz::create($this->validateRequest($request));
+        $fisaCaz = FisaCaz::create($this->validateRequestFisa($request));
 
-        // return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'FisaCazul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost adăugat cu succes!');
-        return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'));
+        return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost adăugată cu succes!');
     }
 
     /**
@@ -112,7 +115,10 @@ class FisaCazController extends Controller
     {
         $request->session()->get('fisaCazReturnUrl') ?? $request->session()->put('fisaCazReturnUrl', url()->previous());
 
-        return view('fiseCaz.edit', compact('fisaCaz'));
+        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
+        $pacienti = Pacient::select('id', 'nume', 'prenume', 'data_nastere', 'localitate')->get();
+
+        return view('fiseCaz.edit', compact('fisaCaz', 'useri', 'pacienti'));
     }
 
     /**
@@ -124,9 +130,9 @@ class FisaCazController extends Controller
      */
     public function update(Request $request, FisaCaz $fisaCaz)
     {
-        $fisaCaz->update($this->validateRequest($request));
+        $fisaCaz->update($this->validateRequestFisa($request));
 
-        return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'FisaCazul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost modificat cu succes!');
+        return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost modificată cu succes!');
     }
 
     /**
@@ -139,7 +145,7 @@ class FisaCazController extends Controller
     {
         $fisaCaz->delete();
 
-        return back()->with('status', 'FisaCazul „' . $pacient->nume . ' ' . $pacient->prenume . '”  a fost șters cu succes!');
+        return back()->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost ștearsă cu succes!');
     }
 
     /**
@@ -147,21 +153,16 @@ class FisaCazController extends Controller
      *
      * @return array
      */
-    protected function validateRequest(Request $request)
+    protected function validateRequestFisa(Request $request)
     {
-        // Se adauga userul doar la adaugare, iar la modificare nu se schimba
-        // if ($request->isMethod('post')) {
-        //     $request->request->add(['user_id' => $request->user()->id]);
-        // }
-
-        // if ($request->isMethod('post')) {
-        //     $request->request->add(['cheie_unica' => uniqid()]);
-        // }
-
         return $request->validate(
             [
+                'data' => 'required',
+                'user_vanzari' => '',
+                'user_comercial' => '',
+                'user_tehnic' => '',
                 'pacient_id' => 'required',
-                'prenume' => 'required|max:200',
+                // 'prenume' => 'required|max:200',
                 // 'data_nastere' => '',
                 // 'sex' => '',
                 // 'adresa' => 'nullable|max:500',

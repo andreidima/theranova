@@ -1,3 +1,7 @@
+@php
+    use \Carbon\Carbon;
+@endphp
+
 @extends ('layouts.app')
 
 @section('content')
@@ -7,7 +11,7 @@
             <div class="shadow-lg" style="border-radius: 40px 40px 40px 40px;">
                 <div class="culoare2 border border-secondary p-2" style="border-radius: 40px 40px 0px 0px;">
                     <span class="badge text-light fs-5">
-                        <i class="fa-solid fa-fa-person-crane me-1"></i>Pacienți / {{ $pacient->nume }} {{ $pacient->prenume }}
+                        <i class="fa-solid fa-file-medical me-1"></i>Fișe caz / {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume }}
                     </span>
                 </div>
 
@@ -22,90 +26,58 @@
                         >
                             <tr>
                                 <td class="pe-4">
-                                    Nume
+                                    Data:
                                 </td>
                                 <td>
-                                    {{ $pacient->nume }}
+                                    {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Prenume
+                                    Vânzări
                                 </td>
                                 <td>
-                                    {{ $pacient->prenume }}
+                                    {{ $fisaCaz->userVanzari->name ?? '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Data naștere:
+                                    Comercial
                                 </td>
                                 <td>
-                                    {{ $pacient->data_nastere ? \Carbon\Carbon::parse($pacient->data_nastere)->isoFormat('DD.MM.YYYY') : '' }}
+                                    {{ $fisaCaz->userComercial->name ?? '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Sex
+                                    Tehnic
                                 </td>
                                 <td>
-                                    {{ $pacient->sex == '1' ? 'M' : 'F' }}
+                                    {{ $fisaCaz->userTehnic->name ?? '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Adresa
+                                    Pacient
                                 </td>
                                 <td>
-                                    {{ $pacient->adresa }}
+                                    <b>{{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}</b>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Localiate
+                                    Data nașterii
                                 </td>
                                 <td>
-                                    {{ $pacient->localitate }}
+                                    {{ $fisaCaz->pacient->data_nastere ? Carbon::parse($fisaCaz->pacient->data_nastere)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Județ
+                                    Localitatea
                                 </td>
                                 <td>
-                                    {{ $pacient->judet }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Cod poștal
-                                </td>
-                                <td>
-                                    {{ $pacient->cod_postal }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Telefon
-                                </td>
-                                <td>
-                                    {{ $pacient->telefon }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Email
-                                </td>
-                                <td>
-                                    {{ $pacient->email }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Observații
-                                </td>
-                                <td>
-                                    {{ $pacient->observatii }}
+                                    {{ $fisaCaz->pacient->localitate ?? '' }}
                                 </td>
                             </tr>
                         </table>
@@ -113,7 +85,7 @@
 
                     <div class="form-row mb-2 px-2">
                         <div class="col-lg-12 d-flex justify-content-center">
-                            <a class="btn btn-secondary text-white rounded-3" href="{{ Session::get('pacientReturnUrl') }}">Înapoi</a>
+                            <a class="btn btn-secondary text-white rounded-3" href="{{ Session::get('fisaCazReturnUrl') }}">Înapoi</a>
                         </div>
                     </div>
 
