@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Pacient;
+use App\Models\User;
 
-class PacientController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,32 +15,19 @@ class PacientController extends Controller
      */
     public function index(Request $request)
     {
-        $request->session()->forget('pacientReturnUrl');
+        $request->session()->forget('userReturnUrl');
 
         $searchNume = $request->searchNume;
-        $searchPrenume = $request->searchPrenume;
-        $searchTelefon = $request->searchTelefon;
 
-        $pacienti = Pacient::
+        $useri = User::
             when($searchNume, function ($query, $searchNume) {
-                foreach (explode(" ", $searchNume) as $cuvant){
-                    $query->where(function ($query) use($cuvant) {
-                        return $query->where('nume', 'like', '%' . $cuvant . '%')
-                                ->orWhere('prenume', 'like', '%' . $cuvant . '%');
-                    });
-                }
-                return $query;
+                return $query->where('name', 'like', '%' . $searchNume . '%');
             })
-            ->when($searchPrenume, function ($query, $searchPrenume) {
-                return $query->where('nume', 'like', '%' . $searchPrenume . '%');
-            })
-            ->when($searchTelefon, function ($query, $searchTelefon) {
-                return $query->where('telefon', 'like', '%' . $searchTelefon . '%');
-            })
-            ->latest()
+            ->where('id', '>', 1) // se sare pentru user 1, Andrei Dima
+            ->orderBy('role')
             ->simplePaginate(25);
 
-        return view('pacienti.index', compact('pacienti', 'searchNume', 'searchPrenume', 'searchTelefon'));
+        return view('useri.index', compact('useri', 'searchNume'));
     }
 
     /**

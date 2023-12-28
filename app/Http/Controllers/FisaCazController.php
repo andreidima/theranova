@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\FisaCaz;
 use App\Models\User;
 use App\Models\Pacient;
+use App\Models\DataMedicala;
+use App\Models\Cerinta;
 
 class FisaCazController extends Controller
 {
@@ -87,7 +89,16 @@ class FisaCazController extends Controller
      */
     public function store(Request $request)
     {
-        $fisaCaz = FisaCaz::create($this->validateRequestFisa($request));
+        $this->validateRequest($request);
+
+        $fisaCaz = FisaCaz::create($request->only(['data', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+
+        foreach ($request->dateMedicale as $date) {
+            $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
+        }
+        foreach ($request->cerinte as $date) {
+            $fisaCaz->cerinte()->save(Cerinta::make($date));
+        }
 
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost adăugată cu succes!');
     }
@@ -130,7 +141,16 @@ class FisaCazController extends Controller
      */
     public function update(Request $request, FisaCaz $fisaCaz)
     {
-        $fisaCaz->update($this->validateRequestFisa($request));
+        $this->validateRequest($request);
+
+        $fisaCaz->update($request->only(['data', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+
+        foreach ($request->dateMedicale as $date) {
+            $fisaCaz->dateMedicale()->first() ? $fisaCaz->dateMedicale()->first()->update($date) : $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
+        }
+        foreach ($request->cerinte as $date) {
+            $fisaCaz->cerinte()->first() ? $fisaCaz->cerinte()->first()->update($date) : $fisaCaz->cerinte()->save(Cerinta::make($date));
+        }
 
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost modificată cu succes!');
     }
@@ -144,6 +164,8 @@ class FisaCazController extends Controller
     public function destroy(Request $request, FisaCaz $fisaCaz)
     {
         $fisaCaz->delete();
+        $fisaCaz->dateMedicale()->delete();
+        $fisaCaz->cerinte()->delete();
 
         return back()->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost ștearsă cu succes!');
     }
@@ -153,7 +175,7 @@ class FisaCazController extends Controller
      *
      * @return array
      */
-    protected function validateRequestFisa(Request $request)
+    protected function validateRequest(Request $request)
     {
         return $request->validate(
             [
@@ -162,19 +184,32 @@ class FisaCazController extends Controller
                 'user_comercial' => '',
                 'user_tehnic' => '',
                 'pacient_id' => 'required',
-                // 'prenume' => 'required|max:200',
-                // 'data_nastere' => '',
-                // 'sex' => '',
-                // 'adresa' => 'nullable|max:500',
-                // 'localitate' => 'nullable|max:200',
-                // 'judet' => 'nullable|max:200',
-                // 'cod_postal' => 'nullable|max:200',
-                // 'telefon' => 'nullable|max:200',
-                // 'email' => 'nullable|max:200|email:rfc,dns',
-                // 'observatii' => 'nullable|max:2000',
+                'dateMedicale.*.greutate' => 'nullable|integer|min:10|max:300',
+                'dateMedicale.*.parte_amputata' => '',
+                'dateMedicale.*.amputatie' => '',
+                'dateMedicale.*.nivel_de_activitate' => '',
+                'dateMedicale.*.cauza_amputatiei' => '',
+                'dateMedicale.*.a_mai_purtat_proteza' => '',
+                'dateMedicale.*.alte_afectiuni' => 'nullable|max:2000',
+                'dateMedicale.*.observatii' => 'nullable|max:2000',
+                'cerinte.*.decizie_cas' => '',
+                'cerinte.*.buget_disponibil' => 'nullable|integer|max:1000000',
+                'cerinte.*.cerinte_particulare_1' => '',
+                'cerinte.*.cerinte_particulare_2' => '',
+                'cerinte.*.cerinte_particulare_3' => '',
+                'cerinte.*.cerinte_particulare_4' => '',
+                'cerinte.*.observatii' => 'nullable|max:2000',
+
             ],
             [
-
+                'dateMedicale.*.greutate.integer' => 'Câmpul greutate trebuie să fie un număr.',
+                'dateMedicale.*.greutate.min' => 'Câmpul greutate trebuie să aibă valoarea minim 10.',
+                'dateMedicale.*.greutate.max' => 'Câmpul greutate trebuie să aibă valoarea maxim 300.',
+                'dateMedicale.*.alte_afectiuni.max' => 'Câmpul alte afecțiuni trebuie să aibă maxim 2000 de caractere.',
+                'dateMedicale.*.observatii.max' => 'Câmpul observații trebuie să aibă maxim 2000 de caractere.',
+                'cerinte.*.buget_disponibil.max' => 'Câmpul buget disponibil trebuie să aibă valoarea maxim 1.000.000.',
+                'cerinte.*.alte_afectiuni.max' => 'Câmpul alte afecțiuni trebuie să aibă maxim 2000 de caractere.',
+                'cerinte.*.observatii.max' => 'Câmpul observații trebuie să aibă maxim 2000 de caractere.',
             ]
         );
     }

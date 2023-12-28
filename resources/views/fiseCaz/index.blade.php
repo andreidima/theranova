@@ -75,7 +75,8 @@
                             <th class="text-white culoare2">Vanzări</th>
                             <th class="text-white culoare2">Comercial</th>
                             <th class="text-white culoare2">Tehnic</th>
-                            <th class="text-white culoare2">Data</th>
+                            <th class="text-white culoare2">Dată fișă</th>
+                            <th class="text-white culoare2 text-center">Documente</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
                     </thead>
@@ -104,23 +105,24 @@
                                     {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-end">
+                                    <div class="text-center">
+                                        <span class="badge bg-warning text-dark">Ofertă</span>
+                                        <span class="badge bg-success">Contract</span>
+                                        <span class="badge bg-primary">Comandă</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-end">
                                         <a href="{{ $fisaCaz->path() }}" class="flex me-1">
-                                            <span class="badge bg-success">Vizualizează</span>
-                                        </a>
+                                            <span class="badge bg-success">Vizualizează</span></a>
                                         <a href="{{ $fisaCaz->path() }}/modifica" class="flex me-1">
-                                            <span class="badge bg-primary">Modifică</span>
-                                        </a>
-                                        <div style="flex" class="">
-                                            <a
-                                                href="#"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
-                                                title="Șterge fișă caz"
-                                                >
-                                                <span class="badge bg-danger">Șterge</span>
-                                            </a>
-                                        </div>
+                                            <span class="badge bg-primary">Modifică</span></a>
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
+                                            title="Șterge fișă caz"
+                                            >
+                                            <span class="badge bg-danger">Șterge</span></a>
                                     </div>
                                 </td>
                             </tr>

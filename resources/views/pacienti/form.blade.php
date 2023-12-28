@@ -2,7 +2,8 @@
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="client">
     <div class="col-lg-12 px-4 py-2 mb-0">
-        <div class="row px-2 pt-4 pb-1 mb-0 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod">
+        {{-- <div class="row px-2 pt-4 pb-1 mb-0 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod"> --}}
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
         {{-- <div class="row"> --}}
             <div class="col-lg-4 mb-4">
                 <label for="nume" class="mb-0 ps-3">Nume<span class="text-danger">*</span></label>
@@ -71,7 +72,8 @@
                     value="{{ old('email', $pacient->email) }}">
             </div>
         </div>
-        <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#ddffff; border-left:6px solid; border-color:#2196F3; border-radius: 0px 0px 0px 0px">
+        {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#ddffff; border-left:6px solid; border-color:#2196F3; border-radius: 0px 0px 0px 0px"> --}}
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-12 mb-4">
                 <label for="adresa" class="mb-0 ps-3">Adresa</label>
                 <input
@@ -109,7 +111,8 @@
                     value="{{ old('cod_postal', $pacient->cod_postal) }}">
             </div>
         </div>
-        <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#B8FFB8; border-left:6px solid; border-color:mediumseagreen; border-radius: 0px 0px 0px 0px">
+        {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#B8FFB8; border-left:6px solid; border-color:mediumseagreen; border-radius: 0px 0px 0px 0px"> --}}
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
             <div class="col-lg-8 mb-4">
                 <label for="observatii" class="form-label mb-0 ps-3">Observații</label>
                 <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"

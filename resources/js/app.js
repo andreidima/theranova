@@ -118,4 +118,21 @@ if (document.getElementById('fisaCazFormDateMedicale') != null) {
     fisaCazFormDateMedicale.mount('#fisaCazFormDateMedicale');
 }
 
+const fisaCazFormCerinte = createApp({
+    el: '#fisaCazFormCerinte',
+    data() {
+        return {
+            cerinte: cerinte,
+        }
+    },
+    created: function () {
+        if (this.cerinte.length === 0) {
+            this.cerinte.push({});
+        }
+    },
+});
+if (document.getElementById('fisaCazFormCerinte') != null) {
+    fisaCazFormCerinte.mount('#fisaCazFormCerinte');
+}
+
 

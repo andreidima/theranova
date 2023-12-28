@@ -54,6 +54,11 @@
                                 <i class="fa-solid fa-person-cane me-1"></i>Pacienți
                             </a>
                         </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link active" aria-current="page" href="/utilizatori">
+                                <i class="fa-solid fa-users me-1"></i>Utilizatori
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

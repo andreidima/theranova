@@ -57,6 +57,11 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="2">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
                                 <td class="pe-4">
                                     Pacient
                                 </td>
@@ -80,6 +85,158 @@
                                     {{ $fisaCaz->pacient->localitate ?? '' }}
                                 </td>
                             </tr>
+                            @foreach ($fisaCaz->dateMedicale as $dataMedicala)
+                                <tr>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Greutate
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->greutate }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Parte amputată
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->parte_amputata }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Amputație
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->amputatie }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Nivel de activitate
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->nivel_de_activitate }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Cauza amputației
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->cauza_amputatiei }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Alte afecțiuni
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->alte_afectiuni }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        A mai purtat proteză
+                                    </td>
+                                    <td>
+                                        {{ ($dataMedicala->a_mai_purtat_proteza == '1') ? 'DA' : 'NU' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Observații
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->observatii }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @foreach ($fisaCaz->cerinte as $cerinta)
+                                <tr>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Decizie CAS
+                                    </td>
+                                    <td>
+                                        {{ ($cerinta->decizie_cas == '1') ? 'DA' : 'NU' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Buget disponibil
+                                    </td>
+                                    <td>
+                                        {{ $cerinta->buget_disponibil }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Sursă buget
+                                    </td>
+                                    <td>
+                                        {{ $cerinta->sursa_buget }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Cerințe particulare
+                                    </td>
+                                    <td>
+                                        @if ($cerinta->cerinte_particulare_1)
+                                            {{ $cerinta->cerinte_particulare_1 }}
+                                            <br>
+                                        @endif
+                                        @if ($cerinta->cerinte_particulare_2)
+                                            {{ $cerinta->cerinte_particulare_2 }}
+                                            <br>
+                                        @endif
+                                        @if ($cerinta->cerinte_particulare_3)
+                                            {{ $cerinta->cerinte_particulare_3 }}
+                                            <br>
+                                        @endif
+                                        @if ($cerinta->cerinte_particulare_4)
+                                            {{ $cerinta->cerinte_particulare_4 }}
+                                            <br>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Alte cerințe
+                                    </td>
+                                    <td>
+                                        @if ($cerinta->alte_cerinte_1)
+                                            {{ $cerinta->alte_cerinte_1 }}
+                                            <br>
+                                        @endif
+                                        @if ($cerinta->alte_cerinte_2)
+                                            {{ $cerinta->alte_cerinte_2 }}
+                                            <br>
+                                        @endif
+                                        @if ($cerinta->alte_cerinte_3)
+                                            {{ $cerinta->alte_cerinte_3 }}
+                                            <br>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Observații
+                                    </td>
+                                    <td>
+                                        {{ $cerinta->observatii }}
+                                    </td>
+                                </tr>
+                            @endforeach
                         </table>
                     </div>
 

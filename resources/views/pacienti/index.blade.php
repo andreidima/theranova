@@ -82,23 +82,17 @@
                                     {{ $pacient->localitate }}
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-end">
+                                    <div class="text-end">
                                         <a href="{{ $pacient->path() }}" class="flex me-1">
-                                            <span class="badge bg-success">Vizualizează</span>
-                                        </a>
+                                            <span class="badge bg-success">Vizualizează</span></a>
                                         <a href="{{ $pacient->path() }}/modifica" class="flex me-1">
-                                            <span class="badge bg-primary">Modifică</span>
-                                        </a>
-                                        <div style="flex" class="">
-                                            <a
-                                                href="#"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#stergePacient{{ $pacient->id }}"
-                                                title="Șterge pacient"
-                                                >
-                                                <span class="badge bg-danger">Șterge</span>
-                                            </a>
-                                        </div>
+                                            <span class="badge bg-primary">Modifică</span></a>
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stergePacient{{ $pacient->id }}"
+                                            title="Șterge pacient"
+                                            >
+                                            <span class="badge bg-danger">Șterge</span></a>
                                     </div>
                                 </td>
                             </tr>
