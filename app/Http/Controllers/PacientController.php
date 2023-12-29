@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Pacient;
+use App\Models\Apartinator;
 
 class PacientController extends Controller
 {
@@ -63,7 +64,13 @@ class PacientController extends Controller
      */
     public function store(Request $request)
     {
-        $pacient = Pacient::create($this->validateRequest($request));
+        $this->validateRequest($request);
+
+        $pacient = Pacient::create($request->except(['apartinatori', 'date']));
+
+        foreach ($request->apartinatori as $apartinator) {
+            $pacient->apartinatori()->save(Apartinator::make($apartinator));
+        }
 
         // Daca pacientul a fost adaugat din formularul FisaCaz, se trimite in sesiune, pentru a fi folosita in fisaCaz
         if ($request->session()->exists('fisaCazRequest')) {
@@ -108,7 +115,14 @@ class PacientController extends Controller
      */
     public function update(Request $request, Pacient $pacient)
     {
-        $pacient->update($this->validateRequest($request));
+        $this->validateRequest($request);
+
+        $pacient->update($request->except(['apartinatori', 'date']));
+
+        $pacient->apartinatori()->whereNotIn('id', collect($request->apartinatori)->where('id')->pluck('id'))->delete();
+        foreach ($request->apartinatori as $date) {
+            $pacient->apartinatori()->save(Apartinator::firstOrNew(['id' =>  $date['id']], $date));
+        }
 
         return redirect($request->session()->get('pacientReturnUrl') ?? ('/pacienti'))->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost modificat cu succes!');
     }
@@ -122,6 +136,7 @@ class PacientController extends Controller
     public function destroy(Request $request, Pacient $pacient)
     {
         $pacient->delete();
+        $pacient->apartinatori()->delete();
 
         return back()->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost șters cu succes!');
     }
@@ -155,20 +170,22 @@ class PacientController extends Controller
                 'telefon' => 'nullable|max:200',
                 'email' => 'nullable|max:200|email:rfc,dns',
 
-                'apartinatori.*.nume' => 'nullable|max:200',
-                'apartinatori.*.prenume' => 'nullable|max:2',
+                'apartinatori.*.nume' => 'required|max:200',
+                'apartinatori.*.prenume' => 'required|max:200',
                 'apartinatori.*.telefon' => 'nullable|max:200',
                 'apartinatori.*.email' => 'nullable|max:200',
-                'apartinatori.*.grad_rudenie' => 'nullable|max:2',
+                'apartinatori.*.grad_rudenie' => 'nullable|max:200',
 
                 'observatii' => 'nullable|max:2000',
             ],
             [
-                'apartinatori.*.nume' => 'Apartinatorul #:position, campul nume nu poate avea mai mult de 200 de caractere',
-                'apartinatori.*.prenume' => 'Apartinatorul #:position, campul prenume nu poate avea mai mult de 200 de caractere.',
-                'apartinatori.*.telefon' => 'Apartinatorul #:position, campul telefon nu poate avea mai mult de 200 de caractere.',
-                'apartinatori.*.email' => 'Apartinatorul #:position, campul email nu poate avea mai mult de 200 de caractere.',
-                'apartinatori.*.grad_rudenie' => 'Apartinatorul #:position, campul grad_rudenie nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.nume.required' => 'Apartinatorul #:position, campul nume este obligatoriu',
+                'apartinatori.*.nume.max' => 'Apartinatorul #:position, campul nume nu poate avea mai mult de 200 de caractere',
+                'apartinatori.*.prenume.required' => 'Apartinatorul #:position, campul prenume este obligatoriu',
+                'apartinatori.*.prenume.max' => 'Apartinatorul #:position, campul prenume nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.telefon.max' => 'Apartinatorul #:position, campul telefon nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.email.max' => 'Apartinatorul #:position, campul email nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.grad_rudenie.max' => 'Apartinatorul #:position, campul grad_rudenie nu poate avea mai mult de 200 de caractere.',
 
             ]
         );

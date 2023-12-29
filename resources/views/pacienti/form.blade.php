@@ -127,18 +127,24 @@
             <div class="col-lg-12 mb-0">
                 <div class="row mx-1 mb-2" v-for="(apartinator, index) in apartinatori" style="border:1px solid #e66800;">
                     <div class="col-lg-4 mb-4">
-                        <label for="nume" class="mb-0 ps-3">Nume</label>
+                        <input
+                            type="hidden"
+                            :name="'apartinatori[' + index + '][id]'"
+                            v-model="apartinatori[index].id"
+                            >
+
+                        <label for="nume" class="mb-0 ps-3">Nume<span class="text-danger">*</span></label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('nume') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'apartinatori[' + index + '][nume]'"
                             v-model="apartinatori[index].nume">
                     </div>
                     <div class="col-lg-4 mb-4">
-                        <label for="prenume" class="mb-0 ps-3">Prenume</label>
+                        <label for="prenume" class="mb-0 ps-3">Prenume<span class="text-danger">*</span></label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('prenume') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'apartinatori[' + index + '][prenume]'"
                             v-model="apartinatori[index].prenume">
                     </div>
@@ -146,7 +152,7 @@
                         <label for="telefon" class="mb-0 ps-3">Telefon</label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('telefon') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'apartinatori[' + index + '][telefon]'"
                             v-model="apartinatori[index].telefon">
                     </div>
@@ -154,7 +160,7 @@
                         <label for="email" class="mb-0 ps-3">Email</label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('email') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'apartinatori[' + index + '][email]'"
                             v-model="apartinatori[index].email">
                     </div>
@@ -162,7 +168,7 @@
                         <label for="grad_rudenie" class="mb-0 ps-3">Grad rudenie</label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('grad_rudenie') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'apartinatori[' + index + '][grad_rudenie]'"
                             v-model="apartinatori[index].grad_rudenie">
                     </div>

@@ -104,7 +104,7 @@
 
                 <nav>
                     <ul class="pagination justify-content-center">
-                        {{$pacienti->appends(Request::except('page'))->links()}}
+                        {{ $pacienti->appends(Request::except('page'))->links() }}
                     </ul>
                 </nav>
         </div>

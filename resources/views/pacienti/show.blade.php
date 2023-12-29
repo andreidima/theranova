@@ -100,6 +100,67 @@
                                     {{ $pacient->email }}
                                 </td>
                             </tr>
+                            @foreach ($pacient->apartinatori as $apartinator)
+                                @if ($loop->first)
+                                    <tr>
+                                        <td colspan="2">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="text-center">
+                                            <b>Aparținători</b>
+                                        </td>
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <td class="pe-4">
+                                        Nume
+                                    </td>
+                                    <td>
+                                        {{ $apartinator->nume }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Prenume
+                                    </td>
+                                    <td>
+                                        {{ $apartinator->prenume }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Telefon
+                                    </td>
+                                    <td>
+                                        {{ $apartinator->telefon }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Email
+                                    </td>
+                                    <td>
+                                        {{ $apartinator->email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Grad rudenie
+                                    </td>
+                                    <td>
+                                        {{ $apartinator->grad_rudenie }}
+                                    </td>
+                                </tr>
+                                @if ($loop->last)
+                                    <tr>
+                                        <td colspan="2">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
                             <tr>
                                 <td class="pe-4">
                                     Observații
