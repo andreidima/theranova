@@ -12,7 +12,7 @@
     cerinte =  {!! json_encode(old('cerinte', $fisaCaz->cerinte()->get()) ?? []) !!}
 </script>
 
-<div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="client">
+<div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0">
         {{-- <div class="row px-2 pt-0 pb-1 mb-4 rounded-3 justify-content-center" style="background-color:#f9e9e8; border-left:6px solid; border-color:#ec8575"> --}}
         {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #ec8575 solid; background-color:#fcf4f3"> --}}
@@ -61,7 +61,7 @@
         {{-- <div class="row px-2 pt-0 mb-4" style="background-color:#eeeeff; border-left:6px solid; border-color:#6a6ba0; border-radius: 0px 0px 0px 0px" id="pacientAutocomplete"> --}}
         {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #6a6ba0 solid; background-color:#f1f1fb" id="pacientAutocomplete"> --}}
         <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5" id="pacientAutocomplete">
-            <div class="col-lg-4 mb-4">
+            <div class="col-lg-4 mb-4" style="position:relative;" v-click-out="() => pacientiListaAutocomplete = ''">
                 <label for="pacient_id" class="mb-0 ps-3">Pacient<span class="text-danger">*</span></label>
                 <input
                     type="hidden"

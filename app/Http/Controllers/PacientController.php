@@ -154,9 +154,21 @@ class PacientController extends Controller
                 'cod_postal' => 'nullable|max:200',
                 'telefon' => 'nullable|max:200',
                 'email' => 'nullable|max:200|email:rfc,dns',
+
+                'apartinatori.*.nume' => 'nullable|max:200',
+                'apartinatori.*.prenume' => 'nullable|max:2',
+                'apartinatori.*.telefon' => 'nullable|max:200',
+                'apartinatori.*.email' => 'nullable|max:200',
+                'apartinatori.*.grad_rudenie' => 'nullable|max:2',
+
                 'observatii' => 'nullable|max:2000',
             ],
             [
+                'apartinatori.*.nume' => 'Apartinatorul #:position, campul nume nu poate avea mai mult de 200 de caractere',
+                'apartinatori.*.prenume' => 'Apartinatorul #:position, campul prenume nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.telefon' => 'Apartinatorul #:position, campul telefon nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.email' => 'Apartinatorul #:position, campul email nu poate avea mai mult de 200 de caractere.',
+                'apartinatori.*.grad_rudenie' => 'Apartinatorul #:position, campul grad_rudenie nu poate avea mai mult de 200 de caractere.',
 
             ]
         );

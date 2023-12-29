@@ -1,6 +1,14 @@
 @csrf
 
-<div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="client">
+@php
+    use \Carbon\Carbon;
+@endphp
+
+<script type="application/javascript">
+    apartinatori =  {!! json_encode(old('apartinatori', $pacient->apartinatori()->get()) ?? []) !!}
+</script>
+
+<div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0">
         {{-- <div class="row px-2 pt-4 pb-1 mb-0 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod"> --}}
         <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
@@ -112,7 +120,59 @@
             </div>
         </div>
         {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#B8FFB8; border-left:6px solid; border-color:mediumseagreen; border-radius: 0px 0px 0px 0px"> --}}
-        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5" id="pacientFormApartinatori">
+            <div class="col-lg-12 mb-4 text-center">
+                <button type="button" class="btn btn-success text-white rounded-3" v-on:click="apartinatori.push({})">Adaugă aparținător</button>
+            </div>
+            <div class="col-lg-12 mb-0">
+                <div class="row mx-1 mb-2" v-for="(apartinator, index) in apartinatori" style="border:1px solid #e66800;">
+                    <div class="col-lg-4 mb-4">
+                        <label for="nume" class="mb-0 ps-3">Nume</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('nume') ? 'is-invalid' : '' }}"
+                            :name="'apartinatori[' + index + '][nume]'"
+                            v-model="apartinatori[index].nume">
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <label for="prenume" class="mb-0 ps-3">Prenume</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('prenume') ? 'is-invalid' : '' }}"
+                            :name="'apartinatori[' + index + '][prenume]'"
+                            v-model="apartinatori[index].prenume">
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <label for="telefon" class="mb-0 ps-3">Telefon</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('telefon') ? 'is-invalid' : '' }}"
+                            :name="'apartinatori[' + index + '][telefon]'"
+                            v-model="apartinatori[index].telefon">
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <label for="email" class="mb-0 ps-3">Email</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('email') ? 'is-invalid' : '' }}"
+                            :name="'apartinatori[' + index + '][email]'"
+                            v-model="apartinatori[index].email">
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <label for="grad_rudenie" class="mb-0 ps-3">Grad rudenie</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('grad_rudenie') ? 'is-invalid' : '' }}"
+                            :name="'apartinatori[' + index + '][grad_rudenie]'"
+                            v-model="apartinatori[index].grad_rudenie">
+                    </div>
+                    <div class="col-lg-4 mb-4 mh-100 d-flex justify-content-end align-items-end">
+                        <button type="button" class="btn btn-danger" v-on:click="apartinatori.splice(index, 1);">Șterge</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-8 mb-4">
                 <label for="observatii" class="form-label mb-0 ps-3">Observații</label>
                 <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"

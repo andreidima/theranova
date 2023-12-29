@@ -97,6 +97,22 @@ const pacientAutocomplete = createApp({
         },
     }
 });
+const clickOutside = {
+    beforeMount: (el, binding) => {
+        el.clickOutsideEvent = event => {
+            if (!(el == event.target || el.contains(event.target))) {
+                binding.value();
+            }
+        };
+        document.addEventListener("click", el.clickOutsideEvent);
+    },
+    unmounted: el => {
+        document.removeEventListener("click", el.clickOutsideEvent);
+    },
+};
+
+pacientAutocomplete.directive("clickOut", clickOutside);
+
 if (document.getElementById('pacientAutocomplete') != null) {
     pacientAutocomplete.mount('#pacientAutocomplete');
 }
@@ -133,6 +149,25 @@ const fisaCazFormCerinte = createApp({
 });
 if (document.getElementById('fisaCazFormCerinte') != null) {
     fisaCazFormCerinte.mount('#fisaCazFormCerinte');
+}
+
+const pacientFormApartinatori = createApp({
+    el: '#pacientFormApartinatori',
+    data() {
+        return {
+            apartinatori: apartinatori,
+        }
+    },
+    // methods: {
+    //     adaugaApartinator() {
+    // created: function () {
+    //     if (this.apartinatori.length === 0) {
+    //         this.apartinatori.push({});
+    //     }
+    // },
+});
+if (document.getElementById('pacientFormApartinatori') != null) {
+    pacientFormApartinatori.mount('#pacientFormApartinatori');
 }
 
 
