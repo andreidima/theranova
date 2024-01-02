@@ -25,4 +25,6 @@ return [
     'Login with Facebook' => 'Autentificare cu Facebook',
     'E-Mail Address' => 'Email',
     'Password' => 'Parola',
+    'Reset Password' => 'Resetare parolă',
+    'Send Password Reset Link' => 'Trimite linkul de resetare a parolei'
 ];

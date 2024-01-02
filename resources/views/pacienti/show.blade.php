@@ -7,7 +7,7 @@
             <div class="shadow-lg" style="border-radius: 40px 40px 40px 40px;">
                 <div class="culoare2 border border-secondary p-2" style="border-radius: 40px 40px 0px 0px;">
                     <span class="badge text-light fs-5">
-                        <i class="fa-solid fa-fa-person-crane me-1"></i>Pacienți / {{ $pacient->nume }} {{ $pacient->prenume }}
+                        <i class="fa-solid fa-person-crane me-1"></i>Pacienți / {{ $pacient->nume }} {{ $pacient->prenume }}
                     </span>
                 </div>
 

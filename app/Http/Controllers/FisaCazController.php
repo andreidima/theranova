@@ -56,6 +56,20 @@ class FisaCazController extends Controller
             ->latest()
             ->simplePaginate(25);
 
+        // $increment = 0;
+        // foreach ($fiseCaz as $fisa){
+        //     $increment += 10;
+        //     $data = \Carbon\Carbon::today()->subMonths(3)->addDays($increment);
+        //     $fisa->data = $data->toDateString();
+        //     $fisa->oferta = $data->addDays(10)->toDateString();
+        //     $fisa->planificare_mulaj = $data->addDays(10)->toDateString();
+        //     $fisa->comanda = $data->addDays(10)->toDateString();
+        //     $fisa->protezare = $data->addDays(10)->toDateString();
+        //     // dd($fisa);
+        //     $fisa->stare = 3;
+        //     $fisa->save();
+        // }
+
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
         return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
@@ -225,5 +239,23 @@ class FisaCazController extends Controller
                 break;
         }
 
+    }
+
+    public function stare(Request $request, FisaCaz $fisaCaz, $stare = null)
+    {
+        switch ($stare) {
+            case 'deschide':
+                $fisaCaz->stare = 1;
+                break;
+            case 'inchide':
+                $fisaCaz->stare = 2;
+                break;
+            case 'anuleaza':
+                $fisaCaz->stare = 3;
+                break;
+        }
+        $fisaCaz->save();
+
+        return back()->with('status', 'Fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost ' . (($fisaCaz->stare === 1) ? 'deschisa' : (($fisaCaz->stare === 2) ? 'inchisa' : (($fisaCaz->stare === 3) ? 'anulata' : '' ))) . '!');
     }
 }

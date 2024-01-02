@@ -5,7 +5,7 @@
 @endphp
 
 @section('content')
-<div class="mx-3 px-3 card container mx-auto" style="border-radius: 40px 40px 40px 40px;">
+<div class="mx-3 px-3 card mx-auto" style="border-radius: 40px 40px 40px 40px;">
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
             <div class="col-lg-3">
                 <span class="badge culoare1 fs-5">
@@ -31,9 +31,9 @@
                 </form>
             </div>
             <div class="col-lg-3 text-end">
-                {{-- <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
-                    <i class="fas fa-plus-square text-white me-1"></i>Adaugă Utilizator
-                </a> --}}
+                <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
+                    <i class="fas fa-plus-square text-white me-1"></i>Adaugă utilizator
+                </a>
             </div>
         </div>
 
@@ -45,13 +45,13 @@
                 <table class="table table-striped table-hover">
                     <thead class="">
                         <tr class="" style="padding:2rem">
-                            <th class="text-white culoare2">#</th>
-                            <th class="text-white culoare2">Nume</th>
-                            <th class="text-white culoare2">Rol</th>
-                            <th class="text-white culoare2">Telefon</th>
-                            <th class="text-white culoare2">Email</th>
-                            {{-- <th class="text-white culoare2">Localitatea</th>
-                            <th class="text-white culoare2 text-end">Acțiuni</th> --}}
+                            <th class="culoare2 text-white">#</th>
+                            <th class="culoare2 text-white">Nume</th>
+                            <th class="culoare2 text-white">Rol</th>
+                            <th class="culoare2 text-white">Telefon</th>
+                            <th class="culoare2 text-white">Email</th>
+                            <th class="culoare2 text-white">Stare Cont</th>
+                            <th class="culoare2 text-white text-end">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,8 +74,6 @@
                                         @case(3)
                                             Tehnic
                                             @break
-                                        @default
-
                                     @endswitch
                                 </td>
                                 <td class="">
@@ -83,6 +81,27 @@
                                 </td>
                                 <td class="">
                                     {{ $user->email }}
+                                </td>
+                                <td>
+                                    @if ($user->activ == 0)
+                                        <span class="text-danger">Închis</span>
+                                    @else
+                                        <span class="text-success">Deschis</span>
+                                    @endif
+                                </td>
+                                <td class="">
+                                    <div class="text-end">
+                                        <a href="{{ $user->path() }}" class="flex me-1">
+                                            <span class="badge bg-success">Vizualizează</span></a>
+                                        <a href="{{ $user->path() }}/modifica" class="flex me-1">
+                                            <span class="badge bg-primary">Modifică</span></a>
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stergeUser{{ $user->id }}"
+                                            title="Șterge utilizator"
+                                            >
+                                            <span class="badge bg-danger">Șterge</span></a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -98,5 +117,37 @@
                 </nav>
         </div>
     </div>
+
+    {{-- Modalele pentru stergere user --}}
+    @foreach ($useri as $user)
+        <div class="modal fade text-dark" id="stergeUser{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white" id="exampleModalLabel">Utilizator: <b>{{ $user->name }}</b></h5>
+                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="text-align:left;">
+                    Ești sigur ca vrei să ștergi utilizatorul?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                    <form method="POST" action="{{ $user->path() }}">
+                        @method('DELETE')
+                        @csrf
+                        <button
+                            type="submit"
+                            class="btn btn-danger text-white"
+                            >
+                            Șterge utilizatorul
+                        </button>
+                    </form>
+
+                </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 
 @endsection

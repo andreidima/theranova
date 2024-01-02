@@ -16,8 +16,9 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Auth::routes(['register' => false, 'password.request' => false, 'reset' => false]);
-
+// Auth::routes(['register' => false, 'password.request' => false, 'reset' => false]);
+Auth::routes();
+Route::get('/asteptare-aprobare', [RegisterController::class, 'register']);
 
 Route::redirect('/', '/acasa');
 
@@ -27,7 +28,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/pacienti', PacientController::class)->parameters(['pacienti' => 'pacient']);
     Route::resource('/fise-caz', FisaCazController::class)->parameters(['fise-caz' => 'fisaCaz']);
     Route::any('/fise-caz/adauga-resursa/{resursa}', [FisaCazController::class, 'fisaCazAdaugaResursa']);
+    Route::get('/fise-caz/{fisaCaz}/stare/{stare}', [FisaCazController::class, 'stare']);
 
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 });
+
+
 

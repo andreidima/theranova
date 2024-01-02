@@ -13,7 +13,7 @@
                 </span>
             </div>
             <div class="col-lg-6">
-                <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
+                <form class="needs-validation" novalidate method="GET" action="{{ url()->current() }}">
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
                         <div class="col-lg-4">

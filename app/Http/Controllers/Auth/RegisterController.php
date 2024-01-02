@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -30,6 +33,14 @@ class RegisterController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+
+    // Andrei
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        event(new Registered($user = $this->create($request->all())));
+        return redirect('/login')->with('status', 'Contul ' . $user->name . ' a fost creat cu succes! Pentru a vă putea autentifica în aplicație, este necesar să contactați administratorul pentru a activă contul.');
+    }
 
     /**
      * Create a new controller instance.
@@ -68,6 +79,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'activ' => 0, // Andrei
         ]);
     }
 }

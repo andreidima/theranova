@@ -71,12 +71,14 @@
                         <tr class="" style="padding:2rem">
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Pacient</th>
-                            <th class="text-white culoare2">Localitate</th>
-                            <th class="text-white culoare2">Vanzări</th>
-                            <th class="text-white culoare2">Comercial</th>
-                            <th class="text-white culoare2">Tehnic</th>
-                            <th class="text-white culoare2">Dată fișă</th>
+                            <th class="text-white culoare2 text-center">Evaluare</th>
+                            <th class="text-white culoare2 text-center">Ofertă</th>
+                            <th class="text-white culoare2 text-center">Planificare mulaj</th>
+                            <th class="text-white culoare2 text-center">Comandă</th>
+                            <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Documente</th>
+                            <th class="text-white culoare2 text-center">Stare</th>
+                            <th class="text-white culoare2">Utilizator</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
                     </thead>
@@ -87,22 +89,65 @@
                                     {{ ($fiseCaz ->currentpage()-1) * $fiseCaz ->perpage() + $loop->index + 1 }}
                                 </td>
                                 <td class="">
-                                    {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}
-                                </td>
-                                <td class="">
+                                    <a href="{{ $fisaCaz->pacient->path() }}">
+                                        {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}
+                                    </a>
+                                    <br>
+                                    {{ $fisaCaz->pacient->telefon ?? '' }}
+                                    <br>
                                     {{ $fisaCaz->pacient->localitate ?? '' }}
                                 </td>
-                                <td class="">
-                                    {{ $fisaCaz->userVanzari->name ?? '' }}
+                                <td class="text-center">
+                                    @if ($fisaCaz->data)
+                                        {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                        <br>
+                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
+                                    @else
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    @endif
                                 </td>
-                                <td class="">
-                                    {{ $fisaCaz->userComercial->name ?? '' }}
+                                <td class="text-center">
+                                    @if ($fisaCaz->oferta)
+                                        {{ $fisaCaz->oferta ? Carbon::parse($fisaCaz->oferta)->isoFormat('DD.MM.YYYY') : '' }}
+                                        <br>
+                                        <span class="badge text-success" title="Descarcă"><i class="fa-solid fa-file-arrow-down"></i></span>
+                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
+                                    @else
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    @endif
                                 </td>
-                                <td class="">
-                                    {{ $fisaCaz->userTehnic->name ?? '' }}
+                                <td class="text-center">
+                                    @if ($fisaCaz->planificare_mulaj)
+                                        {{ $fisaCaz->planificare_mulaj ? Carbon::parse($fisaCaz->planificare_mulaj)->isoFormat('DD.MM.YYYY') : '' }}
+                                        <br>
+                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
+                                    @else
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    @endif
                                 </td>
-                                <td class="">
-                                    {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                <td class="text-center">
+                                    @if ($fisaCaz->comanda)
+                                        {{ $fisaCaz->comanda ? Carbon::parse($fisaCaz->comanda)->isoFormat('DD.MM.YYYY') : '' }}
+                                        <br>
+                                        <span class="badge text-success" title="Descarcă"><i class="fa-solid fa-file-arrow-down"></i></span>
+                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
+                                    @else
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if ($fisaCaz->protezare)
+                                        {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
+                                        <br>
+                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
+                                    @else
+                                        <span class="badge text-success"><i class="fas fa-plus-square"></i></span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="text-center">
@@ -110,6 +155,29 @@
                                         <span class="badge bg-success">Contract</span>
                                         <span class="badge bg-primary">Comandă</span>
                                     </div>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        <a href="{{ $fisaCaz->path() }}/stare/deschide" class="flex me-1" title="Deschisă">
+                                            <span class="badge {{ $fisaCaz->stare === 1 ? 'bg-success' : 'bg-light text-dark' }}">
+                                                <i class="fa-solid fa-lock-open fa-1x"></i>
+                                            </span></a>
+                                        <a href="{{ $fisaCaz->path() }}/stare/inchide" class="flex me-1" title="Închisă">
+                                            <span class="badge {{ $fisaCaz->stare === 2 ? 'bg-dark' : 'bg-white text-dark' }}">
+                                                <i class="fa-solid fa-lock fa-1x"></i>
+                                            </span></a>
+                                        <a href="{{ $fisaCaz->path() }}/stare/anuleaza" class="flex me-1" title="Anulată">
+                                            <span class="badge {{ $fisaCaz->stare === 3 ? 'bg-danger' : 'bg-light text-dark' }}">
+                                                <i class="fa-solid fa-ban fa-1x"></i>
+                                            </span></a>
+                                    </div>
+                                </td>
+                                <td class="">
+                                    V: {{ $fisaCaz->userVanzari->name ?? '' }}
+                                    <br>
+                                    C: {{ $fisaCaz->userComercial->name ?? '' }}
+                                    <br>
+                                    T: {{ $fisaCaz->userTehnic->name ?? '' }}
                                 </td>
                                 <td>
                                     <div class="text-end">

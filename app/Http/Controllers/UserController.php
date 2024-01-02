@@ -24,8 +24,10 @@ class UserController extends Controller
                 return $query->where('name', 'like', '%' . $searchNume . '%');
             })
             ->where('id', '>', 1) // se sare pentru user 1, Andrei Dima
+            ->orderBy('activ', 'desc')
             ->orderBy('role')
-            ->simplePaginate(25);
+            ->orderBy('name')
+            ->simplePaginate(100);
 
         return view('useri.index', compact('useri', 'searchNume'));
     }
@@ -37,9 +39,9 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
+        $request->session()->get('userReturnUrl') ?? $request->session()->put('userReturnUrl', url()->previous());
 
-        return view('pacienti.create');
+        return view('useri.create');
     }
 
     /**
@@ -50,67 +52,63 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $pacient = Pacient::create($this->validateRequest($request));
+        $user = User::create($this->validateRequest($request));
 
-        // Daca pacientul a fost adaugat din formularul FisaCaz, se trimite in sesiune, pentru a fi folosita in fisaCaz
-        if ($request->session()->exists('fisaCazRequest')) {
-            $fisaCazRequest = $request->session()->put('fisaCazRequest.pacient_id', $pacient->id);
-        }
-
-        return redirect($request->session()->get('pacientReturnUrl') ?? ('/pacienti'))->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost adăugat cu succes!');
+        return redirect($request->session()->get('userReturnUrl') ?? ('/utilizatori'))->with('status', 'Utilizatorul „' . $user->name . '” a fost adăugat cu succes!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Pacient  $pacient
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, Pacient $pacient)
+    public function show(Request $request, User $user)
     {
-        $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
+        $request->session()->get('userReturnUrl') ?? $request->session()->put('userReturnUrl', url()->previous());
 
-        return view('pacienti.show', compact('pacient'));
+        return view('useri.show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Pacient  $pacient
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, Pacient $pacient)
+    public function edit(Request $request, User $user)
     {
-        $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
+        $request->session()->get('userReturnUrl') ?? $request->session()->put('userReturnUrl', url()->previous());
 
-        return view('pacienti.edit', compact('pacient'));
+        return view('useri.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Pacient  $pacient
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pacient $pacient)
+    public function update(Request $request, User $user)
     {
-        $pacient->update($this->validateRequest($request));
+        is_null($request->password) ? $request->request->remove('password') : ''; // Daca nu se introduce nimic in campul parola, aceasta ramane aceeasi
+        $user->update($this->validateRequest($request));
 
-        return redirect($request->session()->get('pacientReturnUrl') ?? ('/pacienti'))->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost modificat cu succes!');
+        return redirect($request->session()->get('userReturnUrl') ?? ('/utilizatori'))->with('status', 'Utilizatorul „' . $user->name . '” a fost modificat cu succes!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Pacient  $pacient
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, Pacient $pacient)
+    public function destroy(Request $request, User $user)
     {
-        $pacient->delete();
+        $user->delete();
 
-        return back()->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost șters cu succes!');
+        return back()->with('status', 'Utilizatorul „' . $user->name . '” a fost șters cu success!');
     }
 
     /**
@@ -128,23 +126,19 @@ class UserController extends Controller
         // if ($request->isMethod('post')) {
         //     $request->request->add(['cheie_unica' => uniqid()]);
         // }
-
+// dd($request, $request->isMethod('post'));
         return $request->validate(
             [
-                'nume' => 'required|max:200',
-                'prenume' => 'required|max:200',
-                'data_nastere' => '',
-                'sex' => '',
-                'adresa' => 'nullable|max:500',
-                'localitate' => 'nullable|max:200',
-                'judet' => 'nullable|max:200',
-                'cod_postal' => 'nullable|max:200',
-                'telefon' => 'nullable|max:200',
-                'email' => 'nullable|max:200|email:rfc,dns',
-                'observatii' => 'nullable|max:2000',
+                'role' => 'required',
+                'name' => 'required|max:255',
+                'telefon' => 'nullable|max:50',
+                'email' => 'required|max:255|email:rfc,dns|unique:users,email,' . $request->id,
+                'password' => ($request->isMethod('POST') ? 'required' : 'nullable') . '|min:8|max:255|confirmed',
+                'activ' => 'required',
             ],
             [
-
+                'password.required' => 'Câmpul parola este obligatoriu.',
+                'password.max' => 'Câmpul parola nu poate conține mai mult de 255 de caractere.',
             ]
         );
     }
