@@ -122,9 +122,10 @@ class PacientController extends Controller
         $pacient->update($request->except(['apartinatori', 'date']));
 
         $pacient->apartinatori()->whereNotIn('id', collect($request->apartinatori)->where('id')->pluck('id'))->delete();
+        // dd($request->apartinatori);
         if ($request->apartinatori) {
             foreach ($request->apartinatori as $date) {
-                $pacient->apartinatori()->save(Apartinator::firstOrNew(['id' =>  $date['id']], $date));
+                $pacient->apartinatori()->save(Apartinator::updateOrCreate(['id' =>  $date['id']], $date));
             }
         }
 
