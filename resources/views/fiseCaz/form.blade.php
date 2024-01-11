@@ -85,7 +85,7 @@
                         aria-describedby="pacient_nume"
                         required>
                     <div class="input-group-prepend d-flex align-items-center">
-                        <span v-if="pacient_id" class="input-group-text text-danger" id="pacient_nume" v-on:click="pacient_id = null; pacient_nume = ''; pacient_data_nastere=''; pacient_localitate=''"><i class="fa-solid fa-xmark"></i></span>
+                        <span v-if="pacient_id" class="input-group-text text-danger" id="pacient_nume" v-on:click="pacient_id = null; pacient_nume = ''; pacient_telefon=''; pacient_localitate=''"><i class="fa-solid fa-xmark"></i></span>
                     </div>
                     <div class="input-group-prepend ms-2 d-flex align-items-center">
                         <button type="submit" ref="submit" formaction="/fise-caz/adauga-resursa/pacient" class="btn btn-success text-white rounded-3 py-0 px-2"
@@ -99,7 +99,8 @@
                             v-on:click="
                                 pacient_id = pacient.id;
                                 pacient_nume = pacient.nume + ' ' + pacient.prenume;
-                                pacient_data_nastere = new Date(pacient.data_nastere); pacient_data_nastere = pacient_data_nastere.toLocaleString('ro-RO', { dateStyle: 'short' });
+                                {{-- pacient_data_nastere = new Date(pacient.data_nastere); pacient_data_nastere = pacient_data_nastere.toLocaleString('ro-RO', { dateStyle: 'short' }); --}}
+                                pacient_telefon = pacient.telefon;
                                 pacient_localitate = pacient.localitate;
 
                                 pacientiListaAutocomplete = ''
@@ -112,13 +113,13 @@
                 <small v-else class="ps-3 text-success">* Ați selectat un pacient</small>
             </div>
             <div class="col-lg-2 mb-4">
-                <label for="data_nastere" class="mb-0 ps-3">Data nașterii</label>
+                <label for="telefon" class="mb-0 ps-3">Telefon</label>
                 <input
                     type="text"
-                    class="form-control rounded-3 {{ $errors->has('data_nastere') ? 'is-invalid' : '' }}"
-                    name="data_nastere"
+                    class="form-control rounded-3 {{ $errors->has('telefon') ? 'is-invalid' : '' }}"
+                    name="telefon"
                     placeholder=""
-                    v-model="pacient_data_nastere"
+                    v-model="pacient_telefon"
                     disabled>
             </div>
             <div class="col-lg-2 mb-4">
@@ -140,7 +141,7 @@
             <div class="col-lg-12 mb-0" id="fisaCazFormDateMedicale">
                 <div class="row align-items-start mb-1" v-for="(dateMedical, index) in dateMedicale">
                     <div class="col-lg-2 mb-4">
-                        <label for="greutate" class="mb-0 ps-3">Greutate</label>
+                        <label for="greutate" class="mb-0 ps-3">Greutate<span class="text-danger">*</span></label>
                         <input
                             type="text"
                             class="form-control bg-white rounded-3 {{ $errors->has('greutate') ? 'is-invalid' : '' }}"
@@ -148,7 +149,7 @@
                             v-model="dateMedicale[index].greutate">
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="parte_amputata" class="mb-0 ps-3">Parte amputată</label>
+                        <label for="parte_amputata" class="mb-0 ps-3">Parte amputată<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('parte_amputata') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][parte_amputata]'"
                             v-model="dateMedicale[index].parte_amputata">
@@ -159,7 +160,7 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="amputatie" class="mb-0 ps-3">Amputație</label>
+                        <label for="amputatie" class="mb-0 ps-3">Amputație<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('amputatie') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][amputatie]'"
                             v-model="dateMedicale[index].amputatie">
@@ -181,7 +182,7 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="nivel_de_activitate" class="mb-0 ps-3">Nivel de activitate</label>
+                        <label for="nivel_de_activitate" class="mb-0 ps-3">Nivel de activitate<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('nivel_de_activitate') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][nivel_de_activitate]'"
                             v-model="dateMedicale[index].nivel_de_activitate">
@@ -193,7 +194,7 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="cauza_amputatiei" class="mb-0 ps-3">Cauza amputației</label>
+                        <label for="cauza_amputatiei" class="mb-0 ps-3">Cauza amputației<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('cauza_amputatiei') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][cauza_amputatiei]'"
                             v-model="dateMedicale[index].cauza_amputatiei">
@@ -206,7 +207,7 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="a_mai_purtat_proteza" class="mb-0 ps-3">A mai putat proteza</label>
+                        <label for="a_mai_purtat_proteza" class="mb-0 ps-3">A mai putat proteza<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('a_mai_purtat_proteza') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][a_mai_purtat_proteza]'"
                             v-model="dateMedicale[index].a_mai_purtat_proteza">
@@ -215,14 +216,25 @@
                             <option value="1">DA</option>
                         </select>
                     </div>
-                    <div class="col-lg-6 mb-4">
+                    <div class="col-lg-2 mb-4">
+                        <label for="tip_proteza" class="mb-0 ps-3">Tip proteză<span class="text-danger">*</span></label>
+                        <select class="form-select bg-white rounded-3 {{ $errors->has('tip_proteza') ? 'is-invalid' : '' }}"
+                            :name="'dateMedicale[' + index + '][tip_proteza]'"
+                            v-model="dateMedicale[index].tip_proteza">
+                            <option selected></option>
+                            <option value="Provizorie">Provizorie</option>
+                            <option value="Definitivă">Definitivă</option>
+                            <option value="Modificări">Modificări</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-5 mb-4">
                         <label for="alte_afectiuni" class="mb-0 ps-3">Alte afecțiuni</label>
                         <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][alte_afectiuni]'"
                             v-model="dateMedicale[index].alte_afectiuni"
                             rows="3"></textarea>
                     </div>
-                    <div class="col-lg-6 mb-4">
+                    <div class="col-lg-5 mb-4">
                         <label for="observatii" class="mb-0 ps-3">Observații</label>
                         <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][observatii]'"

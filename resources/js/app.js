@@ -64,7 +64,7 @@ const pacientAutocomplete = createApp({
         return {
             pacient_id: pacientIdVechi,
             pacient_nume: '',
-            pacient_data_nastere: '',
+            pacient_telefon: '',
             pacient_localitate: '',
             pacienti: pacienti,
             pacientiListaAutocomplete: []
@@ -75,7 +75,8 @@ const pacientAutocomplete = createApp({
             for (var i = 0; i < this.pacienti.length; i++) {
                 if (this.pacienti[i].id == this.pacient_id) {
                     this.pacient_nume = this.pacienti[i].nume + ' ' + this.pacienti[i].prenume;
-                    this.pacient_data_nastere = new Date(this.pacienti[i].data_nastere); this.pacient_data_nastere = this.pacient_data_nastere.toLocaleString('ro-RO', { dateStyle: 'short' });;
+                    // this.pacient_data_nastere = new Date(this.pacienti[i].data_nastere); this.pacient_data_nastere = this.pacient_data_nastere.toLocaleString('ro-RO', { dateStyle: 'short' });
+                    this.pacient_telefon = this.pacienti[i].telefon;
                     this.pacient_localitate = this.pacienti[i].localitate;
                     break;
                 }

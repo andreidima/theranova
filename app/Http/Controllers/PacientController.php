@@ -68,8 +68,10 @@ class PacientController extends Controller
 
         $pacient = Pacient::create($request->except(['apartinatori', 'date']));
 
-        foreach ($request->apartinatori as $apartinator) {
-            $pacient->apartinatori()->save(Apartinator::make($apartinator));
+        if ($request->apartinatori) {
+            foreach ($request->apartinatori as $apartinator) {
+                $pacient->apartinatori()->save(Apartinator::make($apartinator));
+            }
         }
 
         // Daca pacientul a fost adaugat din formularul FisaCaz, se trimite in sesiune, pentru a fi folosita in fisaCaz
@@ -120,8 +122,10 @@ class PacientController extends Controller
         $pacient->update($request->except(['apartinatori', 'date']));
 
         $pacient->apartinatori()->whereNotIn('id', collect($request->apartinatori)->where('id')->pluck('id'))->delete();
-        foreach ($request->apartinatori as $date) {
-            $pacient->apartinatori()->save(Apartinator::firstOrNew(['id' =>  $date['id']], $date));
+        if ($request->apartinatori) {
+            foreach ($request->apartinatori as $date) {
+                $pacient->apartinatori()->save(Apartinator::firstOrNew(['id' =>  $date['id']], $date));
+            }
         }
 
         return redirect($request->session()->get('pacientReturnUrl') ?? ('/pacienti'))->with('status', 'Pacientul „' . $pacient->nume . ' ' . $pacient->prenume . '” a fost modificat cu succes!');

@@ -88,7 +88,7 @@ class FisaCazController extends Controller
         $fisaCaz->fill($request->session()->pull('fisaCazRequest', []));
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
-        $pacienti = Pacient::select('id', 'nume', 'prenume', 'data_nastere', 'localitate')->get();
+        $pacienti = Pacient::select('id', 'nume', 'prenume', 'telefon', 'localitate')->get();
 
         $request->session()->get('fisaCazReturnUrl') ?? $request->session()->put('fisaCazReturnUrl', url()->previous());
 
@@ -141,7 +141,7 @@ class FisaCazController extends Controller
         $request->session()->get('fisaCazReturnUrl') ?? $request->session()->put('fisaCazReturnUrl', url()->previous());
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
-        $pacienti = Pacient::select('id', 'nume', 'prenume', 'data_nastere', 'localitate')->get();
+        $pacienti = Pacient::select('id', 'nume', 'prenume', 'telefon', 'localitate')->get();
 
         return view('fiseCaz.edit', compact('fisaCaz', 'useri', 'pacienti'));
     }
@@ -198,12 +198,13 @@ class FisaCazController extends Controller
                 'user_comercial' => '',
                 'user_tehnic' => '',
                 'pacient_id' => 'required',
-                'dateMedicale.*.greutate' => 'nullable|integer|min:10|max:300',
-                'dateMedicale.*.parte_amputata' => '',
-                'dateMedicale.*.amputatie' => '',
-                'dateMedicale.*.nivel_de_activitate' => '',
-                'dateMedicale.*.cauza_amputatiei' => '',
-                'dateMedicale.*.a_mai_purtat_proteza' => '',
+                'dateMedicale.*.greutate' => 'required|integer|min:10|max:300',
+                'dateMedicale.*.parte_amputata' => 'required',
+                'dateMedicale.*.amputatie' => 'required',
+                'dateMedicale.*.nivel_de_activitate' => 'required',
+                'dateMedicale.*.cauza_amputatiei' => 'required',
+                'dateMedicale.*.a_mai_purtat_proteza' => 'required',
+                'dateMedicale.*.tip_proteza' => 'required',
                 'dateMedicale.*.alte_afectiuni' => 'nullable|max:2000',
                 'dateMedicale.*.observatii' => 'nullable|max:2000',
                 'cerinte.*.decizie_cas' => '',
@@ -216,9 +217,16 @@ class FisaCazController extends Controller
 
             ],
             [
+                'dateMedicale.*.greutate.required' => 'Câmpul Greutate este obligatoriu.',
                 'dateMedicale.*.greutate.integer' => 'Câmpul greutate trebuie să fie un număr.',
                 'dateMedicale.*.greutate.min' => 'Câmpul greutate trebuie să aibă valoarea minim 10.',
                 'dateMedicale.*.greutate.max' => 'Câmpul greutate trebuie să aibă valoarea maxim 300.',
+                'dateMedicale.*.parte_amputata.required' => 'Câmpul Parte amputată este obligatoriu.',
+                'dateMedicale.*.amputatie.required' => 'Câmpul Amputație este obligatoriu.',
+                'dateMedicale.*.nivel_de_activitate.required' => 'Câmpul Nivel de activitate este obligatoriu.',
+                'dateMedicale.*.cauza_amputatiei.required' => 'Câmpul Cauza amputației este obligatoriu.',
+                'dateMedicale.*.a_mai_purtat_proteza.required' => 'Câmpul A mai putat proteza este obligatoriu.',
+                'dateMedicale.*.tip_proteza.required' => 'Câmpul Tip proteză este obligatoriu.',
                 'dateMedicale.*.alte_afectiuni.max' => 'Câmpul alte afecțiuni trebuie să aibă maxim 2000 de caractere.',
                 'dateMedicale.*.observatii.max' => 'Câmpul observații trebuie să aibă maxim 2000 de caractere.',
                 'cerinte.*.buget_disponibil.max' => 'Câmpul buget disponibil trebuie să aibă valoarea maxim 1.000.000.',

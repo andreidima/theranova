@@ -38,10 +38,42 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Data naștere:
+                                    Telefon
                                 </td>
                                 <td>
-                                    {{ $pacient->data_nastere ? \Carbon\Carbon::parse($pacient->data_nastere)->isoFormat('DD.MM.YYYY') : '' }}
+                                    {{ $pacient->telefon }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Email
+                                </td>
+                                <td>
+                                    {{ $pacient->email }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    CNP
+                                </td>
+                                <td>
+                                    {{ $pacient->cnp }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Serie nr. buletin
+                                </td>
+                                <td>
+                                    {{ $pacient->serie_numar_buletin }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Data exp. buletin:
+                                </td>
+                                <td>
+                                    {{ $pacient->data_expirare_buletin ? \Carbon\Carbon::parse($pacient->data_expirare_buletin)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                             </tr>
                             <tr>
@@ -82,22 +114,6 @@
                                 </td>
                                 <td>
                                     {{ $pacient->cod_postal }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Telefon
-                                </td>
-                                <td>
-                                    {{ $pacient->telefon }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="pe-4">
-                                    Email
-                                </td>
-                                <td>
-                                    {{ $pacient->email }}
                                 </td>
                             </tr>
                             @foreach ($pacient->apartinatori as $apartinator)

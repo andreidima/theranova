@@ -13,7 +13,7 @@
         {{-- <div class="row px-2 pt-4 pb-1 mb-0 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod"> --}}
         <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
         {{-- <div class="row"> --}}
-            <div class="col-lg-4 mb-4">
+            <div class="col-lg-3 mb-4">
                 <label for="nume" class="mb-0 ps-3">Nume<span class="text-danger">*</span></label>
                 <input
                     type="text"
@@ -23,7 +23,7 @@
                     value="{{ old('nume', $pacient->nume) }}"
                     required>
             </div>
-            <div class="col-lg-4 mb-4">
+            <div class="col-lg-3 mb-4">
                 <label for="prenume" class="mb-0 ps-3">Prenume<span class="text-danger">*</span></label>
                 <input
                     type="text"
@@ -33,11 +33,47 @@
                     value="{{ old('prenume', $pacient->prenume) }}"
                     required>
             </div>
+            <div class="col-lg-3 mb-4">
+                <label for="telefon" class="mb-0 ps-3">Telefon</label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('telefon') ? 'is-invalid' : '' }}"
+                    name="telefon"
+                    placeholder=""
+                    value="{{ old('telefon', $pacient->telefon) }}">
+            </div>
+            <div class="col-lg-3 mb-4">
+                <label for="email" class="mb-0 ps-3">Email</label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('email') ? 'is-invalid' : '' }}"
+                    name="email"
+                    placeholder=""
+                    value="{{ old('email', $pacient->email) }}">
+            </div>
+            <div class="col-lg-3 mb-4">
+                <label for="cnp" class="mb-0 ps-3">CNP</label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('cnp') ? 'is-invalid' : '' }}"
+                    name="cnp"
+                    placeholder=""
+                    value="{{ old('cnp', $pacient->cnp) }}">
+            </div>
+            <div class="col-lg-3 mb-4">
+                <label for="serie_numar_buletin" class="mb-0 ps-3">Serie Nr. buletin</label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('serie_numar_buletin') ? 'is-invalid' : '' }}"
+                    name="serie_numar_buletin"
+                    placeholder=""
+                    value="{{ old('serie_numar_buletin', $pacient->serie_numar_buletin) }}">
+            </div>
             <div class="col-lg-2 mb-4 text-center" id="datePicker">
-                <label for="data" class="mb-0 ps-0">Data nașterii</label>
+                <label for="data" class="mb-0 ps-0"><small>Data exp. buletin</small></label>
                 <vue-datepicker-next
-                    data-veche="{{ old('data_nastere', $pacient->data_nastere) }}"
-                    nume-camp-db="data_nastere"
+                    data-veche="{{ old('data_expirare_buletin', $pacient->data_expirare_buletin) }}"
+                    nume-camp-db="data_expirare_buletin"
                     tip="date"
                     value-type="YYYY-MM-DD"
                     format="DD.MM.YYYY"
@@ -60,24 +96,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 mb-4">
-                <label for="telefon" class="mb-0 ps-3">Telefon</label>
-                <input
-                    type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('telefon') ? 'is-invalid' : '' }}"
-                    name="telefon"
-                    placeholder=""
-                    value="{{ old('telefon', $pacient->telefon) }}">
-            </div>
-            <div class="col-lg-4 mb-4">
-                <label for="email" class="mb-0 ps-3">Email</label>
-                <input
-                    type="text"
-                    class="form-control bg-white rounded-3 {{ $errors->has('email') ? 'is-invalid' : '' }}"
-                    name="email"
-                    placeholder=""
-                    value="{{ old('email', $pacient->email) }}">
             </div>
         </div>
         {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#ddffff; border-left:6px solid; border-color:#2196F3; border-radius: 0px 0px 0px 0px"> --}}
@@ -178,7 +196,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-8 mb-4">
                 <label for="observatii" class="form-label mb-0 ps-3">Observații</label>
                 <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"

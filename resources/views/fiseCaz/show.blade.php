@@ -133,18 +133,26 @@
                                 </tr>
                                 <tr>
                                     <td class="pe-4">
-                                        Alte afecțiuni
-                                    </td>
-                                    <td>
-                                        {{ $dataMedicala->alte_afectiuni }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-4">
                                         A mai purtat proteză
                                     </td>
                                     <td>
                                         {{ ($dataMedicala->a_mai_purtat_proteza == '1') ? 'DA' : 'NU' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                       Tip proteză
+                                    </td>
+                                    <td>
+                                        {{ ($dataMedicala->tip_proteza == '1') ? 'DA' : 'NU' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                        Alte afecțiuni
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->alte_afectiuni }}
                                     </td>
                                 </tr>
                                 <tr>
