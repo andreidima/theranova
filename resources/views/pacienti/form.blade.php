@@ -11,7 +11,7 @@
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0">
         {{-- <div class="row px-2 pt-4 pb-1 mb-0 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod"> --}}
-        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
         {{-- <div class="row"> --}}
             <div class="col-lg-3 mb-4">
                 <label for="nume" class="mb-0 ps-3">Nume<span class="text-danger">*</span></label>
@@ -60,8 +60,8 @@
                     placeholder=""
                     value="{{ old('cnp', $pacient->cnp) }}">
             </div>
-            <div class="col-lg-3 mb-4">
-                <label for="serie_numar_buletin" class="mb-0 ps-3">Serie Nr. buletin</label>
+            <div class="col-lg-2 mb-4">
+                <label for="serie_numar_buletin" class="mb-0 ps-xxl-3">Serie Nr. buletin</label>
                 <input
                     type="text"
                     class="form-control bg-white rounded-3 {{ $errors->has('serie_numar_buletin') ? 'is-invalid' : '' }}"
@@ -69,8 +69,8 @@
                     placeholder=""
                     value="{{ old('serie_numar_buletin', $pacient->serie_numar_buletin) }}">
             </div>
-            <div class="col-lg-2 mb-4 text-center" id="datePicker">
-                <label for="data" class="mb-0 ps-0"><small>Data exp. buletin</small></label>
+            <div class="col-lg-2 mb-4" id="datePicker">
+                <label for="data" class="mb-0 ps-xxl-2"><small>Data exp. buletin</small></label>
                 <vue-datepicker-next
                     data-veche="{{ old('data_expirare_buletin', $pacient->data_expirare_buletin) }}"
                     nume-camp-db="data_expirare_buletin"
@@ -96,6 +96,17 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-lg-3 mb-4">
+                <label for="cum_a_aflat_de_theranova" class="mb-0 ps-xxl-3"><small>Cum a aflat de Theranova</small></label>
+                <select class="form-select bg-white rounded-3 {{ $errors->has('cum_a_aflat_de_theranova') ? 'is-invalid' : '' }}"
+                    name="cum_a_aflat_de_theranova">
+                    <option selected></option>
+                    <option value="Spital" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Spital" ? 'selected' : '' }}>Spital</option>
+                    <option value="Recomandare" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Recomandare" ? 'selected' : '' }}>Recomandare</option>
+                    <option value="Internet" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Internet" ? 'selected' : '' }}>Internet</option>
+                    <option value="theranova.ro" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "theranova.ro" ? 'selected' : '' }}>theranova.ro</option>
+                </select>
             </div>
         </div>
         {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#ddffff; border-left:6px solid; border-color:#2196F3; border-radius: 0px 0px 0px 0px"> --}}

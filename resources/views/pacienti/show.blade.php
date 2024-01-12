@@ -86,6 +86,14 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
+                                    Cum a aflat de Theranova
+                                </td>
+                                <td>
+                                    {{ $pacient->cum_a_aflat_de_theranova }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
                                     Adresa
                                 </td>
                                 <td>
