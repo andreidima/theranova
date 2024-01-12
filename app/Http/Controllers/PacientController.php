@@ -181,7 +181,7 @@ class PacientController extends Controller
                 'apartinatori.*.nume' => 'required|max:200',
                 'apartinatori.*.prenume' => 'required|max:200',
                 'apartinatori.*.telefon' => 'nullable|max:200',
-                'apartinatori.*.email' => 'nullable|max:200',
+                'apartinatori.*.email' => 'nullable|max:200|email:rfc,dns',
                 'apartinatori.*.grad_rudenie' => 'nullable|max:200',
 
                 'observatii' => 'nullable|max:2000',
