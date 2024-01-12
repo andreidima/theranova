@@ -70,10 +70,10 @@
                     value="{{ old('serie_numar_buletin', $pacient->serie_numar_buletin) }}">
             </div>
             <div class="col-lg-2 mb-4" id="datePicker">
-                <label for="data" class="mb-0 ps-xxl-2"><small>Data exp. buletin</small></label>
+                <label for="data" class="mb-0 ps-xxl-2"><small>Data elib. buletin</small></label>
                 <vue-datepicker-next
-                    data-veche="{{ old('data_expirare_buletin', $pacient->data_expirare_buletin) }}"
-                    nume-camp-db="data_expirare_buletin"
+                    data-veche="{{ old('data_eliberare_buletin', $pacient->data_eliberare_buletin) }}"
+                    nume-camp-db="data_eliberare_buletin"
                     tip="date"
                     value-type="YYYY-MM-DD"
                     format="DD.MM.YYYY"
