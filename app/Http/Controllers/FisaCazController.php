@@ -185,8 +185,8 @@ class FisaCazController extends Controller
         return $request->validate(
             [
                 'data' => 'required',
-                'compresie_manson' => 'required',
-                'protezare' => 'required',
+                'compresie_manson' => '',
+                'protezare' => '',
                 'user_vanzari' => '',
                 'user_comercial' => '',
                 'user_tehnic' => '',
