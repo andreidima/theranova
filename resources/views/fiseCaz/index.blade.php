@@ -112,6 +112,8 @@
                                             {{-- {{ $loop->iteration }}. --}}
                                             @if ($oferta->acceptata == "1")
                                                 <i class="fa-solid fa-thumbs-up text-success"></i>
+                                            @elseif ($oferta->acceptata == "0")
+                                                <i class="fa-solid fa-thumbs-down text-danger"></i>
                                             @endif
                                             {{ $oferta->pret }} lei
                                             @foreach ($oferta->fisiere as $fisier)
