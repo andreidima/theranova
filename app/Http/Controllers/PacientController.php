@@ -168,7 +168,7 @@ class PacientController extends Controller
                 'prenume' => 'required|max:200',
                 'telefon' => 'nullable|max:200',
                 'email' => 'nullable|max:200|email:rfc,dns',
-                'cnp' => 'nullable|max:100',
+                'cnp' => 'nullable|numeric|integer|min:1|digits:13',
                 'serie_numar_buletin' => 'nullable|max:100',
                 'data_eliberare_buletin' => '',
                 'sex' => '',

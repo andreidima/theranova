@@ -50,11 +50,6 @@
                             </a>
                         </li>
                         <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="#">
-                                <i class="fa-solid fa-clipboard-list me-1"></i>Comenzi
-                            </a>
-                        </li>
-                        <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/pacienti">
                                 <i class="fa-solid fa-person-cane me-1"></i>Pacienți
                             </a>

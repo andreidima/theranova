@@ -75,7 +75,6 @@
                             <th class="text-white culoare2 text-center">Ofertă</th>
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
-                            <th class="text-white culoare2 text-center">Documente</th>
                             <th class="text-white culoare2 text-center">Stare</th>
                             <th class="text-white culoare2">Utilizator</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
@@ -139,13 +138,6 @@
                                 </td>
                                 <td class="text-center">
                                     {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
-                                </td>
-                                <td>
-                                    <div class="text-center">
-                                        <span class="badge bg-warning text-dark">Ofertă</span>
-                                        <span class="badge bg-success">Contract</span>
-                                        <span class="badge bg-primary">Comandă</span>
-                                    </div>
                                 </td>
                                 <td>
                                     <div class="text-center">
