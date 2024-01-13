@@ -36,6 +36,6 @@ class Oferta extends Model
      */
     public function fisiere(): HasMany
     {
-        return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 'oferta');
+        return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 1);
     }
 }

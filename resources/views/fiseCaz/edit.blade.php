@@ -16,7 +16,7 @@
                 <div class="card-body py-2 border border-secondary"
                     style="border-radius: 0px 0px 40px 40px;"
                 >
-                    <form  class="needs-validation" novalidate method="POST" action="{{ $fisaCaz->path() }}">
+                    <form  class="needs-validation" novalidate method="POST" action="{{ $fisaCaz->path() }}" enctype="multipart/form-data">
                         @method('PATCH')
 
                                 @include ('fiseCaz.form', [

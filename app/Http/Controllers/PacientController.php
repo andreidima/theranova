@@ -178,7 +178,7 @@ class PacientController extends Controller
                 'judet' => 'nullable|max:200',
                 'cod_postal' => 'nullable|max:200',
 
-                'apartinatori.*.nume' => 'required|max:2001',
+                'apartinatori.*.nume' => 'required|max:200',
                 'apartinatori.*.prenume' => 'required|max:200',
                 'apartinatori.*.telefon' => 'nullable|max:200',
                 'apartinatori.*.email' => 'nullable|max:200|email:rfc,dns',

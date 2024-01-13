@@ -88,4 +88,24 @@ class FisaCaz extends Model
     {
         return $this->hasMany(Oferta::class, 'fisa_caz_id');
     }
+
+    /**
+     * Get all of the fisiereComanda for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function fisiereComanda(): HasMany
+    {
+        return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 2);
+    }
+
+    /**
+     * Get all of the fisiereFisaMasuri for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function fisiereFisaMasuri(): HasMany
+    {
+        return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 3);
+    }
 }

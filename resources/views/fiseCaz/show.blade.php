@@ -26,10 +26,26 @@
                         >
                             <tr>
                                 <td class="pe-4">
-                                    Data:
+                                    Evaluare:
                                 </td>
                                 <td>
                                     {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Compresie manșon:
+                                </td>
+                                <td>
+                                    {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Protezare:
+                                </td>
+                                <td>
+                                    {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                             </tr>
                             <tr>
@@ -71,10 +87,28 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Data nașterii
+                                    Vârsta
                                 </td>
                                 <td>
-                                    {{ $fisaCaz->pacient->data_nastere ? Carbon::parse($fisaCaz->pacient->data_nastere)->isoFormat('DD.MM.YYYY') : '' }}
+                                    @if ($fisaCaz->pacient->cnp)
+                                        @php
+                                            $cnp = $fisaCaz->pacient->cnp;
+                                            $anNastere = substr($cnp, 1, 2);
+                                            $lunaNastere = substr($cnp, 3, 2);
+                                            $ziNastere = substr($cnp, 5, 2);
+                                            $dataNastere = new Carbon($anNastere . '-' . $lunaNastere . '-' . $ziNastere);
+                                            $varsta = $dataNastere->diffInYears(Carbon::now());
+                                        @endphp
+                                        {{ $varsta }} ani
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Telefon
+                                </td>
+                                <td>
+                                    {{ $fisaCaz->pacient->telefon ?? '' }}
                                 </td>
                             </tr>
                             <tr>
@@ -144,7 +178,7 @@
                                        Tip proteză
                                     </td>
                                     <td>
-                                        {{ ($dataMedicala->tip_proteza == '1') ? 'DA' : 'NU' }}
+                                        {{ $dataMedicala->tip_proteza }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -245,6 +279,33 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td colspan="2">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Comandă
+                                </td>
+                                <td>
+                                    @foreach ($fisaCaz->fisiereComanda as $fisier)
+                                        <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                            {{ $fisier->nume }}</a>
+                                    @endforeach
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
+                                    Fișă Măsuri
+                                </td>
+                                <td>
+                                    @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                                        <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                            {{ $fisier->nume }}</a>
+                                    @endforeach
+                                </td>
+                            </tr>
                         </table>
                     </div>
 

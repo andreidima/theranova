@@ -7,19 +7,31 @@
 @section('content')
 <div class="mx-3 px-3 card" style="border-radius: 40px 40px 40px 40px;">
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
-            <div class="col-lg-2">
+            <div class="col-lg-1">
                 <span class="badge culoare1 fs-5">
                     <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz
                 </span>
             </div>
-            <div class="col-lg-7">
+            <div class="col-lg-9">
                 <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
-                        <div class="col-lg-3">
-                            <input type="text" class="form-control rounded-3" id="searchNume" name="searchNume" placeholder="Nume pacient" value="{{ $searchNume }}">
+                        <div class="col-lg-2">
+                            <input type="text" class="form-control rounded-3" id="searchNume" name="searchNume" placeholder="Nume sau tel. pacient" value="{{ $searchNume }}">
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-4 d-flex align-items-center" id="datePicker">
+                            <label for="searchInterval" class="pe-1">Interval protezare:</label>
+                            <vue-datepicker-next
+                                data-veche="{{ $searchInterval }}"
+                                nume-camp-db="searchInterval"
+                                tip="date"
+                                range="range"
+                                value-type="YYYY-MM-DD"
+                                format="DD.MM.YYYY"
+                                :latime="{ width: '210px' }"
+                            ></vue-datepicker-next>
+                        </div>
+                        <div class="col-lg-2">
                             <select name="searchUserVanzari" class="form-select bg-white rounded-3 {{ $errors->has('searchUserVanzari') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Vânzări</option>
                                 @foreach ($useri->where('role', 1) as $user)
@@ -27,7 +39,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-2">
                             <select name="searchUserComercial" class="form-select bg-white rounded-3 {{ $errors->has('searchUserComercial') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Comercial</option>
                                 @foreach ($useri->where('role', 2) as $user)
@@ -35,7 +47,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-2">
                             <select name="searchUserTehnic" class="form-select bg-white rounded-3 {{ $errors->has('searchUserTehnic') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Tehnic</option>
                                 @foreach ($useri->where('role', 3) as $user)
@@ -54,7 +66,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-lg-3 text-end">
+            <div class="col-lg-2 text-end">
                 <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
                     <i class="fas fa-plus-square text-white me-1"></i>Adaugă Fișă Caz
                 </a>

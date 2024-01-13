@@ -77,6 +77,38 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-lg-6 mb-4">
+                <label for="fisierComanda" class="mb-0 ps-3">Fișier comandă</label>
+                <input type="file" name="fisierComanda" class="form-control rounded-3">
+                @if($errors->has('fisierComanda'))
+                    <span class="help-block text-danger">{{ $errors->first('fisierComanda') }}</span>
+                @endif
+                @if ($fisaCaz->fisiereComanda->first())
+                    <small class="m-0 ps-3">
+                        * Comandă încărcată la această fișă caz: {{ $fisaCaz->fisiereComanda->first()->nume ?? '' }}
+                    </small>
+                    <br>
+                    <small class="m-0 ps-3">
+                        * Dacă vrei să o înlocuiești, încarcă alt fișier, și cel care este acum se va șterge automat.
+                    </small>
+                @endif
+            </div>
+            <div class="col-lg-6 mb-4">
+                <label for="fisierFisaMasuri" class="mb-0 ps-3">Fișier fisă măsuri</label>
+                <input type="file" name="fisierFisaMasuri" class="form-control rounded-3">
+                @if($errors->has('fisierFisaMasuri'))
+                    <span class="help-block text-danger">{{ $errors->first('fisierFisaMasuri') }}</span>
+                @endif
+                @if ($fisaCaz->fisiereFisaMasuri->first())
+                    <small class="m-0 ps-3">
+                        * Fișă măsuri încărcată la această fișă caz: {{ $fisaCaz->fisiereFisaMasuri->first()->nume ?? '' }}
+                    </small>
+                    <br>
+                    <small class="m-0 ps-3">
+                        * Dacă vrei să o înlocuiești, încarcă alt fișier, și cel care este acum se va șterge automat.
+                    </small>
+                @endif
+            </div>
         </div>
         {{-- <div class="row px-2 pt-0 mb-4" style="background-color:#eeeeff; border-left:6px solid; border-color:#6a6ba0; border-radius: 0px 0px 0px 0px" id="pacientAutocomplete"> --}}
         {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #6a6ba0 solid; background-color:#f1f1fb" id="pacientAutocomplete"> --}}

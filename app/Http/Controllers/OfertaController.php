@@ -60,7 +60,7 @@ class OfertaController extends Controller
         try {
             Storage::putFileAs($cale, $fisier, $numeFisier);
             $fisier = new Fisier;
-            $fisier->referinta = "oferta";
+            $fisier->referinta = 1;
             $fisier->referinta_id = $oferta->id;
             $fisier->cale = $cale;
             $fisier->nume = $numeFisier;
@@ -107,10 +107,9 @@ class OfertaController extends Controller
      */
     public function update(Request $request, FisaCaz $fisaCaz, Oferta $oferta)
     {
-        // dd($request->request);
         $this->validateRequest($request);
         $oferta->update($request->except(['fisier']));
-// dd($oferta);
+
         // Daca exista fisier in request, se sterge vechiul fisier si se salveaza cel de acum
         if ($request->file('fisier')) {
             // stergere fisier vechi
