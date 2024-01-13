@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PacientController;
 use App\Http\Controllers\FisaCazController;
+use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FisierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +32,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::any('/fise-caz/adauga-resursa/{resursa}', [FisaCazController::class, 'fisaCazAdaugaResursa']);
     Route::get('/fise-caz/{fisaCaz}/stare/{stare}', [FisaCazController::class, 'stare']);
 
+    Route::resource('/fise-caz/{fisaCaz}/oferte', OfertaController::class)->parameters(['oferte' => 'oferta']);
+
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
+
+    Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
 });
 
 

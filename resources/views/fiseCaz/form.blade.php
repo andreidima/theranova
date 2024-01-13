@@ -16,9 +16,9 @@
     <div class="col-lg-12 px-4 py-2 mb-0">
         {{-- <div class="row px-2 pt-0 pb-1 mb-4 rounded-3 justify-content-center" style="background-color:#f9e9e8; border-left:6px solid; border-color:#ec8575"> --}}
         {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #ec8575 solid; background-color:#fcf4f3"> --}}
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
-            <div class="col-lg-2 mb-4" id="datePicker">
-                <label for="data" class="mb-0 ps-3">Dată fișă<span class="text-danger">*</span></label>
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)" id="datePicker">
+            <div class="col-lg-2 mb-4">
+                <label for="data" class="mb-0 ps-3">Evaluare<span class="text-danger">*</span></label>
                 <vue-datepicker-next
                     data-veche="{{ old('data', $fisaCaz->data ?? Carbon::today()) }}"
                     nume-camp-db="data"
@@ -28,7 +28,27 @@
                     :latime="{ width: '125px' }"
                 ></vue-datepicker-next>
             </div>
-            <div class="col-lg-4 mb-4">
+            <div class="col-lg-2 mb-4">
+                <label for="compresie_manson" class="mb-0 ps-0">Compresie manșon</label>
+                <vue-datepicker-next
+                    data-veche="{{ old('compresie_manson', $fisaCaz->compresie_manson ?? '') }}"
+                    nume-camp-db="compresie_manson"
+                    tip="date"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    :latime="{ width: '125px' }"
+                ></vue-datepicker-next>
+            </div>
+            <div class="col-lg-2 mb-4">
+                <label for="protezare" class="mb-0 ps-3">Protezare</label>
+                <vue-datepicker-next
+                    data-veche="{{ old('data', $fisaCaz->protezare ?? '') }}"
+                    nume-camp-db="protezare"
+                    tip="date"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    :latime="{ width: '125px' }"
+                ></vue-datepicker-next>
             </div>
             <div class="col-lg-2 mb-4">
                 <label for="user_vanzari" class="mb-0 ps-3">Vânzări</label>
@@ -361,11 +381,7 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="col-lg-8 mb-4">
-            <label for="observatii" class="form-label mb-0 ps-3">Observații</label>
-            <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
-                name="observatii" rows="3">{{ old('observatii', $pacient->observatii) }}</textarea>
-        </div> --}}
+
         <div class="row pt-3">
             <div class="col-lg-12 mb-0 d-flex justify-content-center">
                 <button type="submit" ref="submit" class="btn btn-lg btn-primary text-white me-3 rounded-3">{{ $buttonText }}</button>

@@ -78,4 +78,14 @@ class FisaCaz extends Model
     {
         return $this->hasMany(Cerinta::class, 'fisa_caz_id');
     }
+
+    /**
+     * Get all of the oferte for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function oferte(): HasMany
+    {
+        return $this->hasMany(Oferta::class, 'fisa_caz_id');
+    }
 }

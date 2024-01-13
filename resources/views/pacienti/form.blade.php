@@ -104,6 +104,7 @@
                     <option selected></option>
                     <option value="Spital" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Spital" ? 'selected' : '' }}>Spital</option>
                     <option value="Recomandare" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Recomandare" ? 'selected' : '' }}>Recomandare</option>
+                    <option value="Pacient vechi" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Pacient vechi" ? 'selected' : '' }}>Pacient vechi</option>
                     <option value="Internet" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "Internet" ? 'selected' : '' }}>Internet</option>
                     <option value="theranova.ro" {{ old('cum_a_aflat_de_theranova', $pacient->cum_a_aflat_de_theranova ?? '') == "theranova.ro" ? 'selected' : '' }}>theranova.ro</option>
                 </select>

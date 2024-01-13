@@ -20,13 +20,14 @@ class FisaCazController extends Controller
     public function index(Request $request)
     {
         $request->session()->forget('fisaCazReturnUrl');
+        $request->session()->forget('ofertaReturnUrl');
 
         $searchNume = $request->searchNume;
         $searchUserVanzari = $request->searchUserVanzari;
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
 
-        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic')
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient')
             ->when($searchNume, function ($query, $searchNume) {
                 foreach (explode(" ", $searchNume) as $cuvant){
                     $query->whereHas('pacient', function ($query) use($cuvant) {
@@ -53,22 +54,8 @@ class FisaCazController extends Controller
                     return $query->where('id', $searchUserTehnic);
                 });
             })
-            ->latest()
+            ->orderBy('data', 'desc')
             ->simplePaginate(25);
-
-        // $increment = 0;
-        // foreach ($fiseCaz as $fisa){
-        //     $increment += 10;
-        //     $data = \Carbon\Carbon::today()->subMonths(3)->addDays($increment);
-        //     $fisa->data = $data->toDateString();
-        //     $fisa->oferta = $data->addDays(10)->toDateString();
-        //     $fisa->planificare_mulaj = $data->addDays(10)->toDateString();
-        //     $fisa->comanda = $data->addDays(10)->toDateString();
-        //     $fisa->protezare = $data->addDays(10)->toDateString();
-        //     // dd($fisa);
-        //     $fisa->stare = 3;
-        //     $fisa->save();
-        // }
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
@@ -105,7 +92,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 
-        $fisaCaz = FisaCaz::create($request->only(['data', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz = FisaCaz::create($request->only(['data', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
         foreach ($request->dateMedicale as $date) {
             $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
@@ -157,7 +144,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 
-        $fisaCaz->update($request->only(['data', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz->update($request->only(['data', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
         foreach ($request->dateMedicale as $date) {
             $fisaCaz->dateMedicale()->first() ? $fisaCaz->dateMedicale()->first()->update($date) : $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
@@ -177,6 +164,10 @@ class FisaCazController extends Controller
      */
     public function destroy(Request $request, FisaCaz $fisaCaz)
     {
+        if ($fisaCaz->oferte->count() > 0){
+            return back()->with('error', 'Nu poți șterge fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” pentru că are oferte atașate. Șterge mai întâi ofertele.');
+        }
+
         $fisaCaz->delete();
         $fisaCaz->dateMedicale()->delete();
         $fisaCaz->cerinte()->delete();
@@ -194,6 +185,8 @@ class FisaCazController extends Controller
         return $request->validate(
             [
                 'data' => 'required',
+                'compresie_manson' => 'required',
+                'protezare' => 'required',
                 'user_vanzari' => '',
                 'user_comercial' => '',
                 'user_tehnic' => '',

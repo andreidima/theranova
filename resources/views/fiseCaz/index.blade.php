@@ -73,8 +73,7 @@
                             <th class="text-white culoare2">Pacient</th>
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
-                            <th class="text-white culoare2 text-center">Planificare mulaj</th>
-                            <th class="text-white culoare2 text-center">Comandă</th>
+                            <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Documente</th>
                             <th class="text-white culoare2 text-center">Stare</th>
@@ -100,54 +99,44 @@
                                 <td class="text-center">
                                     @if ($fisaCaz->data)
                                         {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
-                                        <br>
+                                        {{-- <br>
                                         <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
-                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
+                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span> --}}
                                     @else
-                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                        {{-- <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span> --}}
                                     @endif
                                 </td>
-                                <td class="text-center">
-                                    @if ($fisaCaz->oferta)
-                                        {{ $fisaCaz->oferta ? Carbon::parse($fisaCaz->oferta)->isoFormat('DD.MM.YYYY') : '' }}
-                                        <br>
-                                        <span class="badge text-success" title="Descarcă"><i class="fa-solid fa-file-arrow-down"></i></span>
-                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
-                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
-                                    @else
-                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                <td class="text-end">
+                                    @if ($fisaCaz->oferte->count() > 0)
+                                        @foreach ($fisaCaz->oferte as $oferta)
+                                            {{-- {{ $loop->iteration }}. --}}
+                                            @if ($oferta->acceptata == "1")
+                                                <i class="fa-solid fa-thumbs-up text-success"></i>
+                                            @endif
+                                            {{ $oferta->pret }} lei
+                                            @foreach ($oferta->fisiere as $fisier)
+                                                <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                                    <span class="badge text-success" title="Deschide"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                            @endforeach
+                                            <a href="{{ $oferta->path() }}/modifica">
+                                                <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
+                                            <a href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#stergeOferta{{ $oferta->id }}"
+                                                title="Șterge oferta">
+                                                <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
+                                            <br>
+                                        @endforeach
                                     @endif
+                                    <a href="{{ $fisaCaz->path() }}/oferte/adauga">
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    </a>
                                 </td>
                                 <td class="text-center">
-                                    @if ($fisaCaz->planificare_mulaj)
-                                        {{ $fisaCaz->planificare_mulaj ? Carbon::parse($fisaCaz->planificare_mulaj)->isoFormat('DD.MM.YYYY') : '' }}
-                                        <br>
-                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
-                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
-                                    @else
-                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
-                                    @endif
+                                    {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td class="text-center">
-                                    @if ($fisaCaz->comanda)
-                                        {{ $fisaCaz->comanda ? Carbon::parse($fisaCaz->comanda)->isoFormat('DD.MM.YYYY') : '' }}
-                                        <br>
-                                        <span class="badge text-success" title="Descarcă"><i class="fa-solid fa-file-arrow-down"></i></span>
-                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
-                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
-                                    @else
-                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if ($fisaCaz->protezare)
-                                        {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
-                                        <br>
-                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
-                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span>
-                                    @else
-                                        <span class="badge text-success"><i class="fas fa-plus-square"></i></span>
-                                    @endif
+                                    {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td>
                                     <div class="text-center">
@@ -238,6 +227,46 @@
                 </div>
             </div>
         </div>
+    @endforeach
+
+    {{-- Modalele pentru stergere oferte --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        @foreach ($fisaCaz->oferte as $oferta)
+            <div class="modal fade text-dark" id="stergeOferta{{ $oferta->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header bg-danger">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Ofertă: <b>{{ ($oferta->fisaCaz->pacient->nume ?? '') . ' ' . ($oferta->fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="text-align:left;">
+                        Obiectul contractului: {{ $oferta->obiect_contract }}
+                        <br>
+                        Pret: {{ $oferta->pret }} lei
+                        <br><br>
+                        <p class="m-0 text-center">
+                            Ești sigur că vrei să ștergi Oferta?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                        <form method="POST" action="{{ $oferta->path() }}">
+                            @method('DELETE')
+                            @csrf
+                            <button
+                                type="submit"
+                                class="btn btn-danger text-white"
+                                >
+                                Șterge oferta
+                            </button>
+                        </form>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     @endforeach
 
 @endsection
