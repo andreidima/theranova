@@ -180,6 +180,11 @@
                                             <span class="badge bg-success">Vizualizează</span></a>
                                         <a href="{{ $fisaCaz->path() }}/modifica" class="flex me-1">
                                             <span class="badge bg-primary">Modifică</span></a>
+                                            @php
+                                                // dd(auth()->user->roles());
+                                                dd(auth()->user);
+                                            @endphp
+                                        {{-- @if (auth()) --}}
                                         <a href="#"
                                             data-bs-toggle="modal"
                                             data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
