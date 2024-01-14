@@ -274,9 +274,13 @@
                             :name="'dateMedicale[' + index + '][tip_proteza]'"
                             v-model="dateMedicale[index].tip_proteza">
                             <option selected></option>
-                            <option value="Provizorie">Provizorie</option>
-                            <option value="Definitivă">Definitivă</option>
+                            <option value="AK provizorie">AK provizorie</option>
+                            <option value="AK definitivă">AK definitivă</option>
+                            <option value="BK provizorie">BK provizorie</option>
+                            <option value="BK definitivă">BK definitivă</option>
                             <option value="Modificări">Modificări</option>
+                            <option value="PMS">PMS</option>
+                            <option value="PPP">PPP</option>
                         </select>
                     </div>
                     <div class="col-lg-5 mb-4">

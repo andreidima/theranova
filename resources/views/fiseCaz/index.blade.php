@@ -7,19 +7,19 @@
 @section('content')
 <div class="mx-3 px-3 card" style="border-radius: 40px 40px 40px 40px;">
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
-            <div class="col-lg-1">
+            <div class="col-lg-2">
                 <span class="badge culoare1 fs-5">
                     <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz
                 </span>
             </div>
-            <div class="col-lg-9">
+            <div class="col-lg-7">
                 <form class="needs-validation" novalidate method="GET" action="{{ url()->current()  }}">
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
-                        <div class="col-lg-2">
+                        <div class="col-lg-6">
                             <input type="text" class="form-control rounded-3" id="searchNume" name="searchNume" placeholder="Nume sau tel. pacient" value="{{ $searchNume }}">
                         </div>
-                        <div class="col-lg-4 d-flex align-items-center" id="datePicker">
+                        <div class="col-lg-6 d-flex align-items-center" id="datePicker">
                             <label for="searchInterval" class="pe-1">Interval protezare:</label>
                             <vue-datepicker-next
                                 data-veche="{{ $searchInterval }}"
@@ -31,7 +31,7 @@
                                 :latime="{ width: '210px' }"
                             ></vue-datepicker-next>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <select name="searchUserVanzari" class="form-select bg-white rounded-3 {{ $errors->has('searchUserVanzari') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Vânzări</option>
                                 @foreach ($useri->where('role', 1) as $user)
@@ -39,7 +39,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <select name="searchUserComercial" class="form-select bg-white rounded-3 {{ $errors->has('searchUserComercial') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Comercial</option>
                                 @foreach ($useri->where('role', 2) as $user)
@@ -47,7 +47,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <select name="searchUserTehnic" class="form-select bg-white rounded-3 {{ $errors->has('searchUserTehnic') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Tehnic</option>
                                 @foreach ($useri->where('role', 3) as $user)
@@ -66,7 +66,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-lg-2 text-end">
+            <div class="col-lg-3 text-end">
                 <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
                     <i class="fas fa-plus-square text-white me-1"></i>Adaugă Fișă Caz
                 </a>
@@ -83,6 +83,7 @@
                         <tr class="" style="padding:2rem">
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Pacient</th>
+                            <th class="text-white culoare2">Tip proteză</th>
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
@@ -106,6 +107,9 @@
                                     {{ $fisaCaz->pacient->telefon ?? '' }}
                                     <br>
                                     {{ $fisaCaz->pacient->localitate ?? '' }}
+                                </td>
+                                <td class="">
+                                    {{ $fisaCaz->dateMedicale->first()->tip_proteza ?? '' }}
                                 </td>
                                 <td class="text-center">
                                     @if ($fisaCaz->data)
@@ -157,10 +161,12 @@
                                             <span class="badge {{ $fisaCaz->stare === 1 ? 'bg-success' : 'bg-light text-dark' }}">
                                                 <i class="fa-solid fa-lock-open fa-1x"></i>
                                             </span></a>
+                                        <br>
                                         <a href="{{ $fisaCaz->path() }}/stare/inchide" class="flex me-1" title="Închisă">
                                             <span class="badge {{ $fisaCaz->stare === 2 ? 'bg-dark' : 'bg-white text-dark' }}">
                                                 <i class="fa-solid fa-lock fa-1x"></i>
                                             </span></a>
+                                        <br>
                                         <a href="{{ $fisaCaz->path() }}/stare/anuleaza" class="flex me-1" title="Anulată">
                                             <span class="badge {{ $fisaCaz->stare === 3 ? 'bg-danger' : 'bg-light text-dark' }}">
                                                 <i class="fa-solid fa-ban fa-1x"></i>
@@ -176,13 +182,15 @@
                                 </td>
                                 <td>
                                     <div class="text-end">
-                                        <a href="{{ $fisaCaz->path() }}" class="flex me-1">
+                                        <a href="{{ $fisaCaz->path() }}" class="flex">
                                             <span class="badge bg-success">Vizualizează</span></a>
-                                        <a href="{{ $fisaCaz->path() }}/modifica" class="flex me-1">
+                                        <br>
+                                        <a href="{{ $fisaCaz->path() }}/modifica" class="flex">
                                             <span class="badge bg-primary">Modifică</span></a>
+                                        <br>
                                             @php
                                                 // dd(auth()->user->roles());
-                                                dd(auth()->user);
+                                                // dd(auth()->user);
                                             @endphp
                                         {{-- @if (auth()) --}}
                                         <a href="#"
