@@ -139,7 +139,7 @@
                     placeholder=""
                     value="{{ old('judet', $pacient->judet) }}">
             </div>
-            <div class="col-lg-4 mb-4">
+            {{-- <div class="col-lg-4 mb-4">
                 <label for="cod_postal" class="mb-0 ps-3">Cod poștal</label>
                 <input
                     type="text"
@@ -147,7 +147,7 @@
                     name="cod_postal"
                     placeholder=""
                     value="{{ old('cod_postal', $pacient->cod_postal) }}">
-            </div>
+            </div> --}}
         </div>
         {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#B8FFB8; border-left:6px solid; border-color:mediumseagreen; border-radius: 0px 0px 0px 0px"> --}}
         <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5" id="pacientFormApartinatori">

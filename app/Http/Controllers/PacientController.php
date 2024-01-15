@@ -176,7 +176,7 @@ class PacientController extends Controller
                 'adresa' => 'nullable|max:500',
                 'localitate' => 'nullable|max:200',
                 'judet' => 'nullable|max:200',
-                'cod_postal' => 'nullable|max:200',
+                // 'cod_postal' => 'nullable|max:200',
 
                 'apartinatori.*.nume' => 'required|max:200',
                 'apartinatori.*.prenume' => 'required|max:200',

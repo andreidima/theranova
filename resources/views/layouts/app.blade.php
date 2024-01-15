@@ -45,13 +45,13 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/fise-caz">
-                                <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz
+                            <a class="nav-link active" aria-current="page" href="/pacienti">
+                                <i class="fa-solid fa-person-cane me-1"></i>Pacienți
                             </a>
                         </li>
                         <li class="nav-item me-3">
-                            <a class="nav-link active" aria-current="page" href="/pacienti">
-                                <i class="fa-solid fa-person-cane me-1"></i>Pacienți
+                            <a class="nav-link active" aria-current="page" href="/fise-caz">
+                                <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz
                             </a>
                         </li>
                         <li class="nav-item me-3">

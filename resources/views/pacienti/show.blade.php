@@ -81,7 +81,8 @@
                                     Sex
                                 </td>
                                 <td>
-                                    {{ $pacient->sex == '1' ? 'M' : 'F' }}
+                                    {{ $pacient->sex == '1' ? 'M' : '' }}
+                                    {{ $pacient->sex == '2' ? 'F' : '' }}
                                 </td>
                             </tr>
                             <tr>
@@ -116,14 +117,14 @@
                                     {{ $pacient->judet }}
                                 </td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <td class="pe-4">
                                     Cod poștal
                                 </td>
                                 <td>
                                     {{ $pacient->cod_postal }}
                                 </td>
-                            </tr>
+                            </tr> --}}
                             @foreach ($pacient->apartinatori as $apartinator)
                                 @if ($loop->first)
                                     <tr>

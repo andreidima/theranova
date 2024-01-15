@@ -28,7 +28,7 @@ class PacientFactory extends Factory
             // 'judet' => fake()->city(),
             'localitate' => fake()->city(),
             'adresa' => fake()->address(),
-            'cod_postal' => fake()->numberBetween(100000, 999999),
+            // 'cod_postal' => fake()->numberBetween(100000, 999999),
             'observatii' => fake()->text(),
             'created_at' => now(),
             'updated_at' => now(),
