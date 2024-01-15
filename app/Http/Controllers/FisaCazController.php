@@ -301,11 +301,11 @@ class FisaCazController extends Controller
                 'user_vanzari' => '',
                 'user_comercial' => '',
                 'user_tehnic' => '',
-                'fisierComanda' => [($request->isMethod('post') ? 'required' : ''),
+                'fisierComanda' => ['nullable',
                     File::types(['pdf', 'jpg'])
                         ->max(30 * 1024),
                     ],
-                'fisierFisaMasuri' => [($request->isMethod('post') ? 'required' : ''),
+                'fisierFisaMasuri' => ['nullable',
                     File::types(['pdf', 'jpg'])
                         ->max(30 * 1024),
                     ],
