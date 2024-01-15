@@ -100,7 +100,7 @@
                                     {{ ($fiseCaz ->currentpage()-1) * $fiseCaz ->perpage() + $loop->index + 1 }}
                                 </td>
                                 <td class="">
-                                    <a href="{{ $fisaCaz->pacient->path() }}">
+                                    <a href="{{ $fisaCaz->pacient ? $fisaCaz->pacient->path() : '' }}">
                                         {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}
                                     </a>
                                     <br>
