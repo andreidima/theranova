@@ -140,6 +140,10 @@ class PacientController extends Controller
      */
     public function destroy(Request $request, Pacient $pacient)
     {
+        if ($pacient->fiseCaz->count() > 0){
+            return back()->with('error', 'Nu poți șterge pacientul „' . ($pacient->nume ?? '') . ' ' . ($pacient->prenume ?? '') . '” pentru că are fișe caz atașate. Șterge mai întâi fișele caz.');
+        }
+
         $pacient->delete();
         $pacient->apartinatori()->delete();
 

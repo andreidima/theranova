@@ -27,4 +27,14 @@ class Pacient extends Model
     {
         return $this->hasMany(Apartinator::class, 'pacient_id');
     }
+
+    /**
+     * Get all of the fiseCaz for the Pacient
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function fiseCaz(): HasMany
+    {
+        return $this->hasMany(FisaCaz::class, 'pacient_id');
+    }
 }
