@@ -259,7 +259,7 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="a_mai_purtat_proteza" class="mb-0 ps-3">A mai putat proteza<span class="text-danger">*</span></label>
+                        <label for="a_mai_purtat_proteza" class="mb-0 ps-3 ps-md-0">A mai purtat proteza<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('a_mai_purtat_proteza') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][a_mai_purtat_proteza]'"
                             v-model="dateMedicale[index].a_mai_purtat_proteza">
@@ -283,14 +283,33 @@
                             <option value="PPP">PPP</option>
                         </select>
                     </div>
-                    <div class="col-lg-5 mb-4">
+                    <div class="col-lg-2 mb-4">
+                        <label for="circumferinta_bont" class="mb-0 ps-3 ps-md-0 small">Circumferință bont(cm)</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('circumferinta_bont') ? 'is-invalid' : '' }}"
+                            :name="'dateMedicale[' + index + '][circumferinta_bont]'"
+                            v-model="dateMedicale[index].circumferinta_bont">
+                        <small>* la 4-6 cm de capătul distal</small>
+                    </div>
+                    <div class="col-lg-2 mb-4">
+                        <label for="marime_picior" class="mb-0 ps-3">Mărime picior</label>
+                        <select class="form-select bg-white rounded-3 {{ $errors->has('marime_picior') ? 'is-invalid' : '' }}"
+                            :name="'dateMedicale[' + index + '][marime_picior]'"
+                            v-model="dateMedicale[index].marime_picior">
+                            <option selected></option>
+                            <option value="cm">cm</option>
+                            <option value="mărime pantof">mărime pantof</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 mb-4">
                         <label for="alte_afectiuni" class="mb-0 ps-3">Alte afecțiuni</label>
                         <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][alte_afectiuni]'"
                             v-model="dateMedicale[index].alte_afectiuni"
                             rows="3"></textarea>
                     </div>
-                    <div class="col-lg-5 mb-4">
+                    <div class="col-lg-3 mb-4">
                         <label for="observatii" class="mb-0 ps-3">Observații</label>
                         <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][observatii]'"

@@ -183,6 +183,24 @@
                                 </tr>
                                 <tr>
                                     <td class="pe-4">
+                                       Circumferință bont (cm)
+                                       <br>
+                                       (la 4-6 cm de capătul distal)
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->circumferinta_bont }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
+                                       Mărime picior
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->marime_picior }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
                                         Alte afecțiuni
                                     </td>
                                     <td>

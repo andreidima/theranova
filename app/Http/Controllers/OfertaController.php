@@ -49,24 +49,26 @@ class OfertaController extends Controller
         $this->validateRequest($request);
         $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier'])));
 
-        $fisier = $request->file('fisier');
-        $numeFisier = $fisier->getClientOriginalName();
-        $cale = 'fiseCaz/' . $fisaCaz->id . '/oferte/' . $oferta->id;
+        if ($request->file('fisier')) {
+            $fisier = $request->file('fisier');
+            $numeFisier = $fisier->getClientOriginalName();
+            $cale = 'fiseCaz/' . $fisaCaz->id . '/oferte/' . $oferta->id;
 
-        if (Storage::exists($cale . '/' . $numeFisier)){
-            return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
-        }
+            if (Storage::exists($cale . '/' . $numeFisier)){
+                return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
+            }
 
-        try {
-            Storage::putFileAs($cale, $fisier, $numeFisier);
-            $fisier = new Fisier;
-            $fisier->referinta = 1;
-            $fisier->referinta_id = $oferta->id;
-            $fisier->cale = $cale;
-            $fisier->nume = $numeFisier;
-            $fisier->save();
-        } catch (Exception $e) {
-            return back()->with('error', 'Fișierul nu a putut fi încărcat.');
+            try {
+                Storage::putFileAs($cale, $fisier, $numeFisier);
+                $fisier = new Fisier;
+                $fisier->referinta = 1;
+                $fisier->referinta_id = $oferta->id;
+                $fisier->cale = $cale;
+                $fisier->nume = $numeFisier;
+                $fisier->save();
+            } catch (Exception $e) {
+                return back()->with('error', 'Fișierul nu a putut fi încărcat.');
+            }
         }
 
         return redirect($request->session()->get('ofertaReturnUrl') ?? ('/fise-caz'))->with('status', 'Oferta pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost adăugată cu succes!');
@@ -127,7 +129,19 @@ class OfertaController extends Controller
 
             try {
                 Storage::putFileAs($cale, $fisier, $numeFisier);
-                $oferta->fisiere()->first()->update(['nume' => $numeFisier]);
+
+                // Daca exista fisier in baza de date, se actualizeaza.
+                // Daca nu, se creaza unul nou
+                if ($oferta->fisiere->count() > 0){
+                    $oferta->fisiere()->first()->update(['nume' => $numeFisier]);
+                } else {
+                    $fisier = new Fisier;
+                    $fisier->referinta = 1;
+                    $fisier->referinta_id = $oferta->id;
+                    $fisier->cale = $cale;
+                    $fisier->nume = $numeFisier;
+                    $fisier->save();
+                }
             } catch (Exception $e) {
                 return back()->with('error', 'Fișierul nu a putut fi încărcat.');
             }
@@ -188,7 +202,7 @@ class OfertaController extends Controller
                 'pret' => 'required|numeric|between:1,999999',
                 'observatii' => 'nullable|max:2000',
                 'acceptata' => '',
-                'fisier' => [($request->isMethod('post') ? 'required' : ''),
+                'fisier' => [
                     File::types(['pdf', 'jpg'])
                         // ->min(1024)
                         ->max(30 * 1024),
