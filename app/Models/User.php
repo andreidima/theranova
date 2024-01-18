@@ -61,4 +61,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserRole::class, 'user_id');
     }
+
+    // Verificare daca userul are anumite drepturi
+    public function hasRole($roleNume)
+    {
+        foreach ($this->roles()->get() as $role)
+        {
+            if ($role->nume == $roleNume)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -137,11 +137,13 @@
                                             @endforeach
                                             <a href="{{ $oferta->path() }}/modifica">
                                                 <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
-                                            <a href="#"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#stergeOferta{{ $oferta->id }}"
-                                                title="Șterge oferta">
-                                                <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
+                                            @if (auth()->user()->hasRole("stergere"))
+                                                <a href="#"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#stergeOferta{{ $oferta->id }}"
+                                                    title="Șterge oferta">
+                                                    <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
+                                            @endif
                                             <br>
                                         @endforeach
                                     @endif
@@ -188,17 +190,14 @@
                                         <a href="{{ $fisaCaz->path() }}/modifica" class="flex">
                                             <span class="badge bg-primary">Modifică</span></a>
                                         <br>
-                                            @php
-                                                dd(Auth::user->roles());
-                                                // dd(auth()->user);
-                                            @endphp
-                                        {{-- @if (auth()) --}}
-                                        <a href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
-                                            title="Șterge fișă caz"
-                                            >
-                                            <span class="badge bg-danger">Șterge</span></a>
+                                        @if (auth()->user()->hasRole("stergere"))
+                                            <a href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
+                                                title="Șterge fișă caz"
+                                                >
+                                                <span class="badge bg-danger">Șterge</span></a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

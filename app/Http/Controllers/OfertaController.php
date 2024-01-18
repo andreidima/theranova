@@ -158,6 +158,10 @@ class OfertaController extends Controller
      */
     public function destroy(Request $request, FisaCaz $fisaCaz, Oferta $oferta)
     {
+        if (!auth()->user()->hasRole("stergere")){
+            return back()->with('error', 'Nu ai drepturi de ștergere.');
+        }
+
         $oferta->delete();
 
         // Se sterge fisierul

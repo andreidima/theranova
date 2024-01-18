@@ -87,12 +87,14 @@
                                             <span class="badge bg-success">Vizualizează</span></a>
                                         <a href="{{ $pacient->path() }}/modifica" class="flex me-1">
                                             <span class="badge bg-primary">Modifică</span></a>
-                                        <a href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#stergePacient{{ $pacient->id }}"
-                                            title="Șterge pacient"
-                                            >
-                                            <span class="badge bg-danger">Șterge</span></a>
+                                        @if (auth()->user()->hasRole("stergere"))
+                                            <a href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#stergePacient{{ $pacient->id }}"
+                                                title="Șterge pacient"
+                                                >
+                                                <span class="badge bg-danger">Șterge</span></a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

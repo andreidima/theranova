@@ -281,6 +281,10 @@ class FisaCazController extends Controller
      */
     public function destroy(Request $request, FisaCaz $fisaCaz)
     {
+        if (!auth()->user()->hasRole("stergere")){
+            return back()->with('error', 'Nu ai drepturi de ștergere.');
+        }
+
         if ($fisaCaz->oferte->count() > 0){
             return back()->with('error', 'Nu poți șterge fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” pentru că are oferte atașate. Șterge mai întâi ofertele.');
         }

@@ -106,6 +106,10 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
+        if (!auth()->user()->hasRole("stergere")){
+            return back()->with('error', 'Nu ai drepturi de ștergere.');
+        }
+
         $user->delete();
 
         return back()->with('status', 'Utilizatorul „' . $user->name . '” a fost șters cu success!');
