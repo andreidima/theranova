@@ -189,7 +189,7 @@
                                             <span class="badge bg-primary">Modifică</span></a>
                                         <br>
                                             @php
-                                                // dd(auth()->user->roles());
+                                                dd(Auth::user->roles());
                                                 // dd(auth()->user);
                                             @endphp
                                         {{-- @if (auth()) --}}
