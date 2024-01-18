@@ -85,7 +85,11 @@
                 @endif
                 @if ($fisaCaz->fisiereComanda->first())
                     <small class="m-0 ps-3">
-                        * Comandă încărcată la această fișă caz: {{ $fisaCaz->fisiereComanda->first()->nume ?? '' }}
+                        * Comandă încărcată:
+                        @foreach ($fisaCaz->fisiereComanda as $fisier)
+                            <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                {{ $fisier->nume }}</a>{{ !$loop->last ? ', ' : '.' }}
+                        @endforeach
                     </small>
                     <br>
                     <small class="m-0 ps-3">
@@ -94,18 +98,23 @@
                 @endif
             </div>
             <div class="col-lg-6 mb-4">
-                <label for="fisierFisaMasuri" class="mb-0 ps-3">Fișier fisă măsuri</label>
-                <input type="file" name="fisierFisaMasuri" class="form-control rounded-3">
-                @if($errors->has('fisierFisaMasuri'))
-                    <span class="help-block text-danger">{{ $errors->first('fisierFisaMasuri') }}</span>
+                <label for="fisiereFisaMasuri" class="mb-0 ps-3">Fișiere fișă măsuri</label>
+                <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3" multiple>
+                @if($errors->has('fisiereFisaMasuri'))
+                    <span class="help-block text-danger">{{ $errors->first('fisiereFisaMasuri') }}</span>
                 @endif
-                @if ($fisaCaz->fisiereFisaMasuri->first())
+                @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
                     <small class="m-0 ps-3">
-                        * Fișă măsuri încărcată la această fișă caz: {{ $fisaCaz->fisiereFisaMasuri->first()->nume ?? '' }}
+                        * Fișe încărcate:
+                        @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                            <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                {{ $fisier->nume }}</a>{{ !$loop->last ? ', ' : '.' }}
+                            {{-- {{ $fisier->nume ?? '' }} --}}
+                        @endforeach
                     </small>
                     <br>
                     <small class="m-0 ps-3">
-                        * Dacă vrei să o înlocuiești, încarcă alt fișier, și cel care este acum se va șterge automat.
+                        * Dacă vrei să le înlocuiești, încarcă alte fișiere, și cele care sunt acum se vor șterge automat.
                     </small>
                 @endif
             </div>

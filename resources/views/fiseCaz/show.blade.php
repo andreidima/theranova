@@ -314,17 +314,19 @@
                                     @foreach ($fisaCaz->fisiereComanda as $fisier)
                                         <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
                                             {{ $fisier->nume }}</a>
+                                        <br>
                                     @endforeach
                                 </td>
                             </tr>
                             <tr>
                                 <td class="pe-4">
-                                    Fișă Măsuri
+                                    Fișe măsuri
                                 </td>
                                 <td>
                                     @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
                                         <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
                                             {{ $fisier->nume }}</a>
+                                        <br>
                                     @endforeach
                                 </td>
                             </tr>
