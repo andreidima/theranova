@@ -106,7 +106,7 @@
                                     <br>
                                     {{ $fisaCaz->pacient->telefon ?? '' }}
                                     <br>
-                                    {{ $fisaCaz->pacient->localitate ?? '' }}
+                                    {{ $fisaCaz->pacient->judet ?? '' }}
                                 </td>
                                 <td class="">
                                     {{ $fisaCaz->dateMedicale->first()->tip_proteza ?? '' }}

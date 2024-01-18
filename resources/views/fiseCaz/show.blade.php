@@ -93,11 +93,15 @@
                                     @if ($fisaCaz->pacient->cnp)
                                         @php
                                             $cnp = $fisaCaz->pacient->cnp;
-                                            $anNastere = substr($cnp, 1, 2);
+                                            // daca anul din cnp este mai mic decat anul curent, inseamna ca s-a nascut in secolul trecut
+                                            // daca anul din cnp este mai mare decat anul curent, inseamna ca s-a nascut in secolul acesta
+                                            $anNastere = (intval(substr($cnp, 1, 2)) < intval(substr(Carbon::now()->year, 2, 2))) ? '20' : '19';
+                                            $anNastere.= substr($cnp, 1, 2);
                                             $lunaNastere = substr($cnp, 3, 2);
                                             $ziNastere = substr($cnp, 5, 2);
                                             $dataNastere = new Carbon($anNastere . '-' . $lunaNastere . '-' . $ziNastere);
                                             $varsta = $dataNastere->diffInYears(Carbon::now());
+                                            // $varsta = Carbon::now()->diffInYears($dataNastere);
                                         @endphp
                                         {{ $varsta }} ani
                                     @endif

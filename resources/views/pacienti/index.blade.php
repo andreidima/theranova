@@ -53,7 +53,7 @@
                         <tr class="" style="padding:2rem">
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Nume</th>
-                            <th class="text-white culoare2">Vârsta</th>
+                            {{-- <th class="text-white culoare2">Vârsta</th> --}}
                             <th class="text-white culoare2">Telefon</th>
                             <th class="text-white culoare2">Email</th>
                             <th class="text-white culoare2">Localitatea</th>
@@ -69,9 +69,9 @@
                                 <td class="">
                                     {{ $pacient->nume }} {{ $pacient->prenume }}
                                 </td>
-                                <td class="">
+                                {{-- <td class="">
                                     {{ $pacient->data_nastere ? Carbon::now()->diffInYears($pacient->data_nastere) : '' }}
-                                </td>
+                                </td> --}}
                                 <td class="">
                                     {{ $pacient->telefon }}
                                 </td>

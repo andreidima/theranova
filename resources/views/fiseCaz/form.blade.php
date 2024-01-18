@@ -284,7 +284,7 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="circumferinta_bont" class="mb-0 ps-3 ps-md-0 small">Circumferință bont(cm)</label>
+                        <label for="circumferinta_bont" class="mb-0 ps-0 ps-xxl-3 small">Circumferință bont(cm)</label>
                         <input
                             type="text"
                             class="form-control bg-white rounded-3 {{ $errors->has('circumferinta_bont') ? 'is-invalid' : '' }}"
@@ -302,14 +302,23 @@
                             <option value="mărime pantof">mărime pantof</option>
                         </select>
                     </div>
-                    <div class="col-lg-3 mb-4">
+                    <div class="col-lg-2 mb-4">
+                        <label for="marime_picior_valoare" class="mb-0 ps-0 ps-xxl-3">Mărime picior valoare</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('marime_picior_valoare') ? 'is-invalid' : '' }}"
+                            :name="'dateMedicale[' + index + '][marime_picior_valoare]'"
+                            v-model="dateMedicale[index].marime_picior_valoare">
+                        </select>
+                    </div>
+                    <div class="col-lg-6 mb-4">
                         <label for="alte_afectiuni" class="mb-0 ps-3">Alte afecțiuni</label>
                         <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][alte_afectiuni]'"
                             v-model="dateMedicale[index].alte_afectiuni"
                             rows="3"></textarea>
                     </div>
-                    <div class="col-lg-3 mb-4">
+                    <div class="col-lg-6 mb-4">
                         <label for="observatii" class="mb-0 ps-3">Observații</label>
                         <textarea class="form-control bg-white {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][observatii]'"
