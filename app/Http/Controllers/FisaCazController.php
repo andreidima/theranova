@@ -30,7 +30,7 @@ class FisaCazController extends Controller
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
 
-        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient')
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente')
             ->when($searchNume, function ($query, $searchNume) {
                 foreach (explode(" ", $searchNume) as $cuvant){
                     $query->whereHas('pacient', function ($query) use($cuvant) {

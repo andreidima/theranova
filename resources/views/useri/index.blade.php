@@ -2,6 +2,12 @@
 
 @php
     use \Carbon\Carbon;
+
+    if (auth()->user()->hasRole("stergere")) {
+        $userCanDelete = true;
+    } else {
+        $userCanDelete = false;
+    }
 @endphp
 
 @section('content')
@@ -95,7 +101,7 @@
                                             <span class="badge bg-success">Vizualizează</span></a>
                                         <a href="{{ $user->path() }}/modifica" class="flex me-1">
                                             <span class="badge bg-primary">Modifică</span></a>
-                                        @if (auth()->user()->hasRole("stergere"))
+                                        @if ($userCanDelete)
                                             <a href="#"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#stergeUser{{ $user->id }}"
@@ -120,36 +126,38 @@
         </div>
     </div>
 
-    {{-- Modalele pentru stergere user --}}
-    @foreach ($useri as $user)
-        <div class="modal fade text-dark" id="stergeUser{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="exampleModalLabel">Utilizator: <b>{{ $user->name }}</b></h5>
-                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="text-align:left;">
-                    Ești sigur ca vrei să ștergi utilizatorul?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+    @if ($userCanDelete)
+        {{-- Modalele pentru stergere user --}}
+        @foreach ($useri as $user)
+            <div class="modal fade text-dark" id="stergeUser{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header bg-danger">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Utilizator: <b>{{ $user->name }}</b></h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="text-align:left;">
+                        Ești sigur ca vrei să ștergi utilizatorul?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
-                    <form method="POST" action="{{ $user->path() }}">
-                        @method('DELETE')
-                        @csrf
-                        <button
-                            type="submit"
-                            class="btn btn-danger text-white"
-                            >
-                            Șterge utilizatorul
-                        </button>
-                    </form>
+                        <form method="POST" action="{{ $user->path() }}">
+                            @method('DELETE')
+                            @csrf
+                            <button
+                                type="submit"
+                                class="btn btn-danger text-white"
+                                >
+                                Șterge utilizatorul
+                            </button>
+                        </form>
 
-                </div>
+                    </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endforeach
+        @endforeach
+    @endif
 
 @endsection

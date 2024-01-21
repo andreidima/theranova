@@ -2,6 +2,12 @@
 
 @php
     use \Carbon\Carbon;
+
+    if (auth()->user()->hasRole("stergere")) {
+        $userCanDelete = true;
+    } else {
+        $userCanDelete = false;
+    }
 @endphp
 
 @section('content')
@@ -137,7 +143,7 @@
                                             @endforeach
                                             <a href="{{ $oferta->path() }}/modifica">
                                                 <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
-                                            @if (auth()->user()->hasRole("stergere"))
+                                            @if ($userCanDelete)
                                                 <a href="#"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#stergeOferta{{ $oferta->id }}"
@@ -159,7 +165,7 @@
                                             <span class="badge text-success px-1 py-0" title="Modifică"><i class="fa-solid fa-file-arrow-down"></i></span></a>
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/modifica">
                                             <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
-                                        @if (auth()->user()->hasRole("stergere"))
+                                        @if ($userCanDelete)
                                             <a href="#"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#stergeComandaComponente{{ $fisaCaz->id }}"
@@ -212,7 +218,7 @@
                                         <a href="{{ $fisaCaz->path() }}/modifica" class="flex">
                                             <span class="badge bg-primary">Modifică</span></a>
                                         <br>
-                                        @if (auth()->user()->hasRole("stergere"))
+                                        @if ($userCanDelete)
                                             <a href="#"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}"
@@ -237,68 +243,30 @@
         </div>
     </div>
 
-    {{-- Modalele pentru stergere fisa caz --}}
-    @foreach ($fiseCaz as $fisaCaz)
-        <div class="modal fade text-dark" id="stergeFisaCaz{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
-                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="text-align:left;">
-                    Ești sigur că vrei să ștergi Fișa Caz?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
-
-                    <form method="POST" action="{{ $fisaCaz->path() }}">
-                        @method('DELETE')
-                        @csrf
-                        <button
-                            type="submit"
-                            class="btn btn-danger text-white"
-                            >
-                            Șterge Fișa Caz
-                        </button>
-                    </form>
-
-                </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
-
-    {{-- Modalele pentru stergere oferte --}}
-    @foreach ($fiseCaz as $fisaCaz)
-        @foreach ($fisaCaz->oferte as $oferta)
-            <div class="modal fade text-dark" id="stergeOferta{{ $oferta->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @if ($userCanDelete)
+        {{-- Modalele pentru stergere fisa caz --}}
+        @foreach ($fiseCaz as $fisaCaz)
+            <div class="modal fade text-dark" id="stergeFisaCaz{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                     <div class="modal-header bg-danger">
-                        <h5 class="modal-title text-white" id="exampleModalLabel">Ofertă: <b>{{ ($oferta->fisaCaz->pacient->nume ?? '') . ' ' . ($oferta->fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
                         <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="text-align:left;">
-                        Obiectul contractului: {{ $oferta->obiect_contract }}
-                        <br>
-                        Pret: {{ $oferta->pret }} lei
-                        <br><br>
-                        <p class="m-0 text-center">
-                            Ești sigur că vrei să ștergi Oferta?
-                        </p>
+                        Ești sigur că vrei să ștergi Fișa Caz?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
-                        <form method="POST" action="{{ $oferta->path() }}">
+                        <form method="POST" action="{{ $fisaCaz->path() }}">
                             @method('DELETE')
                             @csrf
                             <button
                                 type="submit"
                                 class="btn btn-danger text-white"
                                 >
-                                Șterge oferta
+                                Șterge Fișa Caz
                             </button>
                         </form>
 
@@ -307,39 +275,79 @@
                 </div>
             </div>
         @endforeach
-    @endforeach
 
-    {{-- Modalele pentru stergere comenziComponente --}}
-    @foreach ($fiseCaz as $fisaCaz)
-        <div class="modal fade text-dark" id="stergeComandaComponente{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="exampleModalLabel">Pacient: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
-                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="text-align:left;">
-                    Ești sigur că vrei să ștergi Fișa comandă?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+        {{-- Modalele pentru stergere oferte --}}
+        @foreach ($fiseCaz as $fisaCaz)
+            @foreach ($fisaCaz->oferte as $oferta)
+                <div class="modal fade text-dark" id="stergeOferta{{ $oferta->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Ofertă: <b>{{ ($oferta->fisaCaz->pacient->nume ?? '') . ' ' . ($oferta->fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:left;">
+                            Obiectul contractului: {{ $oferta->obiect_contract }}
+                            <br>
+                            Pret: {{ $oferta->pret }} lei
+                            <br><br>
+                            <p class="m-0 text-center">
+                                Ești sigur că vrei să ștergi Oferta?
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
-                    <form method="POST" action="{{ $fisaCaz->path() }}/comenzi-componente/toate/sterge">
-                        @method('DELETE')
-                        @csrf
-                        <button
-                            type="submit"
-                            class="btn btn-danger text-white"
-                            >
-                            Șterge Fișa comandă
-                        </button>
-                    </form>
+                            <form method="POST" action="{{ $oferta->path() }}">
+                                @method('DELETE')
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger text-white"
+                                    >
+                                    Șterge oferta
+                                </button>
+                            </form>
 
+                        </div>
+                        </div>
+                    </div>
                 </div>
+            @endforeach
+        @endforeach
+
+        {{-- Modalele pentru stergere comenziComponente --}}
+        @foreach ($fiseCaz as $fisaCaz)
+            <div class="modal fade text-dark" id="stergeComandaComponente{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header bg-danger">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Pacient: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="text-align:left;">
+                        Ești sigur că vrei să ștergi Fișa comandă?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                        <form method="POST" action="{{ $fisaCaz->path() }}/comenzi-componente/toate/sterge">
+                            @method('DELETE')
+                            @csrf
+                            <button
+                                type="submit"
+                                class="btn btn-danger text-white"
+                                >
+                                Șterge Fișa comandă
+                            </button>
+                        </form>
+
+                    </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endforeach
+        @endforeach
+    @endif
 
 @endsection

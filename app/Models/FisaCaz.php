@@ -118,4 +118,8 @@ class FisaCaz extends Model
     {
         return $this->hasMany(ComandaComponenta::class, 'fisa_caz_id');
     }
+
+    public function userCanDelete() {
+        return auth()->user()->hasRole("stergere");
+    }
 }
