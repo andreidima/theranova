@@ -108,4 +108,14 @@ class FisaCaz extends Model
     {
         return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 3);
     }
+
+    /**
+     * Get all of the comenziComponente for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comenziComponente(): HasMany
+    {
+        return $this->hasMany(ComandaComponenta::class, 'fisa_caz_id');
+    }
 }

@@ -22,8 +22,7 @@ class FisaCazController extends Controller
      */
     public function index(Request $request)
     {
-        $request->session()->forget('fisaCazReturnUrl');
-        $request->session()->forget('ofertaReturnUrl');
+        $request->session()->forget(['fisaCazReturnUrl', 'ofertaReturnUrl', 'comandaComponentaReturnUrl', 'comandaComponenteReturnUrl']);
 
         $searchNume = $request->searchNume;
         $searchInterval = $request->searchInterval;
@@ -292,6 +291,7 @@ class FisaCazController extends Controller
         $fisaCaz->delete();
         $fisaCaz->dateMedicale()->delete();
         $fisaCaz->cerinte()->delete();
+        $fisaCaz->comenziComponente()->delete();
 
         // Se sterge complet directorul fisaCaz cu tot ce contine acesta
         Storage::deleteDirectory('fiseCaz/' . $fisaCaz->id);

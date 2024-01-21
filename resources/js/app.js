@@ -172,3 +172,20 @@ if (document.getElementById('pacientFormApartinatori') != null) {
 }
 
 
+const comandaComponente = createApp({
+    el: '#comandaComponente',
+    data() {
+        return {
+            comenziComponente: comenziComponente,
+        }
+    },
+    created: function () {
+        if (this.comenziComponente.length === 0) {
+            this.comenziComponente.push({});
+        }
+    },
+});
+if (document.getElementById('comandaComponente') != null) {
+    comandaComponente.mount('#comandaComponente');
+}
+

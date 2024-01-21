@@ -86,6 +86,7 @@
                             <th class="text-white culoare2">Tip proteză</th>
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
+                            <th class="text-white culoare2 text-center">Fișă comandă</th>
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Stare</th>
@@ -124,7 +125,6 @@
                                 <td class="text-end">
                                     @if ($fisaCaz->oferte->count() > 0)
                                         @foreach ($fisaCaz->oferte as $oferta)
-                                            {{-- {{ $loop->iteration }}. --}}
                                             @if ($oferta->acceptata == "1")
                                                 <i class="fa-solid fa-thumbs-up text-success"></i>
                                             @elseif ($oferta->acceptata == "0")
@@ -150,6 +150,26 @@
                                     <a href="{{ $fisaCaz->path() }}/oferte/adauga">
                                         <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
                                     </a>
+                                </td>
+                                <td class="text-center">
+                                    @if ($fisaCaz->comenziComponente->count() > 0)
+                                        <a href="{{ $fisaCaz->path() }}/comenzi-componente/export/pdf" target="_blank">
+                                            <span class="badge text-success px-1 py-0" title="Modifică"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                        <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/modifica">
+                                            <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
+                                        @if (auth()->user()->hasRole("stergere"))
+                                            <a href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#stergeComandaComponente{{ $fisaCaz->id }}"
+                                                title="Șterge comanda componente">
+                                                <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
+                                        @endif
+                                        <br>
+                                    @else
+                                        <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/adauga">
+                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                        </a>
+                                    @endif
                                 </td>
                                 <td class="text-center">
                                     {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
@@ -285,6 +305,39 @@
                 </div>
             </div>
         @endforeach
+    @endforeach
+
+    {{-- Modalele pentru stergere comenziComponente --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        <div class="modal fade text-dark" id="stergeComandaComponente{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white" id="exampleModalLabel">Pacient: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="text-align:left;">
+                    Ești sigur că vrei să ștergi comanda de componente?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                    <form method="POST" action="{{ $fisaCaz->path() }}/comenzi-componente/toate/sterge">
+                        @method('DELETE')
+                        @csrf
+                        <button
+                            type="submit"
+                            class="btn btn-danger text-white"
+                            >
+                            Șterge comanda de componente
+                        </button>
+                    </form>
+
+                </div>
+                </div>
+            </div>
+        </div>
     @endforeach
 
 @endsection

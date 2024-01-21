@@ -6,6 +6,7 @@ use App\Http\Controllers\FisaCazController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FisierController;
+use App\Http\Controllers\ComandaComponentaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/fise-caz/{fisaCaz}/stare/{stare}', [FisaCazController::class, 'stare']);
 
     Route::resource('/fise-caz/{fisaCaz}/oferte', OfertaController::class)->parameters(['oferte' => 'oferta']);
+
+    // ComenziComponente
+    // Route::resource('/fise-caz/{fisaCaz}/comenzi-componente', ComandaComponentaController::class)->parameters(['comenzi-componente' => 'comandaComponenta']);
+    Route::get('/fise-caz/{fisaCaz}/comenzi-componente/toate/adauga', [ComandaComponentaController::class, 'toateAdauga']);
+    Route::post('/fise-caz/{fisaCaz}/comenzi-componente/toate/adauga', [ComandaComponentaController::class, 'postToateAdauga']);
+    Route::get('/fise-caz/{fisaCaz}/comenzi-componente/toate/modifica', [ComandaComponentaController::class, 'toateModifica']);
+    Route::patch('/fise-caz/{fisaCaz}/comenzi-componente/toate/modifica', [ComandaComponentaController::class, 'postToateModifica']);
+    Route::delete('/fise-caz/{fisaCaz}/comenzi-componente/toate/sterge', [ComandaComponentaController::class, 'postToateSterge']);
+    Route::get('/fise-caz/{fisaCaz}/comenzi-componente/export/pdf', [ComandaComponentaController::class, 'toateExport']);
 
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 
