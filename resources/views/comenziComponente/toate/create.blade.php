@@ -20,7 +20,7 @@
 
                             @include ('comenziComponente.toate.form', [
                                 // 'comandaComponente' => new App\Models\ComandaComponenta,
-                                'buttonText' => 'Adaugă comanda'
+                                'buttonText' => 'Adaugă Fișă comandă'
                             ])
                     </form>
                 </div>

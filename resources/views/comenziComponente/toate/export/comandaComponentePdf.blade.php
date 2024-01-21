@@ -98,7 +98,8 @@
                             NUME PACIENT: {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume }}
                         </h2>
                         <h2 style="">
-                            DATA: {{ \Carbon\Carbon::now()->isoFormat('DD.MM.YYYY') }}
+                            {{-- DATA: {{ \Carbon\Carbon::now()->isoFormat('DD.MM.YYYY') }} --}}
+                            DATA: {{ $fisaCaz->comenziComponente->first()->created_at ? \Carbon\Carbon::parse($fisaCaz->comenziComponente->first()->created_at)->isoFormat('DD.MM.YYYY') : '' }}
                         </h2>
                     </td>
                 </tr>

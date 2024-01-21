@@ -317,7 +317,7 @@
                     <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="text-align:left;">
-                    Ești sigur că vrei să ștergi comanda de componente?
+                    Ești sigur că vrei să ștergi Fișa comandă?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -330,7 +330,7 @@
                             type="submit"
                             class="btn btn-danger text-white"
                             >
-                            Șterge comanda de componente
+                            Șterge Fișa comandă
                         </button>
                     </form>
 
