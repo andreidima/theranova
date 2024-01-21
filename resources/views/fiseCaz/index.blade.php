@@ -153,6 +153,8 @@
                                 </td>
                                 <td class="text-center">
                                     @if ($fisaCaz->comenziComponente->count() > 0)
+                                        {{ \Carbon\Carbon::parse($fisaCaz->comenziComponente->first()->created_at)->isoFormat('DD.MM.YYYY') }}
+                                        <br>
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/export/pdf" target="_blank">
                                             <span class="badge text-success px-1 py-0" title="Modifică"><i class="fa-solid fa-file-arrow-down"></i></span></a>
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/modifica">
