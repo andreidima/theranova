@@ -145,6 +145,8 @@ class ComandaComponentaController extends Controller
     {
         $this->toateValidateRequest($request);
 
+        $fisaCaz->update(['fisa_comanda_sosita' => $request->fisa_comanda_sosita]);
+
         foreach($request->comenziComponente as $componenta) {
             $comandaComponenta = new ComandaComponenta;
             $comandaComponenta->create($componenta);
@@ -163,6 +165,8 @@ class ComandaComponentaController extends Controller
     public function postToateModifica(Request $request, FisaCaz $fisaCaz)
     {
         $this->toateValidateRequest($request);
+
+        $fisaCaz->update(['fisa_comanda_sosita' => $request->fisa_comanda_sosita]);
 
         // Stergerea comenzilorComponente ce nu mai sunt in array: array_column scoate doar coloana de id-uri, array_filter elimina din array valorile null (fara id)
         ComandaComponenta::where('fisa_caz_id', $fisaCaz->id)->whereNotIn('id', array_filter(array_column($request->comenziComponente , 'id')))->delete();
@@ -188,6 +192,8 @@ class ComandaComponentaController extends Controller
     public function postToateSterge(Request $request, FisaCaz $fisaCaz)
     {
         $fisaCaz->comenziComponente()->delete();
+
+        $fisaCaz->update(['fisa_comanda_sosita' => null]);
 
         return redirect($request->session()->get('comandaComponenteReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost ștearsă cu succes!');
     }

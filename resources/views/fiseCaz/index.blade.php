@@ -159,6 +159,11 @@
                                 </td>
                                 <td class="text-center">
                                     @if ($fisaCaz->comenziComponente->count() > 0)
+                                        @if ($fisaCaz->fisa_comanda_sosita == "1")
+                                            <i class="fa-solid fa-thumbs-up text-success"></i>
+                                        @elseif ($fisaCaz->fisa_comanda_sosita == "0")
+                                            <i class="fa-solid fa-thumbs-down text-danger"></i>
+                                        @endif
                                         {{ \Carbon\Carbon::parse($fisaCaz->comenziComponente->first()->created_at)->isoFormat('DD.MM.YYYY') }}
                                         <br>
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/export/pdf" target="_blank">
