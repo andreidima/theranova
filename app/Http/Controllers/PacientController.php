@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Pacient;
 use App\Models\Apartinator;
+use App\Models\User;
 
 class PacientController extends Controller
 {
@@ -22,8 +23,8 @@ class PacientController extends Controller
         $searchPrenume = $request->searchPrenume;
         $searchTelefon = $request->searchTelefon;
 
-        $pacienti = Pacient::
-            when($searchNume, function ($query, $searchNume) {
+        $pacienti = Pacient::with('responsabil')
+            ->when($searchNume, function ($query, $searchNume) {
                 foreach (explode(" ", $searchNume) as $cuvant){
                     $query->where(function ($query) use($cuvant) {
                         return $query->where('nume', 'like', '%' . $cuvant . '%')
@@ -53,7 +54,9 @@ class PacientController extends Controller
     {
         $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
 
-        return view('pacienti.create');
+        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
+
+        return view('pacienti.create', compact('useri'));
     }
 
     /**
@@ -105,7 +108,9 @@ class PacientController extends Controller
     {
         $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
 
-        return view('pacienti.edit', compact('pacient'));
+        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
+
+        return view('pacienti.edit', compact('pacient', 'useri'));
     }
 
     /**
@@ -120,7 +125,7 @@ class PacientController extends Controller
         $this->validateRequest($request);
 
         $pacient->update($request->except(['apartinatori', 'date']));
-
+// dd($request, $pacient);
         $pacient->apartinatori()->whereNotIn('id', collect($request->apartinatori)->where('id')->pluck('id'))->delete();
         // dd($request->apartinatori);
         if ($request->apartinatori) {
@@ -172,6 +177,7 @@ class PacientController extends Controller
 
         return $request->validate(
             [
+                'user_responsabil' => '',
                 'nume' => 'required|max:200',
                 'prenume' => 'required|max:200',
                 'telefon' => 'nullable|max:200',

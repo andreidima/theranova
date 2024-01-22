@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use \Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pacient extends Model
 {
@@ -36,5 +37,15 @@ class Pacient extends Model
     public function fiseCaz(): HasMany
     {
         return $this->hasMany(FisaCaz::class, 'pacient_id');
+    }
+
+    /**
+     * Get the responsabil that owns the Pacient
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function responsabil(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_responsabil');
     }
 }

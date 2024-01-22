@@ -10,6 +10,17 @@
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0">
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
+            <div class="col-lg-3 mb-4">
+                <label for="user_responsabil" class="mb-0 ps-3">Responsabil</label>
+                <select name="user_responsabil" class="form-select bg-white rounded-3 {{ $errors->has('user_responsabil') ? 'is-invalid' : '' }}">
+                    <option selected></option>
+                    @foreach ($useri->where('role', 1) as $user)
+                        <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_responsabil', $pacient->user_responsabil ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
         {{-- <div class="row px-2 pt-4 pb-1 mb-0 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod"> --}}
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
         {{-- <div class="row"> --}}
