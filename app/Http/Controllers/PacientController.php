@@ -180,6 +180,11 @@ class PacientController extends Controller
                 'user_responsabil' => '',
                 'nume' => 'required|max:200',
                 'prenume' => 'required|max:200',
+                    // function (string $attribute, mixed $value, Closure $fail) {
+                    //     if ($value === 'foo') {
+                    //         $fail("The {$attribute} is invalid.");
+                    //     }
+                    // },
                 'telefon' => 'nullable|max:200',
                 'email' => 'nullable|max:200|email:rfc,dns',
                 'cnp' => 'nullable|numeric|integer|min:1|digits:13',
