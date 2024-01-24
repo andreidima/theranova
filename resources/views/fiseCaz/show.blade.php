@@ -197,6 +197,16 @@
                                 </tr>
                                 <tr>
                                     <td class="pe-4">
+                                       Circumferință bont (cm)
+                                       <br>
+                                       la nivelul perineului
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->circumferinta_bont_la_nivel_perineu }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
                                        Mărime picior
                                     </td>
                                     <td>

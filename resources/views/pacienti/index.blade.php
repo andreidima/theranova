@@ -63,6 +63,7 @@
                             <th class="text-white culoare2">Telefon</th>
                             <th class="text-white culoare2">Email</th>
                             <th class="text-white culoare2">Localitatea</th>
+                            <th class="text-white culoare2">Responsabil</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
                     </thead>
@@ -86,6 +87,9 @@
                                 </td>
                                 <td class="">
                                     {{ $pacient->localitate }}
+                                </td>
+                                <td class="">
+                                    {{ $pacient->responsabil->name ?? '' }}
                                 </td>
                                 <td>
                                     <div class="text-end">

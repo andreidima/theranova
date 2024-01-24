@@ -22,6 +22,14 @@
                         >
                             <tr>
                                 <td class="pe-4">
+                                    Responsabil
+                                </td>
+                                <td>
+                                    {{ $pacient->responsabil->name ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
                                     Nume
                                 </td>
                                 <td>

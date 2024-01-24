@@ -302,6 +302,15 @@
                         <small>* la 4-6 cm de capătul distal</small>
                     </div>
                     <div class="col-lg-2 mb-4">
+                        <label for="circumferinta_bont_la_nivel_perineu" class="mb-0 ps-0 ps-xxl-3 small">Circumferință bont(cm)</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('circumferinta_bont_la_nivel_perineu') ? 'is-invalid' : '' }}"
+                            :name="'dateMedicale[' + index + '][circumferinta_bont_la_nivel_perineu]'"
+                            v-model="dateMedicale[index].circumferinta_bont_la_nivel_perineu">
+                        <small class="ps-3">* la nivelul perineului</small>
+                    </div>
+                    <div class="col-lg-2 mb-4">
                         <label for="marime_picior" class="mb-0 ps-3">Mărime picior</label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('marime_picior') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][marime_picior]'"
