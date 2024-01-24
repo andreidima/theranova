@@ -108,49 +108,6 @@ class FisaCazController extends Controller
             $fisaCaz->cerinte()->save(Cerinta::make($date));
         }
 
-        // Fisier Comanda
-        if ($request->file('fisierComanda')) {
-            $fisier = $request->file('fisierComanda');
-            $numeFisier = $fisier->getClientOriginalName();
-            $cale = 'fiseCaz/' . $fisaCaz->id . '/comanda';
-            if (Storage::exists($cale . '/' . $numeFisier)){
-                return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
-            }
-            try {
-                Storage::putFileAs($cale, $fisier, $numeFisier);
-                $fisier = new Fisier;
-                $fisier->referinta = 2;
-                $fisier->referinta_id = $fisaCaz->id;
-                $fisier->cale = $cale;
-                $fisier->nume = $numeFisier;
-                $fisier->save();
-            } catch (Exception $e) {
-                return back()->with('error', 'Fișierul nu a putut fi încărcat.');
-            }
-        }
-
-        // Fisiere Fisa Masuri
-        if ($request->file('fisiereFisaMasuri')) {
-            foreach ($request->file('fisiereFisaMasuri') as $fisier){
-                $numeFisier = $fisier->getClientOriginalName();
-                $cale = 'fiseCaz/' . $fisaCaz->id . '/fisaMasuri';
-                if (Storage::exists($cale . '/' . $numeFisier)){
-                    return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
-                }
-                try {
-                    Storage::putFileAs($cale, $fisier, $numeFisier);
-                    $fisier = new Fisier;
-                    $fisier->referinta = 3;
-                    $fisier->referinta_id = $fisaCaz->id;
-                    $fisier->cale = $cale;
-                    $fisier->nume = $numeFisier;
-                    $fisier->save();
-                } catch (Exception $e) {
-                    return back()->with('error', 'Fișierul nu a putut fi încărcat.');
-                }
-            }
-        }
-
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost adăugată cu succes!');
     }
 
@@ -203,72 +160,6 @@ class FisaCazController extends Controller
             $fisaCaz->cerinte()->first() ? $fisaCaz->cerinte()->first()->update($date) : $fisaCaz->cerinte()->save(Cerinta::make($date));
         }
 
-        // Fisier Comanda
-        // Daca exista fisier in request, se sterge vechiul fisier si se salveaza cel de acum
-        if ($request->file('fisierComanda')) {
-            // stergere fisier vechi
-            if ($fisaCaz->fisiereComanda->count() > 0){
-                Storage::delete($fisaCaz->fisiereComanda()->first()->cale . '/' . $fisaCaz->fisiereComanda()->first()->nume);
-            }
-            $fisier = $request->file('fisierComanda');
-            $numeFisier = $fisier->getClientOriginalName();
-            $cale = 'fiseCaz/' . $fisaCaz->id . '/comanda';
-            if (Storage::exists($cale . '/' . $numeFisier)){
-                return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
-            }
-            try {
-                // se salveaza fisierul pe disk
-                Storage::putFileAs($cale, $fisier, $numeFisier);
-                if ($fisaCaz->fisiereComanda->count() > 0){ // daca exista deja inregistrare cu un fisier, se face update in baza de data
-                    $fisaCaz->fisiereComanda->first()->update(['nume' => $numeFisier]);
-                } else { // daca nu exista deja inregistrare in baza de date, se creaza o inregistrare noua
-                    $fisier = new Fisier;
-                    $fisier->referinta = 2;
-                    $fisier->referinta_id = $fisaCaz->id;
-                    $fisier->cale = $cale;
-                    $fisier->nume = $numeFisier;
-                    $fisier->save();
-                }
-            } catch (Exception $e) {
-                return back()->with('error', 'Fișierul nu a putut fi încărcat.');
-            }
-        }
-
-        // Fisiere Fisa Masuri
-        // Daca exista fisiere in request, se sterge vechile fisiere si se salveaza cele de acum
-        if ($request->file('fisiereFisaMasuri')) {
-            // stergere fisiere vechi
-            if ($fisaCaz->fisiereFisaMasuri->count() > 0){
-                // Se sterge tot directorul cu toate fisierele din el
-                Storage::deleteDirectory($fisaCaz->fisiereFisaMasuri->first()->cale);
-
-                // Se sterge toate fisierele din baza de date
-                $fisaCaz->fisiereFisaMasuri()->delete();
-            }
-
-            foreach ($request->file('fisiereFisaMasuri') as $fisier){
-                $numeFisier = $fisier->getClientOriginalName();
-                $cale = 'fiseCaz/' . $fisaCaz->id . '/fisaMasuri';
-                if (Storage::exists($cale . '/' . $numeFisier)){
-                    return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
-                }
-                try {
-                    // se salveaza fisierul pe disk
-                    Storage::putFileAs($cale, $fisier, $numeFisier);
-
-                    // se salveaza fisierul in baza de date
-                    $fisier = new Fisier;
-                    $fisier->referinta = 3;
-                    $fisier->referinta_id = $fisaCaz->id;
-                    $fisier->cale = $cale;
-                    $fisier->nume = $numeFisier;
-                    $fisier->save();
-                } catch (Exception $e) {
-                    return back()->with('error', 'Fișierul nu a putut fi încărcat.');
-                }
-            }
-        }
-
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost modificată cu succes!');
     }
 
@@ -314,14 +205,6 @@ class FisaCazController extends Controller
                 'user_vanzari' => '',
                 'user_comercial' => '',
                 'user_tehnic' => '',
-                'fisierComanda' => ['nullable',
-                    File::types(['pdf', 'jpg'])
-                        ->max(30 * 1024),
-                    ],
-                'fisiereFisaMasuri.*' => ['nullable',
-                    File::types(['pdf', 'jpg'])
-                        ->max(30 * 1024),
-                    ],
                 'pacient_id' => 'required',
                 'dateMedicale.*.greutate' => 'required|integer|min:10|max:300',
                 'dateMedicale.*.parte_amputata' => 'required',
@@ -398,5 +281,55 @@ class FisaCazController extends Controller
         $fisaCaz->save();
 
         return back()->with('status', 'Fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost ' . (($fisaCaz->stare === 1) ? 'deschisa' : (($fisaCaz->stare === 2) ? 'inchisa' : (($fisaCaz->stare === 3) ? 'anulata' : '' ))) . '!');
+    }
+
+    public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
+    {
+        $request->validate(
+            [
+                'fisiereFisaMasuri' => 'required',
+                'fisiereFisaMasuri.*' => ['nullable',
+                    File::types(['pdf', 'jpg'])
+                        ->max(30 * 1024),
+                    ],
+            ]
+        );
+
+        // Fisiere Fisa Masuri
+        // Daca exista fisiere in request, se sterge vechile fisiere si se salveaza cele de acum
+        if ($request->file('fisiereFisaMasuri')) {
+            // stergere fisiere vechi
+            if ($fisaCaz->fisiereFisaMasuri->count() > 0){
+                // Se sterge tot directorul cu toate fisierele din el
+                Storage::deleteDirectory($fisaCaz->fisiereFisaMasuri->first()->cale);
+
+                // Se sterge toate fisierele din baza de date
+                $fisaCaz->fisiereFisaMasuri()->delete();
+            }
+
+            foreach ($request->file('fisiereFisaMasuri') as $fisier){
+                $numeFisier = $fisier->getClientOriginalName();
+                $cale = 'fiseCaz/' . $fisaCaz->id . '/fisaMasuri';
+                if (Storage::exists($cale . '/' . $numeFisier)){
+                    return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
+                }
+                try {
+                    // se salveaza fisierul pe disk
+                    Storage::putFileAs($cale, $fisier, $numeFisier);
+
+                    // se salveaza fisierul in baza de date
+                    $fisier = new Fisier;
+                    $fisier->referinta = 3;
+                    $fisier->referinta_id = $fisaCaz->id;
+                    $fisier->cale = $cale;
+                    $fisier->nume = $numeFisier;
+                    $fisier->save();
+                } catch (Exception $e) {
+                    return back()->with('error', 'Fișierul nu a putut fi încărcat.');
+                }
+            }
+        }
+
+        return back()->with('status', 'Fișa măsuri pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost încărcată cu succes!');
     }
 }

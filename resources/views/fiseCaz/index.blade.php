@@ -95,6 +95,7 @@
                             <th class="text-white culoare2 text-center">Fișă comandă</th>
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
+                            <th class="text-white culoare2 text-center">Fișă măsuri</th>
                             <th class="text-white culoare2 text-center">Stare</th>
                             <th class="text-white culoare2">Utilizator</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
@@ -177,11 +178,16 @@
                                                 title="Șterge comanda componente">
                                                 <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
                                         @endif
-                                        <br>
                                     @else
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/adauga">
-                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
-                                        </a>
+                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
+                                    @endif
+                                    <br>
+                                    @if ($fisaCaz->fisiereComanda->first())
+                                        @foreach ($fisaCaz->fisiereComanda as $fisier)
+                                            <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank">
+                                                <span class="badge bg-success" title="Fișier">Fișier</span></a>
+                                        @endforeach
                                     @endif
                                 </td>
                                 <td class="text-center">
@@ -189,6 +195,25 @@
                                 </td>
                                 <td class="text-center">
                                     {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
+                                </td>
+                                <td class="text-center">
+                                    @if ($fisaCaz->fisiereFisaMasuri->first())
+                                        @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                                            <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank">
+                                                <span class="badge bg-success" title="Fișier">Fișier</span></a>
+                                        @endforeach
+                                    @endif
+
+                                    <a href="#"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#adaugaModificaFisaMasuriLaFisaCaz{{ $fisaCaz->id }}"
+                                        title="Adaugă modifică Fișă Măsuri"
+                                        >
+                                        @if ($fisaCaz->fisiereFisaMasuri->first())
+                                            <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
+                                        @else
+                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
+                                        @endif
                                 </td>
                                 <td>
                                     <div class="text-center">
@@ -354,5 +379,51 @@
             </div>
         @endforeach
     @endif
+
+    {{-- Modalele pentru adaugare modificare fisiere Fișă măsuri --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        <div class="modal fade text-dark" id="adaugaModificaFisaMasuriLaFisaCaz{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form method="POST" action="{{ $fisaCaz->path() }}/adauga-modifica-fisa-masuri" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:left;">
+                            <label for="fisiereFisaMasuri" class="mb-0 ps-3">Fișiere fișă măsuri</label>
+                            <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3" multiple>
+                            @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
+                                <small class="m-0 ps-3">
+                                    * Fișe încărcate:
+                                    @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                                        <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                            {{ $fisier->nume }}</a>
+                                    @endforeach
+                                </small>
+                                <br>
+                                <small class="m-0 ps-3">
+                                    * Dacă vrei să le înlocuiești, încarcă alte fișiere, și cele care sunt acum se vor șterge automat.
+                                </small>
+                            @endif
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                            <button
+                                type="submit"
+                                class="btn btn-success text-white"
+                                >
+                                Încarcă
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
 
 @endsection

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\File;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\ComandaComponenta;
 use App\Models\FisaCaz;
+use App\Models\Fisier;
 
 class ComandaComponentaController extends Controller
 {
@@ -145,6 +148,27 @@ class ComandaComponentaController extends Controller
     {
         $this->toateValidateRequest($request);
 
+        // Fisier Comanda
+        if ($request->file('fisierComanda')) {
+            $fisier = $request->file('fisierComanda');
+            $numeFisier = $fisier->getClientOriginalName();
+            $cale = 'fiseCaz/' . $fisaCaz->id . '/comanda';
+            if (Storage::exists($cale . '/' . $numeFisier)){
+                return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
+            }
+            try {
+                Storage::putFileAs($cale, $fisier, $numeFisier);
+                $fisier = new Fisier;
+                $fisier->referinta = 2;
+                $fisier->referinta_id = $fisaCaz->id;
+                $fisier->cale = $cale;
+                $fisier->nume = $numeFisier;
+                $fisier->save();
+            } catch (Exception $e) {
+                return back()->with('error', 'Fișierul nu a putut fi încărcat.');
+            }
+        }
+
         $fisaCaz->update(['fisa_comanda_sosita' => $request->fisa_comanda_sosita]);
 
         foreach($request->comenziComponente as $componenta) {
@@ -165,6 +189,37 @@ class ComandaComponentaController extends Controller
     public function postToateModifica(Request $request, FisaCaz $fisaCaz)
     {
         $this->toateValidateRequest($request);
+
+        // Fisier Comanda
+        // Daca exista fisier in request, se sterge vechiul fisier si se salveaza cel de acum
+        if ($request->file('fisierComanda')) {
+            // stergere fisier vechi
+            if ($fisaCaz->fisiereComanda->count() > 0){
+                Storage::delete($fisaCaz->fisiereComanda()->first()->cale . '/' . $fisaCaz->fisiereComanda()->first()->nume);
+            }
+            $fisier = $request->file('fisierComanda');
+            $numeFisier = $fisier->getClientOriginalName();
+            $cale = 'fiseCaz/' . $fisaCaz->id . '/comanda';
+            if (Storage::exists($cale . '/' . $numeFisier)){
+                return back()->with('error', 'Există deja un fișier cu numele „' . $numeFisier . '”. Redenumește fișierul și încearcă din nou.');
+            }
+            try {
+                // se salveaza fisierul pe disk
+                Storage::putFileAs($cale, $fisier, $numeFisier);
+                if ($fisaCaz->fisiereComanda->count() > 0){ // daca exista deja inregistrare cu un fisier, se face update in baza de data
+                    $fisaCaz->fisiereComanda->first()->update(['nume' => $numeFisier]);
+                } else { // daca nu exista deja inregistrare in baza de date, se creaza o inregistrare noua
+                    $fisier = new Fisier;
+                    $fisier->referinta = 2;
+                    $fisier->referinta_id = $fisaCaz->id;
+                    $fisier->cale = $cale;
+                    $fisier->nume = $numeFisier;
+                    $fisier->save();
+                }
+            } catch (Exception $e) {
+                return back()->with('error', 'Fișierul nu a putut fi încărcat.');
+            }
+        }
 
         $fisaCaz->update(['fisa_comanda_sosita' => $request->fisa_comanda_sosita]);
 
@@ -225,6 +280,10 @@ class ComandaComponentaController extends Controller
         return $request->validate(
             [
                 'id' => '',
+                'fisierComanda' => ['nullable',
+                    File::types(['pdf', 'jpg'])
+                        ->max(30 * 1024),
+                    ],
                 'comenziComponente' => 'required',
                 'comenziComponente.*.fisa_caz_id' => 'required',
                 'comenziComponente.*.producator' => 'required|max:200',

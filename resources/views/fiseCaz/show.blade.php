@@ -316,7 +316,7 @@
                                     &nbsp;
                                 </td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <td class="pe-4">
                                     Comandă
                                 </td>
@@ -327,7 +327,7 @@
                                         <br>
                                     @endforeach
                                 </td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <td class="pe-4">
                                     Fișe măsuri

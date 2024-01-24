@@ -11,7 +11,27 @@
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0">
-        <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
+        <div class="row mb-4 pt-2 rounded-3 justify-content-between" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
+            <div class="col-lg-9 mb-4">
+                <label for="fisierComanda" class="mb-0 ps-3">Fișier comandă</label>
+                <input type="file" name="fisierComanda" class="form-control rounded-3">
+                @if($errors->has('fisierComanda'))
+                    <span class="help-block text-danger">{{ $errors->first('fisierComanda') }}</span>
+                @endif
+                @if ($fisaCaz->fisiereComanda->first())
+                    <small class="m-0 ps-3">
+                        * Comandă încărcată:
+                        @foreach ($fisaCaz->fisiereComanda as $fisier)
+                            <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                {{ $fisier->nume }}</a>{{ !$loop->last ? ', ' : '.' }}
+                        @endforeach
+                    </small>
+                    <br>
+                    <small class="m-0 ps-3">
+                        * Dacă vrei să o înlocuiești, încarcă alt fișier, și cel care este acum se va șterge automat.
+                    </small>
+                @endif
+            </div>
             <div class="col-lg-3 mb-4">
                 <label for="fisa_comanda_sosita" class="mb-0 ps-3">Sosită</label>
                 <select class="form-select bg-white rounded-3 {{ $errors->has('fisa_comanda_sosita') ? 'is-invalid' : '' }}" name="fisa_comanda_sosita">

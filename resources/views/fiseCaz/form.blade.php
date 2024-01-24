@@ -77,47 +77,6 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-lg-6 mb-4">
-                <label for="fisierComanda" class="mb-0 ps-3">Fișier comandă</label>
-                <input type="file" name="fisierComanda" class="form-control rounded-3">
-                @if($errors->has('fisierComanda'))
-                    <span class="help-block text-danger">{{ $errors->first('fisierComanda') }}</span>
-                @endif
-                @if ($fisaCaz->fisiereComanda->first())
-                    <small class="m-0 ps-3">
-                        * Comandă încărcată:
-                        @foreach ($fisaCaz->fisiereComanda as $fisier)
-                            <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
-                                {{ $fisier->nume }}</a>{{ !$loop->last ? ', ' : '.' }}
-                        @endforeach
-                    </small>
-                    <br>
-                    <small class="m-0 ps-3">
-                        * Dacă vrei să o înlocuiești, încarcă alt fișier, și cel care este acum se va șterge automat.
-                    </small>
-                @endif
-            </div>
-            <div class="col-lg-6 mb-4">
-                <label for="fisiereFisaMasuri" class="mb-0 ps-3">Fișiere fișă măsuri</label>
-                <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3" multiple>
-                @if($errors->has('fisiereFisaMasuri'))
-                    <span class="help-block text-danger">{{ $errors->first('fisiereFisaMasuri') }}</span>
-                @endif
-                @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
-                    <small class="m-0 ps-3">
-                        * Fișe încărcate:
-                        @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
-                            <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
-                                {{ $fisier->nume }}</a>{{ !$loop->last ? ', ' : '.' }}
-                            {{-- {{ $fisier->nume ?? '' }} --}}
-                        @endforeach
-                    </small>
-                    <br>
-                    <small class="m-0 ps-3">
-                        * Dacă vrei să le înlocuiești, încarcă alte fișiere, și cele care sunt acum se vor șterge automat.
-                    </small>
-                @endif
-            </div>
         </div>
         {{-- <div class="row px-2 pt-0 mb-4" style="background-color:#eeeeff; border-left:6px solid; border-color:#6a6ba0; border-radius: 0px 0px 0px 0px" id="pacientAutocomplete"> --}}
         {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #6a6ba0 solid; background-color:#f1f1fb" id="pacientAutocomplete"> --}}
