@@ -162,7 +162,7 @@
                                         {{ \Carbon\Carbon::parse($fisaCaz->comenziComponente->first()->created_at)->isoFormat('DD.MM.YYYY') }}
                                         <br>
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/export/pdf" target="_blank">
-                                            <span class="badge text-success px-1 py-0" title="Modifică"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                            <span class="badge text-success px-1 py-0" title="PDF"><i class="fa-solid fa-file-arrow-down"></i></span></a>
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/modifica">
                                             <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
                                         @if ($userCanDelete)
