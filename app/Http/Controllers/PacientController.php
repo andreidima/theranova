@@ -123,7 +123,7 @@ class PacientController extends Controller
      */
     public function update(Request $request, Pacient $pacient)
     {
-        $this->validateRequest($request);
+        $this->validateRequest($request, $pacient);
 
         $pacient->update($request->except(['apartinatori', 'date']));
 // dd($request, $pacient);
@@ -165,7 +165,7 @@ class PacientController extends Controller
      *
      * @return array
      */
-    protected function validateRequest(Request $request)
+    protected function validateRequest(Request $request, $pacient = null)
     {
         // Se adauga userul doar la adaugare, iar la modificare nu se schimba
         // if ($request->isMethod('post')) {
@@ -181,8 +181,8 @@ class PacientController extends Controller
                 'user_responsabil' => '',
                 'nume' => 'required|max:200',
                 'prenume' => ['required', 'max:200',
-                    function (string $attribute, mixed $value, Closure $fail) use ($request){
-                        if (Pacient::where('nume', $request->nume)->where('prenume', $request->prenume)->get()->count() > 0) {
+                    function (string $attribute, mixed $value, Closure $fail) use ($request, $pacient){
+                        if (Pacient::where('id', '<>', $pacient->id)->where('nume', $request->nume)->where('prenume', $request->prenume)->get()->count() > 0) {
                             $fail("Există deja în aplicație un pacient cu acest nume și prenume.");
                         }
                     },

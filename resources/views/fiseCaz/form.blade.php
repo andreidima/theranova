@@ -199,6 +199,8 @@
                             <option value="Cot">Cot</option>
                             <option value="Braț">Braț</option>
                             <option value="Dezarticulație umăr">Dezarticulație umăr</option>
+                            <option selected value="" disabled style="color:white; background-color: gray;"></option>
+                            <option value="Sân">Sân</option>
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">

@@ -179,11 +179,11 @@ const comandaComponente = createApp({
             comenziComponente: comenziComponente,
         }
     },
-    created: function () {
-        if (this.comenziComponente.length === 0) {
-            this.comenziComponente.push({});
-        }
-    },
+    // created: function () {
+    //     if (this.comenziComponente.length === 0) {
+    //         this.comenziComponente.push({});
+    //     }
+    // },
 });
 if (document.getElementById('comandaComponente') != null) {
     comandaComponente.mount('#comandaComponente');

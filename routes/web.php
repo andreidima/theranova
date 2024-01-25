@@ -45,10 +45,26 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/fise-caz/{fisaCaz}/comenzi-componente/toate/sterge', [ComandaComponentaController::class, 'postToateSterge']);
     Route::get('/fise-caz/{fisaCaz}/comenzi-componente/export/pdf', [ComandaComponentaController::class, 'toateExport']);
 
-
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
+
+    Route::get('/actualizeaza-date', function (){
+        $fiseCaz = \App\Models\FisaCaz::with('pacient')->whereHas('comenziComponente')->orderBy('data', 'desc')->get();
+        foreach ($fiseCaz as $fisaCaz){
+            echo ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '');
+            echo '<br>';
+            echo $fisaCaz->comenziComponente->first()->created_at;
+            echo '<br>';
+            $fisaCaz->fisa_comanda_data = $fisaCaz->comenziComponente->first()->created_at;
+            $fisaCaz->save();
+            // echo $fisaCaz->fisa_comanda_data;
+            echo '<br>';
+            echo '<br>';
+            echo '<br>';
+            echo '<br>';
+        }
+    });
 });
 
 

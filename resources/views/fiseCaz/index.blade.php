@@ -159,16 +159,30 @@
                                     </a>
                                 </td>
                                 <td class="text-center">
-                                    @if ($fisaCaz->comenziComponente->count() > 0)
-                                        @if ($fisaCaz->fisa_comanda_sosita == "1")
-                                            <i class="fa-solid fa-thumbs-up text-success"></i>
-                                        @elseif ($fisaCaz->fisa_comanda_sosita == "0")
-                                            <i class="fa-solid fa-thumbs-down text-danger"></i>
-                                        @endif
-                                        {{ \Carbon\Carbon::parse($fisaCaz->comenziComponente->first()->created_at)->isoFormat('DD.MM.YYYY') }}
+                                    @if ($fisaCaz->fisa_comanda_sosita == "1")
+                                        <i class="fa-solid fa-thumbs-up text-success"></i>
+                                    @elseif ($fisaCaz->fisa_comanda_sosita == "0")
+                                        <i class="fa-solid fa-thumbs-down text-danger"></i>
+                                    @endif
+                                    @if ($fisaCaz->fisa_comanda_data)
+                                        {{ $fisaCaz->fisa_comanda_data ? Carbon::parse($fisaCaz->fisa_comanda_data)->isoFormat('DD.MM.YYYY') : '' }}
                                         <br>
+                                    @endif
+
+                                    @if ($fisaCaz->fisiereComanda->count() > 0)
+                                        @foreach ($fisaCaz->fisiereComanda as $fisier)
+                                            <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" title="descarcă fișier">
+                                                <i class="fa-solid fa-file text-success"></i></a>
+                                        @endforeach
+                                        <br>
+                                    @endif
+
+                                    @if ($fisaCaz->comenziComponente->count() > 0)
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/export/pdf" target="_blank">
                                             <span class="badge text-success px-1 py-0" title="PDF"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                    @endif
+
+                                    @if ($fisaCaz->fisiereComanda->first() || ($fisaCaz->comenziComponente->count() > 0))
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/modifica">
                                             <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
                                         @if ($userCanDelete)
@@ -182,13 +196,6 @@
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/adauga">
                                             <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
                                     @endif
-                                    <br>
-                                    @if ($fisaCaz->fisiereComanda->first())
-                                        @foreach ($fisaCaz->fisiereComanda as $fisier)
-                                            <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank">
-                                                <span class="badge bg-success" title="Fișier">Fișier</span></a>
-                                        @endforeach
-                                    @endif
                                 </td>
                                 <td class="text-center">
                                     {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
@@ -197,10 +204,10 @@
                                     {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td class="text-center">
-                                    @if ($fisaCaz->fisiereFisaMasuri->first())
+                                    @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
                                         @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
                                             <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank">
-                                                <span class="badge bg-success" title="Fișier">Fișier</span></a>
+                                                <i class="fa-solid fa-file text-success"></i></a>
                                         @endforeach
                                     @endif
 
@@ -209,7 +216,7 @@
                                         data-bs-target="#adaugaModificaFisaMasuriLaFisaCaz{{ $fisaCaz->id }}"
                                         title="Adaugă modifică Fișă Măsuri"
                                         >
-                                        @if ($fisaCaz->fisiereFisaMasuri->first())
+                                        @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
                                             <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
                                         @else
                                             <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>

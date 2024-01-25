@@ -12,7 +12,7 @@
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-4 pt-2 rounded-3 justify-content-between" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
-            <div class="col-lg-9 mb-4">
+            <div class="col-lg-7 mb-4">
                 <label for="fisierComanda" class="mb-0 ps-3">Fișier comandă</label>
                 <input type="file" name="fisierComanda" class="form-control rounded-3">
                 @if($errors->has('fisierComanda'))
@@ -31,6 +31,17 @@
                         * Dacă vrei să o înlocuiești, încarcă alt fișier, și cel care este acum se va șterge automat.
                     </small>
                 @endif
+            </div>
+            <div class="col-lg-2 mb-4" id="datePicker">
+                <label for="fisa_comanda_data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
+                <vue-datepicker-next
+                    data-veche="{{ old('fisa_comanda_data', $fisaCaz->fisa_comanda_data) }}"
+                    nume-camp-db="fisa_comanda_data"
+                    tip="date"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    :latime="{ width: '125px' }"
+                ></vue-datepicker-next>
             </div>
             <div class="col-lg-3 mb-4">
                 <label for="fisa_comanda_sosita" class="mb-0 ps-3">Sosită</label>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 use App\Models\ComandaComponenta;
 use App\Models\FisaCaz;
@@ -141,6 +142,8 @@ class ComandaComponentaController extends Controller
     {
         $request->session()->get('comandaComponenteReturnUrl') ?? $request->session()->put('comandaComponenteReturnUrl', url()->previous());
 
+        $fisaCaz->fisa_comanda_data = Carbon::now();
+
         return view('comenziComponente.toate.create', compact('fisaCaz'));
     }
 
@@ -169,11 +172,16 @@ class ComandaComponentaController extends Controller
             }
         }
 
-        $fisaCaz->update(['fisa_comanda_sosita' => $request->fisa_comanda_sosita]);
+        $fisaCaz->update([
+            'fisa_comanda_data' => $request->fisa_comanda_data,
+            'fisa_comanda_sosita' => $request->fisa_comanda_sosita,
+        ]);
 
-        foreach($request->comenziComponente as $componenta) {
-            $comandaComponenta = new ComandaComponenta;
-            $comandaComponenta->create($componenta);
+        if ($request->comenziComponente){
+            foreach($request->comenziComponente as $componenta) {
+                $comandaComponenta = new ComandaComponenta;
+                $comandaComponenta->create($componenta);
+            }
         }
 
         return redirect($request->session()->get('comandaComponenteReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost adăugată cu succes!');
@@ -221,25 +229,29 @@ class ComandaComponentaController extends Controller
             }
         }
 
-        $fisaCaz->update(['fisa_comanda_sosita' => $request->fisa_comanda_sosita]);
+        $fisaCaz->update([
+            'fisa_comanda_data' => $request->fisa_comanda_data,
+            'fisa_comanda_sosita' => $request->fisa_comanda_sosita,
+        ]);
 
         // Stergerea comenzilorComponente ce nu mai sunt in array: array_column scoate doar coloana de id-uri, array_filter elimina din array valorile null (fara id)
-        ComandaComponenta::where('fisa_caz_id', $fisaCaz->id)->whereNotIn('id', array_filter(array_column($request->comenziComponente , 'id')))->delete();
-
+        ComandaComponenta::where('fisa_caz_id', $fisaCaz->id)->whereNotIn('id', array_filter(array_column(($request->comenziComponente ?? []) , 'id')))->delete();
         // Adaugarea/modificarea comenzilorComponente din array
-        foreach($request->comenziComponente as $componenta) {
-            ComandaComponenta::updateOrCreate(
-                [
-                    'id' => $componenta['id']
-                ],
-                [
-                    'fisa_caz_id' => $componenta['fisa_caz_id'],
-                    'producator' => $componenta['producator'],
-                    'cod_produs' => $componenta['cod_produs'],
-                    'bucati' => $componenta['bucati'],
-                ]
-            );
-        }
+        // if ($request->comenziComponente){
+            foreach(($request->comenziComponente ?? []) as $componenta) {
+                ComandaComponenta::updateOrCreate(
+                    [
+                        'id' => $componenta['id']
+                    ],
+                    [
+                        'fisa_caz_id' => $componenta['fisa_caz_id'],
+                        'producator' => $componenta['producator'],
+                        'cod_produs' => $componenta['cod_produs'],
+                        'bucati' => $componenta['bucati'],
+                    ]
+                );
+            }
+        // }
 
         return redirect($request->session()->get('comandaComponenteReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost modificată cu succes!');
     }
@@ -284,7 +296,7 @@ class ComandaComponentaController extends Controller
                     File::types(['pdf', 'jpg'])
                         ->max(30 * 1024),
                     ],
-                'comenziComponente' => 'required',
+                // 'comenziComponente' => 'required',
                 'comenziComponente.*.fisa_caz_id' => 'required',
                 'comenziComponente.*.producator' => 'required|max:200',
                 'comenziComponente.*.cod_produs' => 'required|max:200',
