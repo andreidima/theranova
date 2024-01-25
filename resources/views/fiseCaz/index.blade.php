@@ -242,6 +242,12 @@
                                 </td>
                                 <td class="">
                                     V: {{ $fisaCaz->userVanzari->name ?? '' }}
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#trimiteFisaCazPrinEmailCatreUtilizator{{ $fisaCaz->id }}"
+                                            title="trimite Fișa Caz prin email către utilizator"
+                                            >
+                                            <i class="fa-solid fa-file-medical text-success"></i></a>
                                     <br>
                                     C: {{ $fisaCaz->userComercial->name ?? '' }}
                                     <br>
