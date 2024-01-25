@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Closure;
 
 use App\Models\Pacient;
 use App\Models\Apartinator;
@@ -179,12 +180,13 @@ class PacientController extends Controller
             [
                 'user_responsabil' => '',
                 'nume' => 'required|max:200',
-                'prenume' => 'required|max:200',
-                    // function (string $attribute, mixed $value, Closure $fail) {
-                    //     if ($value === 'foo') {
-                    //         $fail("The {$attribute} is invalid.");
-                    //     }
-                    // },
+                'prenume' => ['required', 'max:200',
+                    function (string $attribute, mixed $value, Closure $fail) use ($request){
+                        if (Pacient::where('nume', $request->nume)->where('prenume', $request->prenume)->get()->count() > 0) {
+                            $fail("Există deja în aplicație un pacient cu acest nume și prenume.");
+                        }
+                    },
+                ],
                 'telefon' => 'nullable|max:200',
                 'email' => 'nullable|max:200|email:rfc,dns',
                 'cnp' => 'nullable|numeric|integer|min:1|digits:13',

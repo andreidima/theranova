@@ -249,6 +249,9 @@
                             <option value="Modificări">Modificări</option>
                             <option value="PMS">PMS</option>
                             <option value="PPP">PPP</option>
+                            <option value="Manșon">Manșon</option>
+                            <option value="Proteză sân">Proteză sân</option>
+                            <option value="Proteză sân+sutien">Proteză sân+sutien</option>
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4">
