@@ -182,7 +182,7 @@ class PacientController extends Controller
                 'nume' => 'required|max:200',
                 'prenume' => ['required', 'max:200',
                     function (string $attribute, mixed $value, Closure $fail) use ($request, $pacient){
-                        if (Pacient::where('id', '<>', $pacient->id)->where('nume', $request->nume)->where('prenume', $request->prenume)->get()->count() > 0) {
+                        if (Pacient::where('id', '<>', ($pacient->id ?? 0))->where('nume', $request->nume)->where('prenume', $request->prenume)->get()->count() > 0) {
                             $fail("Există deja în aplicație un pacient cu acest nume și prenume.");
                         }
                     },
