@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\FisaCaz;
 use App\Models\User;
@@ -108,6 +109,22 @@ class FisaCazController extends Controller
             $fisaCaz->cerinte()->save(Cerinta::make($date));
         }
 
+        // Trimitere notificare pe email
+        // $casuteEmail = [];
+        // if ($fisaCaz->userVanzari){
+        //     echo 'da';
+        // } else {
+        //     echo 'nu';
+        // }
+        // dd('stop');
+
+        // Mail::to($tombola->email)->send(new \App\Mail\CodTombola($tombola));
+        // \App\Models\MesajTrimisEmail::create([
+        //     'referinta' => 1,
+        //     'referinta_id' => $tombola->id,
+        //     'email' => $tombola->email
+        // ]);
+
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost adăugată cu succes!');
     }
 
@@ -160,6 +177,22 @@ class FisaCazController extends Controller
             $fisaCaz->cerinte()->first() ? $fisaCaz->cerinte()->first()->update($date) : $fisaCaz->cerinte()->save(Cerinta::make($date));
         }
 
+        // Trimitere notificare pe email
+        // $casuteEmail = [];
+        // ($email = ($fisaCaz->userVanzari->email ?? null)) ? array_push($casuteEmail, $email) : '';
+        // ($email = ($fisaCaz->userComercial->email ?? null)) ? array_push($casuteEmail, $email) : '';
+        // ($email = ($fisaCaz->userTehnic->email ?? null)) ? array_push($casuteEmail, $email) : '';
+        // $casuteEmail = implode(', ', $casuteEmail);
+        // Mail::to($casuteEmail)->send(new \App\Mail\AdaugareModificareFisaCaz($fisaCaz));
+        // \App\Models\MesajTrimisEmail::create([
+        //     'referinta' => 1, // Fisa caz
+        //     'referinta_id' => $fisaCaz->id,
+        //     'categorie' => 'Ofertari',
+        //     'subcategorie' => 'Modificare',
+        //     'email' => $casuteEmail
+        // ]);
+        // dd($casuteEmail, implode(', ', $casuteEmail));
+
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost modificată cu succes!');
     }
 
@@ -206,7 +239,7 @@ class FisaCazController extends Controller
                 'user_comercial' => '',
                 'user_tehnic' => '',
                 'pacient_id' => 'required',
-                'dateMedicale.*.greutate' => 'required|integer|min:10|max:300',
+                'dateMedicale.*.greutate' => 'required|integer|min:1|max:255',
                 'dateMedicale.*.parte_amputata' => 'required',
                 'dateMedicale.*.amputatie' => 'required',
                 'dateMedicale.*.nivel_de_activitate' => 'required',
@@ -231,8 +264,8 @@ class FisaCazController extends Controller
             [
                 'dateMedicale.*.greutate.required' => 'Câmpul Greutate este obligatoriu.',
                 'dateMedicale.*.greutate.integer' => 'Câmpul greutate trebuie să fie un număr.',
-                'dateMedicale.*.greutate.min' => 'Câmpul greutate trebuie să aibă valoarea minim 10.',
-                'dateMedicale.*.greutate.max' => 'Câmpul greutate trebuie să aibă valoarea maxim 300.',
+                'dateMedicale.*.greutate.min' => 'Câmpul greutate trebuie să aibă valoarea minim 1.',
+                'dateMedicale.*.greutate.max' => 'Câmpul greutate trebuie să aibă valoarea maxim 255.',
                 'dateMedicale.*.parte_amputata.required' => 'Câmpul Parte amputată este obligatoriu.',
                 'dateMedicale.*.amputatie.required' => 'Câmpul Amputație este obligatoriu.',
                 'dateMedicale.*.nivel_de_activitate.required' => 'Câmpul Nivel de activitate este obligatoriu.',

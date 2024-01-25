@@ -215,6 +215,14 @@
                                 </tr>
                                 <tr>
                                     <td class="pe-4">
+                                       Mărime picior valoare
+                                    </td>
+                                    <td>
+                                        {{ $dataMedicala->marime_picior_valoare }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">
                                         Alte afecțiuni
                                     </td>
                                     <td>
@@ -311,11 +319,11 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            <tr>
+                            {{-- <tr>
                                 <td colspan="2">
                                     &nbsp;
                                 </td>
-                            </tr>
+                            </tr> --}}
                             {{-- <tr>
                                 <td class="pe-4">
                                     Comandă
@@ -328,7 +336,7 @@
                                     @endforeach
                                 </td>
                             </tr> --}}
-                            <tr>
+                            {{-- <tr>
                                 <td class="pe-4">
                                     Fișe măsuri
                                 </td>
@@ -339,7 +347,7 @@
                                         <br>
                                     @endforeach
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </table>
                     </div>
 
