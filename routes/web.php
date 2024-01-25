@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::any('/fise-caz/adauga-resursa/{resursa}', [FisaCazController::class, 'fisaCazAdaugaResursa']);
     Route::get('/fise-caz/{fisaCaz}/stare/{stare}', [FisaCazController::class, 'stare']);
     Route::post('/fise-caz/{fisaCaz}/adauga-modifica-fisa-masuri', [FisaCazController::class, 'adaugaModificaFisaMasuri']);
+    Route::get('/fise-caz/{fisaCaz}/trimite-prin-email-catre-utilizator/{user}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizator']);
 
     Route::resource('/fise-caz/{fisaCaz}/oferte', OfertaController::class)->parameters(['oferte' => 'oferta']);
 
@@ -49,22 +50,23 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
 
-    Route::get('/actualizeaza-date', function (){
-        $fiseCaz = \App\Models\FisaCaz::with('pacient')->whereHas('comenziComponente')->orderBy('data', 'desc')->get();
-        foreach ($fiseCaz as $fisaCaz){
-            echo ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '');
-            echo '<br>';
-            echo $fisaCaz->comenziComponente->first()->created_at;
-            echo '<br>';
-            $fisaCaz->fisa_comanda_data = $fisaCaz->comenziComponente->first()->created_at;
-            $fisaCaz->save();
-            // echo $fisaCaz->fisa_comanda_data;
-            echo '<br>';
-            echo '<br>';
-            echo '<br>';
-            echo '<br>';
-        }
-    });
+    // de sters 01.02.2024
+    // Route::get('/actualizeaza-date', function (){
+    //     $fiseCaz = \App\Models\FisaCaz::with('pacient')->whereHas('comenziComponente')->orderBy('data', 'desc')->get();
+    //     foreach ($fiseCaz as $fisaCaz){
+    //         echo ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '');
+    //         echo '<br>';
+    //         echo $fisaCaz->comenziComponente->first()->created_at;
+    //         echo '<br>';
+    //         $fisaCaz->fisa_comanda_data = $fisaCaz->comenziComponente->first()->created_at;
+    //         $fisaCaz->save();
+    //         // echo $fisaCaz->fisa_comanda_data;
+    //         echo '<br>';
+    //         echo '<br>';
+    //         echo '<br>';
+    //         echo '<br>';
+    //     }
+    // });
 });
 
 

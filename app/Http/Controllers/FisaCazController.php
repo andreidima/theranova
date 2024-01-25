@@ -31,7 +31,7 @@ class FisaCazController extends Controller
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
 
-        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente')
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri')
             ->when($searchNume, function ($query, $searchNume) {
                 foreach (explode(" ", $searchNume) as $cuvant){
                     $query->whereHas('pacient', function ($query) use($cuvant) {
@@ -364,5 +364,44 @@ class FisaCazController extends Controller
         }
 
         return back()->with('status', 'Fișa măsuri pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost încărcată cu succes!');
+    }
+
+    public function trimitePrinEmailCatreUtilizator(Request $request, FisaCaz $fisaCaz, User $user)
+    {
+        $user->validate(
+            [
+                'email' => 'required|email:rfc,dns',
+            ]
+        );
+
+        return back();
+
+        //     Mail::to($user->email)
+        //         ->cc('danatudorache@theranova.ro', 'adrianples@theranova.ro')
+        //     ->send(new \App\Mail\AdaugareModificareFisaCaz($fisaCaz));
+
+        //     \App\Models\MesajTrimisEmail::create([
+        //         'referinta' => 1, // Fisa caz
+        //         'referinta_id' => $fisaCaz->id,
+        //         'categorie' => 'Modificare',
+        //         'subcategorie' => 'Modificare',
+        //         'mesaj' => $request->mesaj,
+        //         'email' => $user->email
+        //     ]);
+
+        //     $emailTrimis = new \App\Models\MesajTrimisEmail;
+        //     $emailTrimis->comanda_id = $comanda->id;
+        //     $emailTrimis->firma_id = $comanda->transportator->id ?? '';
+        //     $emailTrimis->categorie = 3;
+        //     $emailTrimis->email = $comanda->transportator->email;
+        //     $emailTrimis->save();
+
+        //     // Nu se trimit notificari decat daca a fost trimisa comanda pe email catre transportator
+        //     $comanda->cronjob()->updateOrCreate(['comanda_id' => $comanda->id],['contract_trimis_pe_email_catre_transportator' => 1]);
+
+        //     return back()->with('status', 'Emailul către „' . $comanda->transportator->nume . '” a fost trimis cu succes!');
+        // } else {
+        //     return back()->with('error', 'Nu există un email valid!');
+        // }
     }
 }
