@@ -28,7 +28,7 @@ class FisaCaz extends Mailable
     {
         return new Envelope(
             subject: (($this->tipEmail == "fisaCaz") ? 'Fișă caz' : (($this->tipEmail == "oferta") ? 'Ofertă' : (($this->tipEmail == "comanda") ? 'Fișă comandă' : ''))) .
-            ' pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . ($this->fisaCaz->dateMedicale()->first->tip_proteza ?? ''),
+            ' pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . ($this->fisaCaz->dateMedicale->first()->tip_proteza ?? ''),
         );
     }
 
