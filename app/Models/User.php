@@ -75,4 +75,9 @@ class User extends Authenticatable
 
         return false;
     }
+
+    public function numarEmailuriFisaCaz($fisaCazId)
+    {
+        return MesajeTrimiseEmail::where('referinta_id', $fisaCazId)->where('referinta2_id', $this->id)->count();
+    }
 }

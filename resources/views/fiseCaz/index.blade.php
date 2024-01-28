@@ -241,17 +241,106 @@
                                     </div>
                                 </td>
                                 <td class="">
-                                    V: {{ $fisaCaz->userVanzari->name ?? '' }}
-                                        <a href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#trimiteFisaCazPrinEmailCatreUtilizator{{ $fisaCaz->id }}"
-                                            title="trimite Fișa Caz prin email către utilizator"
-                                            >
-                                            <i class="fa-solid fa-file-medical text-success"></i></a>
-                                    <br>
-                                    C: {{ $fisaCaz->userComercial->name ?? '' }}
-                                    <br>
-                                    T: {{ $fisaCaz->userTehnic->name ?? '' }}
+                                    <div style="white-space: nowrap;">
+                                        @if ($fisaCaz->userVanzari->email ?? null)
+                                            @php
+                                                $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
+                                                $acronym = "";
+
+                                                foreach ($words as $w) {
+                                                    $acronym .= mb_substr($w, 0, 1);
+                                                }
+                                                // dd($fisaCaz);
+                                            @endphp
+                                            V(<a href="#"
+                                                class="text-info" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_fisaCaz_{{ $fisaCaz->userVanzari->id }}"
+                                                title="trimite Fișa Caz prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriFisaCaz->where('referinta2_id', $fisaCaz->user_vanzari)->count() }}</b></a>,<a href="#"
+                                                class="text-success" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_oferta_{{ $fisaCaz->userVanzari->id }}"
+                                                title="trimite Oferta prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriOferta->where('referinta2_id', $fisaCaz->user_vanzari)->count() }}</b></a>,<a href="#"
+                                                class="text-primary" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_comanda_{{ $fisaCaz->userVanzari->id }}"
+                                                title="trimite Fișa Comanda prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriComanda->where('referinta2_id', $fisaCaz->user_vanzari)->count() }}</b></a>):
+                                                <span title="{{ $fisaCaz->userVanzari->name ?? '' }}">
+                                                {{ $acronym ?? '' }}
+                                            </span>
+                                        @else
+                                            V:
+                                        @endif
+                                    </div>
+                                    <div style="white-space: nowrap;">
+                                        @if ($fisaCaz->userComercial->email ?? null)
+                                            @php
+                                                $words = explode(" ", ($fisaCaz->userComercial->name ?? ''));
+                                                $acronym = "";
+
+                                                foreach ($words as $w) {
+                                                    $acronym .= mb_substr($w, 0, 1);
+                                                }
+                                            @endphp
+                                            C(<a href="#"
+                                                class="text-info" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_fisaCaz_{{ $fisaCaz->userComercial->id }}"
+                                                title="trimite Fișa Caz prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriFisaCaz->where('referinta2_id', $fisaCaz->user_comercial)->count() }}</b></a>,<a href="#"
+                                                class="text-success" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_oferta_{{ $fisaCaz->userComercial->id }}"
+                                                title="trimite Oferta prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriOferta->where('referinta2_id', $fisaCaz->user_comercial)->count() }}</b></a>,<a href="#"
+                                                class="text-primary" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_comanda_{{ $fisaCaz->userComercial->id }}"
+                                                title="trimite Fișa Comanda prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriComanda->where('referinta2_id', $fisaCaz->user_comercial)->count() }}</b></a>):
+                                                <span title="{{ $fisaCaz->userComercial->name ?? '' }}">
+                                                {{ $acronym ?? '' }}
+                                            </span>
+                                        @else
+                                            C:
+                                        @endif
+                                    </div>
+                                    <div style="white-space: nowrap;">
+                                        @if ($fisaCaz->userTehnic->email ?? null)
+                                            @php
+                                                $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
+                                                $acronym = "";
+
+                                                foreach ($words as $w) {
+                                                    $acronym .= mb_substr($w, 0, 1);
+                                                }
+                                            @endphp
+                                            T(<a href="#"
+                                                class="text-info" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_fisaCaz_{{ $fisaCaz->userTehnic->id }}"
+                                                title="trimite Fișa Caz prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriFisaCaz->where('referinta2_id', $fisaCaz->user_tehnic)->count() }}</b></a>,<a href="#"
+                                                class="text-success" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_oferta_{{ $fisaCaz->userTehnic->id }}"
+                                                title="trimite Oferta prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriOferta->where('referinta2_id', $fisaCaz->user_tehnic)->count() }}</b></a>,<a href="#"
+                                                class="text-primary" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_comanda_{{ $fisaCaz->userTehnic->id }}"
+                                                title="trimite Fișa Comanda prin email către utilizator"
+                                                ><b>{{ $fisaCaz->emailuriComanda->where('referinta2_id', $fisaCaz->user_tehnic)->count() }}</b></a>):
+                                                <span title="{{ $fisaCaz->userTehnic->name ?? '' }}">
+                                                {{ $acronym ?? '' }}
+                                            </span>
+                                        @else
+                                            T:
+                                        @endif
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="text-end">
@@ -437,6 +526,49 @@
                 </form>
             </div>
         </div>
+    @endforeach
+
+    {{-- Modalele pentru trimitere Fisa Caz prin email catre utilizator --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        @php
+            $useriIds = [];
+            ($fisaCaz->userVanzari->email ?? null) ? array_push($useriIds, $fisaCaz->userVanzari->id) : '';
+            ($fisaCaz->userComercial->email ?? null) ? array_push($useriIds, $fisaCaz->userComercial->id) : '';
+            ($fisaCaz->userTehnic->email ?? null) ? array_push($useriIds, $fisaCaz->userTehnic->id) : '';
+        @endphp
+        @foreach ($useriIds as $userId)
+            @foreach (['fisaCaz', 'oferta', 'comanda'] as $tipEmail)
+                <div class="modal fade text-dark" id="trimiteEmailCatreUtilizator_{{ $fisaCaz->id }}_{{ $tipEmail }}_{{ $userId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <form method="POST" action="{{ $fisaCaz->path() }}/trimite-email-catre-utilizator/{{ $tipEmail }}/{{ $userId }}">
+                            @csrf
+
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning">
+                                    <h5 class="modal-title text-dark" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                                    <button type="button" class="btn-close bg-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="text-align:left;">
+                                    Trimite email <b>{{ $tipEmail }}</b>, către <b>{{ $useri->where('id', $userId)->first()->name ?? '' }}</b>
+                                    <br>
+                                    <br>
+                                    <label for="mesaj" class="form-label mb-0 ps-3">Mesaj</label>
+                                    <textarea class="form-control bg-white {{ $errors->has('mesaj') ? 'is-invalid' : '' }}"
+                                        name="mesaj" rows="3">{{ old('mesaj') }}</textarea>
+                                    <small class="m-0 ps-3">
+                                        * Completează doar dacă vrei să mai adaugi ceva la emailul standard.
+                                    </small>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                                    <button type="submit" class="btn btn-primary">Trimite email</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        @endforeach
     @endforeach
 
 @endsection

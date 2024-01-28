@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\FisaCaz;
 use App\Models\User;
@@ -31,7 +32,10 @@ class FisaCazController extends Controller
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
 
-        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri')
+// dd(FisaCaz::where('id', 217)->get()->first()->numarEmailuriFisaCazUserComercial());
+
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda')
+            // ->withCount('emailuriFisaCazUserVanzari', 'emailuriFisaCazUserComercial', 'emailuriFisaCazUserTehnic', 'emailuriOfertaUserVanzari', 'emailuriOfertaUserComercial', 'emailuriOfertaUserTehnic', 'emailuriComandaUserVanzari', 'emailuriComandaUserComercial', 'emailuriComandaUserTehnic')
             ->when($searchNume, function ($query, $searchNume) {
                 foreach (explode(" ", $searchNume) as $cuvant){
                     $query->whereHas('pacient', function ($query) use($cuvant) {
@@ -366,15 +370,36 @@ class FisaCazController extends Controller
         return back()->with('status', 'Fișa măsuri pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost încărcată cu succes!');
     }
 
-    public function trimitePrinEmailCatreUtilizator(Request $request, FisaCaz $fisaCaz, User $user)
+    public function trimitePrinEmailCatreUtilizator(Request $request, FisaCaz $fisaCaz, $tipEmail=null, User $user)
     {
-        $user->validate(
+        $validator = Validator::make(
             [
-                'email' => 'required|email:rfc,dns',
-            ]
-        );
+                'mesaj' => $request->mesaj,
+                'email' => $user->email,
+            ],
+            [
+                'mesaj' => 'nullable|max:2000',
+                'email' => 'email:rfc,dns'
+            ]);
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return back();
+        $trimitereEmail = Mail::to($user->email)
+            // ->cc('danatudorache@theranova.ro', 'adrianples@theranova.ro')
+            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user));
+
+        $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
+            'referinta' => 1, // Fisa caz
+            'referinta_id' => $fisaCaz->id,
+            'referinta2' => 1, // Fisa caz
+            'referinta2_id' => $user->id,
+            'tip' => (($tipEmail == "fisaCaz") ? '1' : (($tipEmail == "oferta") ? '2' : (($tipEmail == "comanda") ? '3' : ''))),
+            'mesaj' => $request->mesaj,
+            'email' => $user->email
+        ]);
+
+        return back()->with('status',' Emailul către ' . $user->name . ' a fost trimis cu succes.');
 
         //     Mail::to($user->email)
         //         ->cc('danatudorache@theranova.ro', 'adrianples@theranova.ro')

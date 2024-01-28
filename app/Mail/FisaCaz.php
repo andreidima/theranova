@@ -9,14 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AdaugareModificareFisaCaz extends Mailable
+class FisaCaz extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public \App\Models\FisaCaz $fisaCaz)
+    public function __construct(public \App\Models\FisaCaz $fisaCaz, public $tipEmail, public $mesaj, public \App\Models\User $user)
     {
         //
     }
@@ -27,7 +27,8 @@ class AdaugareModificareFisaCaz extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Fișă caz pacient ' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . ' - proteză ' . ($fisaCaz->dateMedicale()->first->tip_proteza ?? ''),
+            subject: (($this->tipEmail == "fisaCaz") ? 'Fișă caz' : (($this->tipEmail == "oferta") ? 'Ofertă' : (($this->tipEmail == "comanda") ? 'Fișă comandă' : ''))) .
+            ' pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . ($this->fisaCaz->dateMedicale()->first->tip_proteza ?? ''),
         );
     }
 
@@ -37,7 +38,7 @@ class AdaugareModificareFisaCaz extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emailuri.fiseCaz.adaugareModificare',
+            view: 'emailuri.fiseCaz.fisaCaz',
         );
     }
 

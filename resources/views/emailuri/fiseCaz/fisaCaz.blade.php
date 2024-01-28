@@ -4,14 +4,20 @@
         @include ('emailuri.headerFooter.header')
 
         <div style="padding:20px 20px; max-width:760px!important;margin:0 auto; font-size:18px">
-            {{-- Bună {{ $tombola->nume }},
-            <br><br>
-            Te-ai înscris la Tombola pentru topul „{{ $tombola->top }}”.
-            <br>
-            Codul tău este: <span style="font-weight: bold; font-size:200%">{{ $tombola->cod }}</span> --}}
+            Bună {{ $user->name }},
 
+            <br><br>
+
+            @if ($mesaj)
+                <b>
+                    {{ $mesaj }}
+                </b>
+                <br><br>
+            @endif
+
+            <a href="{{ $fisaCaz->path() }}" target="_blank">Fișa caz</a> a pacientului {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? '' }}
             <br><br><br>
-            Acesta este un mesaj automat. Te rugăm să nu răspunzi la acest e-mail.
+            Acesta este un mesaj trimis direct din aplicația Theranova. Te rugăm să nu răspunzi la acest e-mail.
             <br><br>
             Mulțumim!
         </div>
