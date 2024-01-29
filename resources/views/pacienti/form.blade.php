@@ -15,7 +15,7 @@
                 <label for="user_responsabil" class="mb-0 ps-3">Responsabil</label>
                 <select name="user_responsabil" class="form-select bg-white rounded-3 {{ $errors->has('user_responsabil') ? 'is-invalid' : '' }}">
                     <option selected></option>
-                    @foreach ($useri->where('role', 1) as $user)
+                    @foreach ($useri as $user)
                         <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_responsabil', $pacient->user_responsabil ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
                     @endforeach
                 </select>

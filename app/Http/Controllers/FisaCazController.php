@@ -28,6 +28,7 @@ class FisaCazController extends Controller
 
         $searchNume = $request->searchNume;
         $searchInterval = $request->searchInterval;
+        $searchTipProteza = $request->searchTipProteza;
         $searchUserVanzari = $request->searchUserVanzari;
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
@@ -47,6 +48,11 @@ class FisaCazController extends Controller
                     });
                 }
                 return $query;
+            })
+            ->when($searchTipProteza, function ($query, $searchTipProteza) {
+                $query->whereHas('dateMedicale', function ($query) use ($searchTipProteza) {
+                    return $query->where('tip_proteza', $searchTipProteza);
+                });
             })
             ->when($searchInterval, function ($query, $searchInterval) {
                 return $query->whereBetween('protezare', [strtok($searchInterval, ','), strtok( '' )]);
@@ -71,7 +77,7 @@ class FisaCazController extends Controller
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
-        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
+        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchTipProteza', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
     }
 
     /**
@@ -386,8 +392,8 @@ class FisaCazController extends Controller
         }
 
         $trimitereEmail = Mail::to($user->email)
-            // ->cc('danatudorache@theranova.ro', 'adrianples@theranova.ro')
-            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user));
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user->name));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
             'referinta' => 1, // Fisa caz
@@ -400,33 +406,5 @@ class FisaCazController extends Controller
         ]);
 
         return back()->with('status',' Emailul către ' . $user->name . ' a fost trimis cu succes.');
-
-        //     Mail::to($user->email)
-        //         ->cc('danatudorache@theranova.ro', 'adrianples@theranova.ro')
-        //     ->send(new \App\Mail\AdaugareModificareFisaCaz($fisaCaz));
-
-        //     \App\Models\MesajTrimisEmail::create([
-        //         'referinta' => 1, // Fisa caz
-        //         'referinta_id' => $fisaCaz->id,
-        //         'categorie' => 'Modificare',
-        //         'subcategorie' => 'Modificare',
-        //         'mesaj' => $request->mesaj,
-        //         'email' => $user->email
-        //     ]);
-
-        //     $emailTrimis = new \App\Models\MesajTrimisEmail;
-        //     $emailTrimis->comanda_id = $comanda->id;
-        //     $emailTrimis->firma_id = $comanda->transportator->id ?? '';
-        //     $emailTrimis->categorie = 3;
-        //     $emailTrimis->email = $comanda->transportator->email;
-        //     $emailTrimis->save();
-
-        //     // Nu se trimit notificari decat daca a fost trimisa comanda pe email catre transportator
-        //     $comanda->cronjob()->updateOrCreate(['comanda_id' => $comanda->id],['contract_trimis_pe_email_catre_transportator' => 1]);
-
-        //     return back()->with('status', 'Emailul către „' . $comanda->transportator->nume . '” a fost trimis cu succes!');
-        // } else {
-        //     return back()->with('error', 'Nu există un email valid!');
-        // }
     }
 }

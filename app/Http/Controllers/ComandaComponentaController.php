@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\ComandaComponenta;
 use App\Models\FisaCaz;
@@ -184,6 +186,10 @@ class ComandaComponentaController extends Controller
             }
         }
 
+        if ($fisaCaz->fisa_comanda_sosita == '1') {
+            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită');
+        }
+
         return redirect($request->session()->get('comandaComponenteReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost adăugată cu succes!');
     }
 
@@ -237,21 +243,23 @@ class ComandaComponentaController extends Controller
         // Stergerea comenzilorComponente ce nu mai sunt in array: array_column scoate doar coloana de id-uri, array_filter elimina din array valorile null (fara id)
         ComandaComponenta::where('fisa_caz_id', $fisaCaz->id)->whereNotIn('id', array_filter(array_column(($request->comenziComponente ?? []) , 'id')))->delete();
         // Adaugarea/modificarea comenzilorComponente din array
-        // if ($request->comenziComponente){
-            foreach(($request->comenziComponente ?? []) as $componenta) {
-                ComandaComponenta::updateOrCreate(
-                    [
-                        'id' => $componenta['id']
-                    ],
-                    [
-                        'fisa_caz_id' => $componenta['fisa_caz_id'],
-                        'producator' => $componenta['producator'],
-                        'cod_produs' => $componenta['cod_produs'],
-                        'bucati' => $componenta['bucati'],
-                    ]
-                );
-            }
-        // }
+        foreach(($request->comenziComponente ?? []) as $componenta) {
+            ComandaComponenta::updateOrCreate(
+                [
+                    'id' => $componenta['id']
+                ],
+                [
+                    'fisa_caz_id' => $componenta['fisa_caz_id'],
+                    'producator' => $componenta['producator'],
+                    'cod_produs' => $componenta['cod_produs'],
+                    'bucati' => $componenta['bucati'],
+                ]
+            );
+        }
+
+        if ($fisaCaz->wasChanged('fisa_comanda_sosita') && ($fisaCaz->fisa_comanda_sosita == '1')) {
+            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită');
+        }
 
         return redirect($request->session()->get('comandaComponenteReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost modificată cu succes!');
     }
@@ -313,5 +321,42 @@ class ComandaComponentaController extends Controller
                 'comenziComponente.*.bucati.between' => 'Câmpul Bucăți pentru componenta :position trebuie să fie între 1 și 999.',
             ]
         );
+    }
+
+    public function trimitePrinEmailCatreUtilizator(FisaCaz $fisaCaz, $tipEmail=null)
+    {
+        $validator = Validator::make(
+            [
+                'email_vanzari' => $fisaCaz->userVanzari->email ?? '',
+                'email_comercial' => $fisaCaz->userComercial->email ?? '',
+                'email_tehnic' => $fisaCaz->userTehnic->email ?? '',
+            ],
+            [
+                'email_vanzari' => 'email:rfc,dns',
+                'email_comercial' => 'email:rfc,dns',
+                'email_tehnic' => 'email:rfc,dns'
+            ]);
+        if ($validator->fails()) {
+            return;
+        }
+
+        $adreseEmail = [];
+        $fisaCaz->userVanzari->email ? array_push($adreseEmail, $fisaCaz->userVanzari->email) : '';
+        $fisaCaz->userComercial->email ? array_push($adreseEmail, $fisaCaz->userComercial->email) : '';
+        $fisaCaz->userTehnic->email ? array_push($adreseEmail, $fisaCaz->userTehnic->email) : '';
+
+        Mail::to($adreseEmail)
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, null, null));
+
+        $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
+            'referinta' => 1, // Fisa caz
+            'referinta_id' => $fisaCaz->id,
+            'referinta2' => null, // User
+            'referinta2_id' => null,
+            'tip' => 4, // comanda Sosita
+            'mesaj' => '',
+            'email' => implode(', ', $adreseEmail)
+        ]);
     }
 }

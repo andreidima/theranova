@@ -22,8 +22,23 @@
                 <form class="needs-validation" novalidate method="GET" action="{{ url()->current() }}">
                     @csrf
                     <div class="row mb-1 custom-search-form justify-content-center">
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <input type="text" class="form-control rounded-3" id="searchNume" name="searchNume" placeholder="Nume sau tel. pacient" value="{{ $searchNume }}">
+                        </div>
+                        <div class="col-lg-3">
+                            <select name="searchTipProteza" class="form-select bg-white rounded-3 {{ $errors->has('searchTipProteza') ? 'is-invalid' : '' }}">
+                                <option selected value="" style="color:white; background-color: gray;">Tip proteză</option>
+                                <option value="AK provizorie" {{ ($searchTipProteza == 'AK provizorie') ? 'selected' : '' }}>AK provizorie</option>
+                                <option value="AK definitivă" {{ ($searchTipProteza == 'AK definitivă') ? 'selected' : '' }}>AK definitivă</option>
+                                <option value="BK provizorie" {{ ($searchTipProteza == 'BK provizorie') ? 'selected' : '' }}>BK provizorie</option>
+                                <option value="BK definitivă" {{ ($searchTipProteza == 'BK definitivă') ? 'selected' : '' }}>BK definitivă</option>
+                                <option value="Modificări" {{ ($searchTipProteza == 'Modificări') ? 'selected' : '' }}>Modificări</option>
+                                <option value="PMS" {{ ($searchTipProteza == 'PMS') ? 'selected' : '' }}>PMS</option>
+                                <option value="PPP" {{ ($searchTipProteza == 'PPP') ? 'selected' : '' }}>PPP</option>
+                                <option value="Manșon" {{ ($searchTipProteza == 'Manșon') ? 'selected' : '' }}>Manșon</option>
+                                <option value="Proteză sân" {{ ($searchTipProteza == 'Proteză sân') ? 'selected' : '' }}>Proteză sân</option>
+                                <option value="Proteză sân+sutien" {{ ($searchTipProteza == 'Proteză sân+sutien') ? 'selected' : '' }}>Proteză sân+sutien</option>
+                            </select>
                         </div>
                         <div class="col-lg-6 d-flex align-items-center" id="datePicker">
                             <label for="searchInterval" class="pe-1">Interval protezare:</label>
@@ -245,12 +260,7 @@
                                         @if ($fisaCaz->userVanzari->email ?? null)
                                             @php
                                                 $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
-                                                $acronym = "";
-
-                                                foreach ($words as $w) {
-                                                    $acronym .= mb_substr($w, 0, 1);
-                                                }
-                                                // dd($fisaCaz);
+                                                $acronym = $words[0] . ' ' . mb_substr($words[1], 0, 1);
                                             @endphp
                                             V(<a href="#"
                                                 class="text-info" style="text-decoration: none;"
@@ -279,11 +289,7 @@
                                         @if ($fisaCaz->userComercial->email ?? null)
                                             @php
                                                 $words = explode(" ", ($fisaCaz->userComercial->name ?? ''));
-                                                $acronym = "";
-
-                                                foreach ($words as $w) {
-                                                    $acronym .= mb_substr($w, 0, 1);
-                                                }
+                                                $acronym = $words[0] . ' ' . mb_substr($words[1], 0, 1);
                                             @endphp
                                             C(<a href="#"
                                                 class="text-info" style="text-decoration: none;"
@@ -312,11 +318,7 @@
                                         @if ($fisaCaz->userTehnic->email ?? null)
                                             @php
                                                 $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
-                                                $acronym = "";
-
-                                                foreach ($words as $w) {
-                                                    $acronym .= mb_substr($w, 0, 1);
-                                                }
+                                                $acronym = $words[0] . ' ' . mb_substr($words[1], 0, 1);
                                             @endphp
                                             T(<a href="#"
                                                 class="text-info" style="text-decoration: none;"

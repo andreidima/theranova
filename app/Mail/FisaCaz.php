@@ -9,6 +9,8 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+use Illuminate\Mail\Mailables\Attachment;
+
 class FisaCaz extends Mailable
 {
     use Queueable, SerializesModels;
@@ -16,7 +18,7 @@ class FisaCaz extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public \App\Models\FisaCaz $fisaCaz, public $tipEmail, public $mesaj, public \App\Models\User $user)
+    public function __construct(public \App\Models\FisaCaz $fisaCaz, public $tipEmail, public $mesaj = null, public $userName = null)
     {
         //
     }
@@ -27,8 +29,8 @@ class FisaCaz extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: (($this->tipEmail == "fisaCaz") ? 'Fișă caz' : (($this->tipEmail == "oferta") ? 'Ofertă' : (($this->tipEmail == "comanda") ? 'Fișă comandă' : ''))) .
-            ' pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . ($this->fisaCaz->dateMedicale->first()->tip_proteza ?? ''),
+            subject: (($this->tipEmail == "fisaCaz") ? 'Fișă caz' : (($this->tipEmail == "oferta") ? 'Ofertă' : (($this->tipEmail == "comanda") ? 'Fișă comandă' : $this->tipEmail))) .
+            ' - pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . ($this->fisaCaz->dateMedicale->first()->tip_proteza ?? ''),
         );
     }
 
@@ -49,6 +51,32 @@ class FisaCaz extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $fisaCaz = $this->fisaCaz;
+
+        $arrayFisiere = [];
+
+        if (($this->tipEmail == "oferta") && ($fisaCaz->oferte->count() > 0)) {
+            foreach ($fisaCaz->oferte as $oferta) {
+                foreach ($oferta->fisiere as $fisier){
+                    array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                }
+            }
+        } elseif ($this->tipEmail == "Comanda sosită") {
+            if ($fisaCaz->fisiereComanda->count() > 0) {
+                foreach ($fisaCaz->fisiereComanda as $fisier) {
+                    array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                }
+            }
+
+            if ($fisaCaz->comenziComponente->count() > 0) {
+                $pdf = \PDF::loadView('comenziComponente.toate.export.comandaComponentePdf', compact('fisaCaz'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+
+                array_push($arrayFisiere, Attachment::fromData(fn () => $pdf->output(), 'Fișă comandă ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . '.pdf'));
+            }
+        }
+
+        return $arrayFisiere;
     }
 }

@@ -123,7 +123,6 @@ class FisaCaz extends Model
         return auth()->user()->hasRole("stergere");
     }
 
-
     public function emailuriFisaCaz(): HasMany
     {
         return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('tip', 1);
@@ -136,49 +135,4 @@ class FisaCaz extends Model
     {
         return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('tip', 3);
     }
-
-    // public function emailuriFisaCazUserVanzari(): HasMany
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_vanzari)->where('tip', 1);
-    // }
-
-    // public function emailuriFisaCazUserComercial()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Comercial->id ?? null)->where('tip', 1);
-    // }
-
-    // public function emailuriFisaCazUserTehnic()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Tehnic->id ?? null)->where('tip', 1);
-    // }
-
-    // public function emailuriOfertaUserVanzari()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Vanzari->id ?? null)->where('tip', 2);
-    // }
-
-    // public function emailuriOfertaUserComercial()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Comercial->id ?? null)->where('tip', 2);
-    // }
-
-    // public function emailuriOfertaUserTehnic()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Tehnic->id ?? null)->where('tip', 2);
-    // }
-
-    // public function emailuriComandaUserVanzari()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Vanzari->id ?? null)->where('tip', 3);
-    // }
-
-    // public function emailuriComandaUserComercial()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Comercial->id ?? null)->where('tip', 3);
-    // }
-
-    // public function emailuriComandaUserTehnic()
-    // {
-    //     return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('referinta2_id', $this->user_Tehnic->id ?? null)->where('tip', 3);
-    // }
 }

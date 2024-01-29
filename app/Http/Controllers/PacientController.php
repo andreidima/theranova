@@ -55,7 +55,9 @@ class PacientController extends Controller
     {
         $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
 
-        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
+        $useri = User::select('id', 'name', 'role')
+            ->where('id', '>', 1) // Andrei Dima
+            ->orderBy('name')->get();
 
         return view('pacienti.create', compact('useri'));
     }
@@ -109,7 +111,9 @@ class PacientController extends Controller
     {
         $request->session()->get('pacientReturnUrl') ?? $request->session()->put('pacientReturnUrl', url()->previous());
 
-        $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
+        $useri = User::select('id', 'name', 'role')
+            ->where('id', '>', 1) // Andrei Dima
+            ->orderBy('name')->get();
 
         return view('pacienti.edit', compact('pacient', 'useri'));
     }
