@@ -392,7 +392,7 @@ class FisaCazController extends Controller
         }
 
         $trimitereEmail = Mail::to($user->email)
-            // ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
             ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user->name));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
