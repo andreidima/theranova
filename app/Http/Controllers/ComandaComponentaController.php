@@ -341,9 +341,9 @@ class ComandaComponentaController extends Controller
         }
 
         $adreseEmail = [];
-        $fisaCaz->userVanzari->email ? array_push($adreseEmail, $fisaCaz->userVanzari->email) : '';
-        $fisaCaz->userComercial->email ? array_push($adreseEmail, $fisaCaz->userComercial->email) : '';
-        $fisaCaz->userTehnic->email ? array_push($adreseEmail, $fisaCaz->userTehnic->email) : '';
+        ($fisaCaz->userVanzari->email ?? null) ? array_push($adreseEmail, $fisaCaz->userVanzari->email) : '';
+        ($fisaCaz->userComercial->email ?? null) ? array_push($adreseEmail, $fisaCaz->userComercial->email) : '';
+        ($fisaCaz->userTehnic->email ?? null) ? array_push($adreseEmail, $fisaCaz->userTehnic->email) : '';
 
         Mail::to($adreseEmail)
             ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
