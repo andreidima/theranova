@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Support\Facades\Storage;
 
 class FisaCaz extends Mailable
 {
@@ -18,7 +19,12 @@ class FisaCaz extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public \App\Models\FisaCaz $fisaCaz, public $tipEmail, public $mesaj = null, public $userName = null)
+    public function __construct(
+        public \App\Models\FisaCaz $fisaCaz,
+        public $tipEmail,
+        public $mesaj = null,
+        // public $userName = null
+        )
     {
         //
     }
@@ -58,13 +64,18 @@ class FisaCaz extends Mailable
         if (($this->tipEmail == "oferta") && ($fisaCaz->oferte->count() > 0)) {
             foreach ($fisaCaz->oferte as $oferta) {
                 foreach ($oferta->fisiere as $fisier){
-                    array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                    if(Storage::exists($fisier->cale . '/' . $fisier->nume)) {
+                        array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                    }
                 }
             }
-        } elseif ($this->tipEmail == "Comanda sosită") {
+        }
+        elseif ($this->tipEmail == "Comanda sosită") {
             if ($fisaCaz->fisiereComanda->count() > 0) {
                 foreach ($fisaCaz->fisiereComanda as $fisier) {
-                    array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                    if(Storage::exists($fisier->cale . '/' . $fisier->nume)) {
+                        array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                    }
                 }
             }
 
@@ -73,7 +84,7 @@ class FisaCaz extends Mailable
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
 
-                array_push($arrayFisiere, Attachment::fromData(fn () => $pdf->output(), 'Fișă comandă ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . '.pdf'));
+                array_push($arrayFisiere, Attachment::fromData(fn () => $pdf->output(), 'Fisa comanda ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . '.pdf'));
             }
         }
 

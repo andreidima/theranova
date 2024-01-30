@@ -111,7 +111,8 @@
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Fișă măsuri</th>
-                            <th class="text-white culoare2 text-center">Stare</th>
+                            <th class="text-white culoare2 text-center"><i class="fa-solid fa-chart-simple"></i></th>
+                            <th class="text-white culoare2 text-center">Email</i></th>
                             <th class="text-white culoare2">Utilizator</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
@@ -237,27 +238,53 @@
                                             <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
                                         @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <div class="text-center">
-                                        <a href="{{ $fisaCaz->path() }}/stare/deschide" class="flex me-1" title="Deschisă">
+                                        <a href="{{ $fisaCaz->path() }}/stare/deschide" class="flex" title="Deschisă">
                                             <span class="badge {{ $fisaCaz->stare === 1 ? 'bg-success' : 'bg-light text-dark' }}">
                                                 <i class="fa-solid fa-lock-open fa-1x"></i>
                                             </span></a>
                                         <br>
-                                        <a href="{{ $fisaCaz->path() }}/stare/inchide" class="flex me-1" title="Închisă">
+                                        <a href="{{ $fisaCaz->path() }}/stare/inchide" class="flex" title="Închisă">
                                             <span class="badge {{ $fisaCaz->stare === 2 ? 'bg-dark' : 'bg-white text-dark' }}">
                                                 <i class="fa-solid fa-lock fa-1x"></i>
                                             </span></a>
                                         <br>
-                                        <a href="{{ $fisaCaz->path() }}/stare/anuleaza" class="flex me-1" title="Anulată">
+                                        <a href="{{ $fisaCaz->path() }}/stare/anuleaza" class="flex" title="Anulată">
                                             <span class="badge {{ $fisaCaz->stare === 3 ? 'bg-danger' : 'bg-light text-dark' }}">
                                                 <i class="fa-solid fa-ban fa-1x"></i>
                                             </span></a>
                                     </div>
                                 </td>
+                                <td class="text-center">
+                                    <div style="white-space: nowrap;">
+                                        <a href="#"
+                                            class="text-info" style="text-decoration: none;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_fisaCaz"
+                                            title="trimite Fișa Caz prin email către utilizatori"
+                                            ><span class="badge bg-success text-white">FisaCaz ({{ $fisaCaz->emailuriFisaCaz->count() }})</span></a>
+                                    </div>
+                                    <div style="white-space: nowrap;">
+                                        <a href="#"
+                                            class="text-info" style="text-decoration: none;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_oferta"
+                                            title="trimite Oferta prin email către utilizatori"
+                                            ><span class="badge bg-primary text-white">Oferta ({{ $fisaCaz->emailuriOferta->count() }})</span></a>
+                                    </div>
+                                    <div style="white-space: nowrap;">
+                                        <a href="#"
+                                            class="text-info" style="text-decoration: none;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_comanda"
+                                            title="trimite Comanda prin email către utilizatori"
+                                            ><span class="badge bg-warning text-dark">Comanda ({{ $fisaCaz->emailuriComanda->count() }})</span></a>
+                                    </div>
+                                </td>
                                 <td class="">
                                     <div style="white-space: nowrap;">
-                                        @if ($fisaCaz->userVanzari->email ?? null)
+                                        {{-- @if ($fisaCaz->userVanzari->email ?? null)
                                             @php
                                                 $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
                                                 $acronym = $words[0] . ' ' . mb_substr($words[1], 0, 1);
@@ -283,10 +310,15 @@
                                             </span>
                                         @else
                                             V:
-                                        @endif
+                                        @endif --}}
+                                        @php
+                                            $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
+                                            $acronym = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+                                        @endphp
+                                        V: {{ $acronym ?? '' }}
                                     </div>
                                     <div style="white-space: nowrap;">
-                                        @if ($fisaCaz->userComercial->email ?? null)
+                                        {{-- @if ($fisaCaz->userComercial->email ?? null)
                                             @php
                                                 $words = explode(" ", ($fisaCaz->userComercial->name ?? ''));
                                                 $acronym = $words[0] . ' ' . mb_substr($words[1], 0, 1);
@@ -312,10 +344,15 @@
                                             </span>
                                         @else
                                             C:
-                                        @endif
+                                        @endif --}}
+                                        @php
+                                            $words = explode(" ", ($fisaCaz->userComercial->name ?? ''));
+                                            $acronym = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+                                        @endphp
+                                        C: {{ $acronym ?? '' }}
                                     </div>
                                     <div style="white-space: nowrap;">
-                                        @if ($fisaCaz->userTehnic->email ?? null)
+                                        {{-- @if ($fisaCaz->userTehnic->email ?? null)
                                             @php
                                                 $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
                                                 $acronym = $words[0] . ' ' . mb_substr($words[1], 0, 1);
@@ -341,7 +378,12 @@
                                             </span>
                                         @else
                                             T:
-                                        @endif
+                                        @endif --}}
+                                        @php
+                                            $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
+                                            $acronym = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+                                        @endphp
+                                        T: {{ $acronym ?? '' }}
                                     </div>
                                 </td>
                                 <td>
@@ -532,6 +574,41 @@
 
     {{-- Modalele pentru trimitere Fisa Caz prin email catre utilizator --}}
     @foreach ($fiseCaz as $fisaCaz)
+        @foreach (['fisaCaz', 'oferta', 'comanda'] as $tipEmail)
+            <div class="modal fade text-dark" id="trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_{{ $tipEmail }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form method="POST" action="{{ $fisaCaz->path() }}/trimite-email-catre-utilizatori/{{ $tipEmail }}">
+                        @csrf
+
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning">
+                                <h5 class="modal-title text-dark" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                                <button type="button" class="btn-close bg-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="text-align:left;">
+                                Trimite email <b>{{ $tipEmail }}</b>.</b>
+                                <br>
+                                <br>
+                                <label for="mesaj" class="form-label mb-0 ps-3">Mesaj</label>
+                                <textarea class="form-control bg-white {{ $errors->has('mesaj') ? 'is-invalid' : '' }}"
+                                    name="mesaj" rows="3">{{ old('mesaj') }}</textarea>
+                                <small class="m-0 ps-3">
+                                    * Completează doar dacă vrei să mai adaugi ceva la emailul standard.
+                                </small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                                <button type="submit" class="btn btn-primary">Trimite email</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endforeach
+    @endforeach
+
+    {{-- Modalele pentru trimitere Fisa Caz prin email catre utilizator --}}
+    {{-- @foreach ($fiseCaz as $fisaCaz)
         @php
             $useriIds = [];
             ($fisaCaz->userVanzari->email ?? null) ? array_push($useriIds, $fisaCaz->userVanzari->id) : '';
@@ -571,6 +648,6 @@
                 </div>
             @endforeach
         @endforeach
-    @endforeach
+    @endforeach --}}
 
 @endsection

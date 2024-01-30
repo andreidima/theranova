@@ -376,35 +376,72 @@ class FisaCazController extends Controller
         return back()->with('status', 'Fișa măsuri pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost încărcată cu succes!');
     }
 
-    public function trimitePrinEmailCatreUtilizator(Request $request, FisaCaz $fisaCaz, $tipEmail=null, User $user)
+    // public function trimitePrinEmailCatreUtilizator(Request $request, FisaCaz $fisaCaz, $tipEmail=null, User $user)
+    // {
+    //     $validator = Validator::make(
+    //         [
+    //             'mesaj' => $request->mesaj,
+    //             'email' => $user->email,
+    //         ],
+    //         [
+    //             'mesaj' => 'nullable|max:2000',
+    //             'email' => 'email:rfc,dns'
+    //         ]);
+    //     if ($validator->fails()) {
+    //         return back()->withErrors($validator)->withInput();
+    //     }
+
+    //     $trimitereEmail = Mail::to($user->email)
+    //         ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+    //         ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user->name));
+
+    //     $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
+    //         'referinta' => 1, // Fisa caz
+    //         'referinta_id' => $fisaCaz->id,
+    //         'referinta2' => 1, // User
+    //         'referinta2_id' => $user->id,
+    //         'tip' => (($tipEmail == "fisaCaz") ? '1' : (($tipEmail == "oferta") ? '2' : (($tipEmail == "comanda") ? '3' : ''))),
+    //         'mesaj' => $request->mesaj,
+    //         'email' => $user->email
+    //     ]);
+
+    //     return back()->with('status',' Emailul către ' . $user->name . ' a fost trimis cu succes.');
+    // }
+
+    public function trimitePrinEmailCatreUtilizatori(Request $request, FisaCaz $fisaCaz, $tipEmail=null)
     {
         $validator = Validator::make(
             [
                 'mesaj' => $request->mesaj,
-                'email' => $user->email,
             ],
             [
                 'mesaj' => 'nullable|max:2000',
-                'email' => 'email:rfc,dns'
             ]);
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        $trimitereEmail = Mail::to($user->email)
+        $usersEmails = [];
+        ($fisaCaz->userVanzari->email ?? null) ? array_push($usersEmails, $fisaCaz->userVanzari->email) : '';
+        ($fisaCaz->userComercial->email ?? null) ? array_push($usersEmails, $fisaCaz->userComercial->email) : '';
+        ($fisaCaz->userTehnic->email ?? null) ? array_push($usersEmails, $fisaCaz->userTehnic->email) : '';
+
+        if (count($usersEmails) == 0){
+            return back()->with('error', 'Nu există adrese de email către care să se trimită mesajul');
+        }
+// dd($fisaCaz, $tipEmail, $usersEmails, $request->mesaj);
+        $trimitereEmail = Mail::to($usersEmails)
             ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
-            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user->name));
+            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
             'referinta' => 1, // Fisa caz
             'referinta_id' => $fisaCaz->id,
-            'referinta2' => 1, // Fisa caz
-            'referinta2_id' => $user->id,
             'tip' => (($tipEmail == "fisaCaz") ? '1' : (($tipEmail == "oferta") ? '2' : (($tipEmail == "comanda") ? '3' : ''))),
             'mesaj' => $request->mesaj,
-            'email' => $user->email
+            'email' => implode(', ', $usersEmails)
         ]);
 
-        return back()->with('status',' Emailul către ' . $user->name . ' a fost trimis cu succes.');
+        return back()->with('status',' Emailul a fost trimis cu succes.');
     }
 }

@@ -4,7 +4,8 @@
         @include ('emailuri.headerFooter.header')
 
         <div style="padding:20px 20px; max-width:760px!important;margin:0 auto; font-size:18px">
-            Bună {{ $userName ?? '' }},
+            {{-- Bună {{ $userName ?? '' }}, --}}
+            Bună,
 
             <br><br>
 
