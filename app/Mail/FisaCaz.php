@@ -70,7 +70,7 @@ class FisaCaz extends Mailable
                 }
             }
         }
-        elseif ($this->tipEmail == "Comanda sosită") {
+        elseif ($this->tipEmail == "comanda") {
             if ($fisaCaz->fisiereComanda->count() > 0) {
                 foreach ($fisaCaz->fisiereComanda as $fisier) {
                     if(Storage::exists($fisier->cale . '/' . $fisier->nume)) {
