@@ -7,6 +7,7 @@ use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FisierController;
 use App\Http\Controllers\ComandaComponentaController;
+use App\Http\Controllers\CronJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
+
+    Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteEmail']);
 
     // de sters 01.02.2024
     // Route::get('/actualizeaza-date', function (){
