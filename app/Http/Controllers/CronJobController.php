@@ -25,7 +25,11 @@ class CronJobController extends Controller
                     $query->where('tip_proteza', 'AK provizorie');
                 })
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(8))
-                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9));
+                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9))
+                ->where(function ($query) {
+                    $query->whereNull('stare')
+                        ->orWhere('stare', 1);
+                });
             })
             ->orWhere(function ($query) {
                 $query->whereDoesntHave('emailReminderBKProvizorie')
@@ -33,7 +37,11 @@ class CronJobController extends Controller
                     $query->where('tip_proteza', 'BK provizorie');
                 })
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(5))
-                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6));
+                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6))
+                ->where(function ($query) {
+                    $query->whereNull('stare')
+                        ->orWhere('stare', 1);
+                });
             })
             ->orderBy('protezare')
             ->get();
