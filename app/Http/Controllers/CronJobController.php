@@ -55,7 +55,7 @@ class CronJobController extends Controller
             echo ' - ';
             echo $fisaCaz->dateMedicale()->first()->tip_proteza ?? null;
             echo '<br><br>';
-// dd('stop');
+
             $adreseEmail = [];
             ($fisaCaz->userVanzari->email ?? null) ? array_push($adreseEmail, $fisaCaz->userVanzari->email) : '';
             ($fisaCaz->userComercial->email ?? null) ? array_push($adreseEmail, $fisaCaz->userComercial->email) : '';
