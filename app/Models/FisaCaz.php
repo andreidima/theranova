@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class FisaCaz extends Model
 {
@@ -134,5 +135,13 @@ class FisaCaz extends Model
     public function emailuriComanda(): HasMany
     {
         return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('tip', 3);
+    }
+    public function emailReminderAKProvizorie(): HasOne
+    {
+        return $this->hasOne(MesajTrimisEmail::class, 'referinta_id')->where('tip', 5);
+    }
+    public function emailReminderBKProvizorie(): HasOne
+    {
+        return $this->hasOne(MesajTrimisEmail::class, 'referinta_id')->where('tip', 6);
     }
 }

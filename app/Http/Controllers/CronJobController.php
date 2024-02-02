@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\FisaCaz;
 
@@ -14,10 +16,64 @@ class CronJobController extends Controller
             echo 'Cheia pentru Cron Joburi este incorectă!';
             return ;
         }
-        // if ($key !== \Config::get('variabile.cron_job_key')){
-        //     echo 'Cheia pentru Cron Joburi nu este corectă!';
-        //     return ;
-        // }
-        // $cron = DB::table('users')->get();
+
+        // Mail reminder pentru 'AK provizorie', dupa 8 luni.
+        $fiseCaz = FisaCaz::with('dateMedicale', 'userVanzari', 'userComercial', 'userTehnic')
+            ->where(function ($query) {
+                $query->whereDoesntHave('emailReminderAKProvizorie')
+                ->whereHas('dateMedicale', function($query){
+                    $query->where('tip_proteza', 'AK provizorie');
+                })
+                ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(8))
+                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9));
+            })
+            ->orWhere(function ($query) {
+                $query->whereDoesntHave('emailReminderBKProvizorie')
+                ->whereHas('dateMedicale', function($query){
+                    $query->where('tip_proteza', 'BK provizorie');
+                })
+                ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(5))
+                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6));
+            })
+            ->orderBy('protezare')
+            ->get();
+
+        foreach ($fiseCaz as $fisaCaz){
+            echo $fisaCaz->id;
+            echo '. ';
+            echo $fisaCaz->protezare;
+            echo ' - ';
+            echo $fisaCaz->pacient->nume ?? null;
+            echo ' - ';
+            echo $fisaCaz->dateMedicale()->first()->tip_proteza ?? null;
+            echo '<br><br>';
+// dd('stop');
+            $adreseEmail = [];
+            ($fisaCaz->userVanzari->email ?? null) ? array_push($adreseEmail, $fisaCaz->userVanzari->email) : '';
+            ($fisaCaz->userComercial->email ?? null) ? array_push($adreseEmail, $fisaCaz->userComercial->email) : '';
+            ($fisaCaz->userTehnic->email ?? null) ? array_push($adreseEmail, $fisaCaz->userTehnic->email) : '';
+
+            if (count($adreseEmail) === 0){
+                return ;
+            }
+
+            $tip_proteza = $fisaCaz->dateMedicale->first()->tip_proteza ?? null;
+
+            // Mail::to($adreseEmail)
+            //     ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+            //     ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, null, null));
+            // Mail::to(['danatudorache@theranova.ro'])
+            //     ->send(new \App\Mail\FisaCazReminder($fisaCaz, $tip_proteza));
+
+            $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
+                'referinta' => 1, // Fisa caz
+                'referinta_id' => $fisaCaz->id,
+                'referinta2' => null, // User
+                'referinta2_id' => null,
+                'tip' => ($tip_proteza == "AK provizorie") ? 5 : (($tip_proteza == "BK provizorie") ? 6 : null) , // reminder AK provizorie
+                'mesaj' => '',
+                'email' => implode(', ', $adreseEmail)
+            ]);
+        }
     }
 }
