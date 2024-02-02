@@ -26,6 +26,8 @@ Route::get('/asteptare-aprobare', [RegisterController::class, 'register']);
 
 Route::redirect('/', '/acasa');
 
+Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteEmail']);
+
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
 
@@ -51,8 +53,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
-
-    Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteEmail']);
 
     // de sters 01.02.2024
     // Route::get('/actualizeaza-date', function (){
