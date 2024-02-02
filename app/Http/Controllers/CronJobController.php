@@ -62,7 +62,7 @@ class CronJobController extends Controller
             // Mail::to($adreseEmail)
             //     ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
             //     ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, null, null));
-            Mail::to(['danatudorache@theranova.ro'])
+            Mail::to(['andrei.dima@usm.ro'])
                 ->send(new \App\Mail\FisaCazReminder($fisaCaz, $tip_proteza));
 
             $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
