@@ -23,6 +23,7 @@ class PacientController extends Controller
         $searchNume = $request->searchNume;
         $searchPrenume = $request->searchPrenume;
         $searchTelefon = $request->searchTelefon;
+        $searchResponsabil = $request->searchResponsabil;
 
         $pacienti = Pacient::with('responsabil')
             ->when($searchNume, function ($query, $searchNume) {
@@ -40,10 +41,17 @@ class PacientController extends Controller
             ->when($searchTelefon, function ($query, $searchTelefon) {
                 return $query->where('telefon', 'like', '%' . $searchTelefon . '%');
             })
+            ->when($searchResponsabil, function ($query, $searchResponsabil) {
+                return $query->where('user_responsabil', $searchResponsabil);
+            })
             ->latest()
             ->simplePaginate(25);
 
-        return view('pacienti.index', compact('pacienti', 'searchNume', 'searchPrenume', 'searchTelefon'));
+        $useri = User::select('id', 'name', 'role')
+            ->where('id', '>', 1) // Andrei Dima
+            ->orderBy('name')->get();
+
+        return view('pacienti.index', compact('pacienti', 'searchNume', 'searchPrenume', 'searchTelefon', 'searchResponsabil', 'useri'));
     }
 
     /**

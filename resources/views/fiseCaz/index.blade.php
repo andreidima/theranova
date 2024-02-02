@@ -111,7 +111,12 @@
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Fișă măsuri</th>
-                            <th class="text-white culoare2 text-center"><i class="fa-solid fa-chart-simple"></i></th>
+
+                            {{-- Pot schimba starea doar Andrei, Dana si Adrian Ples --}}
+                            @if (in_array((auth()->user()->id ?? null), [1,2,72]))
+                                <th class="text-white culoare2 text-center"><i class="fa-solid fa-chart-simple"></i></th>
+                            @endif
+
                             <th class="text-white culoare2 text-center">Email</i></th>
                             <th class="text-white culoare2">Utilizator</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
@@ -238,13 +243,38 @@
                                             <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
                                         @endif
                                 </td>
+                                {{-- Pot schimba starea doar Andrei, Dana si Adrian Ples --}}
+                                @if (in_array((auth()->user()->id ?? null), [1,2,72]))
                                 <td class="text-center">
                                     <div class="text-center">
-                                        <a href="{{ $fisaCaz->path() }}/stare/deschide" class="flex" title="Deschisă">
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stareDeschide{{ $fisaCaz->id }}"
+                                            >
                                             <span class="badge {{ $fisaCaz->stare === 1 ? 'bg-success' : 'bg-light text-dark' }}">
                                                 <i class="fa-solid fa-lock-open fa-1x"></i>
                                             </span></a>
                                         <br>
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stareInchide{{ $fisaCaz->id }}"
+                                            >
+                                            <span class="badge {{ $fisaCaz->stare === 2 ? 'bg-dark' : 'bg-white text-dark' }}">
+                                                <i class="fa-solid fa-lock fa-1x"></i>
+                                            </span></a>
+                                        <br>
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stareAnuleaza{{ $fisaCaz->id }}"
+                                            >
+                                            <span class="badge {{ $fisaCaz->stare === 3 ? 'bg-danger' : 'bg-light text-dark' }}">
+                                                <i class="fa-solid fa-ban fa-1x"></i>
+                                            </span></a>
+                                        {{-- <a href="{{ $fisaCaz->path() }}/stare/deschide" class="flex" title="Deschisă">
+                                            <span class="badge {{ $fisaCaz->stare === 1 ? 'bg-success' : 'bg-light text-dark' }}">
+                                                <i class="fa-solid fa-lock-open fa-1x"></i>
+                                            </span></a> --}}
+                                        {{-- <br>
                                         <a href="{{ $fisaCaz->path() }}/stare/inchide" class="flex" title="Închisă">
                                             <span class="badge {{ $fisaCaz->stare === 2 ? 'bg-dark' : 'bg-white text-dark' }}">
                                                 <i class="fa-solid fa-lock fa-1x"></i>
@@ -253,9 +283,10 @@
                                         <a href="{{ $fisaCaz->path() }}/stare/anuleaza" class="flex" title="Anulată">
                                             <span class="badge {{ $fisaCaz->stare === 3 ? 'bg-danger' : 'bg-light text-dark' }}">
                                                 <i class="fa-solid fa-ban fa-1x"></i>
-                                            </span></a>
+                                            </span></a> --}}
                                     </div>
                                 </td>
+                                @endif
                                 <td class="text-center">
                                     <div style="white-space: nowrap;">
                                         <a href="#"
@@ -649,5 +680,60 @@
             @endforeach
         @endforeach
     @endforeach --}}
+
+    {{-- Modalele pentru schimbare stare --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        <div class="modal fade text-dark" id="stareDeschide{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-success">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="text-align:left;">
+                        Deschide stare fișă
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                        <a href="{{ $fisaCaz->path() }}/stare/deschide" class="btn btn-success" title="Deschisă">Deschide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade text-dark" id="stareInchide{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-success">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="text-align:left;">
+                        Închide stare fișă
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                        <a href="{{ $fisaCaz->path() }}/stare/inchide" class="btn btn-dark" title="Deschisă">Închide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade text-dark" id="stareAnuleaza{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-success">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="text-align:left;">
+                        Anulează stare fișă
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                        <a href="{{ $fisaCaz->path() }}/stare/anuleaza" class="btn btn-danger" title="Deschisă">Anulează</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 
 @endsection

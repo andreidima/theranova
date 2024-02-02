@@ -31,6 +31,14 @@
                         <div class="col-lg-4">
                             <input type="text" class="form-control rounded-3" id="searchTelefon" name="searchTelefon" placeholder="Telefon" value="{{ $searchTelefon }}">
                         </div>
+                        <div class="col-lg-4">
+                            <select name="searchResponsabil" class="form-select bg-white rounded-3 {{ $errors->has('searchResponsabil') ? 'is-invalid' : '' }}">
+                                <option selected value="" style="color:white; background-color: gray;">Responsabil</option>
+                                @foreach ($useri as $user)
+                                    <option value="{{ $user->id }}" {{ ($user->id === intval($searchResponsabil)) ? 'selected' : '' }}>{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="row custom-search-form justify-content-center">
                         <button class="btn btn-sm btn-primary text-white col-md-4 me-3 border border-dark rounded-3" type="submit">
