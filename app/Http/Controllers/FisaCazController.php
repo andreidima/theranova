@@ -444,4 +444,12 @@ class FisaCazController extends Controller
 
         return back()->with('status',' Emailul a fost trimis cu succes.');
     }
+
+    public function contractPdf(Request $request, FisaCaz $fisaCaz)
+    {
+        $pdf = \PDF::loadView('fiseCaz.export.contractPdf', compact('fisaCaz'))
+            ->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->set_option("enable_php", true);
+        return $pdf->stream();
+    }
 }

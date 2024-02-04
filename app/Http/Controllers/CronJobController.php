@@ -47,14 +47,14 @@ class CronJobController extends Controller
             ->get();
 
         foreach ($fiseCaz as $fisaCaz){
-            echo $fisaCaz->id;
-            echo '. ';
-            echo $fisaCaz->protezare;
-            echo ' - ';
-            echo $fisaCaz->pacient->nume ?? null;
-            echo ' - ';
-            echo $fisaCaz->dateMedicale()->first()->tip_proteza ?? null;
-            echo '<br><br>';
+            // echo $fisaCaz->id;
+            // echo '. ';
+            // echo $fisaCaz->protezare;
+            // echo ' - ';
+            // echo $fisaCaz->pacient->nume ?? null;
+            // echo ' - ';
+            // echo $fisaCaz->dateMedicale()->first()->tip_proteza ?? null;
+            // echo '<br><br>';
 
             $adreseEmail = [];
             ($fisaCaz->userVanzari->email ?? null) ? array_push($adreseEmail, $fisaCaz->userVanzari->email) : '';

@@ -419,6 +419,11 @@
                                 </td>
                                 <td>
                                     <div class="text-end">
+
+                                        <a href="{{ $fisaCaz->path() }}/export/contract-pdf" class="flex">
+                                            <span class="badge bg-success">Contract</span></a>
+                                        <br>
+
                                         <a href="{{ $fisaCaz->path() }}" class="flex">
                                             <span class="badge bg-success">Vizualizează</span></a>
                                         <br>

@@ -91,6 +91,16 @@ class FisaCaz extends Model
     }
 
     /**
+     * Get ofertaAcceptata for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ofertaAcceptata(): HasOne
+    {
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', 1);
+    }
+
+    /**
      * Get all of the fisiereComanda for the FisaCaz
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
