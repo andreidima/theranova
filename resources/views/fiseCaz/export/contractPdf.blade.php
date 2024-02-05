@@ -29,9 +29,9 @@
             font-size: 12px;
             /* margin-top: 1cm; */
             margin-top: 4cm;
-            margin-left: 1.5cm;
-            margin-right: 1.5cm;
-            margin-bottom: 1.5cm;
+            margin-left: 2cm;
+            margin-right: 2cm;
+            margin-bottom: 2cm;
         }
 
         * {
@@ -78,7 +78,10 @@
         <img src="{{ asset('images/logo2-400x103.jpg') }}" width="400px">
     </header>
 
-    <main>
+    <main style="
+            background-image: url('{{ asset('images/contractBackground.jpg') }}');
+            background-size: 100%;
+            background-repeat: no-repeat;">
 
         {{-- <div style="page-break-after: always"> --}}
         <p style="font-size:150%; text-align: center;">CONTRACT DE PRESTĂRI SERVICII</p>
@@ -99,7 +102,7 @@
 
 
         <p>
-            <b>3. Durata contractului</b> se stabilește de comun acord cu beneficiarul.</p>
+            <b>3. Durata contractului</b> se stabilește de comun acord cu beneficiarul.
             <br>
             <b>3.1.</b> Durata contractului poate fi prelungită prin act adiţional, cu acordul părţilor.
         </p>
@@ -122,11 +125,9 @@
         <br>
         Nota de comandă este un document semnat şi transmis furnizorului de servicii de protezare/ortezare de către beneficiar,  în concordanţă cu informaţiile din cuprinsul ofertei de preţ. Transmiterea notei de comandă reprezintă acordul de voinţă al beneficiarului cu privire la contractarea serviciilor furnizorului de proteze/orteze. Nota de comandă reprezintă parte integrantă a ofertei de preț - <b>anexa nr. 2</b>.
         <br>
-        <br>
         <b>5.3. Completarea fişei individuale de măsurători</b>
         <br>
         În baza notei de comandă transmise de către beneficiar se efectuează măsurători în vederea completării datelor tehnice necesare confecţionării protezei provizorii sau definitive. Fişa individuală de măsurători este parte integrantă a prezentului contract - <b>anexa nr. 3</b>.
-        <br>
         <br>
         <b>5.4. Condiţii de plată</b>
         <br>
@@ -143,7 +144,6 @@
         sau  la
         <br>
         Banca Transilvania Sucursala Oradea, cont  <b>IBAN RON: RO71BTRL00501202765924XX</b>
-        <br>
         <br>
         <b>5.5. Predarea/primirea dispozitivelor medicale</b>
         <br>
@@ -270,10 +270,11 @@
 
         Prezentul act se incheie in 2 exemplare, cate unul de fiecare parte.
 
+        <div style="page-break-after: always"></div>
         <br>
         <br>
         <b>*) Anexele la contract:</b>
-        <br>
+        <br><br>
         nota de informare si acord prelucrare date personale - anexa nr. 1
         <br>
         ofertă de preţ - anexa nr. 2
@@ -295,7 +296,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         Semnătura ......................................................
 
-        <br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br>
 
         <table style="text-align: center">
             <tr>
@@ -313,14 +314,17 @@
             </tr>
         </table>
 
-        <br><br>
+        <br><br><br>
 
         Data: ......................................................
         <br><br>
         Localitatea: ......................................................
+        <br><br><br><br><br><br><br><br><br><br>
+    </main>
 
-        <div style="page-break-after: always"></div>
+    <div style="page-break-after: always"></div>
 
+    <main style="">
         <b>ANEXA NR. 1</b>
         <br>
         <p style="text-align: center;">
@@ -368,7 +372,7 @@
             <li>De asemenea, datele persoanei vizate pot fi prelucrate si pe durata existentei unei obligatii legale pentru pastrarea datelor dumneavoastra, respectiv pe durata de existenta a unui alt temei justificativ legal, in conformitate cu exigentele art. 5 din Regulamentul General UE privind protectia datelor.</li>
         </ul>
         <p>Datele de contact ale responsabilului cu protectia datelor:____________</p>
-        <p>Subsemnatul /a__________________________, avand urmatoarele date de identificare________________, <b>arat ca am citit si inteles pe deplin continutul informarii de mai sus si sunt de acord in totalitate cu prelucrarea datelor mele personale astfel cum rezulta din Nota de informare de mai sus.</b></p>
+        <p>Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare <b>{{ ($fisaCaz->pacient->serie_numar_buletin ?? '') }}</b>, <b>arat ca am citit si inteles pe deplin continutul informarii de mai sus si sunt de acord in totalitate cu prelucrarea datelor mele personale astfel cum rezulta din Nota de informare de mai sus.</b></p>
         <table>
             <tr>
                 <td style="width: 80%">Data:</td>
@@ -379,7 +383,7 @@
 
         <p style="text-align: center;"><b>DECLARATIE DE CONSIMTAMANT</b></p>
         <br>
-        <p>Subsemnatul /a__________________________, avand urmatoarele date de identificare________________,  <b>imi exprim consimtamantul in mod expres pentru publicarea/postarea in mediul on-line in vederea promovarii serviciilor incluse in obiectul de activitate al THERANOVA PROTEZARE, cu scop de marketing, publicitate, promovare si arat ca sunt de acord cu publicarea fotografiilor si filmarilor in orice format continand imaginea subsemnatului pe pagini /platforme on-line (Facebook, Instagram, etc ) detinute /administrate de THERANOVA PROTEZARE. Prezentul consimtamant este valabil pana la revocarea expresa a acestuia prin Notificarea scrisa a THERANOVA PROTEZARE.</b></p>
+        <p>Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare <b>{{ ($fisaCaz->pacient->serie_numar_buletin ?? '') }}</b>,  <b>imi exprim consimtamantul in mod expres pentru publicarea/postarea in mediul on-line in vederea promovarii serviciilor incluse in obiectul de activitate al THERANOVA PROTEZARE, cu scop de marketing, publicitate, promovare si arat ca sunt de acord cu publicarea fotografiilor si filmarilor in orice format continand imaginea subsemnatului pe pagini /platforme on-line (Facebook, Instagram, etc ) detinute /administrate de THERANOVA PROTEZARE. Prezentul consimtamant este valabil pana la revocarea expresa a acestuia prin Notificarea scrisa a THERANOVA PROTEZARE.</b></p>
         <table>
             <tr>
                 <td style="width: 80%">Data:</td>
@@ -400,7 +404,7 @@
                 $font = $fontMetrics->getFont("helvetica");
                 $width = $fontMetrics->get_text_width($text, $font, $size) / 2;
                 $x = ($pdf->get_width() - $width) / 2;
-                $y = $pdf->get_height() - 20;
+                $y = $pdf->get_height() - 30;
                 $pdf->page_text($x, $y, $text, $font, $size);
             }
         </script>

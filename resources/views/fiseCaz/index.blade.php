@@ -419,11 +419,6 @@
                                 </td>
                                 <td>
                                     <div class="text-end">
-
-                                        <a href="{{ $fisaCaz->path() }}/export/contract-pdf" class="flex">
-                                            <span class="badge bg-success">Contract</span></a>
-                                        <br>
-
                                         <a href="{{ $fisaCaz->path() }}" class="flex">
                                             <span class="badge bg-success">Vizualizează</span></a>
                                         <br>
@@ -438,6 +433,10 @@
                                                 >
                                                 <span class="badge bg-danger">Șterge</span></a>
                                         @endif
+                                        <br>
+                                        <a href="{{ $fisaCaz->path() }}/export/contract-pdf" target="_blank" class="flex">
+                                            <span class="badge bg-warning text-dark">Contract</span></a>
+                                        <br>
                                     </div>
                                 </td>
                             </tr>

@@ -17,7 +17,7 @@ class CronJobController extends Controller
             return ;
         }
 
-        // Mail reminder pentru 'AK provizorie', dupa 8 luni.
+        // Mail reminder pentru 'AK provizorie', dupa 8 luni / 'BK provizorie', dupa 5 luni
         $fiseCaz = FisaCaz::with('dateMedicale', 'userVanzari', 'userComercial', 'userTehnic')
             ->where(function ($query) {
                 $query->whereDoesntHave('emailReminderAKProvizorie')
