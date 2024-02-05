@@ -47,7 +47,7 @@ class OfertaController extends Controller
     public function store(Request $request, FisaCaz $fisaCaz)
     {
         $this->validateRequest($request);
-        $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier'])));
+        $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier', 'date'])));
 
         if ($request->file('fisier')) {
             $fisier = $request->file('fisier');
@@ -110,7 +110,7 @@ class OfertaController extends Controller
     public function update(Request $request, FisaCaz $fisaCaz, Oferta $oferta)
     {
         $this->validateRequest($request);
-        $oferta->update($request->except(['fisier']));
+        $oferta->update($request->except(['fisier', 'date']));
 
         // Daca exista fisier in request, se sterge vechiul fisier si se salveaza cel de acum
         if ($request->file('fisier')) {
@@ -210,7 +210,9 @@ class OfertaController extends Controller
                     File::types(['pdf', 'jpg'])
                         // ->min(1024)
                         ->max(30 * 1024),
-                        ]
+                ],
+                'contract_nr' => 'nullable|max:200',
+                'contract_data' => '',
             ],
             [
             ]

@@ -60,6 +60,30 @@
                     name="observatii" rows="3">{{ old('observatii', $oferta->observatii) }}</textarea>
             </div>
         </div>
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
+        {{-- <div class="row"> --}}
+            <div class="col-lg-3 mb-4">
+                <label for="contract_nr" class="mb-0 ps-3">Contract nr.</label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('contract_nr') ? 'is-invalid' : '' }}"
+                    name="contract_nr"
+                    placeholder=""
+                    value="{{ old('contract_nr', $oferta->contract_nr) }}"
+                    required>
+            </div>
+            <div class="col-lg-3 mb-4" id="datePicker">
+                <label for="contract_data" class="mb-0 ps-3">Contract data</label>
+                <vue-datepicker-next
+                    data-veche="{{ old('contract_data', $oferta->contract_data ?? null) }}"
+                    nume-camp-db="contract_data"
+                    tip="date"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    :latime="{ width: '125px' }"
+                ></vue-datepicker-next>
+            </div>
+        </div>
         <div class="row pt-3">
             <div class="col-lg-12 mb-0 d-flex justify-content-center">
                 <button type="submit" ref="submit" class="btn btn-lg btn-primary text-white me-3 rounded-3">{{ $buttonText }}</button>

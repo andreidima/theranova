@@ -1,3 +1,7 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 <!DOCTYPE  html>
 <html lang="ro">
 
@@ -5,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Comanda componente</title>
+    <title>Contract</title>
     <style>
         /* html {
             margin: 0px 0px;
@@ -85,7 +89,10 @@
 
         {{-- <div style="page-break-after: always"> --}}
         <p style="font-size:150%; text-align: center;">CONTRACT DE PRESTĂRI SERVICII</p>
-        <p style="font-size:120%; text-align: center;">Nr. ________ din data de _________________</p>
+        <p style="font-size:120%; text-align: center;">
+            Nr. {{ $fisaCaz->ofertaAcceptata->contract_nr ?? '________' }}
+            din data de {{ $fisaCaz->ofertaAcceptata->contract_data ? Carbon::parse($fisaCaz->ofertaAcceptata->contract_data)->isoFormat('DD.MM.YYYY') : '_________________' }}
+        </p>
 
         <br>
         <br>
@@ -94,7 +101,7 @@
         <p>
             <b>1.2 {{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, denumit în continuare beneficiar, domiciliat în localitatea {{ $fisaCaz->pacient->localitate ?? '' }}, {{ $fisaCaz->pacient->adresa ?? '' }} , judeţul/ sectorul {{ $fisaCaz->pacient->judet ?? '' }}, codul numeric personal {{ $fisaCaz->pacient->cnp ?? '' }},
             posesor al B.I./C.I. seria {{ substr(($fisaCaz->pacient->serie_numar_buletin ?? ''), 0, 2) }}, nr. {{ preg_replace('/[^0-9]/', '', ($fisaCaz->pacient->serie_numar_buletin)) }},
-            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ?? '' }}.
+            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ? Carbon::parse($fisaCaz->pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }}.
         </p>
         <br>
 
@@ -310,7 +317,7 @@
             </tr>
             <tr>
                 <td style="text-align: center">SC THERANOVA PROTEZARE SRL</td>
-                <td></td>
+                <td style="text-align: center">{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</td>
             </tr>
         </table>
 
@@ -372,7 +379,12 @@
             <li>De asemenea, datele persoanei vizate pot fi prelucrate si pe durata existentei unei obligatii legale pentru pastrarea datelor dumneavoastra, respectiv pe durata de existenta a unui alt temei justificativ legal, in conformitate cu exigentele art. 5 din Regulamentul General UE privind protectia datelor.</li>
         </ul>
         <p>Datele de contact ale responsabilului cu protectia datelor:____________</p>
-        <p>Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare <b>{{ ($fisaCaz->pacient->serie_numar_buletin ?? '') }}</b>, <b>arat ca am citit si inteles pe deplin continutul informarii de mai sus si sunt de acord in totalitate cu prelucrarea datelor mele personale astfel cum rezulta din Nota de informare de mai sus.</b></p>
+        <p>
+            Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare
+            B.I./C.I. seria {{ substr(($fisaCaz->pacient->serie_numar_buletin ?? ''), 0, 2) }}, nr. {{ preg_replace('/[^0-9]/', '', ($fisaCaz->pacient->serie_numar_buletin)) }},
+            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ? Carbon::parse($fisaCaz->pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }},
+            <b>arat ca am citit si inteles pe deplin continutul informarii de mai sus si sunt de acord in totalitate cu prelucrarea datelor mele personale astfel cum rezulta din Nota de informare de mai sus.</b>
+        </p>
         <table>
             <tr>
                 <td style="width: 80%">Data:</td>
@@ -383,7 +395,12 @@
 
         <p style="text-align: center;"><b>DECLARATIE DE CONSIMTAMANT</b></p>
         <br>
-        <p>Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare <b>{{ ($fisaCaz->pacient->serie_numar_buletin ?? '') }}</b>,  <b>imi exprim consimtamantul in mod expres pentru publicarea/postarea in mediul on-line in vederea promovarii serviciilor incluse in obiectul de activitate al THERANOVA PROTEZARE, cu scop de marketing, publicitate, promovare si arat ca sunt de acord cu publicarea fotografiilor si filmarilor in orice format continand imaginea subsemnatului pe pagini /platforme on-line (Facebook, Instagram, etc ) detinute /administrate de THERANOVA PROTEZARE. Prezentul consimtamant este valabil pana la revocarea expresa a acestuia prin Notificarea scrisa a THERANOVA PROTEZARE.</b></p>
+        <p>
+            Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare
+            B.I./C.I. seria {{ substr(($fisaCaz->pacient->serie_numar_buletin ?? ''), 0, 2) }}, nr. {{ preg_replace('/[^0-9]/', '', ($fisaCaz->pacient->serie_numar_buletin)) }},
+            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ? Carbon::parse($fisaCaz->pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }},
+            <b>imi exprim consimtamantul in mod expres pentru publicarea/postarea in mediul on-line in vederea promovarii serviciilor incluse in obiectul de activitate al THERANOVA PROTEZARE, cu scop de marketing, publicitate, promovare si arat ca sunt de acord cu publicarea fotografiilor si filmarilor in orice format continand imaginea subsemnatului pe pagini /platforme on-line (Facebook, Instagram, etc ) detinute /administrate de THERANOVA PROTEZARE. Prezentul consimtamant este valabil pana la revocarea expresa a acestuia prin Notificarea scrisa a THERANOVA PROTEZARE.</b>
+        </p>
         <table>
             <tr>
                 <td style="width: 80%">Data:</td>
