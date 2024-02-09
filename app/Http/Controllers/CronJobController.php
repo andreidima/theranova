@@ -25,7 +25,7 @@ class CronJobController extends Controller
                     $query->where('tip_proteza', 'AK provizorie');
                 })
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(8))
-                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9))
+                // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9))
                 ->where(function ($query) {
                     $query->whereNull('stare')
                         ->orWhere('stare', 1);
@@ -37,15 +37,16 @@ class CronJobController extends Controller
                     $query->where('tip_proteza', 'BK provizorie');
                 })
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(5))
-                ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6))
+                // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6))
                 ->where(function ($query) {
                     $query->whereNull('stare')
                         ->orWhere('stare', 1);
                 });
             })
-            ->orderBy('protezare')
+            ->orderBy('protezare', 'asc')
+            ->take(1)
             ->get();
-
+// dd($fiseCaz);
         foreach ($fiseCaz as $fisaCaz){
             // echo $fisaCaz->id;
             // echo '. ';
@@ -66,6 +67,7 @@ class CronJobController extends Controller
             }
 
             $tip_proteza = $fisaCaz->dateMedicale->first()->tip_proteza ?? null;
+            $tipEmail = $tip_proteza;
 
             Mail::to($adreseEmail)
                 ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])

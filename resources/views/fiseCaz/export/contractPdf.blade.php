@@ -91,7 +91,7 @@
         <p style="font-size:150%; text-align: center;">CONTRACT DE PRESTĂRI SERVICII</p>
         <p style="font-size:120%; text-align: center;">
             Nr. {{ $fisaCaz->ofertaAcceptata->contract_nr ?? '________' }}
-            din data de {{ $fisaCaz->ofertaAcceptata->contract_data ? Carbon::parse($fisaCaz->ofertaAcceptata->contract_data)->isoFormat('DD.MM.YYYY') : '_________________' }}
+            din data de {{ ($fisaCaz->ofertaAcceptata->contract_data ?? null) ? Carbon::parse($fisaCaz->ofertaAcceptata->contract_data)->isoFormat('DD.MM.YYYY') : '_________________' }}
         </p>
 
         <br>
