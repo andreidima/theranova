@@ -15,7 +15,7 @@
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
             <div class="col-lg-2">
                 <span class="badge culoare1 fs-5">
-                    <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz
+                    <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz ({{ $fiseCaz->total() }})
                 </span>
             </div>
             <div class="col-lg-7">
@@ -448,7 +448,7 @@
 
                 <nav>
                     <ul class="pagination justify-content-center">
-                        {{$fiseCaz->appends(Request::except('page'))->links()}}
+                        {{ $fiseCaz->links() }}
                     </ul>
                 </nav>
         </div>

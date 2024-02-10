@@ -73,7 +73,8 @@ class FisaCazController extends Controller
                 });
             })
             ->orderBy('data', 'desc')
-            ->simplePaginate(25);
+            // ->simplePaginate(25);
+            ->paginate(25);
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
@@ -451,5 +452,15 @@ class FisaCazController extends Controller
             ->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->set_option("enable_php", true);
         return $pdf->stream();
+    }
+
+    public function toateHtml()
+    {
+        $fiseCaz = FisaCaz::with('pacient:id,nume,prenume,localitate,judet,telefon,cum_a_aflat_de_theranova', 'pacient.apartinatori:pacient_id,nume,prenume,telefon', 'userVanzari:id,name', 'userTehnic:id,name', 'dateMedicale:fisa_caz_id,tip_proteza', 'cerinte:fisa_caz_id,sursa_buget', 'ofertaAcceptata:fisa_caz_id,pret')
+            ->select('id', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare')
+            ->orderBy('protezare', 'asc')
+            ->get();
+
+        return view('fiseCaz.export.toateHtml', compact('fiseCaz'));
     }
 }

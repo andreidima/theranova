@@ -11,7 +11,7 @@
 
             @if ($mesaj)
                 <b>
-                    {{ $mesaj }}
+                    {!! nl2br($mesaj) !!}
                 </b>
                 <br><br>
             @endif

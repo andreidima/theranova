@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 use Route;
 
@@ -25,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
             'create' => 'adauga',
             'edit' => 'modifica'
         ]);
+        // Paginator::useBootstrapFive();
+            Paginator::useBootstrapFour();
+
     }
 }
