@@ -116,8 +116,10 @@
                         {{ $fisaCaz->pacient->judet ?? '' }}
                     </td>
                     <td>
-                        {{ $fisaCaz->pacient->telefon ?? '' }}
-                        <br>
+                        @if ($fisaCaz->pacient->telefon)
+                            {{ $fisaCaz->pacient->telefon ?? '' }}
+                            <br>
+                        @endif
                             @foreach (($fisaCaz->pacient->apartinatori ?? []) as $apartinator)
                                 @if ($apartinator->telefon)
                                     {{-- {{ $apartinator->nume }} {{ $apartinator->prenume }}: {{ $apartinator->telefon }} --}}
