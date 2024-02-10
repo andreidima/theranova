@@ -120,7 +120,8 @@
                         <br>
                             @foreach (($fisaCaz->pacient->apartinatori ?? []) as $apartinator)
                                 @if ($apartinator->telefon)
-                                    {{ $apartinator->nume }} {{ $apartinator->prenume }}: {{ $apartinator->telefon }}
+                                    {{-- {{ $apartinator->nume }} {{ $apartinator->prenume }}: {{ $apartinator->telefon }} --}}
+                                    {{ $apartinator->telefon }}
                                     <br>
                                 @endif
                             @endforeach
