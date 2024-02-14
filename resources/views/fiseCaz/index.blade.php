@@ -26,18 +26,18 @@
                             <input type="text" class="form-control rounded-3" id="searchNume" name="searchNume" placeholder="Nume sau tel. pacient" value="{{ $searchNume }}">
                         </div>
                         <div class="col-lg-3">
-                            <select name="searchTipProteza" class="form-select bg-white rounded-3 {{ $errors->has('searchTipProteza') ? 'is-invalid' : '' }}">
-                                <option selected value="" style="color:white; background-color: gray;">Tip proteză</option>
-                                <option value="AK provizorie" {{ ($searchTipProteza == 'AK provizorie') ? 'selected' : '' }}>AK provizorie</option>
-                                <option value="AK definitivă" {{ ($searchTipProteza == 'AK definitivă') ? 'selected' : '' }}>AK definitivă</option>
-                                <option value="BK provizorie" {{ ($searchTipProteza == 'BK provizorie') ? 'selected' : '' }}>BK provizorie</option>
-                                <option value="BK definitivă" {{ ($searchTipProteza == 'BK definitivă') ? 'selected' : '' }}>BK definitivă</option>
-                                <option value="Modificări" {{ ($searchTipProteza == 'Modificări') ? 'selected' : '' }}>Modificări</option>
-                                <option value="PMS" {{ ($searchTipProteza == 'PMS') ? 'selected' : '' }}>PMS</option>
-                                <option value="PPP" {{ ($searchTipProteza == 'PPP') ? 'selected' : '' }}>PPP</option>
-                                <option value="Manșon" {{ ($searchTipProteza == 'Manșon') ? 'selected' : '' }}>Manșon</option>
-                                <option value="Proteză sân" {{ ($searchTipProteza == 'Proteză sân') ? 'selected' : '' }}>Proteză sân</option>
-                                <option value="Proteză sân+sutien" {{ ($searchTipProteza == 'Proteză sân+sutien') ? 'selected' : '' }}>Proteză sân+sutien</option>
+                            <select name="searchTipLucrareSolicitata" class="form-select bg-white rounded-3 {{ $errors->has('searchTipLucrareSolicitata') ? 'is-invalid' : '' }}">
+                                <option selected value="" style="color:white; background-color: gray;">Tip lucrare solicitată</option>
+                                <option value="AK provizorie" {{ ($searchTipLucrareSolicitata == 'AK provizorie') ? 'selected' : '' }}>AK provizorie</option>
+                                <option value="AK definitivă" {{ ($searchTipLucrareSolicitata == 'AK definitivă') ? 'selected' : '' }}>AK definitivă</option>
+                                <option value="BK provizorie" {{ ($searchTipLucrareSolicitata == 'BK provizorie') ? 'selected' : '' }}>BK provizorie</option>
+                                <option value="BK definitivă" {{ ($searchTipLucrareSolicitata == 'BK definitivă') ? 'selected' : '' }}>BK definitivă</option>
+                                <option value="Modificări" {{ ($searchTipLucrareSolicitata == 'Modificări') ? 'selected' : '' }}>Modificări</option>
+                                <option value="PMS" {{ ($searchTipLucrareSolicitata == 'PMS') ? 'selected' : '' }}>PMS</option>
+                                <option value="PPP" {{ ($searchTipLucrareSolicitata == 'PPP') ? 'selected' : '' }}>PPP</option>
+                                <option value="Manșon" {{ ($searchTipLucrareSolicitata == 'Manșon') ? 'selected' : '' }}>Manșon</option>
+                                <option value="Proteză sân" {{ ($searchTipLucrareSolicitata == 'Proteză sân') ? 'selected' : '' }}>Proteză sân</option>
+                                <option value="Proteză sân+sutien" {{ ($searchTipLucrareSolicitata == 'Proteză sân+sutien') ? 'selected' : '' }}>Proteză sân+sutien</option>
                             </select>
                         </div>
                         <div class="col-lg-6 d-flex align-items-center" id="datePicker">
@@ -104,7 +104,7 @@
                         <tr class="" style="padding:2rem">
                             <th class="text-white culoare2">#</th>
                             <th class="text-white culoare2">Pacient</th>
-                            <th class="text-white culoare2">Tip proteză</th>
+                            <th class="text-white culoare2 text-center">Tip lucrare solicitată</th>
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
                             <th class="text-white culoare2 text-center">Fișă comandă</th>
@@ -133,12 +133,13 @@
                                         {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}
                                     </a>
                                     <br>
-                                    {{ $fisaCaz->pacient->telefon ?? '' }}
+                                    {{-- {{ $fisaCaz->pacient->telefon ?? '' }} --}}
+                                    {{ $fisaCaz->dateMedicale->first()->amputatie ?? '' }}
                                     <br>
                                     {{ $fisaCaz->pacient->judet ?? '' }}
                                 </td>
                                 <td class="">
-                                    {{ $fisaCaz->dateMedicale->first()->tip_proteza ?? '' }}
+                                    {{ $fisaCaz->tip_lucrare_solicitata }}
                                 </td>
                                 <td class="text-center">
                                     @if ($fisaCaz->data)

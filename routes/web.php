@@ -56,23 +56,22 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
 
-    // de sters 01.02.2024
-    // Route::get('/actualizeaza-date', function (){
-    //     $fiseCaz = \App\Models\FisaCaz::with('pacient')->whereHas('comenziComponente')->orderBy('data', 'desc')->get();
-    //     foreach ($fiseCaz as $fisaCaz){
-    //         echo ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '');
-    //         echo '<br>';
-    //         echo $fisaCaz->comenziComponente->first()->created_at;
-    //         echo '<br>';
-    //         $fisaCaz->fisa_comanda_data = $fisaCaz->comenziComponente->first()->created_at;
-    //         $fisaCaz->save();
-    //         // echo $fisaCaz->fisa_comanda_data;
-    //         echo '<br>';
-    //         echo '<br>';
-    //         echo '<br>';
-    //         echo '<br>';
-    //     }
-    // });
+    // De sters 01.03.2024
+    Route::get('/actualizeaza-date', function (){
+        $fiseCaz = \App\Models\FisaCaz::with('dateMedicale')->whereHas('dateMedicale')->get();
+        foreach ($fiseCaz as $fisaCaz){
+            // echo ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '');
+            // echo '<br>';
+            echo $fisaCaz->dateMedicale->first()->tip_proteza;
+            // echo '<br>';
+            $fisaCaz->tip_lucrare_solicitata = $fisaCaz->dateMedicale->first()->tip_proteza ?? '';
+            $fisaCaz->save();
+            echo '<br>';
+            echo '<br>';
+            echo '<br>';
+            echo '<br>';
+        }
+    });
 });
 
 

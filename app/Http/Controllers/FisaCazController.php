@@ -28,7 +28,7 @@ class FisaCazController extends Controller
 
         $searchNume = $request->searchNume;
         $searchInterval = $request->searchInterval;
-        $searchTipProteza = $request->searchTipProteza;
+        $searchTipLucrareSolicitata = $request->searchTipLucrareSolicitata;
         $searchUserVanzari = $request->searchUserVanzari;
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
@@ -49,10 +49,11 @@ class FisaCazController extends Controller
                 }
                 return $query;
             })
-            ->when($searchTipProteza, function ($query, $searchTipProteza) {
-                $query->whereHas('dateMedicale', function ($query) use ($searchTipProteza) {
-                    return $query->where('tip_proteza', $searchTipProteza);
-                });
+            ->when($searchTipLucrareSolicitata, function ($query, $searchTipLucrareSolicitata) {
+                // $query->whereHas('dateMedicale', function ($query) use ($searchTipLucrareSolicitata) {
+                //     return $query->where('tip_proteza', $searchTipLucrareSolicitata);
+                // });
+                $query->where('tip_lucrare_solicitata', $searchTipLucrareSolicitata);
             })
             ->when($searchInterval, function ($query, $searchInterval) {
                 return $query->whereBetween('protezare', [strtok($searchInterval, ','), strtok( '' )]);
@@ -78,7 +79,7 @@ class FisaCazController extends Controller
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
-        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchTipProteza', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
+        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchTipLucrareSolicitata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
     }
 
     /**
@@ -111,7 +112,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 
-        $fisaCaz = FisaCaz::create($request->only(['data', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
         foreach ($request->dateMedicale as $date) {
             $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
@@ -178,8 +179,8 @@ class FisaCazController extends Controller
     public function update(Request $request, FisaCaz $fisaCaz)
     {
         $this->validateRequest($request);
-
-        $fisaCaz->update($request->only(['data', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+// dd($request);
+        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
         foreach ($request->dateMedicale as $date) {
             $fisaCaz->dateMedicale()->first() ? $fisaCaz->dateMedicale()->first()->update($date) : $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
@@ -244,6 +245,7 @@ class FisaCazController extends Controller
         return $request->validate(
             [
                 'data' => 'required',
+                'tip_lucrare_solicitata' => 'required',
                 'compresie_manson' => '',
                 'protezare' => '',
                 'user_vanzari' => '',
@@ -256,7 +258,7 @@ class FisaCazController extends Controller
                 'dateMedicale.*.nivel_de_activitate' => 'required',
                 'dateMedicale.*.cauza_amputatiei' => 'required',
                 'dateMedicale.*.a_mai_purtat_proteza' => 'required',
-                'dateMedicale.*.tip_proteza' => 'required',
+                // 'dateMedicale.*.tip_proteza' => 'required',
                 'dateMedicale.*.circumferinta_bont' => 'nullable|max:100',
                 'dateMedicale.*.circumferinta_bont_la_nivel_perineu' => 'nullable|max:100',
                 'dateMedicale.*.marime_picior' => 'nullable|max:100',
@@ -282,7 +284,7 @@ class FisaCazController extends Controller
                 'dateMedicale.*.nivel_de_activitate.required' => 'Câmpul Nivel de activitate este obligatoriu.',
                 'dateMedicale.*.cauza_amputatiei.required' => 'Câmpul Cauza amputației este obligatoriu.',
                 'dateMedicale.*.a_mai_purtat_proteza.required' => 'Câmpul A mai putat proteza este obligatoriu.',
-                'dateMedicale.*.tip_proteza.required' => 'Câmpul Tip proteză este obligatoriu.',
+                // 'dateMedicale.*.tip_proteza.required' => 'Câmpul Tip proteză este obligatoriu.',
                 'dateMedicale.*.circumferinta_bont.max' => 'Câmpul Circumferință bont trebuie să aibă maxim 100 de caractere.',
                 'dateMedicale.*.circumferinta_bont_la_nivel_perineu.max' => 'Câmpul Circumferință bont la nivel perineu trebuie să aibă maxim 100 de caractere.',
                 'dateMedicale.*.marime_picior.max' => 'Câmpul Mărime picior trebuie să aibă maxim 100 de caractere.',

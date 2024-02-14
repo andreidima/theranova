@@ -21,9 +21,10 @@ class CronJobController extends Controller
         $fiseCaz = FisaCaz::with('dateMedicale', 'userVanzari', 'userComercial', 'userTehnic')
             ->where(function ($query) {
                 $query->whereDoesntHave('emailReminderAKProvizorie')
-                ->whereHas('dateMedicale', function($query){
-                    $query->where('tip_proteza', 'AK provizorie');
-                })
+                // ->whereHas('dateMedicale', function($query){
+                //     $query->where('tip_proteza', 'AK provizorie');
+                // })
+                ->where('tip_lucrare_solicitata', 'AK provizorie')
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(8))
                 // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9))
                 ->where(function ($query) {
@@ -33,9 +34,10 @@ class CronJobController extends Controller
             })
             ->orWhere(function ($query) {
                 $query->whereDoesntHave('emailReminderBKProvizorie')
-                ->whereHas('dateMedicale', function($query){
-                    $query->where('tip_proteza', 'BK provizorie');
-                })
+                // ->whereHas('dateMedicale', function($query){
+                //     $query->where('tip_proteza', 'BK provizorie');
+                // })
+                ->where('tip_lucrare_solicitata', 'AK provizorie')
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(5))
                 // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6))
                 ->where(function ($query) {
@@ -44,7 +46,7 @@ class CronJobController extends Controller
                 });
             })
             ->orderBy('protezare', 'asc')
-            ->take(1)
+            // ->take(1)
             ->get();
 // dd($fiseCaz);
         foreach ($fiseCaz as $fisaCaz){
@@ -66,7 +68,7 @@ class CronJobController extends Controller
                 return ;
             }
 
-            $tip_proteza = $fisaCaz->dateMedicale->first()->tip_proteza ?? null;
+            $tip_proteza = $fisaCaz->tip_lucrare_solicitata;
             $tipEmail = $tip_proteza;
 
             Mail::to($adreseEmail)

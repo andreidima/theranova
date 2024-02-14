@@ -129,7 +129,7 @@
                             @endforeach
                     </td>
                     <td>
-                        {{ $fisaCaz->dateMedicale->first()->tip_proteza ?? ''}}
+                        {{ $fisaCaz->tip_lucrare_solicitata }}
                     </td>
                     <td>
                         {{ $fisaCaz->ofertaAcceptata->pret ?? '' }}

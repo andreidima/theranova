@@ -27,39 +27,46 @@
         @endphp
         <div class="col-md-4 mb-3">
             <div class="card culoare2">
-                <div class="card-header text-center">Proteze</div>
+                <div class="card-header text-center">Tip lucrare solicitată</div>
                 <div class="card-body text-center d-flex justify-content-center">
                     @php
-                        $dateMedicaleAnulCurent = \App\Models\DataMedicala::with('fisaCaz:id,protezare')
-                            ->select('id', 'fisa_caz_id', 'tip_proteza')
-                            ->whereHas('fisaCaz', function($query) {
-                                $query->whereYear('protezare', now());
-                            })
+                        // $dateMedicaleAnulCurent = \App\Models\DataMedicala::with('fisaCaz:id,protezare')
+                        //     ->select('id', 'fisa_caz_id', 'tip_proteza')
+                        //     ->whereHas('fisaCaz', function($query) {
+                        //         $query->whereYear('protezare', now());
+                        //     })
+                        //     ->get();
+                        // $dateMedicaleLunaCurenta = \App\Models\DataMedicala::with('fisaCaz:id,protezare,data')
+                        //     ->select('id', 'fisa_caz_id', 'tip_proteza')
+                        //     ->whereHas('fisaCaz', function($query) {
+                        //         $query->whereMonth('protezare', now())
+                        //             ->whereYear('protezare', now());
+                        //     })
+                        //     ->get();
+                        $fiseCazAnulCurent = \App\Models\FisaCaz::select('tip_lucrare_solicitata')
+                            ->whereYear('protezare', now())
                             ->get();
-                        $dateMedicaleLunaCurenta = \App\Models\DataMedicala::with('fisaCaz:id,protezare,data')
-                            ->select('id', 'fisa_caz_id', 'tip_proteza')
-                            ->whereHas('fisaCaz', function($query) {
-                                $query->whereMonth('protezare', now())
-                                    ->whereYear('protezare', now());
-                            })
+                        $fiseCazLunaCurenta = \App\Models\FisaCaz::select('tip_lucrare_solicitata')
+                            ->whereMonth('protezare', now())
+                            ->whereYear('protezare', now())
                             ->get();
                     @endphp
                     <table>
                         <tr>
-                            <th class="px-4">Proteză</th>
+                            <th class="px-4">Lucrare</th>
                             <th class="px-4">{{ now()->isoFormat('MM.YYYY') }}</th>
                             <th class="px-4">{{ now()->year }}</th>
                         </tr>
-                    @foreach ($dateMedicaleAnulCurent->unique('tip_proteza')->sortBy('tip_proteza') as $dataMedicala)
+                    @foreach ($fiseCazAnulCurent->unique('tip_lucrare_solicitata')->sortBy('tip_lucrare_solicitata') as $fisaCaz)
                         <tr>
                             <td class="text-start">
-                                {{ $dataMedicala->tip_proteza }}
+                                {{ $fisaCaz->tip_lucrare_solicitata }}
                             </td>
                             <th>
-                                {{ $dateMedicaleLunaCurenta->where('tip_proteza', $dataMedicala->tip_proteza)->count() }}
+                                {{ $fiseCazLunaCurenta->where('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata)->count() }}
                             </th>
                             <th>
-                                {{ $dateMedicaleAnulCurent->where('tip_proteza', $dataMedicala->tip_proteza)->count() }}
+                                {{ $fiseCazAnulCurent->where('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata)->count() }}
                             </th>
                         </tr>
                     @endforeach

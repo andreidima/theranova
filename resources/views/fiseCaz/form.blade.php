@@ -10,6 +10,8 @@
 
     dateMedicale =  {!! json_encode(old('dateMedicale', $fisaCaz->dateMedicale()->get()) ?? []) !!}
     cerinte =  {!! json_encode(old('cerinte', $fisaCaz->cerinte()->get()) ?? []) !!}
+
+    tipProteza
 </script>
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
@@ -17,65 +19,88 @@
         {{-- <div class="row px-2 pt-0 pb-1 mb-4 rounded-3 justify-content-center" style="background-color:#f9e9e8; border-left:6px solid; border-color:#ec8575"> --}}
         {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #ec8575 solid; background-color:#fcf4f3"> --}}
         <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)" id="datePicker">
-            <div class="col-lg-2 mb-4">
-                <label for="data" class="mb-0 ps-3">Evaluare<span class="text-danger">*</span></label>
-                <vue-datepicker-next
-                    data-veche="{{ old('data', $fisaCaz->data ?? Carbon::today()) }}"
-                    nume-camp-db="data"
-                    tip="date"
-                    value-type="YYYY-MM-DD"
-                    format="DD.MM.YYYY"
-                    :latime="{ width: '125px' }"
-                ></vue-datepicker-next>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label for="compresie_manson" class="mb-0 ps-0">Compresie manșon</label>
-                <vue-datepicker-next
-                    data-veche="{{ old('compresie_manson', $fisaCaz->compresie_manson ?? '') }}"
-                    nume-camp-db="compresie_manson"
-                    tip="date"
-                    value-type="YYYY-MM-DD"
-                    format="DD.MM.YYYY"
-                    :latime="{ width: '125px' }"
-                ></vue-datepicker-next>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label for="protezare" class="mb-0 ps-3">Protezare</label>
-                <vue-datepicker-next
-                    data-veche="{{ old('data', $fisaCaz->protezare ?? '') }}"
-                    nume-camp-db="protezare"
-                    tip="date"
-                    value-type="YYYY-MM-DD"
-                    format="DD.MM.YYYY"
-                    :latime="{ width: '125px' }"
-                ></vue-datepicker-next>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label for="user_vanzari" class="mb-0 ps-3">Vânzări</label>
-                <select name="user_vanzari" class="form-select bg-white rounded-3 {{ $errors->has('user_vanzari') ? 'is-invalid' : '' }}">
-                    <option selected></option>
-                    @foreach ($useri->where('role', 1) as $user)
-                        <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_vanzari', $fisaCaz->user_vanzari ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label for="user_comercial" class="mb-0 ps-3">Comercial</label>
-                <select name="user_comercial" class="form-select bg-white rounded-3 {{ $errors->has('user_comercial') ? 'is-invalid' : '' }}">
-                    <option selected></option>
-                    @foreach ($useri->where('role', 2) as $user)
-                        <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_comercial', $fisaCaz->user_comercial ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label for="user_tehnic" class="mb-0 ps-3">Tehnic</label>
-                <select name="user_tehnic" class="form-select bg-white rounded-3 {{ $errors->has('user_tehnic') ? 'is-invalid' : '' }}">
-                    <option selected></option>
-                    @foreach ($useri->where('role', 3) as $user)
-                        <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_tehnic', $fisaCaz->user_tehnic ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
-                    @endforeach
-                </select>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-2 mb-4">
+                        <label for="data" class="mb-0 ps-3">Evaluare<span class="text-danger">*</span></label>
+                        <vue-datepicker-next
+                            data-veche="{{ old('data', $fisaCaz->data ?? Carbon::today()) }}"
+                            nume-camp-db="data"
+                            tip="date"
+                            value-type="YYYY-MM-DD"
+                            format="DD.MM.YYYY"
+                            :latime="{ width: '125px' }"
+                        ></vue-datepicker-next>
+                    </div>
+                    <div class="col-lg-2 mb-4">
+                        <label for="tip_lucrare_solicitata" class="mb-0 ps-3">Tip lucrare solicitată<span class="text-danger">*</span></label>
+                        <select class="form-select bg-white rounded-3 {{ $errors->has('tip_lucrare_solicitata') ? 'is-invalid' : '' }}"
+                            name="tip_lucrare_solicitata">
+                            <option selected></option>
+                            <option value="AK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK provizorie" ? 'selected' : '' }}>AK provizorie</option>
+                            <option value="AK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK definitivă" ? 'selected' : '' }}>AK definitivă</option>
+                            <option value="BK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK provizorie" ? 'selected' : '' }}>BK provizorie</option>
+                            <option value="BK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK definitivă" ? 'selected' : '' }}>BK definitivă</option>
+                            <option value="Modificări" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Modificări" ? 'selected' : '' }}>Modificări</option>
+                            <option value="PMS" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "PMS" ? 'selected' : '' }}>PMS</option>
+                            <option value="PPP" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "PPP" ? 'selected' : '' }}>PPP</option>
+                            <option value="Manșon" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Manșon" ? 'selected' : '' }}>Manșon</option>
+                            <option value="Proteză sân" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Proteză sân" ? 'selected' : '' }}>Proteză sân</option>
+                            <option value="Proteză sân+sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Proteză sân+sutien" ? 'selected' : '' }}>Proteză sân+sutien</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 mb-4 text-center">
+                        <label for="compresie_manson" class="mb-0 ps-0">Compresie manșon</label>
+                        <vue-datepicker-next
+                            data-veche="{{ old('compresie_manson', $fisaCaz->compresie_manson ?? '') }}"
+                            nume-camp-db="compresie_manson"
+                            tip="date"
+                            value-type="YYYY-MM-DD"
+                            format="DD.MM.YYYY"
+                            :latime="{ width: '125px' }"
+                        ></vue-datepicker-next>
+                    </div>
+                    <div class="col-lg-2 mb-4 text-center">
+                        <label for="protezare" class="mb-0 ps-0">Protezare</label>
+                        <vue-datepicker-next
+                            data-veche="{{ old('data', $fisaCaz->protezare ?? '') }}"
+                            nume-camp-db="protezare"
+                            tip="date"
+                            value-type="YYYY-MM-DD"
+                            format="DD.MM.YYYY"
+                            :latime="{ width: '125px' }"
+                        ></vue-datepicker-next>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2 mb-4">
+                        <label for="user_vanzari" class="mb-0 ps-3">Vânzări</label>
+                        <select name="user_vanzari" class="form-select bg-white rounded-3 {{ $errors->has('user_vanzari') ? 'is-invalid' : '' }}">
+                            <option selected></option>
+                            @foreach ($useri->where('role', 1) as $user)
+                                <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_vanzari', $fisaCaz->user_vanzari ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-lg-2 mb-4">
+                        <label for="user_comercial" class="mb-0 ps-3">Comercial</label>
+                        <select name="user_comercial" class="form-select bg-white rounded-3 {{ $errors->has('user_comercial') ? 'is-invalid' : '' }}">
+                            <option selected></option>
+                            @foreach ($useri->where('role', 2) as $user)
+                                <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_comercial', $fisaCaz->user_comercial ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-lg-2 mb-4">
+                        <label for="user_tehnic" class="mb-0 ps-3">Tehnic</label>
+                        <select name="user_tehnic" class="form-select bg-white rounded-3 {{ $errors->has('user_tehnic') ? 'is-invalid' : '' }}">
+                            <option selected></option>
+                            @foreach ($useri->where('role', 3) as $user)
+                                <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_tehnic', $fisaCaz->user_tehnic ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
         {{-- <div class="row px-2 pt-0 mb-4" style="background-color:#eeeeff; border-left:6px solid; border-color:#6a6ba0; border-radius: 0px 0px 0px 0px" id="pacientAutocomplete"> --}}
@@ -238,7 +263,7 @@
                             <option value="1">DA</option>
                         </select>
                     </div>
-                    <div class="col-lg-2 mb-4">
+                    {{-- <div class="col-lg-2 mb-4">
                         <label for="tip_proteza" class="mb-0 ps-3">Tip proteză<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('tip_proteza') ? 'is-invalid' : '' }}"
                             :name="'dateMedicale[' + index + '][tip_proteza]'"
@@ -255,7 +280,7 @@
                             <option value="Proteză sân">Proteză sân</option>
                             <option value="Proteză sân+sutien">Proteză sân+sutien</option>
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="col-lg-2 mb-4">
                         <label for="circumferinta_bont" class="mb-0 ps-0 ps-xxl-3 small">Circumferință bont(cm)</label>
                         <input

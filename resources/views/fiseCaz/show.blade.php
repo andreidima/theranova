@@ -34,6 +34,14 @@
                             </tr>
                             <tr>
                                 <td class="pe-4">
+                                    Tip lucrare solicitată
+                                </td>
+                                <td>
+                                    {{ $fisaCaz->tip_lucrare_solicitata }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-4">
                                     Compresie manșon:
                                 </td>
                                 <td>
@@ -175,14 +183,6 @@
                                     </td>
                                     <td>
                                         {{ ($dataMedicala->a_mai_purtat_proteza == '1') ? 'DA' : 'NU' }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-4">
-                                       Tip proteză
-                                    </td>
-                                    <td>
-                                        {{ $dataMedicala->tip_proteza }}
                                     </td>
                                 </tr>
                                 <tr>
