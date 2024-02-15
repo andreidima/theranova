@@ -458,8 +458,8 @@ class FisaCazController extends Controller
 
     public function toateHtml()
     {
-        $fiseCaz = FisaCaz::with('pacient:id,nume,prenume,localitate,judet,telefon,cum_a_aflat_de_theranova', 'pacient.apartinatori:pacient_id,nume,prenume,telefon', 'userVanzari:id,name', 'userTehnic:id,name', 'dateMedicale:fisa_caz_id,tip_proteza', 'cerinte:fisa_caz_id,sursa_buget', 'ofertaAcceptata:fisa_caz_id,pret')
-            ->select('id', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare')
+        $fiseCaz = FisaCaz::with('pacient:id,nume,prenume,localitate,judet,telefon,cum_a_aflat_de_theranova', 'pacient.apartinatori:pacient_id,nume,prenume,telefon', 'userVanzari:id,name', 'userTehnic:id,name', 'cerinte:fisa_caz_id,sursa_buget', 'ofertaAcceptata:fisa_caz_id,pret')
+            ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare')
             ->orderBy('protezare', 'asc')
             ->get();
 
