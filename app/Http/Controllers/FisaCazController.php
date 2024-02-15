@@ -75,7 +75,8 @@ class FisaCazController extends Controller
             })
             ->orderBy('data', 'desc')
             // ->simplePaginate(25);
-            ->paginate(25);
+            ->paginate(25)
+            ->withQueryString();
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
