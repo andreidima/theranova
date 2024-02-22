@@ -37,7 +37,7 @@ class CronJobController extends Controller
                 // ->whereHas('dateMedicale', function($query){
                 //     $query->where('tip_proteza', 'BK provizorie');
                 // })
-                ->where('tip_lucrare_solicitata', 'AK provizorie')
+                ->where('tip_lucrare_solicitata', 'BK provizorie')
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(5))
                 // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6))
                 ->where(function ($query) {
