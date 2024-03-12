@@ -17,6 +17,8 @@
             @endif
 
             <a href="{{ url($fisaCaz->path()) }}" target="_blank">Fișa caz</a> a pacientului {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? '' }}
+            <br><br>
+            Cu stimă, {{ auth()->user()->name }}.
             <br><br><br>
             Acesta este un mesaj trimis direct din aplicația Theranova. Te rugăm să nu răspunzi la acest e-mail.
             <br><br>

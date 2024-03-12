@@ -133,6 +133,11 @@
                 @endforeach
             </table>
 
+            <br>
+            <p style="padding-left:20%">
+                TEHNIC: {{ $fisaCaz->userTehnic->name ?? '' }}
+            </p>
+
 
         </div>
 
