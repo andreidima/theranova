@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\PacientController;
 use App\Http\Controllers\FisaCazController;
 use App\Http\Controllers\OfertaController;
+use App\Http\Controllers\ComandaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FisierController;
 use App\Http\Controllers\ComandaComponentaController;
@@ -42,6 +44,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/fise-caz/export/toate-html', [FisaCazController::class, 'toateHtml']);
 
     Route::resource('/fise-caz/{fisaCaz}/oferte', OfertaController::class)->parameters(['oferte' => 'oferta']);
+    Route::resource('/fise-caz/{fisaCaz}/comenzi', ComandaController::class)->parameters(['comenzi' => 'comanda']);
+    Route::get('/fise-caz/{fisaCaz}/comenzi/{comanda}/export/pdf', [ComandaController::class, 'exportPdf']);
 
     // ComenziComponente
     // Route::resource('/fise-caz/{fisaCaz}/comenzi-componente', ComandaComponentaController::class)->parameters(['comenzi-componente' => 'comandaComponenta']);

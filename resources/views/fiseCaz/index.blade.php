@@ -107,6 +107,7 @@
                             <th class="text-white culoare2 text-center">Tip lucrare solicitată</th>
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
+                            <th class="text-white culoare2 text-center">Fișe comandă</th>
                             <th class="text-white culoare2 text-center">Fișă comandă</th>
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
@@ -177,6 +178,43 @@
                                         @endforeach
                                     @endif
                                     <a href="{{ $fisaCaz->path() }}/oferte/adauga">
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    @if ($fisaCaz->comenzi->count() > 0)
+                                        @foreach ($fisaCaz->comenzi as $comanda)
+                                            @if ($comanda->sosita == "1")
+                                                <i class="fa-solid fa-thumbs-up text-success"></i>
+                                            @elseif ($comanda->sosita == "0")
+                                                <i class="fa-solid fa-thumbs-down text-danger"></i>
+                                            @endif
+                                            {{ $comanda->data ? Carbon::parse($comanda->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                            <br>
+
+                                            @foreach ($comanda->fisiere as $fisier)
+                                                <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                                    <span class="badge text-success" title="Deschide"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                            @endforeach
+
+                                            @if ($comanda->componente->count() > 0)
+                                                <a href="{{ $fisaCaz->path() }}/comenzi/{{ $comanda->id }}/export/pdf" target="_blank">
+                                                    <span class="badge text-success px-1 py-0" title="PDF"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                            @endif
+
+                                            <a href="{{ $fisaCaz->path() }}/comenzi/{{ $comanda->id }}/modifica">
+                                                <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
+                                            @if ($userCanDelete)
+                                                <a href="#"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#stergeComanda{{ $comanda->id }}"
+                                                    title="Șterge comanda">
+                                                    <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
+                                            @endif
+                                            <br>
+                                        @endforeach
+                                    @endif
+                                    <a href="{{ $fisaCaz->path() }}/comenzi/adauga">
                                         <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
                                     </a>
                                 </td>
@@ -518,6 +556,41 @@
                                     class="btn btn-danger text-white"
                                     >
                                     Șterge oferta
+                                </button>
+                            </form>
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @endforeach
+
+        {{-- Modalele pentru stergere comenzi --}}
+        @foreach ($fiseCaz as $fisaCaz)
+            @foreach ($fisaCaz->comenzi as $comanda)
+                <div class="modal fade text-dark" id="stergeComanda{{ $comanda->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Comanda: <b>{{ ($comanda->fisaCaz->pacient->nume ?? '') . ' ' . ($comanda->fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:left;">
+                            Ești sigur că vrei să ștergi Fișa comandă din data de {{ $comanda->data ? Carbon::parse($comanda->data)->isoFormat('DD.MM.YYYY') : '' }}?
+                            <br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                            <form method="POST" action="{{ $comanda->path() }}">
+                                @method('DELETE')
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger text-white"
+                                    >
+                                    Șterge comanda
                                 </button>
                             </form>
 

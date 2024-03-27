@@ -111,6 +111,16 @@ class FisaCaz extends Model
     }
 
     /**
+     * Get all of the oferte for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comenzi(): HasMany
+    {
+        return $this->hasMany(Comanda::class, 'fisa_caz_id');
+    }
+
+    /**
      * Get all of the fisiereFisaMasuri for the FisaCaz
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

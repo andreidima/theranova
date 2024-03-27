@@ -223,12 +223,14 @@ class FisaCazController extends Controller
 
         if ($fisaCaz->oferte->count() > 0){
             return back()->with('error', 'Nu poți șterge fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” pentru că are oferte atașate. Șterge mai întâi ofertele.');
+        }else if ($fisaCaz->comenzi->count() > 0){
+            return back()->with('error', 'Nu poți șterge fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” pentru că are comenzi atașate. Șterge mai întâi comenzile.');
         }
 
         $fisaCaz->delete();
         $fisaCaz->dateMedicale()->delete();
         $fisaCaz->cerinte()->delete();
-        $fisaCaz->comenziComponente()->delete();
+        // $fisaCaz->comenziComponente()->delete();
 
         // Se sterge complet directorul fisaCaz cu tot ce contine acesta
         Storage::deleteDirectory('fiseCaz/' . $fisaCaz->id);
