@@ -191,7 +191,7 @@ class ComandaController extends Controller
             $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită');
         }
 
-        return redirect($request->session()->get('comandaComponenteReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost modificată cu succes!');
+        return redirect($request->session()->get('comandaReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost modificată cu succes!');
     }
 
     /**
