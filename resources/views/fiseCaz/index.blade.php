@@ -211,6 +211,16 @@
                                                     title="Șterge comanda">
                                                     <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span></a>
                                             @endif
+                                            <a href="#"
+                                                class="text-info" style="text-decoration: none;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_comanda_{{ $comanda->id }}"
+                                                title="trimite Comanda prin email către utilizatori"
+                                                ><span class="badge px-1 py-0 align-items-center" style="color:rgb(218, 120, 0)">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fa-solid fa-envelope"></i><small>({{ $comanda->emailuriTrimise->count() }})</small>
+                                                    </div>
+                                                </span></a>
                                             <br>
                                         @endforeach
                                     @endif
@@ -696,6 +706,42 @@
                             </div>
                             <div class="modal-body" style="text-align:left;">
                                 Trimite email <b>{{ $tipEmail }}</b>.</b>
+                                <br>
+                                <br>
+                                <label for="mesaj" class="form-label mb-0 ps-3">Mesaj</label>
+                                <textarea class="form-control bg-white {{ $errors->has('mesaj') ? 'is-invalid' : '' }}"
+                                    name="mesaj" rows="3">{{ old('mesaj') }}</textarea>
+                                <small class="m-0 ps-3">
+                                    * Completează doar dacă vrei să mai adaugi ceva la emailul standard.
+                                </small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                                <button type="submit" class="btn btn-primary">Trimite email</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endforeach
+    @endforeach
+
+    {{-- Modalele pentru trimitere Comanda prin email catre utilizator --}}
+    {{-- Versiune noua, cand s-a introdus posibilitatea de adaugare de comenzi multiple --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        @foreach ($fisaCaz->comenzi as $comanda)
+            <div class="modal fade text-dark" id="trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_comanda_{{ $comanda->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form method="POST" action="{{ $fisaCaz->path() }}/trimite-email-catre-utilizatori/comandaVersiuneNoua/{{ $comanda->id }}">
+                        @csrf
+
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning">
+                                <h5 class="modal-title text-dark" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                                <button type="button" class="btn-close bg-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="text-align:left;">
+                                Trimite email <b>comandă</b>.</b>
                                 <br>
                                 <br>
                                 <label for="mesaj" class="form-label mb-0 ps-3">Mesaj</label>

@@ -23,6 +23,7 @@ class FisaCaz extends Mailable
         public \App\Models\FisaCaz $fisaCaz,
         public $tipEmail,
         public $mesaj = null,
+        public \App\Models\Comanda $comanda,
         // public $userName = null
         )
     {
@@ -35,8 +36,28 @@ class FisaCaz extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: (($this->tipEmail == "fisaCaz") ? 'Fișă caz' : (($this->tipEmail == "oferta") ? 'Ofertă' : (($this->tipEmail == "comanda") ? 'Fișă comandă' : $this->tipEmail))) .
-            ' - pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . $this->fisaCaz->tip_lucrare_solicitata,
+            subject:
+                (
+                    ($this->tipEmail == "fisaCaz") ?
+                        'Fișă caz'
+                        :
+                        (
+                            ($this->tipEmail == "oferta") ?
+                                'Ofertă'
+                                :
+                                (
+                                    ($this->tipEmail == "comanda") ?
+                                        'Fișă comandă'
+                                        :
+                                        (
+                                            ($this->tipEmail == "comandaVersiuneNoua") ?
+                                            'Fișă comandă'
+                                            :
+                                            $this->tipEmail
+                                        )
+                                )
+                        )
+                ) . ' - pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . $this->fisaCaz->tip_lucrare_solicitata,
         );
     }
 
@@ -58,6 +79,7 @@ class FisaCaz extends Mailable
     public function attachments(): array
     {
         $fisaCaz = $this->fisaCaz;
+        $comanda = $this->comanda;
 
         $arrayFisiere = [];
 
@@ -81,6 +103,21 @@ class FisaCaz extends Mailable
 
             if ($fisaCaz->comenziComponente->count() > 0) {
                 $pdf = \PDF::loadView('comenziComponente.toate.export.comandaComponentePdf', compact('fisaCaz'))
+                    ->setPaper('a4', 'portrait');
+                $pdf->getDomPDF()->set_option("enable_php", true);
+
+                array_push($arrayFisiere, Attachment::fromData(fn () => $pdf->output(), 'Fisa comanda ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . '.pdf'));
+            }
+        }
+        elseif (($this->tipEmail == "comandaVersiuneNoua") && ($comanda)) {
+            foreach ($comanda->fisiere as $fisier){
+                if(Storage::exists($fisier->cale . '/' . $fisier->nume)) {
+                    array_push($arrayFisiere, Attachment::fromStorage($fisier->cale . '/' . $fisier->nume));
+                }
+            }
+
+            if ($comanda->componente->count() > 0) {
+                $pdf = \PDF::loadView('comenzi.export.comandaComponentePdf', compact('comanda'))
                     ->setPaper('a4', 'portrait');
                 $pdf->getDomPDF()->set_option("enable_php", true);
 

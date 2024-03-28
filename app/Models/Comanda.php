@@ -48,4 +48,9 @@ class Comanda extends Model
     {
         return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 4);
     }
+
+    public function emailuriTrimise(): HasMany
+    {
+        return $this->hasMany(MesajTrimisEmail::class, 'referinta_id')->where('tip', 7);
+    }
 }

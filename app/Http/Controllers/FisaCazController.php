@@ -14,6 +14,7 @@ use App\Models\Pacient;
 use App\Models\DataMedicala;
 use App\Models\Cerinta;
 use App\Models\Fisier;
+use App\Models\Comanda;
 
 class FisaCazController extends Controller
 {
@@ -414,7 +415,7 @@ class FisaCazController extends Controller
     //     return back()->with('status',' Emailul către ' . $user->name . ' a fost trimis cu succes.');
     // }
 
-    public function trimitePrinEmailCatreUtilizatori(Request $request, FisaCaz $fisaCaz, $tipEmail=null)
+    public function trimitePrinEmailCatreUtilizatori(Request $request, FisaCaz $fisaCaz, $tipEmail, Comanda $comanda)
     {
         $validator = Validator::make(
             [
@@ -438,12 +439,33 @@ class FisaCazController extends Controller
 // dd($fisaCaz, $tipEmail, $usersEmails, $request->mesaj);
         $trimitereEmail = Mail::to($usersEmails)
             ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
-            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj));
+            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $comanda));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
-            'referinta' => 1, // Fisa caz
-            'referinta_id' => $fisaCaz->id,
-            'tip' => (($tipEmail == "fisaCaz") ? '1' : (($tipEmail == "oferta") ? '2' : (($tipEmail == "comanda") ? '3' : ''))),
+            'referinta' => $comanda->id ? 2 : 1, // Daca se trimie comanda in request, atunci este pentru comenzi, daca nu este pentru fise caz
+            'referinta_id' => $comanda->id ? $comanda->id : $fisaCaz->id, // Daca se trimie comanda in request, atunci este pentru comenzi, daca nu este pentru fise caz
+            'tip' =>
+                (
+                    ($tipEmail == "fisaCaz") ?
+                        '1'
+                        :
+                        (
+                            ($tipEmail == "oferta") ?
+                                '2'
+                                :
+                                (
+                                    ($tipEmail == "comanda") ?
+                                        '3'
+                                        :
+                                        (
+                                            ($tipEmail == "comandaVersiuneNoua") ?
+                                                '7'
+                                                :
+                                                ''
+                                        )
+                                )
+                        )
+                ),
             'mesaj' => $request->mesaj,
             'email' => implode(', ', $usersEmails)
         ]);
