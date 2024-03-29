@@ -107,7 +107,7 @@
                             <th class="text-white culoare2 text-center">Tip lucrare solicitată</th>
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
-                            <th class="text-white culoare2 text-center">Fișe comandă</th>
+                            <th class="text-white culoare2 text-center">Comenzi componente</th>
                             <th class="text-white culoare2 text-center">Fișă comandă</th>
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
@@ -118,7 +118,9 @@
                                 <th class="text-white culoare2 text-center"><i class="fa-solid fa-chart-simple"></i></th>
                             @endif
 
-                            <th class="text-white culoare2 text-center">Email</i></th>
+                            {{-- Au fost mutate butoanele in alte parti, se poate sterge la 01.06.2024 --}}
+                            {{-- <th class="text-white culoare2 text-center">Email</i></th> --}}
+
                             <th class="text-white culoare2">Utilizator</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
@@ -138,6 +140,16 @@
                                     {{ $fisaCaz->dateMedicale->first()->amputatie ?? '' }}
                                     <br>
                                     {{ $fisaCaz->pacient->judet ?? '' }}
+                                    <a href="#"
+                                        class="text-info" style="text-decoration: none;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_fisaCaz"
+                                        title="trimite Fișa Caz prin email către utilizatori"
+                                        ><span class="badge py-0 align-items-center" style="color:rgb(218, 120, 0)">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid fa-envelope"></i><small>({{ $fisaCaz->emailuriFisaCaz->count() }})</small>
+                                            </div>
+                                        </span></a>
                                 </td>
                                 <td class="">
                                     {{ $fisaCaz->tip_lucrare_solicitata }}
@@ -177,6 +189,16 @@
                                             <br>
                                         @endforeach
                                     @endif
+                                    <a href="#"
+                                        class="text-info" style="text-decoration: none;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#trimiteEmailCatreUtilizatori_{{ $fisaCaz->id }}_oferta"
+                                        title="trimite Oferta prin email către utilizatori"
+                                        ><span class="badge py-0 align-items-center" style="color:rgb(218, 120, 0)">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid fa-envelope"></i><small>({{ $fisaCaz->emailuriOferta->count() }})</small>
+                                            </div>
+                                        </span></a>
                                     <a href="{{ $fisaCaz->path() }}/oferte/adauga">
                                         <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
                                     </a>
@@ -194,7 +216,7 @@
 
                                             @foreach ($comanda->fisiere as $fisier)
                                                 <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
-                                                    <span class="badge text-success" title="Deschide"><i class="fa-solid fa-file-arrow-down"></i></span></a>
+                                                    <span class="badge text-success" title="Deschide"><i class="fa-solid fa-file"></i></span></a>
                                             @endforeach
 
                                             @if ($comanda->componente->count() > 0)
@@ -336,7 +358,10 @@
                                     </div>
                                 </td>
                                 @endif
-                                <td class="text-center">
+
+
+                                {{-- Au fost mutate trimiterea de emailuri in alte parti, se poate sterge la 01.06.2024 --}}
+                                {{-- <td class="text-center">
                                     <div style="white-space: nowrap;">
                                         <a href="#"
                                             class="text-info" style="text-decoration: none;"
@@ -361,7 +386,9 @@
                                             title="trimite Comanda prin email către utilizatori"
                                             ><span class="badge bg-warning text-dark">Comanda ({{ $fisaCaz->emailuriComanda->count() }})</span></a>
                                     </div>
-                                </td>
+                                </td> --}}
+
+
                                 <td class="">
                                     <div style="white-space: nowrap;">
                                         {{-- @if ($fisaCaz->userVanzari->email ?? null)
