@@ -108,7 +108,10 @@
                             <th class="text-white culoare2 text-center">Evaluare</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
                             <th class="text-white culoare2 text-center">Comenzi componente</th>
-                            <th class="text-white culoare2 text-center">Fișă comandă</th>
+
+                            {{-- Should be removed at 01.06.2024, with everything else, including database fields --}}
+                            {{-- <th class="text-white culoare2 text-center">Fișă comandă</th> --}}
+
                             <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Fișă măsuri</th>
@@ -250,7 +253,9 @@
                                         <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
                                     </a>
                                 </td>
-                                <td class="text-center">
+
+                                {{-- Should be removed at 01.06.2024, with everything else, including database fields --}}
+                                {{-- <td class="text-center">
                                     @if ($fisaCaz->fisa_comanda_sosita == "1")
                                         <i class="fa-solid fa-thumbs-up text-success"></i>
                                     @elseif ($fisaCaz->fisa_comanda_sosita == "0")
@@ -288,7 +293,7 @@
                                         <a href="{{ $fisaCaz->path() }}/comenzi-componente/toate/adauga">
                                             <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td class="text-center">
                                     {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
