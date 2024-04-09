@@ -90,8 +90,8 @@ class ComandaController extends Controller
             }
         }
 
-        if ($fisaCaz->fisa_comanda_sosita == '1') {
-            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită');
+        if ($comanda->sosita == '1') {
+            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită', null, $comanda);
         }
 
         return redirect($request->session()->get('comandaReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost adăugată cu succes!');
@@ -188,7 +188,7 @@ class ComandaController extends Controller
         }
 
         if ($comanda->wasChanged('sosita') && ($comanda->sosita == '1')) {
-            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită');
+            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită', null, $comanda);
         }
 
         return redirect($request->session()->get('comandaReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost modificată cu succes!');
@@ -280,8 +280,9 @@ class ComandaController extends Controller
         return $pdf->stream();
     }
 
-    public function trimitePrinEmailCatreUtilizator(FisaCaz $fisaCaz, $tipEmail=null)
+    public function trimitePrinEmailCatreUtilizator(FisaCaz $fisaCaz, $tipEmail=null, $mesaj, $comanda)
     {
+        // dd('here');
         $validator = Validator::make(
             [
                 'email_vanzari' => $fisaCaz->userVanzari->email ?? '',
@@ -304,11 +305,11 @@ class ComandaController extends Controller
 
         Mail::to($adreseEmail)
             ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
-            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, null, null));
+            ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $mesaj, $comanda));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
-            'referinta' => 1, // Fisa caz
-            'referinta_id' => $fisaCaz->id,
+            'referinta' => 2, // Comanda
+            'referinta_id' => $comanda->id,
             'referinta2' => null, // User
             'referinta2_id' => null,
             'tip' => 4, // comanda Sosita
