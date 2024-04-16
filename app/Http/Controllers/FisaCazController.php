@@ -29,6 +29,7 @@ class FisaCazController extends Controller
 
         $searchNume = $request->searchNume;
         $searchInterval = $request->searchInterval;
+        $searchProgramareAtelier = $request->searchProgramareAtelier;
         $searchTipLucrareSolicitata = $request->searchTipLucrareSolicitata;
         $searchUserVanzari = $request->searchUserVanzari;
         $searchUserComercial = $request->searchUserComercial;
@@ -59,6 +60,9 @@ class FisaCazController extends Controller
             ->when($searchInterval, function ($query, $searchInterval) {
                 return $query->whereBetween('protezare', [strtok($searchInterval, ','), strtok( '' )]);
             })
+            ->when($searchProgramareAtelier, function ($query, $searchProgramareAtelier) {
+                return $query->whereDate('programare_atelier', $searchProgramareAtelier);
+            })
             ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
                 $query->whereHas('userVanzari', function ($query) use ($searchUserVanzari) {
                     return $query->where('id', $searchUserVanzari);
@@ -81,7 +85,7 @@ class FisaCazController extends Controller
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
-        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchTipLucrareSolicitata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
+        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchProgramareAtelier', 'searchTipLucrareSolicitata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
     }
 
     /**
@@ -114,7 +118,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 
-        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
         foreach ($request->dateMedicale as $date) {
             $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
@@ -122,22 +126,6 @@ class FisaCazController extends Controller
         foreach ($request->cerinte as $date) {
             $fisaCaz->cerinte()->save(Cerinta::make($date));
         }
-
-        // Trimitere notificare pe email
-        // $casuteEmail = [];
-        // if ($fisaCaz->userVanzari){
-        //     echo 'da';
-        // } else {
-        //     echo 'nu';
-        // }
-        // dd('stop');
-
-        // Mail::to($tombola->email)->send(new \App\Mail\CodTombola($tombola));
-        // \App\Models\MesajTrimisEmail::create([
-        //     'referinta' => 1,
-        //     'referinta_id' => $tombola->id,
-        //     'email' => $tombola->email
-        // ]);
 
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost adăugată cu succes!');
     }
@@ -182,7 +170,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 // dd($request);
-        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
         foreach ($request->dateMedicale as $date) {
             $fisaCaz->dateMedicale()->first() ? $fisaCaz->dateMedicale()->first()->update($date) : $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
@@ -250,6 +238,7 @@ class FisaCazController extends Controller
             [
                 'data' => 'required',
                 'tip_lucrare_solicitata' => 'required',
+                'programare_atelier' => '',
                 'compresie_manson' => '',
                 'protezare' => '',
                 'user_vanzari' => '',

@@ -50,6 +50,17 @@
                         </select>
                     </div>
                     <div class="col-lg-2 mb-4 text-center">
+                        <label for="programare_atelier" class="mb-0 ps-0">Programare atelier</label>
+                        <vue-datepicker-next
+                            data-veche="{{ old('programare_atelier', $fisaCaz->programare_atelier) }}"
+                            nume-camp-db="programare_atelier"
+                            tip="datetime"
+                            value-type="YYYY-MM-DD HH:mm"
+                            format="DD.MM.YYYY HH:mm"
+                            :latime="{ width: '160px' }"
+                        ></vue-datepicker-next>
+                    </div>
+                    <div class="col-lg-2 mb-4 text-center">
                         <label for="compresie_manson" class="mb-0 ps-0">Compresie manșon</label>
                         <vue-datepicker-next
                             data-veche="{{ old('compresie_manson', $fisaCaz->compresie_manson ?? '') }}"

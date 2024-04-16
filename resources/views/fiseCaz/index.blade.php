@@ -18,14 +18,14 @@
                     <i class="fa-solid fa-file-medical me-1"></i>Fișe Caz ({{ $fiseCaz->total() }})
                 </span>
             </div>
-            <div class="col-lg-7">
+            <div class="col-lg-8">
                 <form class="needs-validation" novalidate method="GET" action="{{ url()->current() }}">
                     @csrf
-                    <div class="row mb-1 custom-search-form justify-content-center">
-                        <div class="col-lg-3">
+                    <div class="row mb-1 custom-search-form justify-content-center" id="datePicker">
+                        <div class="col-lg-2">
                             <input type="text" class="form-control rounded-3" id="searchNume" name="searchNume" placeholder="Nume sau tel. pacient" value="{{ $searchNume }}">
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-2">
                             <select name="searchTipLucrareSolicitata" class="form-select bg-white rounded-3 {{ $errors->has('searchTipLucrareSolicitata') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Tip lucrare solicitată</option>
                                 <option value="AK provizorie" {{ ($searchTipLucrareSolicitata == 'AK provizorie') ? 'selected' : '' }}>AK provizorie</option>
@@ -40,7 +40,7 @@
                                 <option value="Proteză sân+sutien" {{ ($searchTipLucrareSolicitata == 'Proteză sân+sutien') ? 'selected' : '' }}>Proteză sân+sutien</option>
                             </select>
                         </div>
-                        <div class="col-lg-6 d-flex align-items-center" id="datePicker">
+                        <div class="col-lg-4 d-flex align-items-center">
                             <label for="searchInterval" class="pe-1">Interval protezare:</label>
                             <vue-datepicker-next
                                 data-veche="{{ $searchInterval }}"
@@ -50,6 +50,17 @@
                                 value-type="YYYY-MM-DD"
                                 format="DD.MM.YYYY"
                                 :latime="{ width: '210px' }"
+                            ></vue-datepicker-next>
+                        </div>
+                        <div class="col-lg-4 d-flex align-items-center">
+                            <label for="searchProgramareAtelier" class="pe-1">Programare atelier:</label>
+                            <vue-datepicker-next
+                                data-veche="{{ $searchProgramareAtelier }}"
+                                nume-camp-db="searchProgramareAtelier"
+                                tip="date"
+                                value-type="YYYY-MM-DD"
+                                format="DD.MM.YYYY"
+                                :latime="{ width: '125px' }"
                             ></vue-datepicker-next>
                         </div>
                         <div class="col-lg-3">
@@ -87,7 +98,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-lg-3 text-end">
+            <div class="col-lg-2 text-end">
                 <a class="btn btn-sm btn-success text-white border border-dark rounded-3 col-md-8" href="{{ url()->current() }}/adauga" role="button">
                     <i class="fas fa-plus-square text-white me-1"></i>Adaugă Fișă Caz
                 </a>
@@ -103,16 +114,14 @@
                     <thead class="">
                         <tr class="" style="padding:2rem">
                             <th class="text-white culoare2">#</th>
-                            <th class="text-white culoare2">Pacient</th>
-                            <th class="text-white culoare2 text-center">Tip lucrare solicitată</th>
-                            <th class="text-white culoare2 text-center">Evaluare</th>
+                            <th class="text-white culoare2">Pacient<br>Programare atelier</th>
+                            <th class="text-white culoare2">Tip lucrare solicitată<br>Evaluare<br>Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
                             <th class="text-white culoare2 text-center">Comenzi componente</th>
 
                             {{-- Should be removed at 01.06.2024, with everything else, including database fields --}}
                             {{-- <th class="text-white culoare2 text-center">Fișă comandă</th> --}}
 
-                            <th class="text-white culoare2 text-center">Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Protezare</th>
                             <th class="text-white culoare2 text-center">Fișă măsuri</th>
 
@@ -153,19 +162,15 @@
                                                 <i class="fa-solid fa-envelope"></i><small>({{ $fisaCaz->emailuriFisaCaz->count() }})</small>
                                             </div>
                                         </span></a>
+                                    <br>
+                                    {{ $fisaCaz->programare_atelier ? Carbon::parse($fisaCaz->programare_atelier)->isoFormat('DD.MM.YYYY HH:mm') : '' }}
                                 </td>
                                 <td class="">
                                     {{ $fisaCaz->tip_lucrare_solicitata }}
-                                </td>
-                                <td class="text-center">
-                                    @if ($fisaCaz->data)
-                                        {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
-                                        {{-- <br>
-                                        <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span>
-                                        <span class="badge text-danger px-1 py-0" title="Șterge"><i class="fa-solid fa-trash-can"></i></span> --}}
-                                    @else
-                                        {{-- <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span> --}}
-                                    @endif
+                                    <br>
+                                    {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
+                                    <br>
+                                    {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
                                 <td class="text-end">
                                     @if ($fisaCaz->oferte->count() > 0)
@@ -294,9 +299,6 @@
                                             <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
                                     @endif
                                 </td> --}}
-                                <td class="text-center">
-                                    {{ $fisaCaz->compresie_manson ? Carbon::parse($fisaCaz->compresie_manson)->isoFormat('DD.MM.YYYY') : '' }}
-                                </td>
                                 <td class="text-center">
                                     {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
                                 </td>
