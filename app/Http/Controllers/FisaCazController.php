@@ -61,7 +61,8 @@ class FisaCazController extends Controller
                 return $query->whereBetween('protezare', [strtok($searchInterval, ','), strtok( '' )]);
             })
             ->when($searchProgramareAtelier, function ($query, $searchProgramareAtelier) {
-                return $query->whereDate('programare_atelier', $searchProgramareAtelier);
+                // return $query->whereDate('programare_atelier', $searchProgramareAtelier);
+                return $query->whereBetween('programare_atelier', [strtok($searchProgramareAtelier, ','), strtok( '' )]);
             })
             ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
                 $query->whereHas('userVanzari', function ($query) use ($searchUserVanzari) {

@@ -58,9 +58,10 @@
                                 data-veche="{{ $searchProgramareAtelier }}"
                                 nume-camp-db="searchProgramareAtelier"
                                 tip="date"
+                                range="range"
                                 value-type="YYYY-MM-DD"
                                 format="DD.MM.YYYY"
-                                :latime="{ width: '125px' }"
+                                :latime="{ width: '210px' }"
                             ></vue-datepicker-next>
                         </div>
                         <div class="col-lg-3">
