@@ -696,16 +696,19 @@
                             <label for="fisiereFisaMasuri" class="mb-0 ps-3">Fișiere fișă măsuri</label>
                             <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3" multiple>
                             @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
-                                <small class="m-0 ps-3">
+                                <br>
+                                <small class="m-0">
                                     * Fișe încărcate:
                                     @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                                        <br>
                                         <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
                                             {{ $fisier->nume }}</a>
                                     @endforeach
-                                </small>
-                                <br>
-                                <small class="m-0 ps-3">
-                                    * Dacă vrei să le înlocuiești, încarcă alte fișiere, și cele care sunt acum se vor șterge automat.
+                                <br><br>
+                                    {{-- ** Dacă vrei să le înlocuiești, încarcă alte fișiere, și cele care sunt acum se vor șterge automat. --}}
+                                    ** Modul de funcționare a fost modificat. Dacă adaugi fișiere, cele vechi NU se vor mai șterge.
+                                    <br>
+                                    *** Dacă dorești funcționalități de ștergere pentru fișiere, comunică te rog acest lucru către Dana Tudorache.
                                 </small>
                             @endif
                         </div>

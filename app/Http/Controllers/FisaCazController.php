@@ -340,14 +340,15 @@ class FisaCazController extends Controller
         // Fisiere Fisa Masuri
         // Daca exista fisiere in request, se sterge vechile fisiere si se salveaza cele de acum
         if ($request->file('fisiereFisaMasuri')) {
-            // stergere fisiere vechi
-            if ($fisaCaz->fisiereFisaMasuri->count() > 0){
-                // Se sterge tot directorul cu toate fisierele din el
-                Storage::deleteDirectory($fisaCaz->fisiereFisaMasuri->first()->cale);
+            // la 17.04.2024, the functionality it was changed, so the old files are not anymore deleted, so the users can just add new files.
+            // // stergere fisiere vechi
+            // if ($fisaCaz->fisiereFisaMasuri->count() > 0){
+            //     // Se sterge tot directorul cu toate fisierele din el
+            //     Storage::deleteDirectory($fisaCaz->fisiereFisaMasuri->first()->cale);
 
-                // Se sterge toate fisierele din baza de date
-                $fisaCaz->fisiereFisaMasuri()->delete();
-            }
+            //     // Se sterge toate fisierele din baza de date
+            //     $fisaCaz->fisiereFisaMasuri()->delete();
+            // }
 
             foreach ($request->file('fisiereFisaMasuri') as $fisier){
                 $numeFisier = $fisier->getClientOriginalName();
