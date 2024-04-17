@@ -16,6 +16,8 @@ use App\Models\Cerinta;
 use App\Models\Fisier;
 use App\Models\Comanda;
 
+use Carbon\Carbon;
+
 class FisaCazController extends Controller
 {
     /**
@@ -62,7 +64,7 @@ class FisaCazController extends Controller
             })
             ->when($searchProgramareAtelier, function ($query, $searchProgramareAtelier) {
                 // return $query->whereDate('programare_atelier', $searchProgramareAtelier);
-                return $query->whereBetween('programare_atelier', [strtok($searchProgramareAtelier, ','), strtok( '' )]);
+                return $query->whereBetween('programare_atelier', [strtok($searchProgramareAtelier, ','), Carbon::parse(strtok( '' ))->endOfDay()]);
             })
             ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
                 $query->whereHas('userVanzari', function ($query) use ($searchUserVanzari) {
