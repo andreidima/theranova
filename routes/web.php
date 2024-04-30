@@ -60,19 +60,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
 
-    // De sters 01.03.2024
-    // Route::get('/actualizeaza-date', function (){
-    //     $fiseCaz = \App\Models\FisaCaz::with('dateMedicale')->whereHas('dateMedicale')->get();
-    //     foreach ($fiseCaz as $fisaCaz){
-    //         echo $fisaCaz->dateMedicale->first()->tip_proteza;
-    //         $fisaCaz->tip_lucrare_solicitata = $fisaCaz->dateMedicale->first()->tip_proteza ?? '';
-    //         $fisaCaz->save();
-    //         echo '<br>';
-    //         echo '<br>';
-    //         echo '<br>';
-    //         echo '<br>';
-    //     }
-    // });
+    Route::get('/calendar/activitati/adauga-la-fisa-caz/{fisaCaz}', [App\Http\Controllers\Calendar\ActivitateController::class, 'create']);
+    Route::get('/calendar/mod-afisare-lunar/activitati/', [App\Http\Controllers\Calendar\ActivitateController::class, 'index']);
+    Route::resource('/calendar/activitati', App\Http\Controllers\Calendar\ActivitateController::class)->parameters(['activitati' => 'activitate']);
+
 });
 
 

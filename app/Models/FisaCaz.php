@@ -164,4 +164,14 @@ class FisaCaz extends Model
     {
         return $this->hasOne(MesajTrimisEmail::class, 'referinta_id')->where('tip', 6);
     }
+
+    /**
+     * Get the activitate associated with the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function activitate(): HasOne
+    {
+        return $this->hasOne(Calendar\Activitate::class, 'fisa_caz_id');
+    }
 }

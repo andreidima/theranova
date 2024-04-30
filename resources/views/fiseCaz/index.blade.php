@@ -165,6 +165,19 @@
                                         </span></a>
                                     <br>
                                     {{ $fisaCaz->programare_atelier ? Carbon::parse($fisaCaz->programare_atelier)->isoFormat('DD.MM.YYYY HH:mm') : '' }}
+                                    <br>
+                                    <i class="fa-solid fa-calendar-days me-1"></i>:
+                                    @if ($fisaCaz->activitate)
+                                        <a href="{{ $fisaCaz->activitate->path() }}/modifica" style="text-decoration: none;">
+                                            {{-- <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a> --}}
+                                            {{ $fisaCaz->activitate->data_inceput ? Carbon::parse($fisaCaz->activitate->data_inceput)->isoFormat('DD.MM.YYYY HH:mm') : '' }}
+                                        </a>
+                                    @else
+                                        <a href="calendar/activitati/adauga-la-fisa-caz/{{ $fisaCaz->id }}">
+                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                        </a>
+                                    @endif
+
                                 </td>
                                 <td class="">
                                     {{ $fisaCaz->tip_lucrare_solicitata }}
@@ -618,7 +631,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                         <div class="modal-header bg-danger">
-                            <h5 class="modal-title text-white" id="exampleModalLabel">Comanda: <b>{{ ($comanda->fisaCaz->pacient->nume ?? '') . ' ' . ($comanda->fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Comanda: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
                             <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body" style="text-align:left;">
