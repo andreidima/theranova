@@ -72,9 +72,16 @@ Route::group(['middleware' => 'auth'], function () {
             $activitate = new App\Models\Calendar\Activitate;
             $activitate->calendar_id = 3;
             $activitate->fisa_caz_id = $fisaCaz->id;
-            $activitate->descriere = 'Pacient ' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
-                                        . ', tehnician ' . ($fisaCaz->userTehnic->name ?? '')
-                                        . ', vanzari ' . ($fisaCaz->userVanzari->name ?? '');
+
+            $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
+            $userTehnic = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+            $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
+            $userVanzari = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+
+            $activitate->descriere = ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
+                                        . ', ' . $fisaCaz->tip_lucrare_solicitata
+                                        . ' - ' . $userTehnic . '/' . $userVanzari;
+
             $activitate->data_inceput = $fisaCaz->programare_atelier;
             $activitate->save();
         }
