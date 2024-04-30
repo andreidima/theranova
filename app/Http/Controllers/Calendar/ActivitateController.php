@@ -77,18 +77,22 @@ class ActivitateController extends Controller
     {
         $request->session()->get('calendarActivitateReturnUrl') ?? $request->session()->put('calendarActivitateReturnUrl', url()->previous());
 
-
         $activitate = new Activitate;
+
         // If the request is comming from fise caz, the we create the description and put the fisaCaz id in activity
         if ($fisaCaz) {
             $fisaCaz = FisaCaz::find($fisaCaz);
+
+            // First are created the acronyms for users name
+            $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
+            $userTehnic = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+            $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
+            $userVanzari = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+
             $activitate->fisa_caz_id = $fisaCaz->id;
-            $activitate->descriere = 'Pacient ' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
-                                        . ', tehnician ' . ($fisaCaz->userTehnic->name ?? '')
-                                        . ', vanzari ' . ($fisaCaz->userVanzari->name ?? '');
-            // dd ($fisaCaz, $activitate);
-        } else {
-            // dd ('nu');
+            $activitate->descriere = ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
+                                        . ', ' . $fisaCaz->tip_lucrare_solicitata
+                                        . ' - ' . $userTehnic . '/' . $userVanzari;
         }
 
         $calendare = Calendar::all();
