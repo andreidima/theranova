@@ -64,6 +64,23 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/calendar/mod-afisare-lunar/activitati/', [App\Http\Controllers\Calendar\ActivitateController::class, 'index']);
     Route::resource('/calendar/activitati', App\Http\Controllers\Calendar\ActivitateController::class)->parameters(['activitati' => 'activitate']);
 
+
+    Route::get('/calendar-update', function () {
+        $fiseCaz = App\Models\FisaCaz::with('pacient')->whereNotNull('programare_atelier')->get();
+
+        foreach ($fiseCaz as $fisaCaz){
+            $activitate = new App\Models\Calendar\Activitate;
+            $activitate->calendar_id = 3;
+            $activitate->fisa_caz_id = $fisaCaz->id;
+            $activitate->descriere = 'Pacient ' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
+                                        . ', tehnician ' . ($fisaCaz->userTehnic->name ?? '')
+                                        . ', vanzari ' . ($fisaCaz->userVanzari->name ?? '');
+            $activitate->data_inceput = $fisaCaz->programare_atelier;
+            $activitate->save();
+        }
+
+        return 'Hello World';
+    });
 });
 
 
