@@ -65,7 +65,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/calendar/activitati', App\Http\Controllers\Calendar\ActivitateController::class)->parameters(['activitati' => 'activitate']);
 
 
-    Route::get('/calendar-update', function () {
+    // To delete everything about $fisaCaz->programare_atelier (database and app code) at 01.06.2024
+
+    // To delete this route: 01.06.2024
+    // Route::get('/calendar-update', function () {
         // First step - creating the calendar activities from fisaCaz->programare_atelier
         // $fiseCaz = App\Models\FisaCaz::with('pacient')->whereNotNull('programare_atelier')->get();
 
@@ -103,7 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
         // }
 
         // return 'Hello World';
-    });
+    // });
 });
 
 

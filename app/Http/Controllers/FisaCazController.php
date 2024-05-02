@@ -242,7 +242,7 @@ class FisaCazController extends Controller
             [
                 'data' => 'required',
                 'tip_lucrare_solicitata' => 'required',
-                'programare_atelier' => '',
+                // 'programare_atelier' => '',
                 'compresie_manson' => '',
                 'protezare' => '',
                 'user_vanzari' => '',

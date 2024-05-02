@@ -163,8 +163,8 @@
                                                 <i class="fa-solid fa-envelope"></i><small>({{ $fisaCaz->emailuriFisaCaz->count() }})</small>
                                             </div>
                                         </span></a>
-                                    <br>
-                                    {{ $fisaCaz->programare_atelier ? Carbon::parse($fisaCaz->programare_atelier)->isoFormat('DD.MM.YYYY HH:mm') : '' }}
+                                    {{-- <br>
+                                    {{ $fisaCaz->programare_atelier ? Carbon::parse($fisaCaz->programare_atelier)->isoFormat('DD.MM.YYYY HH:mm') : '' }} --}}
                                     <br>
                                     <i class="fa-solid fa-calendar-days me-1"></i>:
                                     @if ($fisaCaz->activitate)
