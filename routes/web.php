@@ -89,20 +89,20 @@ Route::group(['middleware' => 'auth'], function () {
 
 
         // Second step: Lucrarile cu tehnicieni Ionut Miron si Alex Oprea sunt pe Bucuresti
-        $activitati = App\Models\Calendar\Activitate::all();
-        foreach ($activitati as $activitate) {
-            if (str_contains($activitate, 'Ionut M') || str_contains($activitate, 'Alex O')){
-                $activitate->calendar_id = 1;
-                $activitate->save();
+        // $activitati = App\Models\Calendar\Activitate::all();
+        // foreach ($activitati as $activitate) {
+        //     if (str_contains($activitate->descriere, 'Ionut M') || str_contains($activitate->descriere, 'Alex O')){
+        //         $activitate->calendar_id = 1;
+        //         $activitate->save();
 
-                echo $activitate->calendar->nume ?? '';
-                echo '<br>';
-                echo ($activitate->descriere);
-                echo '<br><br>';
-            }
-        }
+        //         echo $activitate->calendar->nume ?? '';
+        //         echo '<br>';
+        //         echo ($activitate->descriere);
+        //         echo '<br><br>';
+        //     }
+        // }
 
-        return 'Hello World';
+        // return 'Hello World';
     });
 });
 

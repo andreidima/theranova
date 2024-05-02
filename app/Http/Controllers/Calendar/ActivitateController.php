@@ -93,6 +93,13 @@ class ActivitateController extends Controller
             $activitate->descriere = ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
                                         . ', ' . $fisaCaz->tip_lucrare_solicitata
                                         . ' - ' . $userTehnic . '/' . $userVanzari;
+
+            // Lucrarile cu tehnicieni Ionut Miron si Alex Oprea sunt pe Bucuresti, altfel se pune Oradea
+            if (str_contains($activitate->descriere, 'Ionut M') || str_contains($activitate->descriere, 'Alex O')){
+                $activitate->calendar_id = 1; // Bucuresti
+            } else {
+                $activitate->calendar_id = 3; // Oradea
+            }
         }
 
         $calendare = Calendar::all();
