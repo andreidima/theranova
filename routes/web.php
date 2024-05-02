@@ -66,24 +66,40 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::get('/calendar-update', function () {
-        $fiseCaz = App\Models\FisaCaz::with('pacient')->whereNotNull('programare_atelier')->get();
+        // First step - creating the calendar activities from fisaCaz->programare_atelier
+        // $fiseCaz = App\Models\FisaCaz::with('pacient')->whereNotNull('programare_atelier')->get();
 
-        foreach ($fiseCaz as $fisaCaz){
-            $activitate = new App\Models\Calendar\Activitate;
-            $activitate->calendar_id = 3;
-            $activitate->fisa_caz_id = $fisaCaz->id;
+        // foreach ($fiseCaz as $fisaCaz){
+        //     $activitate = new App\Models\Calendar\Activitate;
+        //     $activitate->calendar_id = 3;
+        //     $activitate->fisa_caz_id = $fisaCaz->id;
 
-            $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
-            $userTehnic = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
-            $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
-            $userVanzari = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+        //     $words = explode(" ", ($fisaCaz->userTehnic->name ?? ''));
+        //     $userTehnic = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
+        //     $words = explode(" ", ($fisaCaz->userVanzari->name ?? ''));
+        //     $userVanzari = ($words[0] ?? '') . ' ' . mb_substr(($words[1] ?? ''), 0, 1);
 
-            $activitate->descriere = ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
-                                        . ', ' . $fisaCaz->tip_lucrare_solicitata
-                                        . ' - ' . $userTehnic . '/' . $userVanzari;
+        //     $activitate->descriere = ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
+        //                                 . ', ' . $fisaCaz->tip_lucrare_solicitata
+        //                                 . ' - ' . $userTehnic . '/' . $userVanzari;
 
-            $activitate->data_inceput = $fisaCaz->programare_atelier;
-            $activitate->save();
+        //     $activitate->data_inceput = $fisaCaz->programare_atelier;
+        //     $activitate->save();
+        // }
+
+
+        // Second step: Lucrarile cu tehnicieni Ionut Miron si Alex Oprea sunt pe Bucuresti
+        $activitati = App\Models\Calendar\Activitate::all();
+        foreach ($activitati as $activitate) {
+            if (str_contains($activitate, 'Ionut M') || str_contains($activitate, 'Alex O')){
+                $activitate->calendar_id = 1;
+                $activitate->save();
+
+                echo $activitate->calendar->nume ?? '';
+                echo '<br>';
+                echo ($activitate->descriere);
+                echo '<br><br>';
+            }
         }
 
         return 'Hello World';

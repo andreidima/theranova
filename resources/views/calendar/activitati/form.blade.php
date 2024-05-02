@@ -55,6 +55,7 @@
                     <option selected></option>
                     <option value="Apartament 1" {{ old('cazare', $activitate->cazare) == "Apartament 1" ? 'selected' : '' }}>Apartament 1</option>
                     <option value="Apartament 2" {{ old('cazare', $activitate->cazare) == "Apartament 2" ? 'selected' : '' }}>Apartament 2</option>
+                    <option value="Apartament 3" {{ old('cazare', $activitate->cazare) == "Apartament 3" ? 'selected' : '' }}>Apartament 3</option>
                 </select>
             </div>
             <div class="col-lg-8 mb-4">
