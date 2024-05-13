@@ -65,6 +65,36 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-lg-8 mb-4">
+                <label for="mementouri_zile" class="mb-0 ps-3">
+                    Mementouri - zile
+                </label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('mementouri_zile') ? 'is-invalid' : '' }}"
+                    name="mementouri_zile"
+                    placeholder="Ex: 1,3,7"
+                    value="{{ old('mementouri_zile', $activitate->mementouri_zile) }}">
+                <small class="ps-3">*Se setează cu câte zile înainte de „Data început” să se trimită memento.</small>
+                <br>
+                <small class="ps-3">**Se pot introduce mai multe zile de memento, cu virgulă între ele.</small>
+            </div>
+            <div class="col-lg-8 mb-4">
+                <label for="mementouri_emailuri" class="mb-0 ps-3">
+                    Mementouri - emailuri
+                </label>
+                <input
+                    type="text"
+                    class="form-control bg-white rounded-3 {{ $errors->has('mementouri_emailuri') ? 'is-invalid' : '' }}"
+                    name="mementouri_emailuri"
+                    placeholder=""
+                    value="{{ old('mementouri_emailuri', $activitate->mementouri_emailuri) }}">
+                <small class="ps-3">*Se setează către ce email să se trimită memento.</small>
+                <br>
+                <small class="ps-3">**Se pot introduce mai multe emailuri, cu virgulă între ele.</small>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-lg-12 mb-0 d-flex justify-content-center">
                 <button type="submit" ref="submit" class="btn btn-lg btn-primary text-white me-3 rounded-3">{{ $buttonText }}</button>
                 <a class="btn btn-lg btn-secondary rounded-3" href="{{ Session::get('calendarActivitateReturnUrl') }}">Renunță</a>

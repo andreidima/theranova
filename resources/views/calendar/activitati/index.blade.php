@@ -134,7 +134,7 @@
         @endforeach
     {{-- @endif --}}
 @elseif (str_contains(url()->current(), 'mod-afisare-lunar' ))
-    <div class="mx-3 px-3 card mx-auto" style="border-radius: 40px 40px 40px 40px;">
+    <div class="mx-3 px-0 card mx-auto" style="border-radius: 40px 40px 40px 40px;">
         <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
             <div class="col-lg-3">
                 <span class="badge culoare1 fs-5">
@@ -311,7 +311,9 @@
                                         {{-- <span class="px-1 rounded-3" style="color:grey">
                                             {{ Carbon::parse($activitate->data_inceput)->isoFormat('HH:mm') }}</span>- --}}
                                         <a href="/calendar/activitati/{{ $activitate->id }}/modifica" style="text-decoration: none;">
-                                            {{ $activitate->descriere }}</a>
+                                            {{ $activitate->descriere }}
+                                            {{ $activitate->cazare ? '(' . $activitate->cazare . ')' : '' }}
+                                        </a>
                                     </div>
                                 @endforeach
 

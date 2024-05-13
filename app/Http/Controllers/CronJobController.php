@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\FisaCaz;
 
@@ -48,7 +49,7 @@ class CronJobController extends Controller
             ->orderBy('protezare', 'asc')
             // ->take(1)
             ->get();
-// dd($fiseCaz);
+
         foreach ($fiseCaz as $fisaCaz){
             // echo $fisaCaz->id;
             // echo '. ';
@@ -86,6 +87,67 @@ class CronJobController extends Controller
                 'mesaj' => '',
                 'email' => implode(', ', $adreseEmail)
             ]);
+        }
+    }
+
+    public function trimiteMementouriActivitatiCalendar($key = null){
+        if (is_null($keyDB = DB::table('variabile')->where('nume', 'cron_job_key')->get()->first()->valoare ?? null) || is_null($key) || ($keyDB !== $key)) {
+            echo 'Cheia pentru Cron Joburi este incorectă!';
+            return ;
+        }
+
+        $activitati = \App\Models\Calendar\Activitate::
+            whereNotNull('mementouri_zile')
+            ->whereDate('data_inceput', '>=', Carbon::today())
+            ->get();
+
+        $arrayIdActivitatiDeTrimisMesaj = [];
+        foreach ($activitati as $activitate){
+            $zileInainte = preg_split ("/\,/", $activitate->mementouri_zile);
+            foreach ($zileInainte as $ziInainte){
+                if (is_int($ziInainte = intval($ziInainte) )) {
+                    if (Carbon::parse($activitate->data_inceput)->startOfDay()->subDays($ziInainte)->eq(Carbon::today())){
+                        array_push($arrayIdActivitatiDeTrimisMesaj, $activitate->id);
+                    }
+                }
+            }
+        }
+
+        $activitatiDeTrimisMesaj = \App\Models\Calendar\Activitate::with('fisaCaz')->whereIn('id', $arrayIdActivitatiDeTrimisMesaj)->get();
+
+        // Daca nu este nici un memento de trimis pentru ziua curenta, se termina functia
+        if (count($activitatiDeTrimisMesaj) === 0){
+            return;
+        }
+
+        // Trimitere email
+        foreach ($activitatiDeTrimisMesaj as $activitate){
+            if (isset($activitate->mementouri_emailuri)){
+                $emails = array_map('trim', explode(',', $activitate->mementouri_emailuri));
+                $validator = Validator::make(['emails' => $emails], ['emails.*' => 'required|email:rfc,dns']);
+                if ($validator->fails()) {
+                    echo 'Nu toate emailurile sunt corecte';
+                    exit;
+                }
+
+                // Trimitere memento prin email
+                \Mail::to($emails)
+                    ->send(new \App\Mail\MementoActivitateCalendar($activitate)
+                );
+
+                $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
+                    'referinta' => 3, // Calendar Activitate
+                    'referinta_id' => $activitate->id,
+                    'referinta2' => null, // User
+                    'referinta2_id' => null,
+                    'tip' => 8 , // memento Activitate Calendar
+                    'mesaj' => '',
+                    'email' => $activitate->mementouri_emailuri
+                ]);
+
+                echo 'Memento trimis catre: ' . implode(', ', $emails);
+                echo '<br><br>';
+            }
         }
     }
 }

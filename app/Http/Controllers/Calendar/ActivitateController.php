@@ -9,6 +9,7 @@ use App\Models\Calendar\Activitate;
 use App\Models\Calendar\Calendar;
 use App\Models\FisaCaz;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class ActivitateController extends Controller
 {
@@ -101,6 +102,9 @@ class ActivitateController extends Controller
                 $activitate->calendar_id = 3; // Oradea
             }
         }
+
+        // The curent user email is added automatically to mementouri_emailuri
+        $activitate->mementouri_emailuri = auth()->user()->email ?? '';
 
         $calendare = Calendar::all();
 
@@ -204,6 +208,29 @@ class ActivitateController extends Controller
                 'data_sfarsit' => '',
                 'cazare' => 'nullable|max:500',
                 'observatii' => 'nullable|max:2000',
+                'mementouri_zile' => ['nullable' , 'max:500',
+                    function ($attribute, $value, $fail) use ($request) {
+                        if ($value){
+                            $mementouriZile = preg_split ("/\,/", $value);
+                            foreach ($mementouriZile as $mementoZi){
+                                if (!(intval($mementoZi) == $mementoZi)){
+                                    $fail('Câmpul „Mementouri - zile” nu este completat corect');
+                                }elseif ($mementoZi < 0){
+                                    $fail('Câmpul „Mementouri - zile” nu poate conține valori negative');
+                                }elseif ($mementoZi > 100){
+                                    $fail('Câmpul „Mementouri - zile” nu poate conține valori mai mari de 100');
+                                }
+                            }
+                        }
+                    }],
+                'mementouri_emailuri' => ['required_with:mementouri_zile', 'max:500',
+                    function ($attribute, $value, $fail) {
+                        $emails = array_map('trim', explode(',', $value));
+                        $validator = Validator::make(['emails' => $emails], ['emails.*' => 'required|email:rfc,dns']);
+                        if ($validator->fails()) {
+                            $fail('Câmpul Mementouri emailuri nu are toate emailurile valide.');
+                        }
+                    }],
             ],
             [
             ]

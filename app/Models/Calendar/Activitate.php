@@ -28,4 +28,14 @@ class Activitate extends Model
     {
         return $this->belongsTo(Calendar::class, 'calendar_id');
     }
+
+    /**
+     * Get the fisaCaz that owns the Activitate
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function fisaCaz(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\FisaCaz::class, 'fisa_caz_id');
+    }
 }
