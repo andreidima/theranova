@@ -29,7 +29,7 @@ Route::get('/asteptare-aprobare', [RegisterController::class, 'register']);
 Route::redirect('/', '/acasa');
 
 Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteEmail']);
-Route::get('/cron-jobs/trimite-mementouri-activitati-calendar/{key}', [CronJobController::class, 'trimiteMementouriActivitatiCalendar']);
+Route::get('/cronjobs/trimite-mementouri-activitati-calendar/{key}', [CronJobController::class, 'trimiteMementouriActivitatiCalendar']);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa');
