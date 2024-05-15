@@ -310,7 +310,7 @@
                                         <span id="line" style="background-color:{{ $activitate->calendar->culoare }}"></span>
                                         {{-- <span class="px-1 rounded-3" style="color:grey">
                                             {{ Carbon::parse($activitate->data_inceput)->isoFormat('HH:mm') }}</span>- --}}
-                                        <a href="/calendar/activitati/{{ $activitate->id }}/modifica" style="text-decoration: none;">
+                                        <a href="/calendar/activitati/{{ $activitate->id }}/modifica" style="text-decoration: none; color:{{ $activitate->calendar->culoare }};">
                                             @switch ($activitate->cazare)
                                                 @case("Apartament 1")
                                                     Ap 1 -
@@ -330,9 +330,10 @@
 
                                 @foreach ($activitatiPeOZi->where('data_inceput', '>=', $ziua->todatestring())->where('data_inceput', '<', $ziua->addDay()->todatestring()) as $activitate)
                                     <span id="dot" style="background-color:{{ $activitate->calendar->culoare }}"></span>
-                                    <span class="px-0 rounded-3" style="color:grey">
-                                        {{ Carbon::parse($activitate->data_inceput)->isoFormat('HH:mm') }}</span> -
-                                    <a href="/calendar/activitati/{{ $activitate->id }}/modifica" style="text-decoration: none;">
+                                    {{-- <span class="px-0 rounded-3" style="color:grey">
+                                        {{ Carbon::parse($activitate->data_inceput)->isoFormat('HH:mm') }}</span> - --}}
+                                    <a href="/calendar/activitati/{{ $activitate->id }}/modifica" style="text-decoration: none; color:{{ $activitate->calendar->culoare }};">
+                                        {{ Carbon::parse($activitate->data_inceput)->isoFormat('HH:mm') }} -
                                         @switch ($activitate->cazare)
                                             @case("Apartament 1")
                                                 Ap 1 -
