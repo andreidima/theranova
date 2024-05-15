@@ -311,8 +311,19 @@
                                         {{-- <span class="px-1 rounded-3" style="color:grey">
                                             {{ Carbon::parse($activitate->data_inceput)->isoFormat('HH:mm') }}</span>- --}}
                                         <a href="/calendar/activitati/{{ $activitate->id }}/modifica" style="text-decoration: none;">
+                                            @switch ($activitate->cazare)
+                                                @case("Apartament 1")
+                                                    Ap 1 -
+                                                    @break
+                                                @case("Apartament 2")
+                                                    Ap 2 -
+                                                    @break
+                                                @case("Apartament 3")
+                                                    Ap 3 -
+                                                    @break
+                                            @endswitch
                                             {{ $activitate->descriere }}
-                                            {{ $activitate->cazare ? '(' . $activitate->cazare . ')' : '' }}
+                                            {{-- {{ $activitate->cazare ? '(' . $activitate->cazare . ')' : '' }} --}}
                                         </a>
                                     </div>
                                 @endforeach
