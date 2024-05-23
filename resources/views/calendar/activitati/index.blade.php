@@ -160,7 +160,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row custom-search-form justify-content-center">
+                    <div class="row custom-search-form justify-content-center mb-3">
                         <button class="btn btn-sm btn-primary text-white col-md-4 me-3 border border-dark rounded-3" type="submit">
                             <i class="fas fa-search text-white me-1"></i>Caută
                         </button>
@@ -168,6 +168,20 @@
                             <i class="far fa-trash-alt text-white me-1"></i>Resetează căutarea
                         </a>
                     </div>
+
+                    <div class="row mb-1 custom-search-form justify-content-center">
+                        <div class="col-lg-8 text-center">
+                            <input type="hidden" id="searchLunaCalendar" name="searchLunaCalendar" value="{{ $searchLunaCalendar }}">
+                            <button class="btn btn-sm btn-primary text-white border border-light rounded-3" type="submit" name="action" value="previousMonth">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </button>
+                            {{ ucfirst($searchLunaCalendar->isoFormat('MMMM YYYY')) }}
+                            <button class="btn btn-sm btn-primary text-white border border-light rounded-3" type="submit" name="action" value="nextMonth">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
                 </form>
             </div>
             <div class="col-lg-3 text-end">
@@ -229,7 +243,8 @@
             <div class="row p-md-4 rounded-3 justify-content-center">
                 <div class="table-responsive rounded-3 px-0" style="background-color: rgb(255, 255, 255)">
                     <table class="table align-middle" id="lunar" style="width: 100%">
-                        <tr>
+                        {{-- To delete 01.06.2024 - this search was moved on the one from the top --}}
+                        {{-- <tr>
                             <th colspan="7" class="culoare2 text-white">
                                 <h5 class="mb-0 d-flex justify-content-center align-items-center">
 
@@ -250,7 +265,7 @@
                                     </form>
                                 </h5>
                             </th>
-                        </tr>
+                        </tr> --}}
                         <tr>
                             <th class="culoare2 text-white" width="13%">
                                 Luni

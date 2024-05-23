@@ -37,8 +37,17 @@ class ActivitateController extends Controller
             $searchLunaCalendar = $request->searchLunaCalendar ? Carbon::parse($request->searchLunaCalendar) : Carbon::today();
             $searchCalendareSelectate = $request->searchCalendareSelectate ?? Calendar::select('id')->pluck('id')->toArray();
 
-            $activitatiPeMaiMulteZile = Activitate::
-                when($searchLunaCalendar, function ($query, $searchLunaCalendar) {
+            // If is pressed one of the buttons to change the calendar month
+            if ($request->action){
+                if ($request->action === "previousMonth"){
+                    $searchLunaCalendar->subMonthNoOverflow();
+                }else if ($request->action === "nextMonth"){
+                    $searchLunaCalendar->addMonthNoOverflow();
+                }
+            }
+
+            $activitatiPeMaiMulteZile = Activitate::with('calendar')
+                ->when($searchLunaCalendar, function ($query, $searchLunaCalendar) {
                     return $query->where(function ($query) use ($searchLunaCalendar) {
                         $query->whereDate('data_inceput', '>=', Carbon::parse($searchLunaCalendar)->startOfMonth()->startOfWeek())
                             ->orWhereDate('data_sfarsit', '<', Carbon::parse($searchLunaCalendar)->endOfMonth()->endOfWeek());
@@ -50,8 +59,8 @@ class ActivitateController extends Controller
                 ->get();
 
 
-            $activitatiPeOZi = Activitate::
-                whereNotIn('id', $activitatiPeMaiMulteZile->pluck('id'))
+            $activitatiPeOZi = Activitate::with('calendar')
+                ->whereNotIn('id', $activitatiPeMaiMulteZile->pluck('id'))
                 ->when($searchLunaCalendar, function ($query, $searchLunaCalendar) {
                     return $query->where(function ($query) use ($searchLunaCalendar) {
                         $query->whereDate('data_inceput', '>=', Carbon::parse($searchLunaCalendar)->startOfMonth()->startOfWeek())
@@ -225,10 +234,12 @@ class ActivitateController extends Controller
                     }],
                 'mementouri_emailuri' => ['required_with:mementouri_zile', 'max:500',
                     function ($attribute, $value, $fail) {
-                        $emails = array_map('trim', explode(',', $value));
-                        $validator = Validator::make(['emails' => $emails], ['emails.*' => 'required|email:rfc,dns']);
-                        if ($validator->fails()) {
-                            $fail('Câmpul Mementouri emailuri nu are toate emailurile valide.');
+                        if ($value){
+                            $emails = array_map('trim', explode(',', $value));
+                            $validator = Validator::make(['emails' => $emails], ['emails.*' => 'required|email:rfc,dns']);
+                            if ($validator->fails()) {
+                                $fail('Câmpul Mementouri emailuri nu are toate emailurile valide.');
+                            }
                         }
                     }],
             ],
