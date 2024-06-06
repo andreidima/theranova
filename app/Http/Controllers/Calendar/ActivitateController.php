@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Calendar;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Models\Calendar\Activitate;
 use App\Models\Calendar\Calendar;
 use App\Models\FisaCaz;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 
 class ActivitateController extends Controller
 {
@@ -55,6 +55,32 @@ class ActivitateController extends Controller
                 })
                 ->whereIn('calendar_id', $searchCalendareSelectate)
                 ->whereRaw('DATE(data_inceput) <> DATE(data_sfarsit)')
+                // ->orderBy('data_inceput')
+                // ->orderByRaw(DB::raw("
+                //         case when salariat like '%revisal%' then 0 else 1 end ASC,
+                //         case when salariat like '%situatie%' then 0 else 1 end ASC,
+                //         case when salariat like '%3 luni%' then 0 else 1 end ASC,
+                //         case when salariat like '%3luni%' then 0 else 1 end ASC,
+                //         case when salariat like '%6 luni%' then 0 else 1 end ASC,
+                //         case when salariat like '%6luni%' then 0 else 1 end ASC,
+                //         case when
+                //             data_incetare like '%înc%' or
+                //             data_incetare like '%lip%' or
+                //             data_incetare like '%susp%' or
+                //             data_incetare like '%c.c.c%' or
+                //             data_incetare like '%ccc%' or
+                //             data_incetare like '%cm%'
+                //         then 0 else 1 end DESC
+                //     "))
+                ->orderByRaw("
+                        case when cazare like 'Apartament 1' then 0 else 1 end ASC,
+                        case when cazare like 'Apartament 2' then 0 else 1 end ASC,
+                        case when cazare like 'Apartament 3' then 0 else 1 end ASC,
+                        case when calendar_id like '3' then 0 else 1 end ASC,
+                        case when calendar_id like '1' then 0 else 1 end ASC,
+                        case when calendar_id like '2' then 0 else 1 end ASC,
+                        case when calendar_id like '4' then 0 else 1 end ASC
+                    ")
                 ->orderBy('data_inceput')
                 ->get();
 
@@ -68,6 +94,15 @@ class ActivitateController extends Controller
                     });
                 })
                 ->whereIn('calendar_id', $searchCalendareSelectate)
+                ->orderByRaw("
+                        case when cazare like 'Apartament 1' then 0 else 1 end ASC,
+                        case when cazare like 'Apartament 2' then 0 else 1 end ASC,
+                        case when cazare like 'Apartament 3' then 0 else 1 end ASC,
+                        case when calendar_id like '3' then 0 else 1 end ASC,
+                        case when calendar_id like '1' then 0 else 1 end ASC,
+                        case when calendar_id like '2' then 0 else 1 end ASC,
+                        case when calendar_id like '4' then 0 else 1 end ASC
+                    ")
                 ->orderBy('data_inceput')
                 ->get();
 

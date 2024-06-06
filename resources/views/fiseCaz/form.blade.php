@@ -72,7 +72,7 @@
                         ></vue-datepicker-next>
                     </div>
                     <div class="col-lg-2 mb-4 text-center">
-                        <label for="protezare" class="mb-0 ps-0">Protezare</label>
+                        <label for="protezare" class="mb-0 ps-0">Dată predare</label>
                         <vue-datepicker-next
                             data-veche="{{ old('data', $fisaCaz->protezare ?? '') }}"
                             nume-camp-db="protezare"

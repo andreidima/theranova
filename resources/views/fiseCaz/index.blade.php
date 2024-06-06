@@ -123,7 +123,8 @@
                             {{-- Should be removed at 01.06.2024, with everything else, including database fields --}}
                             {{-- <th class="text-white culoare2 text-center">Fișă comandă</th> --}}
 
-                            <th class="text-white culoare2 text-center">Protezare</th>
+                            <th class="text-white culoare2 text-center">Dată predare</th>
+
                             <th class="text-white culoare2 text-center">Fișă măsuri</th>
 
                             {{-- Pot schimba starea doar Andrei, Dana si Adrian Ples --}}
@@ -315,6 +316,17 @@
                                 </td> --}}
                                 <td class="text-center">
                                     {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
+                                    <a href="#"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#adaugaModificaProtezare{{ $fisaCaz->id }}"
+                                        title="Dată predare"
+                                        >
+                                        @if (!$fisaCaz->protezare)
+                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                        @else
+                                            <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
+                                        @endif
+                                    </a>
                                 </td>
                                 <td class="text-center">
                                     @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
@@ -692,6 +704,47 @@
             </div>
         @endforeach
     @endif
+
+    {{-- Modalele pentru adaugare modificare data_predare (the field name is „protezare” in the database) --}}
+    @foreach ($fiseCaz as $fisaCaz)
+        <div class="modal fade text-dark" id="adaugaModificaProtezare{{ $fisaCaz->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form method="POST" action="{{ $fisaCaz->path() }}/adauga-modifica-protezare">
+                    @csrf
+
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:left;">
+                            <div class="col-lg-12 mb-4">
+                                <label for="data_predare" class="mb-0 ps-3">Dată predare</label>
+                                <input
+                                    type="text"
+                                    class="form-control rounded-3 {{ $errors->has('data_predare') ? 'is-invalid' : '' }}"
+                                    name="data_predare"
+                                    placeholder="Eg: 20.05.2024"
+                                    value="{{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}"
+                                    >
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                            <button
+                                type="submit"
+                                class="btn btn-success text-white"
+                                >
+                                Salvează
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
 
     {{-- Modalele pentru adaugare modificare fisiere Fișă măsuri --}}
     @foreach ($fiseCaz as $fisaCaz)

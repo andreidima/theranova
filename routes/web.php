@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/fise-caz', FisaCazController::class)->parameters(['fise-caz' => 'fisaCaz']);
     Route::any('/fise-caz/adauga-resursa/{resursa}', [FisaCazController::class, 'fisaCazAdaugaResursa']);
     Route::get('/fise-caz/{fisaCaz}/stare/{stare}', [FisaCazController::class, 'stare']);
+    Route::post('/fise-caz/{fisaCaz}/adauga-modifica-protezare', [FisaCazController::class, 'adaugaModificaProtezare']);
     Route::post('/fise-caz/{fisaCaz}/adauga-modifica-fisa-masuri', [FisaCazController::class, 'adaugaModificaFisaMasuri']);
     // Route::post('/fise-caz/{fisaCaz}/trimite-email-catre-utilizator/{tipEmail}/{user}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizator']);
     Route::post('/fise-caz/{fisaCaz}/trimite-email-catre-utilizatori/{tipEmail}/{comanda?}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizatori']);

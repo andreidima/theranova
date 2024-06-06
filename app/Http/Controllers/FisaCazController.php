@@ -326,6 +326,20 @@ class FisaCazController extends Controller
         return back()->with('status', 'Fișa caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost ' . (($fisaCaz->stare === 1) ? 'deschisa' : (($fisaCaz->stare === 2) ? 'inchisa' : (($fisaCaz->stare === 3) ? 'anulata' : '' ))) . '!');
     }
 
+    public function adaugaModificaProtezare(Request $request, FisaCaz $fisaCaz)
+    {
+        $request->validate(
+            [
+                'data_predare' => 'nullable|date',
+            ],
+        );
+
+        $fisaCaz->protezare = $request->data_predare ? Carbon::parse($request->data_predare) : null;
+        $fisaCaz->save();
+
+        return back()->with('status', 'Data de predate pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost setată cu succes!');
+    }
+
     public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
     {
         $request->validate(
