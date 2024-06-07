@@ -32,12 +32,16 @@
                                 <option value="AK definitivă" {{ ($searchTipLucrareSolicitata == 'AK definitivă') ? 'selected' : '' }}>AK definitivă</option>
                                 <option value="BK provizorie" {{ ($searchTipLucrareSolicitata == 'BK provizorie') ? 'selected' : '' }}>BK provizorie</option>
                                 <option value="BK definitivă" {{ ($searchTipLucrareSolicitata == 'BK definitivă') ? 'selected' : '' }}>BK definitivă</option>
+                                <option value="Disp mers" {{ ($searchTipLucrareSolicitata == 'Disp mers') ? 'selected' : '' }}>Disp mers</option>
+                                <option value="Fotoliu" {{ ($searchTipLucrareSolicitata == 'Fotoliu') ? 'selected' : '' }}>Fotoliu</option>
                                 <option value="Modificări" {{ ($searchTipLucrareSolicitata == 'Modificări') ? 'selected' : '' }}>Modificări</option>
+                                <option value="Orteză" {{ ($searchTipLucrareSolicitata == 'Orteză') ? 'selected' : '' }}>Orteză</option>
                                 <option value="PMS" {{ ($searchTipLucrareSolicitata == 'PMS') ? 'selected' : '' }}>PMS</option>
                                 <option value="PPP" {{ ($searchTipLucrareSolicitata == 'PPP') ? 'selected' : '' }}>PPP</option>
                                 <option value="Manșon" {{ ($searchTipLucrareSolicitata == 'Manșon') ? 'selected' : '' }}>Manșon</option>
                                 <option value="Proteză sân" {{ ($searchTipLucrareSolicitata == 'Proteză sân') ? 'selected' : '' }}>Proteză sân</option>
                                 <option value="Proteză sân+sutien" {{ ($searchTipLucrareSolicitata == 'Proteză sân+sutien') ? 'selected' : '' }}>Proteză sân+sutien</option>
+                                <option value="Sutien" {{ ($searchTipLucrareSolicitata == 'Sutien') ? 'selected' : '' }}>Sutien</option>
                             </select>
                         </div>
                         <div class="col-lg-4 d-flex align-items-center">
