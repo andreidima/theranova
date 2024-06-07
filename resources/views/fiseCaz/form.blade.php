@@ -11,14 +11,14 @@
     dateMedicale =  {!! json_encode(old('dateMedicale', $fisaCaz->dateMedicale()->get()) ?? []) !!}
     cerinte =  {!! json_encode(old('cerinte', $fisaCaz->cerinte()->get()) ?? []) !!}
 
-    tipProteza
+    tipLucrareSolicitataVeche = {!! json_encode(old('tip_lucrare_solicitata', ($fisaCaz->tip_lucrare_solicitata ?? "")) ?? "") !!}
 </script>
 
-<div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
+<div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="fisaCazForm">
     <div class="col-lg-12 px-4 py-2 mb-0">
-        {{-- <div class="row px-2 pt-0 pb-1 mb-4 rounded-3 justify-content-center" style="background-color:#f9e9e8; border-left:6px solid; border-color:#ec8575"> --}}
-        {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #ec8575 solid; background-color:#fcf4f3"> --}}
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)" id="datePicker">
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)"
+            {{-- id="datePicker" --}}
+            >
             <div class="col-lg-12">
                 <div class="row">
                     <div class="col-lg-2 mb-4">
@@ -35,18 +35,24 @@
                     <div class="col-lg-2 mb-4">
                         <label for="tip_lucrare_solicitata" class="mb-0 ps-3">Tip lucrare solicitată<span class="text-danger">*</span></label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('tip_lucrare_solicitata') ? 'is-invalid' : '' }}"
-                            name="tip_lucrare_solicitata">
+                            name="tip_lucrare_solicitata"
+                            v-model="tip_lucrare_solicitata"
+                            >
                             <option selected></option>
                             <option value="AK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK provizorie" ? 'selected' : '' }}>AK provizorie</option>
                             <option value="AK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK definitivă" ? 'selected' : '' }}>AK definitivă</option>
                             <option value="BK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK provizorie" ? 'selected' : '' }}>BK provizorie</option>
                             <option value="BK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK definitivă" ? 'selected' : '' }}>BK definitivă</option>
+                            <option value="Disp mers" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Disp mers" ? 'selected' : '' }}>Disp mers</option>
+                            <option value="Fotoliu" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Fotoliu" ? 'selected' : '' }}>Fotoliu</option>
                             <option value="Modificări" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Modificări" ? 'selected' : '' }}>Modificări</option>
+                            <option value="Orteză" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Orteză" ? 'selected' : '' }}>Orteză</option>
                             <option value="PMS" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "PMS" ? 'selected' : '' }}>PMS</option>
                             <option value="PPP" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "PPP" ? 'selected' : '' }}>PPP</option>
                             <option value="Manșon" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Manșon" ? 'selected' : '' }}>Manșon</option>
                             <option value="Proteză sân" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Proteză sân" ? 'selected' : '' }}>Proteză sân</option>
                             <option value="Proteză sân+sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Proteză sân+sutien" ? 'selected' : '' }}>Proteză sân+sutien</option>
+                            <option value="Sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Sutien" ? 'selected' : '' }}>Sutien</option>
                         </select>
                     </div>
                     {{-- <div class="col-lg-2 mb-4 text-center">
@@ -60,7 +66,7 @@
                             :latime="{ width: '160px' }"
                         ></vue-datepicker-next>
                     </div> --}}
-                    <div class="col-lg-2 mb-4 text-center">
+                    <div v-if="displayAllFields" class="col-lg-2 mb-4 text-center">
                         <label for="compresie_manson" class="mb-0 ps-0">Compresie manșon</label>
                         <vue-datepicker-next
                             data-veche="{{ old('compresie_manson', $fisaCaz->compresie_manson ?? '') }}"
@@ -71,7 +77,7 @@
                             :latime="{ width: '125px' }"
                         ></vue-datepicker-next>
                     </div>
-                    <div class="col-lg-2 mb-4 text-center">
+                    {{-- <div class="col-lg-2 mb-4 text-center">
                         <label for="protezare" class="mb-0 ps-0">Dată predare</label>
                         <vue-datepicker-next
                             data-veche="{{ old('data', $fisaCaz->protezare ?? '') }}"
@@ -81,7 +87,7 @@
                             format="DD.MM.YYYY"
                             :latime="{ width: '125px' }"
                         ></vue-datepicker-next>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="row">
                     <div class="col-lg-2 mb-4">
@@ -114,9 +120,9 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="row px-2 pt-0 mb-4" style="background-color:#eeeeff; border-left:6px solid; border-color:#6a6ba0; border-radius: 0px 0px 0px 0px" id="pacientAutocomplete"> --}}
-        {{-- <div class="row mb-4 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #6a6ba0 solid; background-color:#f1f1fb" id="pacientAutocomplete"> --}}
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5" id="pacientAutocomplete">
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5"
+            {{-- id="pacientAutocomplete" --}}
+            >
             <div class="col-lg-4 mb-4" style="position:relative;" v-click-out="() => pacientiListaAutocomplete = ''">
                 <label for="pacient_id" class="mb-0 ps-3">Pacient<span class="text-danger">*</span></label>
                 <input
@@ -190,11 +196,13 @@
             </div>
         </div>
         {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:#B8FFB8; border-left:6px solid; border-color:mediumseagreen; border-radius: 0px 0px 0px 0px"> --}}
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
+        <div v-if="displayAllFields" class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             {{-- <div class="col-lg-12 mb-4 text-center">
                 <span class="fs-4 badge text-white" style="background-color:mediumseagreen;">Date medicale</span>
             </div> --}}
-            <div class="col-lg-12 mb-0" id="fisaCazFormDateMedicale">
+            <div class="col-lg-12 mb-0"
+                {{-- id="fisaCazFormDateMedicale" --}}
+                >
                 <div class="row align-items-start mb-1" v-for="(dateMedical, index) in dateMedicale">
                     <div class="col-lg-2 mb-4">
                         <label for="greutate" class="mb-0 ps-3">Greutate<span class="text-danger">*</span></label>
@@ -346,11 +354,9 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="row px-2 pt-4 pb-1 justify-content-center" style="background-color:lightyellow; border-left:6px solid; border-color:goldenrod" id="fisaCazFormCerinte"> --}}
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5" id="fisaCazFormCerinte">
-            {{-- <div class="col-lg-12 mb-4 text-center">
-                <span class="fs-4 badge text-white" style="background-color:mediumseagreen;">Date medicale</span>
-            </div> --}}
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5"
+            {{-- id="fisaCazFormCerinte" --}}
+            >
             <div class="col-lg-12 mb-0" v-for="(cerinta, index) in cerinte">
                 <div class="row align-items-start">
                     <div class="col-lg-2 mb-4">
@@ -363,7 +369,7 @@
                             <option value="1">DA</option>
                         </select>
                     </div>
-                    <div class="col-lg-2 mb-4">
+                    <div v-if="displayAllFields" class="col-lg-2 mb-4">
                         <label for="buget_disponibil" class="mb-0 ps-3">Buget disponibil</label>
                         <input
                             type="text"
@@ -371,7 +377,7 @@
                             :name="'cerinte[' + index + '][buget_disponibil]'"
                             v-model="cerinte[index].buget_disponibil">
                     </div>
-                    <div class="col-lg-2 mb-4">
+                    <div v-if="displayAllFields" class="col-lg-2 mb-4">
                         <label for="sursa_buget" class="mb-0 ps-3">Sursă buget</label>
                         <select class="form-select bg-white rounded-3 {{ $errors->has('sursa_buget') ? 'is-invalid' : '' }}"
                             :name="'cerinte[' + index + '][sursa_buget]'"
@@ -385,7 +391,7 @@
                     </div>
                 </div>
                 <div class="row align-items-start mb-2">
-                    <div class="col-lg-5 mb-4">
+                    <div v-if="displayAllFields" class="col-lg-5 mb-4">
                         <div>
                             Cerințe particulare:
                             <br>
@@ -423,7 +429,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-2 mb-4">
+                    <div v-if="displayAllFields" class="col-lg-2 mb-4">
                         <div>
                             Alte cerințe:
                             <br>

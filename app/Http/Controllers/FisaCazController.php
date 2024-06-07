@@ -124,11 +124,15 @@ class FisaCazController extends Controller
 
         $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
-        foreach ($request->dateMedicale as $date) {
-            $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
+        if ($request->dateMedicale){
+            foreach ($request->dateMedicale as $date) {
+                $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
+            }
         }
-        foreach ($request->cerinte as $date) {
-            $fisaCaz->cerinte()->save(Cerinta::make($date));
+        if ($request->cerinte){
+            foreach ($request->cerinte as $date) {
+                $fisaCaz->cerinte()->save(Cerinta::make($date));
+            }
         }
 
         return redirect($request->session()->get('fisaCazReturnUrl') ?? ('/fise-caz'))->with('status', 'Fișa Caz pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” a fost adăugată cu succes!');
@@ -176,11 +180,15 @@ class FisaCazController extends Controller
 // dd($request);
         $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
 
-        foreach ($request->dateMedicale as $date) {
-            $fisaCaz->dateMedicale()->first() ? $fisaCaz->dateMedicale()->first()->update($date) : $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
+        if ($request->dateMedicale){
+            foreach ($request->dateMedicale as $date) {
+                $fisaCaz->dateMedicale()->first() ? $fisaCaz->dateMedicale()->first()->update($date) : $fisaCaz->dateMedicale()->save(DataMedicala::make($date));
+            }
         }
-        foreach ($request->cerinte as $date) {
-            $fisaCaz->cerinte()->first() ? $fisaCaz->cerinte()->first()->update($date) : $fisaCaz->cerinte()->save(Cerinta::make($date));
+        if ($request->cerinte){
+            foreach ($request->cerinte as $date) {
+                $fisaCaz->cerinte()->first() ? $fisaCaz->cerinte()->first()->update($date) : $fisaCaz->cerinte()->save(Cerinta::make($date));
+            }
         }
 
         // Trimitere notificare pe email
@@ -238,6 +246,12 @@ class FisaCazController extends Controller
      */
     protected function validateRequest(Request $request)
     {
+        if (in_array($request->tip_lucrare_solicitata, ['Disp mers', "Fotoliu", "Orteză", "Proteză sân", "Proteză sân+sutien", "Sutien"])){
+            $checkAllFields = false;
+        } else {
+            $checkAllFields = true;
+        }
+
         return $request->validate(
             [
                 'data' => 'required',
@@ -249,12 +263,12 @@ class FisaCazController extends Controller
                 'user_comercial' => '',
                 'user_tehnic' => '',
                 'pacient_id' => 'required',
-                'dateMedicale.*.greutate' => 'required|integer|min:1|max:255',
-                'dateMedicale.*.parte_amputata' => 'required',
-                'dateMedicale.*.amputatie' => 'required',
-                'dateMedicale.*.nivel_de_activitate' => 'required',
-                'dateMedicale.*.cauza_amputatiei' => 'required',
-                'dateMedicale.*.a_mai_purtat_proteza' => 'required',
+                'dateMedicale.*.greutate' => $checkAllFields ? 'required|integer|min:1|max:255' : '',
+                'dateMedicale.*.parte_amputata' => $checkAllFields ? 'required' : '',
+                'dateMedicale.*.amputatie' => $checkAllFields ? 'required' : '',
+                'dateMedicale.*.nivel_de_activitate' => $checkAllFields ? 'required' : '',
+                'dateMedicale.*.cauza_amputatiei' => $checkAllFields ? 'required' : '',
+                'dateMedicale.*.a_mai_purtat_proteza' => $checkAllFields ? 'required' : '',
                 // 'dateMedicale.*.tip_proteza' => 'required',
                 'dateMedicale.*.circumferinta_bont' => 'nullable|max:100',
                 'dateMedicale.*.circumferinta_bont_la_nivel_perineu' => 'nullable|max:100',

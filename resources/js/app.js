@@ -152,6 +152,81 @@ if (document.getElementById('fisaCazFormCerinte') != null) {
     fisaCazFormCerinte.mount('#fisaCazFormCerinte');
 }
 
+
+// 07.06.2024 - it was made a single function for fisaCaz, that included: pacientAutocomplete, fisaCazFormDateMedicale and fisaCazFormCerinte
+const fisaCazForm = createApp({
+    el: '#fisaCazForm',
+    data() {
+        return {
+            pacient_id: pacientIdVechi,
+            pacient_nume: '',
+            pacient_telefon: '',
+            pacient_localitate: '',
+            pacienti: pacienti,
+            pacientiListaAutocomplete: [],
+            dateMedicale: dateMedicale,
+            cerinte: cerinte,
+
+            tip_lucrare_solicitata: tipLucrareSolicitataVeche,
+            displayAllFields: true,
+        }
+    },
+    watch: {
+        tip_lucrare_solicitata: {
+            immediate: true,
+            handler: function (newVal, oldVal) {
+                if ((this.tip_lucrare_solicitata == "Disp mers") || (this.tip_lucrare_solicitata == "Fotoliu") || (this.tip_lucrare_solicitata == "Orteză") ||
+                    (this.tip_lucrare_solicitata == "Proteză sân") || (this.tip_lucrare_solicitata == "Proteză sân+sutien") || (this.tip_lucrare_solicitata == "Sutien")) {
+                    this.displayAllFields = false;
+                } else {
+                    this.displayAllFields = true;
+                }
+            }
+        }
+    },
+    created: function () {
+        if (this.pacient_id) {
+            for (var i = 0; i < this.pacienti.length; i++) {
+                if (this.pacienti[i].id == this.pacient_id) {
+                    this.pacient_nume = this.pacienti[i].nume + ' ' + this.pacienti[i].prenume;
+                    // this.pacient_data_nastere = new Date(this.pacienti[i].data_nastere); this.pacient_data_nastere = this.pacient_data_nastere.toLocaleString('ro-RO', { dateStyle: 'short' });
+                    this.pacient_telefon = this.pacienti[i].telefon;
+                    this.pacient_localitate = this.pacienti[i].localitate;
+                    break;
+                }
+            }
+        }
+        if (this.dateMedicale.length === 0) {
+            this.dateMedicale.push({});
+        }
+        if (this.cerinte.length === 0) {
+            this.cerinte.push({});
+        }
+    },
+    methods: {
+        autocompletePacienti() {
+            this.pacientiListaAutocomplete = [];
+
+            for (var i = 0; i < this.pacienti.length; i++) {
+                if (this.pacienti[i].nume || this.pacienti[i].prenume) {
+                    var nume = this.pacienti[i].nume + ' ' + this.pacienti[i].prenume;
+                    if (nume.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(this.pacient_nume.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, ""))) {
+                        this.pacientiListaAutocomplete.push(this.pacienti[i]);
+                    }
+                }
+            }
+        },
+    }
+});
+
+fisaCazForm.directive("clickOut", clickOutside);
+fisaCazForm.component('vue-datepicker-next', VueDatepickerNext);
+
+if (document.getElementById('fisaCazForm') != null) {
+    fisaCazForm.mount('#fisaCazForm');
+}
+
+
 const pacientFormApartinatori = createApp({
     el: '#pacientFormApartinatori',
     data() {
