@@ -40,7 +40,7 @@ class FisaCazController extends Controller
 // dd(FisaCaz::where('id', 217)->get()->first()->numarEmailuriFisaCazUserComercial());
 
         $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda',
-            'comenzi.fisaCaz', 'comenzi.componente', 'comenzi.componente', 'comenzi.fisiere', 'comenzi.emailuriTrimise', 'activitate')
+            'comenzi.fisaCaz', 'comenzi.componente', 'comenzi.componente', 'comenzi.fisiere', 'comenzi.emailuriTrimise', 'activitate', 'activitati')
             // ->withCount('emailuriFisaCazUserVanzari', 'emailuriFisaCazUserComercial', 'emailuriFisaCazUserTehnic', 'emailuriOfertaUserVanzari', 'emailuriOfertaUserComercial', 'emailuriOfertaUserTehnic', 'emailuriComandaUserVanzari', 'emailuriComandaUserComercial', 'emailuriComandaUserTehnic')
             ->when($searchNume, function ($query, $searchNume) {
                 foreach (explode(" ", $searchNume) as $cuvant){

@@ -174,4 +174,14 @@ class FisaCaz extends Model
     {
         return $this->hasOne(Calendar\Activitate::class, 'fisa_caz_id');
     }
+
+    /**
+     * Get all of the activitati for the FisaCaz
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function activitati(): HasMany
+    {
+        return $this->hasMany(Calendar\Activitate::class, 'fisa_caz_id')->orderBy('data_inceput');
+    }
 }

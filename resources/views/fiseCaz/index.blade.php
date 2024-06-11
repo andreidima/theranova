@@ -168,21 +168,26 @@
                                                 <i class="fa-solid fa-envelope"></i><small>({{ $fisaCaz->emailuriFisaCaz->count() }})</small>
                                             </div>
                                         </span></a>
-                                    {{-- <br>
-                                    {{ $fisaCaz->programare_atelier ? Carbon::parse($fisaCaz->programare_atelier)->isoFormat('DD.MM.YYYY HH:mm') : '' }} --}}
                                     <br>
-                                    <i class="fa-solid fa-calendar-days me-1"></i>:
-                                    @if ($fisaCaz->activitate)
-                                        <a href="{{ $fisaCaz->activitate->path() }}/modifica" style="text-decoration: none;">
-                                            {{-- <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a> --}}
-                                            {{ $fisaCaz->activitate->data_inceput ? Carbon::parse($fisaCaz->activitate->data_inceput)->isoFormat('DD.MM.YYYY HH:mm') : '' }}
+                                    @if ($fisaCaz->activitati->count() > 0)
+                                        <a class="" data-bs-toggle="collapse" href="#collapseFisaCaz{{ $fisaCaz->id }}Activitati" role="button" aria-expanded="false" aria-controls="collapseFisaCaz{{ $fisaCaz->id }}Activitati" style="text-decoration: none">
+                                            <i class="fa-solid fa-calendar-days me-1"></i>:{{ $fisaCaz->activitati->count() }}
                                         </a>
+                                        <div class="collapse" id="collapseFisaCaz{{ $fisaCaz->id }}Activitati">
+                                            @foreach ($fisaCaz->activitati as $activitate)
+                                                <a href="{{ $activitate->path() }}/modifica" style="text-decoration: none;">
+                                                    {{ $activitate->data_inceput ? Carbon::parse($activitate->data_inceput)->isoFormat('DD.MM.YYYY HH:mm') : '' }}
+                                                </a>
+                                                <br>
+                                            @endforeach
+                                            </div>
+                                        </div>
                                     @else
-                                        <a href="calendar/activitati/adauga-la-fisa-caz/{{ $fisaCaz->id }}">
-                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
-                                        </a>
+                                        <i class="fa-solid fa-calendar-days me-1"></i>
                                     @endif
-
+                                    <a href="calendar/activitati/adauga-la-fisa-caz/{{ $fisaCaz->id }}">
+                                        <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span>
+                                    </a>
                                 </td>
                                 <td class="">
                                     {{ $fisaCaz->tip_lucrare_solicitata }}
