@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Oferta;
 use App\Models\FisaCaz;
 use App\Models\Fisier;
+use App\Models\Incasare;
 
 class OfertaController extends Controller
 {
@@ -47,7 +48,13 @@ class OfertaController extends Controller
     public function store(Request $request, FisaCaz $fisaCaz)
     {
         $this->validateRequest($request);
-        $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier', 'date'])));
+        $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier', 'date', 'incasari'])));
+
+        if ($request->incasari){
+            foreach($request->incasari as $incasare) {
+                $oferta->incasari()->create($incasare);
+            }
+        }
 
         if ($request->file('fisier')) {
             $fisier = $request->file('fisier');
@@ -110,7 +117,23 @@ class OfertaController extends Controller
     public function update(Request $request, FisaCaz $fisaCaz, Oferta $oferta)
     {
         $this->validateRequest($request);
-        $oferta->update($request->except(['fisier', 'date']));
+        $oferta->update($request->except(['fisier', 'date', 'incasari']));
+
+        // Stergerea incasarilor ce nu mai sunt in array: array_column scoate doar coloana de id-uri, array_filter elimina din array valorile null (fara id)
+        Incasare::where('oferta_id', $oferta->id)->whereNotIn('id', array_filter(array_column(($request->comenziComponente ?? []) , 'id')))->delete();
+        // Adaugarea/modificarea incasarilor din array
+        foreach(($request->incasari ?? []) as $incasare) {
+            Incasare::updateOrCreate(
+                [
+                    'id' => $incasare['id']
+                ],
+                [
+                    'oferta_id' => $incasare['oferta_id'],
+                    'suma' => $incasare['suma'],
+                    'data' => $incasare['data'],
+                ]
+            );
+        }
 
         // Daca exista fisier in request, se sterge vechiul fisier si se salveaza cel de acum
         if ($request->file('fisier')) {
@@ -162,6 +185,7 @@ class OfertaController extends Controller
             return back()->with('error', 'Nu ai drepturi de ștergere.');
         }
 
+        $oferta->incasari()->delete();
         $oferta->delete();
 
         // Se sterge fisierul
@@ -213,8 +237,15 @@ class OfertaController extends Controller
                 ],
                 'contract_nr' => 'nullable|max:200',
                 'contract_data' => '',
+
+                'incasari.*.suma' => 'required|numeric|between:1,999999',
+                'incasari.*.data' => 'required|date',
             ],
             [
+                'incasari.*.suma.required' => 'Câmpul Suma pentru incasarea :position este necesar.',
+                'incasari.*.suma.integer' => 'Câmpul Suma pentru incasarea :position trebuie să fie un număr întreg.',
+                'incasari.*.suma.between' => 'Câmpul Suma pentru incasarea :position trebuie să fie între 1 și 999.',
+                'incasari.*.data' => 'Câmpul Data pentru incasarea :position este necesar.',
             ]
         );
     }

@@ -5,22 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class DataMedicala extends Model
+class Incasare extends Model
 {
     use HasFactory;
 
-    protected $table = 'date_medicale';
+    protected $table = 'incasari';
     protected $guarded = [];
 
     /**
-     * Get the fisaCaz that owns the DataMedicala
+     * Get the oferta that owns the incasare
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function fisaCaz(): BelongsTo
+    public function oferta(): BelongsTo
     {
-        return $this->belongsTo(FisaCaz::class, 'fisa_caz_id');
+        return $this->belongsTo(Oferta::class, 'oferta_id');
     }
 }

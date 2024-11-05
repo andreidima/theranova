@@ -156,6 +156,7 @@
                                     <br>
                                     {{-- {{ $fisaCaz->pacient->telefon ?? '' }} --}}
                                     {{ $fisaCaz->dateMedicale->first()->amputatie ?? '' }}
+                                    {{ substr($fisaCaz->dateMedicale->first()->parte_amputata ?? '', 0, 2) }}
                                     <br>
                                     {{ $fisaCaz->pacient->judet ?? '' }}
                                     <a href="#"
@@ -204,7 +205,13 @@
                                             @elseif ($oferta->acceptata == "0")
                                                 <i class="fa-solid fa-thumbs-down text-danger"></i>
                                             @endif
-                                            {{ $oferta->pret }} lei
+                                            {{ $oferta->pret }}
+                                            @if ($oferta->incasari->count() > 0)
+                                                <span class="{{ $oferta->pret >= $oferta->incasari->sum('suma') ? 'text-danger' : 'text-success' }}"  title="Suma încasată">
+                                                    ({{ $oferta->incasari->sum('suma') }})
+                                                </span>
+                                            @endif
+                                            lei
                                             @foreach ($oferta->fisiere as $fisier)
                                                 <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
                                                     <span class="badge text-success" title="Deschide"><i class="fa-solid fa-file-arrow-down"></i></span></a>

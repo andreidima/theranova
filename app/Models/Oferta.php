@@ -38,4 +38,14 @@ class Oferta extends Model
     {
         return $this->hasMany(Fisier::class, 'referinta_id')->where('referinta', 1);
     }
+
+    /**
+     * Get all of the incasari for the oferta
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function incasari(): HasMany
+    {
+        return $this->hasMany(Incasare::class, 'oferta_id');
+    }
 }

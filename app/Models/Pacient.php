@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Pacient extends Model
 {
@@ -37,6 +38,13 @@ class Pacient extends Model
     public function fiseCaz(): HasMany
     {
         return $this->hasMany(FisaCaz::class, 'pacient_id');
+    }
+    /**
+     * Get the pacient's latest fisaCaz.
+     */
+    public function latestFisaCaz(): HasOne
+    {
+        return $this->hasOne(FisaCaz::class)->latestOfMany();
     }
 
     /**

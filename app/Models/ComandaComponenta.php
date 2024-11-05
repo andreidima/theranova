@@ -25,6 +25,6 @@ class ComandaComponenta extends Model
      */
     public function fisaCaz(): BelongsTo
     {
-        return $this->belongsTo(FisaCaz::class, 'fisa_caz_id',);
+        return $this->belongsTo(FisaCaz::class, 'fisa_caz_id');
     }
 }

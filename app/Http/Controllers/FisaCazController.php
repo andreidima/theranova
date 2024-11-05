@@ -39,7 +39,7 @@ class FisaCazController extends Controller
 
 // dd(FisaCaz::where('id', 217)->get()->first()->numarEmailuriFisaCazUserComercial());
 
-        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda',
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'oferte.incasari', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda',
             'comenzi.fisaCaz', 'comenzi.componente', 'comenzi.componente', 'comenzi.fisiere', 'comenzi.emailuriTrimise', 'activitate', 'activitati')
             // ->withCount('emailuriFisaCazUserVanzari', 'emailuriFisaCazUserComercial', 'emailuriFisaCazUserTehnic', 'emailuriOfertaUserVanzari', 'emailuriOfertaUserComercial', 'emailuriOfertaUserTehnic', 'emailuriComandaUserVanzari', 'emailuriComandaUserComercial', 'emailuriComandaUserTehnic')
             ->when($searchNume, function ($query, $searchNume) {
@@ -105,7 +105,7 @@ class FisaCazController extends Controller
         $fisaCaz->fill($request->session()->pull('fisaCazRequest', []));
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
-        $pacienti = Pacient::select('id', 'nume', 'prenume', 'telefon', 'localitate')->get();
+        $pacienti = Pacient::with(['latestFisaCaz.latestDateMedicale'])->select('id', 'nume', 'prenume', 'telefon', 'localitate')->get();
 
         $request->session()->get('fisaCazReturnUrl') ?? $request->session()->put('fisaCazReturnUrl', url()->previous());
 

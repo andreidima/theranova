@@ -2,6 +2,7 @@
 
 @php
     use \Carbon\Carbon;
+    // dd(old('comenziComponente', $comanda->componente()->get()) ?? []);
 @endphp
 
 <script type="application/javascript">

@@ -264,3 +264,20 @@ if (document.getElementById('comandaComponente') != null) {
     comandaComponente.mount('#comandaComponente');
 }
 
+// 04.11.2024 - added incasari to oferte
+const incasari = createApp({
+    el: '#incasari',
+    data() {
+        return {
+            incasari: incasariVechi,
+        }
+    },
+    created: function () {
+        console.log(incasari);
+    }
+});
+incasari.component('vue-datepicker-next', VueDatepickerNext);
+if (document.getElementById('incasari') != null) {
+    incasari.mount('#incasari');
+}
+

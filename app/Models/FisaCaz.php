@@ -69,6 +69,10 @@ class FisaCaz extends Model
     {
         return $this->hasMany(DataMedicala::class, 'fisa_caz_id');
     }
+    public function latestDateMedicale(): HasOne
+    {
+        return $this->hasOne(DataMedicala::class)->latestOfMany();
+    }
 
     /**
      * Get all of the cerinte for the FisaCaz
