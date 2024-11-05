@@ -88,7 +88,7 @@
 
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-12 mb-0" id="incasari">
-                <div class="row align-items-end justify-content-center" v-if="incasari.length" v-for="(incasare, index) in incasari" :key="index">
+                <div class="row align-items-start justify-content-center" v-if="incasari.length" v-for="(incasare, index) in incasari" :key="index">
                     <div class="col-lg-3 mb-4">
                         <input type="hidden" :name="'incasari[' + index + '][id]'" v-model="incasari[index].id">
                         <input type="hidden" :name="'incasari[' + index + '][oferta_id]'" value="{{ $oferta->id }}">
@@ -101,7 +101,7 @@
                             v-model="incasari[index].suma">
                     </div>
                     <div class="col-lg-3 mb-4">
-                        <label for="data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
+                        {{-- <label for="data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
                         <vue-datepicker-next
                             :data-veche="incasari[index].data ?? ''"
                             :nume-camp-db="'incasari[' + index + '][data]'"
@@ -109,9 +109,17 @@
                             value-type="YYYY-MM-DD"
                             format="DD.MM.YYYY"
                             :latime="{ width: '125px' }"
-                        ></vue-datepicker-next>
+                        ></vue-datepicker-next> --}}
+                        <label for="data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('data') ? 'is-invalid' : '' }}"
+                            :name="'incasari[' + index + '][data]'"
+                            v-model="incasari[index].data">
+                        <small class="ps-3">Ex:20.05.2024</small>
                     </div>
                     <div class="col-lg-2 mb-4 text-end">
+                        <br>
                         <button type="button" class="btn btn-danger" @click="incasari.splice(index,1)">Șterge</button>
                     </div>
                 </div>
