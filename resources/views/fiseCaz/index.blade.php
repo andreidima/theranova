@@ -774,42 +774,93 @@
                             <h5 class="modal-title text-white" id="exampleModalLabel">Fișă Caz: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
                             <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body" style="text-align:left;">
+                        <div class="modal-body mb-4" style="text-align:left;">
                             <label for="fisiereFisaMasuri" class="mb-0 ps-3">Fișiere fișă măsuri</label>
                             <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3" multiple>
-                            @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
-                                <br>
-                                <small class="m-0">
-                                    * Fișe încărcate:
-                                    @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
-                                        <br>
-                                        <a class="small" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
-                                            {{ $fisier->nume }}</a>
-                                    @endforeach
-                                <br><br>
-                                    {{-- ** Dacă vrei să le înlocuiești, încarcă alte fișiere, și cele care sunt acum se vor șterge automat. --}}
-                                    ** Modul de funcționare a fost modificat. Dacă adaugi fișiere, cele vechi NU se vor mai șterge.
-                                    <br>
-                                    *** Dacă dorești funcționalități de ștergere pentru fișiere, comunică te rog acest lucru către Dana Tudorache.
-                                </small>
-                            @endif
+                            <br>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-success text-white"
+                                    >
+                                    Încarcă
+                                </button>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
-
-                            <button
-                                type="submit"
-                                class="btn btn-success text-white"
-                                >
-                                Încarcă
-                            </button>
-
+                        <div class="d-flex justify-content-center">
+                            @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
+                                    <div class="table-responsive w-100 rounded-3">
+                                        <table class="table table-striped table-hover table-bordered">
+                                            <tr>
+                                                <th colspan="3" class="text-center">Fișe încărcate</th>
+                                            </tr>
+                                            @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                                                <tr>
+                                                    <td>
+                                                        {{ $loop->iteration }}
+                                                    </td>
+                                                    <td style="width: ">
+                                                        <a class="" href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
+                                                            {{ $fisier->nume }}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{-- <a class="btn btn-sm btn-danger" href="/fisiere/{{ $fisier->id }}/sterge">
+                                                            Sterge</a> --}}
+                                                        <a href="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#stergeFisaCaz{{ $fisaCaz->id }}Fisier{{ $fisier->id }}"
+                                                            title="Șterge fișierul"
+                                                            >
+                                                            <span class="badge bg-danger">Șterge</span></a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+
+            {{-- Modalele pentru stergere fisiere de la Fisa Masuri --}}
+            @foreach ($fisaCaz->fisiereFisaMasuri as $fisier)
+                <div class="modal fade text-dark" id="stergeFisaCaz{{ $fisaCaz->id }}Fisier{{ $fisier->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Comanda: <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b></h5>
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:left;">
+                            Ești sigur că vrei să ștergi Fișierul <b>{{ $fisier->nume }}</b>?
+                            <br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+
+                            <form method="POST" action="/fisiere/{{ $fisier->id }}/sterge">
+                                @method('DELETE')
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger text-white"
+                                    >
+                                    Șterge fișierul
+                                </button>
+                            </form>
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
     @endforeach
+
 
     {{-- Modalele pentru trimitere Fisa Caz prin email catre utilizator --}}
     @foreach ($fiseCaz as $fisaCaz)

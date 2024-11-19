@@ -61,6 +61,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
+    Route::delete('/fisiere/{fisier}/sterge', [FisierController::class, 'sterge']);
 
     Route::get('/calendar/activitati/adauga-la-fisa-caz/{fisaCaz}', [App\Http\Controllers\Calendar\ActivitateController::class, 'create']);
     Route::get('/calendar/mod-afisare-lunar/activitati/', [App\Http\Controllers\Calendar\ActivitateController::class, 'index']);

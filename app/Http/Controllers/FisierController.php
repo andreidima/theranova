@@ -24,4 +24,20 @@ class FisierController extends Controller
             abort(404);
         }
     }
+
+    public function sterge(Fisier $fisier)
+    {
+        Storage::delete($fisier->cale . '/' . $fisier->nume);
+        $fisier->delete();
+
+        // Delete the directories too if they are empty
+        if (empty($files = Storage::allFiles($fisier->cale))){ // fisiereIncarcateDeTransportator directory
+            Storage::deleteDirectory($fisier->cale);
+            if (empty($files = Storage::allFiles(dirname($fisier->cale)))){ // If the parent directory is empty too, it will be deleted aswell
+                Storage::deleteDirectory(dirname($fisier->cale));
+            }
+        }
+
+        return back()->with('status', '„' . $fisier->nume . '" a fost șters cu succes!');
+    }
 }
