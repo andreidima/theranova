@@ -161,22 +161,23 @@
                             v-on:click="
                                 pacient_id = pacient.id;
                                 pacient_nume = pacient.nume + ' ' + pacient.prenume;
-                                {{-- pacient_data_nastere = new Date(pacient.data_nastere); pacient_data_nastere = pacient_data_nastere.toLocaleString('ro-RO', { dateStyle: 'short' }); --}}
                                 pacient_telefon = pacient.telefon;
                                 pacient_localitate = pacient.localitate;
 
-                                dateMedicale[0].greutate = pacient.latest_fisa_caz.latest_date_medicale.greutate;
-                                dateMedicale[0].parte_amputata = pacient.latest_fisa_caz.latest_date_medicale.parte_amputata;
-                                dateMedicale[0].amputatie = pacient.latest_fisa_caz.latest_date_medicale.amputatie;
-                                dateMedicale[0].nivel_de_activitate = pacient.latest_fisa_caz.latest_date_medicale.nivel_de_activitate;
-                                dateMedicale[0].cauza_amputatiei = pacient.latest_fisa_caz.latest_date_medicale.cauza_amputatiei;
-                                dateMedicale[0].a_mai_purtat_proteza = pacient.latest_fisa_caz.latest_date_medicale.a_mai_purtat_proteza;
-                                dateMedicale[0].circumferinta_bont = pacient.latest_fisa_caz.latest_date_medicale.circumferinta_bont;
-                                dateMedicale[0].circumferinta_bont_la_nivel_perineu = pacient.latest_fisa_caz.latest_date_medicale.circumferinta_bont_la_nivel_perineu;
-                                dateMedicale[0].marime_picior = pacient.latest_fisa_caz.latest_date_medicale.marime_picior;
-                                dateMedicale[0].marime_picior_valoare = pacient.latest_fisa_caz.latest_date_medicale.marime_picior_valoare;
-                                dateMedicale[0].alte_afectiuni = pacient.latest_fisa_caz.latest_date_medicale.alte_afectiuni;
-                                dateMedicale[0].observatii = pacient.latest_fisa_caz.latest_date_medicale.observatii;
+                                if (pacient.latest_fisa_caz && pacient.latest_fisa_caz.latest_date_medicale) {
+                                    dateMedicale[0].greutate = pacient.latest_fisa_caz.latest_date_medicale.greutate;
+                                    dateMedicale[0].parte_amputata = pacient.latest_fisa_caz.latest_date_medicale.parte_amputata;
+                                    dateMedicale[0].amputatie = pacient.latest_fisa_caz.latest_date_medicale.amputatie;
+                                    dateMedicale[0].nivel_de_activitate = pacient.latest_fisa_caz.latest_date_medicale.nivel_de_activitate;
+                                    dateMedicale[0].cauza_amputatiei = pacient.latest_fisa_caz.latest_date_medicale.cauza_amputatiei;
+                                    dateMedicale[0].a_mai_purtat_proteza = pacient.latest_fisa_caz.latest_date_medicale.a_mai_purtat_proteza;
+                                    dateMedicale[0].circumferinta_bont = pacient.latest_fisa_caz.latest_date_medicale.circumferinta_bont;
+                                    dateMedicale[0].circumferinta_bont_la_nivel_perineu = pacient.latest_fisa_caz.latest_date_medicale.circumferinta_bont_la_nivel_perineu;
+                                    dateMedicale[0].marime_picior = pacient.latest_fisa_caz.latest_date_medicale.marime_picior;
+                                    dateMedicale[0].marime_picior_valoare = pacient.latest_fisa_caz.latest_date_medicale.marime_picior_valoare;
+                                    dateMedicale[0].alte_afectiuni = pacient.latest_fisa_caz.latest_date_medicale.alte_afectiuni;
+                                    dateMedicale[0].observatii = pacient.latest_fisa_caz.latest_date_medicale.observatii;
+                                }
 
                                 pacientiListaAutocomplete = ''
                             ">
