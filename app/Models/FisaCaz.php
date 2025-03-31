@@ -105,6 +105,26 @@ class FisaCaz extends Model
     }
 
     /**
+     * Get the non-accepted offer for the FisaCaz.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ofertaNeacceptata(): HasOne
+    {
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', 0);
+    }
+
+    /**
+     * Get the non-finalized offer for the FisaCaz.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ofertaInAsteptare(): HasOne
+    {
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', 2);
+    }
+
+    /**
      * Get all of the fisiereComanda for the FisaCaz
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

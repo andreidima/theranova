@@ -204,6 +204,8 @@
                                                 <i class="fa-solid fa-thumbs-up text-success"></i>
                                             @elseif ($oferta->acceptata == "0")
                                                 <i class="fa-solid fa-thumbs-down text-danger"></i>
+                                            @elseif ($oferta->acceptata == "2")
+                                                <i class="fa-solid fa-exclamation-triangle text-warning"></i>
                                             @endif
                                             {{ $oferta->pret }}
                                             @if ($oferta->incasari->count() > 0)

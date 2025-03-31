@@ -35,7 +35,7 @@
             <div class="col-lg-3 mb-4">
                 <label for="acceptata" class="mb-0 ps-3">Acceptată</label>
                 <select class="form-select bg-white rounded-3 {{ $errors->has('acceptata') ? 'is-invalid' : '' }}" name="acceptata">
-                    <option selected></option>
+                    <option value="2" {{ (old('acceptata', $oferta->acceptata ?? '') == "2") ? 'selected' : '' }}>În așteptare</option>
                     <option value="1" {{ (old('acceptata', $oferta->acceptata ?? '') == "1") ? 'selected' : '' }}>DA</option>
                     <option value="0" {{ (old('acceptata', $oferta->acceptata ?? '') == "0") ? 'selected' : '' }}>NU</option>
                 </select>

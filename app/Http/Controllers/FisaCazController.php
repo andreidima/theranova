@@ -37,8 +37,6 @@ class FisaCazController extends Controller
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
 
-// dd(FisaCaz::where('id', 217)->get()->first()->numarEmailuriFisaCazUserComercial());
-
         $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'oferte.incasari', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda',
             'comenzi.fisaCaz', 'comenzi.componente', 'comenzi.componente', 'comenzi.fisiere', 'comenzi.emailuriTrimise', 'activitate', 'activitati')
             // ->withCount('emailuriFisaCazUserVanzari', 'emailuriFisaCazUserComercial', 'emailuriFisaCazUserTehnic', 'emailuriOfertaUserVanzari', 'emailuriOfertaUserComercial', 'emailuriOfertaUserTehnic', 'emailuriComandaUserVanzari', 'emailuriComandaUserComercial', 'emailuriComandaUserTehnic')
@@ -55,16 +53,12 @@ class FisaCazController extends Controller
                 return $query;
             })
             ->when($searchTipLucrareSolicitata, function ($query, $searchTipLucrareSolicitata) {
-                // $query->whereHas('dateMedicale', function ($query) use ($searchTipLucrareSolicitata) {
-                //     return $query->where('tip_proteza', $searchTipLucrareSolicitata);
-                // });
                 $query->where('tip_lucrare_solicitata', $searchTipLucrareSolicitata);
             })
             ->when($searchInterval, function ($query, $searchInterval) {
                 return $query->whereBetween('protezare', [strtok($searchInterval, ','), strtok( '' )]);
             })
             ->when($searchProgramareAtelier, function ($query, $searchProgramareAtelier) {
-                // return $query->whereDate('programare_atelier', $searchProgramareAtelier);
                 return $query->whereBetween('programare_atelier', [strtok($searchProgramareAtelier, ','), Carbon::parse(strtok( '' ))->endOfDay()]);
             })
             ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
@@ -83,7 +77,6 @@ class FisaCazController extends Controller
                 });
             })
             ->orderBy('data', 'desc')
-            // ->simplePaginate(25);
             ->paginate(25)
             ->withQueryString();
 
@@ -458,7 +451,6 @@ class FisaCazController extends Controller
         if (count($usersEmails) == 0){
             return back()->with('error', 'Nu există adrese de email către care să se trimită mesajul');
         }
-// dd($fisaCaz, $tipEmail, $usersEmails, $request->mesaj);
         $trimitereEmail = Mail::to($usersEmails)
             ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
             ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $comanda));

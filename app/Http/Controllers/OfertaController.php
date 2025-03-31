@@ -20,11 +20,11 @@ class OfertaController extends Controller
      */
     public function index(Request $request)
     {
-        $request->session()->forget('ofertaReturnUrl');
+        // $request->session()->forget('ofertaReturnUrl');
 
-        $oferte = Oferta::latest()->simplePaginate(25);
+        // $oferte = Oferta::latest()->simplePaginate(25);
 
-        return view('oferte.index', compact('oferte'));
+        // return view('oferte.index', compact('oferte'));
     }
 
     /**
@@ -227,7 +227,7 @@ class OfertaController extends Controller
         return $request->validate(
             [
                 'obiect_contract' => 'required|max:500',
-                'pret' => 'required|numeric|between:1,999999',
+                'pret' => 'required|numeric|between:0,999999',
                 'observatii' => 'nullable|max:2000',
                 'acceptata' => '',
                 'fisier' => [
