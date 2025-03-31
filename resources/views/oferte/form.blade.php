@@ -101,15 +101,6 @@
                             v-model="incasari[index].suma">
                     </div>
                     <div class="col-lg-3 mb-4">
-                        {{-- <label for="data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
-                        <vue-datepicker-next
-                            :data-veche="incasari[index].data ?? ''"
-                            :nume-camp-db="'incasari[' + index + '][data]'"
-                            tip="date"
-                            value-type="YYYY-MM-DD"
-                            format="DD.MM.YYYY"
-                            :latime="{ width: '125px' }"
-                        ></vue-datepicker-next> --}}
                         <label for="data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
                         <input
                             type="text"
@@ -117,6 +108,17 @@
                             :name="'incasari[' + index + '][data]'"
                             v-model="incasari[index].data">
                         <small class="ps-3">Ex:20.05.2024</small>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <input type="hidden" :name="'incasari[' + index + '][id]'" v-model="incasari[index].id">
+                        <input type="hidden" :name="'incasari[' + index + '][oferta_id]'" value="{{ $oferta->id }}">
+
+                        <label for="observatii" class="mb-0 ps-3">Observații</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3 {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
+                            :name="'incasari[' + index + '][observatii]'"
+                            v-model="incasari[index].observatii">
                     </div>
                     <div class="col-lg-2 mb-4 text-end">
                         <br>

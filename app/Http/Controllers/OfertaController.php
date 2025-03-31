@@ -131,6 +131,7 @@ class OfertaController extends Controller
                     'oferta_id' => $incasare['oferta_id'],
                     'suma' => $incasare['suma'],
                     'data' => $incasare['data'],
+                    'observatii' => $incasare['observatii'],
                 ]
             );
         }
@@ -229,7 +230,7 @@ class OfertaController extends Controller
                 'obiect_contract' => 'required|max:500',
                 'pret' => 'required|numeric|between:0,999999',
                 'observatii' => 'nullable|max:2000',
-                'acceptata' => '',
+                'acceptata' => 'required',
                 'fisier' => [
                     File::types(['pdf', 'jpg'])
                         // ->min(1024)
@@ -239,18 +240,17 @@ class OfertaController extends Controller
                 'contract_data' => '',
 
                 'incasari.*.suma' => 'required|numeric|between:1,999999',
-                // 'incasari.*.data' => 'required|date_format:d.m.Y',
-                // 'incasari.*.data' => "required|regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/",
-                'incasari.*.data' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/']
+                'incasari.*.data' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
+                'incasari.*.observatii' => 'nullable|max:5000',
             ],
             [
                 'incasari.*.suma.required' => 'Câmpul Suma pentru incasarea :position este necesar.',
                 'incasari.*.suma.integer' => 'Câmpul Suma pentru incasarea :position trebuie să fie un număr întreg.',
                 'incasari.*.suma.between' => 'Câmpul Suma pentru incasarea :position trebuie să fie între 1 și 999.',
                 'incasari.*.data.required' => 'Câmpul Data pentru incasarea :position este necesar.',
-                // 'incasari.*.data.date_format' => 'Câmpul Data pentru incasarea :position nu este completat corect.',
                 'incasari.*.data.date' => 'Câmpul Data pentru incasarea :position nu există în calendar.',
                 'incasari.*.data.regex' => 'Câmpul Data pentru incasarea :position nu este completat corect.',
+                'incasari.*.observatii.max' => 'Câmpul Observații pentru incasarea :position trebuie să fie maxim 5000 de caractere.',
             ]
         );
     }

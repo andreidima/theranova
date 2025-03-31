@@ -68,6 +68,14 @@
                                 :latime="{ width: '210px' }"
                             ></vue-datepicker-next>
                         </div>
+                        <div class="col-lg-2">
+                            <select name="searchAcceptata" class="form-select bg-white rounded-3 {{ $errors->has('searchAcceptata') ? 'is-invalid' : '' }}">
+                                <option selected value="" style="color:white; background-color: gray;">Ofertă acceptată</option>
+                                <option value="2" {{ ($searchAcceptata == '2') ? 'selected' : '' }}>În așteptare</option>
+                                <option value="1" {{ ($searchAcceptata == '1') ? 'selected' : '' }}>DA</option>
+                                <option value="0" {{ ($searchAcceptata == '0') ? 'selected' : '' }}>NU</option>
+                            </select>
+                        </div>
                         <div class="col-lg-3">
                             <select name="searchUserVanzari" class="form-select bg-white rounded-3 {{ $errors->has('searchUserVanzari') ? 'is-invalid' : '' }}">
                                 <option selected value="" style="color:white; background-color: gray;">Vânzări</option>

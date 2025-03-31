@@ -276,7 +276,7 @@ const incasari = createApp({
         console.log(incasari);
     }
 });
-incasari.component('vue-datepicker-next', VueDatepickerNext);
+// incasari.component('vue-datepicker-next', VueDatepickerNext);
 if (document.getElementById('incasari') != null) {
     incasari.mount('#incasari');
 }

@@ -32,7 +32,7 @@ Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteE
 Route::get('/cronjobs/trimite-mementouri-activitati-calendar/{key}', [CronJobController::class, 'trimiteMementouriActivitatiCalendar']);
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::view('/acasa', 'acasa');
+    Route::view('/acasa', 'acasa')->name('acasa');
 
     Route::resource('/pacienti', PacientController::class)->parameters(['pacienti' => 'pacient']);
     Route::resource('/fise-caz', FisaCazController::class)->parameters(['fise-caz' => 'fisaCaz']);
@@ -43,7 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::post('/fise-caz/{fisaCaz}/trimite-email-catre-utilizator/{tipEmail}/{user}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizator']);
     Route::post('/fise-caz/{fisaCaz}/trimite-email-catre-utilizatori/{tipEmail}/{comanda?}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizatori']);
     Route::get('/fise-caz/{fisaCaz}/export/contract-pdf', [FisaCazController::class, 'contractPdf']);
-    Route::get('/fise-caz/export/toate-html', [FisaCazController::class, 'toateHtml']);
+    Route::get('/fise-caz/export/toate-html', [FisaCazController::class, 'toateHtml'])->middleware('check.export.access');
 
     Route::resource('/fise-caz/{fisaCaz}/oferte', OfertaController::class)->parameters(['oferte' => 'oferta']);
     Route::resource('/fise-caz/{fisaCaz}/comenzi', ComandaController::class)->parameters(['comenzi' => 'comanda']);

@@ -33,6 +33,7 @@ class FisaCazController extends Controller
         $searchInterval = $request->searchInterval;
         $searchProgramareAtelier = $request->searchProgramareAtelier;
         $searchTipLucrareSolicitata = $request->searchTipLucrareSolicitata;
+        $searchAcceptata = $request->searchAcceptata;
         $searchUserVanzari = $request->searchUserVanzari;
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
@@ -61,6 +62,18 @@ class FisaCazController extends Controller
             ->when($searchProgramareAtelier, function ($query, $searchProgramareAtelier) {
                 return $query->whereBetween('programare_atelier', [strtok($searchProgramareAtelier, ','), Carbon::parse(strtok( '' ))->endOfDay()]);
             })
+            ->when($searchAcceptata !== null && $searchAcceptata !== '', function ($query) use ($searchAcceptata) {
+                if ($searchAcceptata == '1') {
+                    // Filter for accepted offer
+                    $query->whereHas('ofertaAcceptata');
+                } elseif ($searchAcceptata == '0') {
+                    // Filter for non-accepted offer
+                    $query->whereHas('ofertaNeacceptata');
+                } elseif ($searchAcceptata == '2') {
+                    // Filter for pending offer (in asteptare)
+                    $query->whereHas('ofertaInAsteptare');
+                }
+            })
             ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
                 $query->whereHas('userVanzari', function ($query) use ($searchUserVanzari) {
                     return $query->where('id', $searchUserVanzari);
@@ -82,7 +95,7 @@ class FisaCazController extends Controller
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
-        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchProgramareAtelier', 'searchTipLucrareSolicitata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
+        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchProgramareAtelier', 'searchTipLucrareSolicitata', 'searchAcceptata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
     }
 
     /**
