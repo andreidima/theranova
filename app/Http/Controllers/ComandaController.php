@@ -23,11 +23,11 @@ class ComandaController extends Controller
      */
     public function index(Request $request)
     {
-        $request->session()->forget('comandaReturnUrl');
+        // $request->session()->forget('comandaReturnUrl');
 
-        $comenzi = Comanda::latest()->simplePaginate(25);
+        // $comenzi = Comanda::latest()->simplePaginate(25);
 
-        return view('comenziComponente.toate.index', compact('comenzi'));
+        // return view('comenziComponente.toate.index', compact('comenzi'));
     }
 
     /**

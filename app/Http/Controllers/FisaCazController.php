@@ -27,7 +27,7 @@ class FisaCazController extends Controller
      */
     public function index(Request $request)
     {
-        $request->session()->forget(['fisaCazReturnUrl', 'ofertaReturnUrl', 'comandaComponentaReturnUrl', 'comandaComponenteReturnUrl']);
+        $request->session()->forget(['fisaCazReturnUrl', 'ofertaReturnUrl', 'comandaReturnUrl', 'comandaComponentaReturnUrl', 'comandaComponenteReturnUrl']);
 
         $searchNume = $request->searchNume;
         $searchInterval = $request->searchInterval;
