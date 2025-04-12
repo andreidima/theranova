@@ -132,7 +132,24 @@
                         {{ $fisaCaz->tip_lucrare_solicitata }}
                     </td>
                     <td>
-                        {{ $fisaCaz->ofertaAcceptata->pret ?? '' }}
+                        {{-- {{ $fisaCaz->ofertaAcceptata->pret ?? '' }} --}}
+                        @foreach ($fisaCaz->oferte as $oferta)
+                            {{ $oferta->pret }} -
+                            @switch ($oferta->acceptata)
+                                @case(0)
+                                    Neacceptată
+                                    @break
+                                @case(1)
+                                    Acceptată
+                                    @break
+                                @case(2)
+                                    În așteptare
+                                    @break
+                                @default
+                                    nedefinită
+                            @endswitch
+                            <br>
+                        @endforeach
                     </td>
                     <td>
                         {{ $fisaCaz->cerinte->first()->sursa_buget ?? ''}}

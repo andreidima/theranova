@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Closure;
+use Illuminate\Validation\Rule;
 
 use App\Models\Pacient;
 use App\Models\Apartinator;
@@ -179,15 +180,6 @@ class PacientController extends Controller
      */
     protected function validateRequest(Request $request, $pacient = null)
     {
-        // Se adauga userul doar la adaugare, iar la modificare nu se schimba
-        // if ($request->isMethod('post')) {
-        //     $request->request->add(['user_id' => $request->user()->id]);
-        // }
-
-        // if ($request->isMethod('post')) {
-        //     $request->request->add(['cheie_unica' => uniqid()]);
-        // }
-
         return $request->validate(
             [
                 'user_responsabil' => '',
@@ -201,7 +193,13 @@ class PacientController extends Controller
                 ],
                 'telefon' => 'nullable|max:200',
                 'email' => 'nullable|max:200|email:rfc,dns',
-                'cnp' => 'nullable|numeric|integer|min:1|digits:13',
+                // 'cnp' => $pacient
+                //     ? 'nullable|numeric|integer|min:1|digits:13|unique:pacienti,cnp,{$pacient->id}'
+                //     : 'nullable|numeric|integer|min:1|digits:13|unique:pacienti,cnp',
+                'cnp' => [
+                    'nullable', 'numeric', 'integer', 'min:1', 'digits:13',
+                    Rule::unique('pacienti')->ignore($pacient->id)
+                ],
                 'serie_numar_buletin' => 'nullable|max:100',
                 'data_eliberare_buletin' => '',
                 'sex' => '',
@@ -209,7 +207,6 @@ class PacientController extends Controller
                 'adresa' => 'nullable|max:500',
                 'localitate' => 'nullable|max:200',
                 'judet' => 'nullable|max:200',
-                // 'cod_postal' => 'nullable|max:200',
 
                 'apartinatori.*.nume' => 'required|max:200',
                 'apartinatori.*.prenume' => 'required|max:200',

@@ -786,7 +786,11 @@
                         </div>
                         <div class="modal-body mb-4" style="text-align:left;">
                             <label for="fisiereFisaMasuri" class="mb-0 ps-3">Fișiere fișă măsuri</label>
-                            <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3" multiple>
+                            <input type="file" name="fisiereFisaMasuri[]" class="form-control rounded-3 mb-4" multiple>
+
+                            <label for="fisa_masuri_descriere" class="mb-0 ps-3">Descriere fișă măsuri</label>
+                            <textarea class="form-control bg-white {{ $errors->has('fisa_masuri_descriere') ? 'is-invalid' : '' }}"
+                                name="fisa_masuri_descriere" rows="3">{{ old('fisa_masuri_descriere', $fisaCaz->fisa_masuri_descriere) }}</textarea>
                             <br>
                             <div class="text-center">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>

@@ -362,29 +362,20 @@ class FisaCazController extends Controller
 
     public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
     {
-        $request->validate(
+        // Validate the input and capture the validated data.
+        $validatedData = $request->validate(
             [
-                'fisiereFisaMasuri' => 'required',
+                'fisiereFisaMasuri' => 'nullable',
                 'fisiereFisaMasuri.*' => ['nullable',
                     File::types(['pdf', 'jpg'])
                         ->max(30 * 1024),
                     ],
+                'fisa_masuri_descriere' => 'nullable|max:500',
             ]
         );
 
         // Fisiere Fisa Masuri
-        // Daca exista fisiere in request, se sterge vechile fisiere si se salveaza cele de acum
         if ($request->file('fisiereFisaMasuri')) {
-            // la 17.04.2024, the functionality it was changed, so the old files are not anymore deleted, so the users can just add new files.
-            // // stergere fisiere vechi
-            // if ($fisaCaz->fisiereFisaMasuri->count() > 0){
-            //     // Se sterge tot directorul cu toate fisierele din el
-            //     Storage::deleteDirectory($fisaCaz->fisiereFisaMasuri->first()->cale);
-
-            //     // Se sterge toate fisierele din baza de date
-            //     $fisaCaz->fisiereFisaMasuri()->delete();
-            // }
-
             foreach ($request->file('fisiereFisaMasuri') as $fisier){
                 $numeFisier = $fisier->getClientOriginalName();
                 $cale = 'fiseCaz/' . $fisaCaz->id . '/fisaMasuri';
@@ -407,6 +398,10 @@ class FisaCazController extends Controller
                 }
             }
         }
+
+        // Update FisaCaz
+        $fisaCaz->fisa_masuri_descriere = $validatedData['fisa_masuri_descriere'] ?? null;
+        $fisaCaz->save();
 
         return back()->with('status', 'Fișa măsuri pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost încărcată cu succes!');
     }
@@ -510,7 +505,14 @@ class FisaCazController extends Controller
 
     public function toateHtml()
     {
-        $fiseCaz = FisaCaz::with('pacient:id,nume,prenume,localitate,judet,telefon,cum_a_aflat_de_theranova', 'pacient.apartinatori:pacient_id,nume,prenume,telefon', 'userVanzari:id,name', 'userTehnic:id,name', 'cerinte:fisa_caz_id,sursa_buget', 'ofertaAcceptata:fisa_caz_id,pret')
+        $fiseCaz = FisaCaz::with(
+                'pacient:id,nume,prenume,localitate,judet,telefon,cum_a_aflat_de_theranova',
+                'pacient.apartinatori:pacient_id,nume,prenume,telefon',
+                'userVanzari:id,name',
+                'userTehnic:id,name',
+                'cerinte:fisa_caz_id,sursa_buget',
+                'oferte:fisa_caz_id,pret,acceptata',
+                'ofertaAcceptata:fisa_caz_id,pret')
             ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare')
             ->orderBy('protezare', 'asc')
             ->get();
