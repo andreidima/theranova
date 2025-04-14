@@ -88,15 +88,26 @@
                 <th>ANUL</th>
                 <th>LUNA</th>
                 <th>NUME PACIENT</th>
-                <th>LOCALITATE DE DOMICILIU</th>
+
+                @if ($dimensiune == 'intreg')
+                    <th>LOCALITATE DE DOMICILIU</th>
+                @endif
+
                 <th>JUDET</th>
-                <th>TELEFON<br>(pacient/<br>apartinator)</th>
+
+                @if ($dimensiune == 'intreg')
+                    <th>TELEFON<br>(pacient/<br>apartinator)</th>
+                @endif
+
                 <th>TIP PROTEZA</th>
                 <th>valoare<br>-lei</th>
-                <th>DECIZIE<br>sau<br>CASH<br>sau<br>VOUCHER</th>
-                <th>PERSOANA<br>VANZARI</th>
-                <th>PERSOANA<br>TEHNIC</th>
-                <th>SURSA:<br>De unde a aflat de Theranova</th>
+
+                @if ($dimensiune == 'intreg')
+                    <th>DECIZIE<br>sau<br>CASH<br>sau<br>VOUCHER</th>
+                    <th>PERSOANA<br>VANZARI</th>
+                    <th>PERSOANA<br>TEHNIC</th>
+                    <th>SURSA:<br>De unde a aflat de Theranova</th>
+                @endif
             </tr>
             @foreach ($fiseCaz as $fisaCaz)
                 <tr>
@@ -109,60 +120,79 @@
                     <td>
                         {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}
                     </td>
-                    <td>
-                        {{ $fisaCaz->pacient->localitate ?? '' }}
-                    </td>
+
+                    @if ($dimensiune == 'intreg')
+                        <td>
+                            {{ $fisaCaz->pacient->localitate ?? '' }}
+                        </td>
+                    @endif
+
                     <td>
                         {{ $fisaCaz->pacient->judet ?? '' }}
                     </td>
-                    <td>
-                        @if ($fisaCaz->pacient->telefon)
-                            {{ $fisaCaz->pacient->telefon ?? '' }}
-                            <br>
-                        @endif
-                            @foreach (($fisaCaz->pacient->apartinatori ?? []) as $apartinator)
-                                @if ($apartinator->telefon)
-                                    {{-- {{ $apartinator->nume }} {{ $apartinator->prenume }}: {{ $apartinator->telefon }} --}}
-                                    {{ $apartinator->telefon }}
-                                    <br>
-                                @endif
-                            @endforeach
-                    </td>
+
+
+                    @if ($dimensiune == 'intreg')
+                        <td>
+                            @if ($fisaCaz->pacient->telefon)
+                                {{ $fisaCaz->pacient->telefon ?? '' }}
+                                <br>
+                            @endif
+                                @foreach (($fisaCaz->pacient->apartinatori ?? []) as $apartinator)
+                                    @if ($apartinator->telefon)
+                                        {{-- {{ $apartinator->nume }} {{ $apartinator->prenume }}: {{ $apartinator->telefon }} --}}
+                                        {{ $apartinator->telefon }}
+                                        <br>
+                                    @endif
+                                @endforeach
+                        </td>
+                    @endif
+
                     <td>
                         {{ $fisaCaz->tip_lucrare_solicitata }}
                     </td>
-                    <td>
-                        {{-- {{ $fisaCaz->ofertaAcceptata->pret ?? '' }} --}}
-                        @foreach ($fisaCaz->oferte as $oferta)
-                            {{ $oferta->pret }} -
-                            @switch ($oferta->acceptata)
-                                @case(0)
-                                    Neacceptată
-                                    @break
-                                @case(1)
-                                    Acceptată
-                                    @break
-                                @case(2)
-                                    În așteptare
-                                    @break
-                                @default
-                                    nedefinită
-                            @endswitch
-                            <br>
-                        @endforeach
-                    </td>
-                    <td>
-                        {{ $fisaCaz->cerinte->first()->sursa_buget ?? ''}}
-                    </td>
-                    <td>
-                        {{ ($fisaCaz->userVanzari->name ?? '') }}
-                    </td>
-                    <td>
-                        {{ ($fisaCaz->userTehnic->name ?? '') }}
-                    </td>
-                    <td>
-                        {{ $fisaCaz->pacient->cum_a_aflat_de_theranova ?? '' }}
-                    </td>
+
+                    @if ($dimensiune == 'intreg')
+                        <td>
+                            {{-- {{ $fisaCaz->ofertaAcceptata->pret ?? '' }} --}}
+                            @foreach ($fisaCaz->oferte as $oferta)
+                                {{ $oferta->pret }} -
+                                @switch ($oferta->acceptata)
+                                    @case(0)
+                                        Neacceptată
+                                        @break
+                                    @case(1)
+                                        Acceptată
+                                        @break
+                                    @case(2)
+                                        În așteptare
+                                        @break
+                                    @default
+                                        nedefinită
+                                @endswitch
+                                <br>
+                            @endforeach
+                        </td>
+                    @elseif ($dimensiune == 'partial')
+                        <td>
+                            {{ $fisaCaz->ofertaAcceptata->pret ?? '' }}
+                        </td>
+                    @endif
+
+                    @if ($dimensiune == 'intreg')
+                        <td>
+                            {{ $fisaCaz->cerinte->first()->sursa_buget ?? ''}}
+                        </td>
+                        <td>
+                            {{ ($fisaCaz->userVanzari->name ?? '') }}
+                        </td>
+                        <td>
+                            {{ ($fisaCaz->userTehnic->name ?? '') }}
+                        </td>
+                        <td>
+                            {{ $fisaCaz->pacient->cum_a_aflat_de_theranova ?? '' }}
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </table>

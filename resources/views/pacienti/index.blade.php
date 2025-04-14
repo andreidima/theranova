@@ -70,7 +70,8 @@
                             {{-- <th class="text-white culoare2">Vârsta</th> --}}
                             <th class="text-white culoare2">Telefon</th>
                             <th class="text-white culoare2">Email</th>
-                            <th class="text-white culoare2">Localitatea</th>
+                            <th class="text-white culoare2">Județ</th>
+                            <th class="text-white culoare2">Localitate</th>
                             <th class="text-white culoare2">Responsabil</th>
                             <th class="text-white culoare2 text-end">Acțiuni</th>
                         </tr>
@@ -92,6 +93,9 @@
                                 </td>
                                 <td class="">
                                     {{ $pacient->email }}
+                                </td>
+                                <td class="">
+                                    {{ $pacient->judet }}
                                 </td>
                                 <td class="">
                                     {{ $pacient->localitate }}

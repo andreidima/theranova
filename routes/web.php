@@ -43,7 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::post('/fise-caz/{fisaCaz}/trimite-email-catre-utilizator/{tipEmail}/{user}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizator']);
     Route::post('/fise-caz/{fisaCaz}/trimite-email-catre-utilizatori/{tipEmail}/{comanda?}', [FisaCazController::class, 'trimitePrinEmailCatreUtilizatori']);
     Route::get('/fise-caz/{fisaCaz}/export/contract-pdf', [FisaCazController::class, 'contractPdf']);
-    Route::get('/fise-caz/export/toate-html', [FisaCazController::class, 'toateHtml'])->middleware('check.export.access');
+    Route::get('/fise-caz/export/toate-html/{dimensiune}', [FisaCazController::class, 'toateHtml'])->middleware('check.export.access');
 
     Route::resource('/fise-caz/{fisaCaz}/oferte', OfertaController::class)->parameters(['oferte' => 'oferta']);
     Route::resource('/fise-caz/{fisaCaz}/comenzi', ComandaController::class)->parameters(['comenzi' => 'comanda']);

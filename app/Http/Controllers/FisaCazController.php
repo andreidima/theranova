@@ -503,7 +503,7 @@ class FisaCazController extends Controller
         return $pdf->stream();
     }
 
-    public function toateHtml()
+    public function toateHtml($dimensiune = null)
     {
         $fiseCaz = FisaCaz::with(
                 'pacient:id,nume,prenume,localitate,judet,telefon,cum_a_aflat_de_theranova',
@@ -517,6 +517,6 @@ class FisaCazController extends Controller
             ->orderBy('protezare', 'asc')
             ->get();
 
-        return view('fiseCaz.export.toateHtml', compact('fiseCaz'));
+        return view('fiseCaz.export.toateHtml', compact('fiseCaz', 'dimensiune'));
     }
 }

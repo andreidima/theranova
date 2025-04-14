@@ -85,8 +85,11 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li>
-                                        <a class="dropdown-item" href="/fise-caz/export/toate-html" target="_blank">
-                                            Fișe Caz - export
+                                        <a class="dropdown-item" href="/fise-caz/export/toate-html/intreg" target="_blank">
+                                            Fișe Caz - export întreg
+                                        </a>
+                                        <a class="dropdown-item" href="/fise-caz/export/toate-html/partial" target="_blank">
+                                            Fișe Caz - export parțial
                                         </a>
                                     </li>
                                 </ul>
