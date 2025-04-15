@@ -198,7 +198,7 @@ class PacientController extends Controller
                 //     : 'nullable|numeric|integer|min:1|digits:13|unique:pacienti,cnp',
                 'cnp' => [
                     'nullable', 'numeric', 'integer', 'min:1', 'digits:13',
-                    Rule::unique('pacienti')->ignore($pacient->id)
+                    Rule::unique('pacienti')->ignore($pacient?->id)
                 ],
                 'serie_numar_buletin' => 'nullable|max:100',
                 'data_eliberare_buletin' => '',
