@@ -104,8 +104,12 @@
 
                 @if ($dimensiune == 'intreg')
                     <th>DECIZIE<br>sau<br>CASH<br>sau<br>VOUCHER</th>
-                    <th>PERSOANA<br>VANZARI</th>
-                    <th>PERSOANA<br>TEHNIC</th>
+                @endif
+
+                <th>PERSOANA<br>VANZARI</th>
+                <th>PERSOANA<br>TEHNIC</th>
+
+                @if ($dimensiune == 'intreg')
                     <th>SURSA:<br>De unde a aflat de Theranova</th>
                 @endif
             </tr>
@@ -183,12 +187,16 @@
                         <td>
                             {{ $fisaCaz->cerinte->first()->sursa_buget ?? ''}}
                         </td>
+                    @endif
+
                         <td>
                             {{ ($fisaCaz->userVanzari->name ?? '') }}
                         </td>
                         <td>
                             {{ ($fisaCaz->userTehnic->name ?? '') }}
                         </td>
+
+                    @if ($dimensiune == 'intreg')
                         <td>
                             {{ $fisaCaz->pacient->cum_a_aflat_de_theranova ?? '' }}
                         </td>

@@ -130,7 +130,7 @@
                             <th class="text-white culoare2">Pacient<br>Programare atelier</th>
                             <th class="text-white culoare2">Tip lucrare solicitată<br>Evaluare<br>Compresie manșon</th>
                             <th class="text-white culoare2 text-center">Ofertă</th>
-                            <th class="text-white culoare2 text-center">Comenzi componente</th>
+                            <th class="text-white culoare2 text-center">Comenzi componente</th>
 
                             {{-- Should be removed at 01.06.2024, with everything else, including database fields --}}
                             {{-- <th class="text-white culoare2 text-center">Fișă comandă</th> --}}
@@ -216,11 +216,24 @@
                                                 <i class="fa-solid fa-exclamation-triangle text-warning"></i>
                                             @endif
                                             {{ $oferta->pret }}
+
                                             @if ($oferta->incasari->count() > 0)
-                                                <span class="{{ $oferta->pret >= $oferta->incasari->sum('suma') ? 'text-danger' : 'text-success' }}"  title="Suma încasată">
-                                                    ({{ $oferta->incasari->sum('suma') }})
+                                                {{-- Calculate $sumaIncasata and the percentage of it, to display it in the table. --}}
+                                                @php
+                                                    $sumaIncasata = $oferta->incasari->sum('suma');
+                                                    // Guard against division by zero
+                                                        if ($oferta->pret > 0) {
+                                                            // Calculate percentage
+                                                            $procentPlata = ($sumaIncasata / $oferta->pret) * 100;
+                                                            // Format to 2 decimal places
+                                                            $procentPlataFormatat = number_format($procentPlata, 0);
+                                                        }
+                                                @endphp
+                                                <span class="{{ $oferta->pret > $sumaIncasata ? 'text-danger' : 'text-success' }}"  title="Suma încasată">
+                                                    ({{ $sumaIncasata }})({{ $procentPlataFormatat . '%' }})
                                                 </span>
                                             @endif
+
                                             lei
                                             @foreach ($oferta->fisiere as $fisier)
                                                 <a href="/fisiere/{{ $fisier->id }}/deschide-descarca" target="_blank" style="text-decoration:cornflowerblue">
