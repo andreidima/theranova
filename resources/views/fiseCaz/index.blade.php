@@ -230,7 +230,7 @@
                                                         }
                                                 @endphp
                                                 <span class="{{ $oferta->pret > $sumaIncasata ? 'text-danger' : 'text-success' }}"  title="Suma încasată">
-                                                    ({{ $sumaIncasata }})({{ $procentPlataFormatat . '%' }})
+                                                    ({{ $sumaIncasata }})({{ ($procentPlataFormatat ?? '') . '%' }})
                                                 </span>
                                             @endif
 
