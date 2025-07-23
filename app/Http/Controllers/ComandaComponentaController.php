@@ -302,7 +302,7 @@ class ComandaComponentaController extends Controller
                 'id' => '',
                 'fisierComanda' => ['nullable',
                     File::types(['pdf', 'jpg'])
-                        ->max(30 * 1024),
+                        ->max(10 * 1024),
                     ],
                 // 'comenziComponente' => 'required',
                 'comenziComponente.*.fisa_caz_id' => 'required',

@@ -234,7 +234,7 @@ class OfertaController extends Controller
                 'fisier' => [
                     File::types(['pdf', 'jpg'])
                         // ->min(1024)
-                        ->max(30 * 1024),
+                        ->max(10 * 1024),
                 ],
                 'contract_nr' => 'nullable|max:200',
                 'contract_data' => '',

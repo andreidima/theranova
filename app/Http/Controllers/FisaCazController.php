@@ -362,13 +362,17 @@ class FisaCazController extends Controller
 
     public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
     {
+        $messages = [
+            'fisier.uploaded' => 'Fișierul nu a putut fi încărcat – este prea mare sau ceva a întrerupt procesul.',
+        ];
+
         // Validate the input and capture the validated data.
         $validatedData = $request->validate(
             [
                 'fisiereFisaMasuri' => 'nullable',
                 'fisiereFisaMasuri.*' => ['nullable',
                     File::types(['pdf', 'jpg'])
-                        ->max(30 * 1024),
+                        ->max(10 * 1024),
                     ],
                 'fisa_masuri_descriere' => 'nullable|max:500',
             ]

@@ -251,7 +251,7 @@ class ComandaController extends Controller
                 'id' => '',
                 'fisier' => ['nullable',
                     File::types(['pdf', 'jpg'])
-                        ->max(30 * 1024),
+                        ->max(10 * 1024),
                     ],
                 // 'comenziComponente' => 'required',
                 // 'comenziComponente.*.fisa_caz_id' => 'required', // I think that should be deleted
