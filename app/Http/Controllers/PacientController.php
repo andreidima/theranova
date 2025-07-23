@@ -50,6 +50,7 @@ class PacientController extends Controller
 
         $useri = User::select('id', 'name', 'role')
             ->where('id', '>', 1) // Andrei Dima
+            ->where('id', '<>', 79) // The virtual user named 'Fara reprezentant'
             ->orderBy('name')->get();
 
         return view('pacienti.index', compact('pacienti', 'searchNume', 'searchPrenume', 'searchTelefon', 'searchResponsabil', 'useri'));
@@ -66,6 +67,7 @@ class PacientController extends Controller
 
         $useri = User::select('id', 'name', 'role')
             ->where('id', '>', 1) // Andrei Dima
+            ->where('id', '<>', 79) // The virtual user named 'Fara reprezentant'
             ->orderBy('name')->get();
 
         return view('pacienti.create', compact('useri'));
@@ -122,6 +124,7 @@ class PacientController extends Controller
 
         $useri = User::select('id', 'name', 'role')
             ->where('id', '>', 1) // Andrei Dima
+            ->where('id', '<>', 79) // The virtual user named 'Fara reprezentant'
             ->orderBy('name')->get();
 
         return view('pacienti.edit', compact('pacient', 'useri'));
@@ -139,9 +142,8 @@ class PacientController extends Controller
         $this->validateRequest($request, $pacient);
 
         $pacient->update($request->except(['apartinatori', 'date']));
-// dd($request, $pacient);
+
         $pacient->apartinatori()->whereNotIn('id', collect($request->apartinatori)->where('id')->pluck('id'))->delete();
-        // dd($request->apartinatori);
         if ($request->apartinatori) {
             foreach ($request->apartinatori as $date) {
                 $pacient->apartinatori()->save(Apartinator::updateOrCreate(['id' =>  $date['id']], $date));
@@ -182,7 +184,7 @@ class PacientController extends Controller
     {
         return $request->validate(
             [
-                'user_responsabil' => '',
+                'user_responsabil' => 'required',
                 'nume' => 'required|max:200',
                 'prenume' => ['required', 'max:200',
                     function (string $attribute, mixed $value, Closure $fail) use ($request, $pacient){

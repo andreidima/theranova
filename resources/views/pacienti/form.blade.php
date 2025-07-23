@@ -12,7 +12,7 @@
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-4 pt-2 rounded-3 justify-content-center" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-3 mb-4">
-                <label for="user_responsabil" class="mb-0 ps-3">Responsabil</label>
+                <label for="user_responsabil" class="mb-0 ps-3">Responsabil<span class="text-danger">*</span></label>
                 <select name="user_responsabil" class="form-select bg-white rounded-3 {{ $errors->has('user_responsabil') ? 'is-invalid' : '' }}">
                     <option selected></option>
                     @foreach ($useri as $user)
