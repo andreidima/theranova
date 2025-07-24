@@ -29,7 +29,7 @@
 #    php_value post_max_size 25M
 #    php_value upload_max_filesize 13M
 # </IfModule>
-<IfModule lsapi_module>
+<IfModule php8_module>
   php_value upload_max_filesize 12M
   php_value post_max_size 25M
 </IfModule>
