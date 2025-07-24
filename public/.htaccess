@@ -25,12 +25,12 @@
   AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
 </IfModule>
 
-# <IfModule php8_module>
-#    php_value post_max_size 25M
-#    php_value upload_max_filesize 13M
-# </IfModule>
 <IfModule php8_module>
-  php_value upload_max_filesize 12M
+   php_value post_max_size 25M
+   php_value upload_max_filesize 20M
+</IfModule>
+<IfModule lsapi_module>
+  php_value upload_max_filesize 22M
   php_value post_max_size 25M
 </IfModule>
 
