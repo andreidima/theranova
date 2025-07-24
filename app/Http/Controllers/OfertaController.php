@@ -244,6 +244,8 @@ class OfertaController extends Controller
                 'incasari.*.observatii' => 'nullable|max:5000',
             ],
             [
+                'fisier.uploaded' => 'Fișierul nu a putut fi încărcat - fie este prea mare (maxim 10 MB) sau altceva a întrerupt procesul.',
+
                 'incasari.*.suma.required' => 'Câmpul Suma pentru incasarea :position este necesar.',
                 'incasari.*.suma.integer' => 'Câmpul Suma pentru incasarea :position trebuie să fie un număr întreg.',
                 'incasari.*.suma.between' => 'Câmpul Suma pentru incasarea :position trebuie să fie între 1 și 999.',

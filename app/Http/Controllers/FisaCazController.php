@@ -362,13 +362,6 @@ class FisaCazController extends Controller
 
     public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
     {
-        // 1) Define your custom messages:
-        $messages = [
-            // Note the use of the wildcard for each file in the array:
-            'fisiereFisaMasuri.*.uploaded' =>
-                'Fișierul nu a putut fi încărcat – este prea mare sau ceva a întrerupt procesul.',
-        ];
-
         // Validate the input and capture the validated data.
         $validatedData = $request->validate(
             [
@@ -379,7 +372,9 @@ class FisaCazController extends Controller
                     ],
                 'fisa_masuri_descriere' => 'nullable|max:500',
             ],
-            $messages
+            [
+                'fisiereFisaMasuri.*.uploaded' => 'Fișierul nu a putut fi încărcat - fie este prea mare (maxim 10 MB) sau altceva a întrerupt procesul.',
+            ]
         );
 
         // Fisiere Fisa Masuri

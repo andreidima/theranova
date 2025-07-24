@@ -311,6 +311,8 @@ class ComandaComponentaController extends Controller
                 'comenziComponente.*.bucati' => 'required|integer|between:1,999',
             ],
             [
+                'fisierComanda.uploaded' => 'Fișierul nu a putut fi încărcat - fie este prea mare (maxim 10 MB) sau altceva a întrerupt procesul.',
+
                 'comenziComponente.required' => 'Este obligatoriu să fie adăugată minim o componentă.',
                 'comenziComponente.*.producator.required' => 'Câmpul Producător pentru componenta :position este necesar.',
                 'comenziComponente.*.producator.max' => 'Câmpul Producător pentru componenta :position poate avea maxim 200 de caractere.',
