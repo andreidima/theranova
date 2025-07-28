@@ -394,7 +394,7 @@
                                         @if ($fisaCaz->fisiereFisaMasuri->count() > 0)
                                             <span class="badge text-primary px-1 py-0" title="Modifică"><i class="fa-solid fa-pen-to-square"></i></span></a>
                                         @else
-                                            <span class="badge text-success" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
+                                            <span class="badge text-success px-1 py-0" title="Adaugă"><i class="fas fa-plus-square"></i></span></a>
                                         @endif
                                 </td>
                                 {{-- Pot schimba starea doar Andrei, Dana si Adrian Ples --}}
