@@ -376,14 +376,14 @@
                                     @endif
 
                                     @if ($fisaCaz->fisa_masuri_descriere)
-                                        <span class="ms-2">
+                                        {{-- <span class=""> --}}
                                             <i
                                                 class="fa-solid fa-info-circle text-info"
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="top"
                                                 title="{{ Str::limit($fisaCaz->fisa_masuri_descriere, 150) }}"
                                             ></i>
-                                        </span>
+                                        {{-- </span> --}}
                                     @endif
 
                                     <a href="#"
