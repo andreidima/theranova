@@ -20,6 +20,8 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
+
+# To delete 01.09.2025
 # Set the “ea-php82” package as the default “PHP” programming language.
 # <IfModule mime_module>
 #   AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
@@ -33,6 +35,8 @@
 #   php_value upload_max_filesize 22M
 #   php_value post_max_size 25M
 # </IfModule>
+
+
 
 <IfModule php8_module>
   <IfModule mime_module>

@@ -375,6 +375,17 @@
                                         @endforeach
                                     @endif
 
+                                    @if ($fisaCaz->fisa_masuri_descriere)
+                                        <span class="ms-2">
+                                            <i
+                                                class="fa-solid fa-info-circle text-info"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="{{ Str::limit($fisaCaz->fisa_masuri_descriere, 150) }}"
+                                            ></i>
+                                        </span>
+                                    @endif
+
                                     <a href="#"
                                         data-bs-toggle="modal"
                                         data-bs-target="#adaugaModificaFisaMasuriLaFisaCaz{{ $fisaCaz->id }}"
