@@ -21,16 +21,30 @@
 </IfModule>
 
 # Set the “ea-php82” package as the default “PHP” programming language.
-<IfModule mime_module>
-  AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
-</IfModule>
+# <IfModule mime_module>
+#   AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
+# </IfModule>
+
+# <IfModule php8_module>
+#    php_value post_max_size 25M
+#    php_value upload_max_filesize 20M
+# </IfModule>
+# <IfModule lsapi_module>
+#   php_value upload_max_filesize 22M
+#   php_value post_max_size 25M
+# </IfModule>
 
 <IfModule php8_module>
-   php_value post_max_size 25M
-   php_value upload_max_filesize 20M
-</IfModule>
-<IfModule lsapi_module>
-  php_value upload_max_filesize 22M
-  php_value post_max_size 25M
-</IfModule>
+  <IfModule mime_module>
+    AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
+  </IfModule>
 
+  php_value upload_max_filesize 22M
+  php_value post_max_size      25M
+
+  <IfModule lsapi_module>
+    # override for LiteSpeed SAPI if you prefer different limits
+    php_value upload_max_filesize 20M
+    php_value post_max_size      25M
+  </IfModule>
+</IfModule>
