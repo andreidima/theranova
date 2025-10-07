@@ -217,11 +217,14 @@ class OfertaController extends Controller
             ];
 
             if ($id) {
-                $updated = Incasare::where('id', $id)
+                $model = Incasare::where('id', $id)
                     ->where('oferta_id', $oferta->id)
-                    ->update($payload);
+                    ->first();
 
-                if ($updated) {
+                if ($model) {
+                    $model->fill($payload);
+                    $model->save();
+
                     continue;
                 }
             }
