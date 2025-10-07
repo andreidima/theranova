@@ -265,7 +265,7 @@ class FisaCazController extends Controller
                 // 'programare_atelier' => '',
                 'compresie_manson' => '',
                 'protezare' => '',
-                'user_vanzari' => '',
+                'user_vanzari' => 'required|exists:users,id',
                 'user_comercial' => '',
                 'user_tehnic' => '',
                 'pacient_id' => 'required',
@@ -292,6 +292,8 @@ class FisaCazController extends Controller
 
             ],
             [
+                'user_vanzari.required' => 'Câmpul Vânzări este obligatoriu.',
+                'user_vanzari.exists' => 'Utilizatorul selectat pentru Vânzări nu este valid.',
                 'dateMedicale.*.greutate.required' => 'Câmpul Greutate este obligatoriu.',
                 'dateMedicale.*.greutate.integer' => 'Câmpul greutate trebuie să fie un număr.',
                 'dateMedicale.*.greutate.min' => 'Câmpul greutate trebuie să aibă valoarea minim 1.',

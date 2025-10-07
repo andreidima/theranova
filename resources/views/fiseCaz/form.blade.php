@@ -38,7 +38,7 @@
                             name="tip_lucrare_solicitata"
                             v-model="tip_lucrare_solicitata"
                             >
-                            <option selected></option>
+                            <option value="" selected></option>
                             <option value="AK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK provizorie" ? 'selected' : '' }}>AK provizorie</option>
                             <option value="AK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK definitivă" ? 'selected' : '' }}>AK definitivă</option>
                             <option value="BK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK provizorie" ? 'selected' : '' }}>BK provizorie</option>
@@ -91,10 +91,14 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-2 mb-4">
-                        <label for="user_vanzari" class="mb-0 ps-3">Vânzări</label>
-                        <select name="user_vanzari" class="form-select bg-white rounded-3 {{ $errors->has('user_vanzari') ? 'is-invalid' : '' }}">
-                            <option selected></option>
-                            @foreach ($useri->where('role', 1) as $user)
+                        <label for="user_vanzari" class="mb-0 ps-3">Vânzări<span class="text-danger">*</span></label>
+                        <select
+                            name="user_vanzari"
+                            class="form-select bg-white rounded-3 {{ $errors->has('user_vanzari') ? 'is-invalid' : '' }}"
+                            required
+                        >
+                            <option value="" selected></option>
+                            @foreach ($useri->where('role', 1)->where('id', '!=', 79) as $user)
                                 <option value="{{ $user->id }}" {{ ($user->id === intval(old('user_vanzari', $fisaCaz->user_vanzari ?? ''))) ? 'selected' : '' }}>{{ $user->name }}</option>
                             @endforeach
                         </select>
