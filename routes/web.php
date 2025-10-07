@@ -30,6 +30,7 @@ Route::redirect('/', '/acasa');
 
 Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteEmail']);
 Route::get('/cronjobs/trimite-mementouri-activitati-calendar/{key}', [CronJobController::class, 'trimiteMementouriActivitatiCalendar']);
+Route::get('/cronjobs/trimite-reminder-decizii-cas/{key}', [CronJobController::class, 'trimiteReminderDeciziiCas']);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa')->name('acasa');
