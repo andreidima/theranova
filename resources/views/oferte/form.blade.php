@@ -21,7 +21,7 @@
             ->where('tip', Incasare::TIP_DECIZIE_CAS)
             ->get()
             ->map(function ($decizie) {
-                return $decizie->only(['id', 'oferta_id', 'suma', 'data', 'observatii', 'data_inregistrare', 'data_validare', 'tip']);
+                return $decizie->only(['id', 'oferta_id', 'suma', 'data', 'nr_data', 'observatii', 'data_inregistrare', 'data_validare', 'tip']);
             })
             ->toArray();
     }
@@ -113,7 +113,7 @@
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-12 mb-0" id="deciziiCas">
                 <div class="row align-items-start justify-content-center" v-if="deciziiCas.length" v-for="(decizie, index) in deciziiCas" :key="'decizie-' + index">
-                    <div class="col-lg-3 mb-4">
+                    <div class="col-lg-2 mb-4">
                         <input type="hidden" :name="'decizii_cas[' + index + '][id]'" v-model="deciziiCas[index].id">
                         <input type="hidden" :name="'decizii_cas[' + index + '][oferta_id]'" :value="deciziiCas[index].oferta_id ?? ofertaId">
                         <input type="hidden" :name="'decizii_cas[' + index + '][tip]'" value="decizie_cas">
@@ -125,7 +125,7 @@
                             :name="'decizii_cas[' + index + '][suma]'"
                             v-model="deciziiCas[index].suma">
                     </div>
-                    <div class="col-lg-3 mb-4">
+                    <div class="col-lg-2 mb-4">
                         <label for="decizii_cas_data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
                         <input
                             type="text"
@@ -133,6 +133,14 @@
                             :name="'decizii_cas[' + index + '][data]'"
                             v-model="deciziiCas[index].data">
                         <small class="ps-3">Ex:20.05.2024</small>
+                    </div>
+                    <div class="col-lg-2 mb-4">
+                        <label for="decizii_cas_nr_data" class="mb-0 ps-3">Nr/data</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'decizii_cas[' + index + '][nr_data]'"
+                            v-model="deciziiCas[index].nr_data">
                     </div>
                     <div class="col-lg-3 mb-4">
                         <label for="decizii_cas_data_inregistrare" class="mb-0 ps-3">Data înregistrare<span class="text-danger">*</span></label>

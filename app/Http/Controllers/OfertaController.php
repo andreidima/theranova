@@ -210,6 +210,7 @@ class OfertaController extends Controller
                 'oferta_id' => $oferta->id,
                 'suma' => $incasare['suma'] ?? null,
                 'data' => $incasare['data'] ?? null,
+                'nr_data' => $incasare['nr_data'] ?? null,
                 'observatii' => $incasare['observatii'] ?? null,
                 'data_inregistrare' => $incasare['data_inregistrare'] ?? null,
                 'data_validare' => $incasare['data_validare'] ?? null,
@@ -269,6 +270,7 @@ class OfertaController extends Controller
 
                 'decizii_cas.*.suma' => 'required|numeric|between:1,999999',
                 'decizii_cas.*.data' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
+                'decizii_cas.*.nr_data' => 'nullable|string|max:255',
                 'decizii_cas.*.data_inregistrare' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
                 'decizii_cas.*.data_validare' => ['nullable' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
                 'decizii_cas.*.observatii' => 'nullable|max:5000',
@@ -293,6 +295,7 @@ class OfertaController extends Controller
                 'decizii_cas.*.data_inregistrare.required' => 'Câmpul Data înregistrare pentru decizia CAS :position este necesar.',
                 'decizii_cas.*.data_inregistrare.date' => 'Câmpul Data înregistrare pentru decizia CAS :position nu există în calendar.',
                 'decizii_cas.*.data_inregistrare.regex' => 'Câmpul Data înregistrare pentru decizia CAS :position nu este completat corect.',
+                'decizii_cas.*.nr_data.max' => 'Câmpul Nr/data pentru decizia CAS :position poate avea cel mult 255 de caractere.',
                 'decizii_cas.*.data_validare.date' => 'Câmpul Data validare pentru decizia CAS :position nu există în calendar.',
                 'decizii_cas.*.data_validare.regex' => 'Câmpul Data validare pentru decizia CAS :position nu este completat corect.',
                 'decizii_cas.*.observatii.max' => 'Câmpul Observații pentru decizia CAS :position trebuie să fie maxim 5000 de caractere.',
