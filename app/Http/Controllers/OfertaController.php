@@ -48,13 +48,10 @@ class OfertaController extends Controller
     public function store(Request $request, FisaCaz $fisaCaz)
     {
         $this->validateRequest($request);
-        $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier', 'date', 'incasari'])));
+        $oferta = $fisaCaz->oferte()->save(Oferta::make($request->except(['fisier', 'date', 'incasari', 'decizii_cas'])));
 
-        if ($request->incasari){
-            foreach($request->incasari as $incasare) {
-                $oferta->incasari()->create($incasare);
-            }
-        }
+        $this->syncIncasari($oferta, $request->decizii_cas ?? [], Incasare::TIP_DECIZIE_CAS);
+        $this->syncIncasari($oferta, $request->incasari ?? [], Incasare::TIP_INCASARE);
 
         if ($request->file('fisier')) {
             $fisier = $request->file('fisier');
@@ -117,24 +114,19 @@ class OfertaController extends Controller
     public function update(Request $request, FisaCaz $fisaCaz, Oferta $oferta)
     {
         $this->validateRequest($request);
-        $oferta->update($request->except(['fisier', 'date', 'incasari']));
+        $oferta->update($request->except(['fisier', 'date', 'incasari', 'decizii_cas']));
 
-        // Stergerea incasarilor ce nu mai sunt in array: array_column scoate doar coloana de id-uri, array_filter elimina din array valorile null (fara id)
-        Incasare::where('oferta_id', $oferta->id)->whereNotIn('id', array_filter(array_column(($request->comenziComponente ?? []) , 'id')))->delete();
-        // Adaugarea/modificarea incasarilor din array
-        foreach(($request->incasari ?? []) as $incasare) {
-            Incasare::updateOrCreate(
-                [
-                    'id' => $incasare['id']
-                ],
-                [
-                    'oferta_id' => $incasare['oferta_id'],
-                    'suma' => $incasare['suma'],
-                    'data' => $incasare['data'],
-                    'observatii' => $incasare['observatii'],
-                ]
-            );
+        $idsDePastrat = array_filter(array_column(($request->incasari ?? []), 'id'));
+        $idsDePastrat = array_merge($idsDePastrat, array_filter(array_column(($request->decizii_cas ?? []), 'id')));
+
+        if (count($idsDePastrat)) {
+            Incasare::where('oferta_id', $oferta->id)->whereNotIn('id', $idsDePastrat)->delete();
+        } else {
+            Incasare::where('oferta_id', $oferta->id)->delete();
         }
+
+        $this->syncIncasari($oferta, $request->decizii_cas ?? [], Incasare::TIP_DECIZIE_CAS);
+        $this->syncIncasari($oferta, $request->incasari ?? [], Incasare::TIP_INCASARE);
 
         // Daca exista fisier in request, se sterge vechiul fisier si se salveaza cel de acum
         if ($request->file('fisier')) {
@@ -209,6 +201,35 @@ class OfertaController extends Controller
         return back()->with('status', 'Oferta pentru pacientul „' . ($oferta->fisaCaz->pacient->nume ?? '') . ' ' . ($oferta->fisaCaz->pacient->prenume) . '” a fost ștearsă cu succes!');
     }
 
+    protected function syncIncasari(Oferta $oferta, array $incasari, string $tip): void
+    {
+        foreach ($incasari as $incasare) {
+            $id = $incasare['id'] ?? null;
+
+            $payload = [
+                'oferta_id' => $oferta->id,
+                'suma' => $incasare['suma'] ?? null,
+                'data' => $incasare['data'] ?? null,
+                'observatii' => $incasare['observatii'] ?? null,
+                'data_inregistrare' => $incasare['data_inregistrare'] ?? null,
+                'data_validare' => $incasare['data_validare'] ?? null,
+                'tip' => $tip,
+            ];
+
+            if ($id) {
+                $updated = Incasare::where('id', $id)
+                    ->where('oferta_id', $oferta->id)
+                    ->update($payload);
+
+                if ($updated) {
+                    continue;
+                }
+            }
+
+            $oferta->incasari()->create($payload);
+        }
+    }
+
     /**
      * Validate the request attributes.
      *
@@ -242,6 +263,12 @@ class OfertaController extends Controller
                 'incasari.*.suma' => 'required|numeric|between:1,999999',
                 'incasari.*.data' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
                 'incasari.*.observatii' => 'nullable|max:5000',
+
+                'decizii_cas.*.suma' => 'required|numeric|between:1,999999',
+                'decizii_cas.*.data' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
+                'decizii_cas.*.data_inregistrare' => ['required' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
+                'decizii_cas.*.data_validare' => ['nullable' , 'date', 'regex:/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/'],
+                'decizii_cas.*.observatii' => 'nullable|max:5000',
             ],
             [
                 'fisier.uploaded' => 'Fișierul nu a putut fi încărcat - fie este prea mare (maxim 10 MB) sau altceva a întrerupt procesul.',
@@ -253,6 +280,19 @@ class OfertaController extends Controller
                 'incasari.*.data.date' => 'Câmpul Data pentru incasarea :position nu există în calendar.',
                 'incasari.*.data.regex' => 'Câmpul Data pentru incasarea :position nu este completat corect.',
                 'incasari.*.observatii.max' => 'Câmpul Observații pentru incasarea :position trebuie să fie maxim 5000 de caractere.',
+
+                'decizii_cas.*.suma.required' => 'Câmpul Suma pentru decizia CAS :position este necesar.',
+                'decizii_cas.*.suma.integer' => 'Câmpul Suma pentru decizia CAS :position trebuie să fie un număr întreg.',
+                'decizii_cas.*.suma.between' => 'Câmpul Suma pentru decizia CAS :position trebuie să fie între 1 și 999.',
+                'decizii_cas.*.data.required' => 'Câmpul Data pentru decizia CAS :position este necesar.',
+                'decizii_cas.*.data.date' => 'Câmpul Data pentru decizia CAS :position nu există în calendar.',
+                'decizii_cas.*.data.regex' => 'Câmpul Data pentru decizia CAS :position nu este completat corect.',
+                'decizii_cas.*.data_inregistrare.required' => 'Câmpul Data înregistrare pentru decizia CAS :position este necesar.',
+                'decizii_cas.*.data_inregistrare.date' => 'Câmpul Data înregistrare pentru decizia CAS :position nu există în calendar.',
+                'decizii_cas.*.data_inregistrare.regex' => 'Câmpul Data înregistrare pentru decizia CAS :position nu este completat corect.',
+                'decizii_cas.*.data_validare.date' => 'Câmpul Data validare pentru decizia CAS :position nu există în calendar.',
+                'decizii_cas.*.data_validare.regex' => 'Câmpul Data validare pentru decizia CAS :position nu este completat corect.',
+                'decizii_cas.*.observatii.max' => 'Câmpul Observații pentru decizia CAS :position trebuie să fie maxim 5000 de caractere.',
             ]
         );
     }

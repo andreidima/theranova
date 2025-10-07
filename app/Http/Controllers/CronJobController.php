@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\FisaCaz;
+use App\Models\Incasare;
+use App\Models\MesajTrimisEmail;
+
+use App\Mail\OfertaDecizieCasReminder;
 
 class CronJobController extends Controller
 {
@@ -149,5 +153,91 @@ class CronJobController extends Controller
                 echo '<br><br>';
             }
         }
+    }
+
+    public function trimiteReminderDeciziiCas($key = null)
+    {
+        if (is_null($keyDB = DB::table('variabile')->where('nume', 'cron_job_key')->get()->first()->valoare ?? null) || is_null($key) || ($keyDB !== $key)) {
+            echo 'Cheia pentru Cron Joburi este incorectă!';
+            return ;
+        }
+
+        $decizii = Incasare::with(['oferta.fisaCaz.pacient', 'oferta.fisaCaz.userVanzari', 'oferta.fisaCaz.userComercial', 'oferta.fisaCaz.userTehnic'])
+            ->where('tip', Incasare::TIP_DECIZIE_CAS)
+            ->whereNotNull('data_inregistrare')
+            ->whereNull('data_validare')
+            ->get();
+
+        foreach ($decizii as $decizie) {
+            if (!$decizie->oferta || !$decizie->oferta->fisaCaz) {
+                continue;
+            }
+
+            $fisaCaz = $decizie->oferta->fisaCaz;
+
+            $adreseEmail = collect([
+                $fisaCaz->userVanzari->email ?? null,
+                $fisaCaz->userComercial->email ?? null,
+                $fisaCaz->userTehnic->email ?? null,
+            ])->filter()->unique();
+
+            if ($adreseEmail->isEmpty()) {
+                continue;
+            }
+
+            try {
+                $dataInregistrare = Carbon::createFromFormat('d.m.Y', $decizie->data_inregistrare);
+            } catch (\Exception $exception) {
+                continue;
+            }
+
+            $primaTrimitere = (clone $dataInregistrare)->addMonthsNoOverflow(2);
+            $aDouaTrimitere = (clone $primaTrimitere)->addDays(15);
+
+            if (!$this->aFostTrimisReminderDecizieCas($decizie->id, 9) && Carbon::now()->greaterThanOrEqualTo($primaTrimitere)) {
+                $this->trimiteReminderDecizieCas(
+                    $adreseEmail->all(),
+                    $decizie,
+                    'primul reminder (2 luni)',
+                    9
+                );
+
+                continue;
+            }
+
+            if (!$this->aFostTrimisReminderDecizieCas($decizie->id, 10) && Carbon::now()->greaterThanOrEqualTo($aDouaTrimitere)) {
+                $this->trimiteReminderDecizieCas(
+                    $adreseEmail->all(),
+                    $decizie,
+                    'al doilea reminder (2 luni și jumătate)',
+                    10
+                );
+            }
+        }
+    }
+
+    protected function aFostTrimisReminderDecizieCas(int $decizieId, int $tip): bool
+    {
+        return MesajTrimisEmail::where('referinta', 4)
+            ->where('referinta_id', $decizieId)
+            ->where('tip', $tip)
+            ->exists();
+    }
+
+    protected function trimiteReminderDecizieCas(array $emailuri, Incasare $decizie, string $tipReminder, int $tipCod): void
+    {
+        Mail::to($emailuri)
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+            ->send(new OfertaDecizieCasReminder($decizie, $tipReminder));
+
+        MesajTrimisEmail::create([
+            'referinta' => 4,
+            'referinta_id' => $decizie->id,
+            'referinta2' => null,
+            'referinta2_id' => null,
+            'tip' => $tipCod,
+            'mesaj' => '',
+            'email' => implode(', ', $emailuri),
+        ]);
     }
 }

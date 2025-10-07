@@ -2,11 +2,35 @@
 
 @php
     use \Carbon\Carbon;
-    // dd(old('incasari', $oferta->incasari()->get()) ?? []);
+    use \App\Models\Incasare;
+
+    $incasariFormData = old('incasari');
+    if (is_null($incasariFormData)) {
+        $incasariFormData = $oferta->incasari()
+            ->where('tip', Incasare::TIP_INCASARE)
+            ->get()
+            ->map(function ($incasare) {
+                return $incasare->only(['id', 'oferta_id', 'suma', 'data', 'observatii', 'tip']);
+            })
+            ->toArray();
+    }
+
+    $deciziiCasFormData = old('decizii_cas');
+    if (is_null($deciziiCasFormData)) {
+        $deciziiCasFormData = $oferta->incasari()
+            ->where('tip', Incasare::TIP_DECIZIE_CAS)
+            ->get()
+            ->map(function ($decizie) {
+                return $decizie->only(['id', 'oferta_id', 'suma', 'data', 'observatii', 'data_inregistrare', 'data_validare', 'tip']);
+            })
+            ->toArray();
+    }
 @endphp
 
 <script type="application/javascript">
-    incasariVechi =  {!! json_encode(old('incasari', $oferta->incasari()->get()) ?? []) !!}
+    const ofertaId = {{ $oferta->id ? $oferta->id : 'null' }};
+    const incasariVechi = {!! json_encode($incasariFormData ?? []) !!};
+    const deciziiCasVechi = {!! json_encode($deciziiCasFormData ?? []) !!};
 </script>
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
@@ -87,16 +111,83 @@
 
 
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
+            <div class="col-lg-12 mb-0" id="deciziiCas">
+                <div class="row align-items-start justify-content-center" v-if="deciziiCas.length" v-for="(decizie, index) in deciziiCas" :key="'decizie-' + index">
+                    <div class="col-lg-3 mb-4">
+                        <input type="hidden" :name="'decizii_cas[' + index + '][id]'" v-model="deciziiCas[index].id">
+                        <input type="hidden" :name="'decizii_cas[' + index + '][oferta_id]'" :value="deciziiCas[index].oferta_id ?? ofertaId">
+                        <input type="hidden" :name="'decizii_cas[' + index + '][tip]'" value="decizie_cas">
+
+                        <label for="decizii_cas_suma" class="mb-0 ps-3">Suma<span class="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'decizii_cas[' + index + '][suma]'"
+                            v-model="deciziiCas[index].suma">
+                    </div>
+                    <div class="col-lg-3 mb-4">
+                        <label for="decizii_cas_data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'decizii_cas[' + index + '][data]'"
+                            v-model="deciziiCas[index].data">
+                        <small class="ps-3">Ex:20.05.2024</small>
+                    </div>
+                    <div class="col-lg-3 mb-4">
+                        <label for="decizii_cas_data_inregistrare" class="mb-0 ps-3">Data înregistrare<span class="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'decizii_cas[' + index + '][data_inregistrare]'"
+                            v-model="deciziiCas[index].data_inregistrare">
+                        <small class="ps-3">Ex:20.05.2024</small>
+                    </div>
+                    <div class="col-lg-3 mb-4">
+                        <label for="decizii_cas_data_validare" class="mb-0 ps-3">Data validare</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'decizii_cas[' + index + '][data_validare]'"
+                            v-model="deciziiCas[index].data_validare">
+                        <small class="ps-3">Ex:20.05.2024</small>
+                    </div>
+                    <div class="col-lg-8 mb-4">
+                        <label for="decizii_cas_observatii" class="mb-0 ps-3">Observații</label>
+                        <input
+                            type="text"
+                            class="form-control bg-white rounded-3"
+                            :name="'decizii_cas[' + index + '][observatii]'"
+                            v-model="deciziiCas[index].observatii">
+                    </div>
+                    <div class="col-lg-2 mb-4 text-end">
+                        <br>
+                        <button type="button" class="btn btn-danger" @click="deciziiCas.splice(index,1)">Șterge</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 mb-4 text-center">
+                        <button type="button" class="btn btn-success text-white rounded-3"
+                            v-on:click="adaugaDecizieCas">
+                            Adaugă decizie CAS
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
             <div class="col-lg-12 mb-0" id="incasari">
-                <div class="row align-items-start justify-content-center" v-if="incasari.length" v-for="(incasare, index) in incasari" :key="index">
+                <div class="row align-items-start justify-content-center" v-if="incasari.length" v-for="(incasare, index) in incasari" :key="'incasare-' + index">
                     <div class="col-lg-3 mb-4">
                         <input type="hidden" :name="'incasari[' + index + '][id]'" v-model="incasari[index].id">
-                        <input type="hidden" :name="'incasari[' + index + '][oferta_id]'" value="{{ $oferta->id }}">
+                        <input type="hidden" :name="'incasari[' + index + '][oferta_id]'" :value="incasari[index].oferta_id ?? ofertaId">
+                        <input type="hidden" :name="'incasari[' + index + '][tip]'" value="incasare">
 
                         <label for="suma" class="mb-0 ps-3">Suma<span class="text-danger">*</span></label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('suma') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'incasari[' + index + '][suma]'"
                             v-model="incasari[index].suma">
                     </div>
@@ -104,19 +195,19 @@
                         <label for="data" class="mb-0 ps-3">Data<span class="text-danger">*</span></label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('data') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'incasari[' + index + '][data]'"
                             v-model="incasari[index].data">
                         <small class="ps-3">Ex:20.05.2024</small>
                     </div>
                     <div class="col-lg-4 mb-4">
                         <input type="hidden" :name="'incasari[' + index + '][id]'" v-model="incasari[index].id">
-                        <input type="hidden" :name="'incasari[' + index + '][oferta_id]'" value="{{ $oferta->id }}">
+                        <input type="hidden" :name="'incasari[' + index + '][oferta_id]'" :value="incasari[index].oferta_id ?? ofertaId">
 
                         <label for="observatii" class="mb-0 ps-3">Observații</label>
                         <input
                             type="text"
-                            class="form-control bg-white rounded-3 {{ $errors->has('observatii') ? 'is-invalid' : '' }}"
+                            class="form-control bg-white rounded-3"
                             :name="'incasari[' + index + '][observatii]'"
                             v-model="incasari[index].observatii">
                     </div>
@@ -128,7 +219,7 @@
                 <div class="row">
                     <div class="col-lg-12 mb-4 text-center">
                         <button type="button" ref="submit" class="btn btn-success text-white rounded-3"
-                            v-on:click="this.incasari.push({});">
+                            v-on:click="adaugaIncasare">
                             Adaugă încasare
                         </button>
                     </div>
