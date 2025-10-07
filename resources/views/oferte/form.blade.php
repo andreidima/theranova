@@ -134,7 +134,7 @@
                             v-model="deciziiCas[index].data">
                         <small class="ps-3">Ex:20.05.2024</small>
                     </div>
-                    <div class="col-lg-2 mb-4">
+                    <div class="col-lg-4 mb-4">
                         <label for="decizii_cas_nr_data" class="mb-0 ps-3">Nr/data</label>
                         <input
                             type="text"
@@ -142,7 +142,7 @@
                             :name="'decizii_cas[' + index + '][nr_data]'"
                             v-model="deciziiCas[index].nr_data">
                     </div>
-                    <div class="col-lg-3 mb-4">
+                    <div class="col-lg-2 mb-4">
                         <label for="decizii_cas_data_inregistrare" class="mb-0 ps-3">Data înregistrare<span class="text-danger">*</span></label>
                         <input
                             type="text"
@@ -151,7 +151,7 @@
                             v-model="deciziiCas[index].data_inregistrare">
                         <small class="ps-3">Ex:20.05.2024</small>
                     </div>
-                    <div class="col-lg-3 mb-4">
+                    <div class="col-lg-2 mb-4">
                         <label for="decizii_cas_data_validare" class="mb-0 ps-3">Data validare</label>
                         <input
                             type="text"
@@ -160,7 +160,7 @@
                             v-model="deciziiCas[index].data_validare">
                         <small class="ps-3">Ex:20.05.2024</small>
                     </div>
-                    <div class="col-lg-8 mb-4">
+                    <div class="col-lg-10 mb-4">
                         <label for="decizii_cas_observatii" class="mb-0 ps-3">Observații</label>
                         <input
                             type="text"
