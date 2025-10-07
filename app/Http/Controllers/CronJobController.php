@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\FisaCaz;
+use App\Models\Incasare;
+use App\Models\MesajTrimisEmail;
+
+use App\Mail\OfertaDecizieCasReminder;
 
 class CronJobController extends Controller
 {
@@ -149,5 +153,144 @@ class CronJobController extends Controller
                 echo '<br><br>';
             }
         }
+    }
+
+    public function trimiteReminderDeciziiCas($key = null)
+    {
+        if (is_null($keyDB = DB::table('variabile')->where('nume', 'cron_job_key')->get()->first()->valoare ?? null) || is_null($key) || ($keyDB !== $key)) {
+            echo 'Cheia pentru Cron Joburi este incorectă!';
+            return ;
+        }
+
+        echo 'Cron job: trimite remindere pentru deciziile CAS fără «data validare». Folosiți acest link doar pentru teste manuale.<br><br>';
+
+        $decizii = Incasare::with(['oferta.fisaCaz.pacient', 'oferta.fisaCaz.userVanzari', 'oferta.fisaCaz.userComercial', 'oferta.fisaCaz.userTehnic'])
+            ->where('tip', Incasare::TIP_DECIZIE_CAS)
+            ->whereNotNull('data_inregistrare')
+            ->whereNull('data_validare')
+            ->get();
+
+        if ($decizii->isEmpty()) {
+            echo 'Nu există decizii CAS eligibile în acest moment.';
+
+            return;
+        }
+
+        $primulReminderTrimis = 0;
+        $alDoileaReminderTrimis = 0;
+        $deciziiSarit = 0;
+
+        foreach ($decizii as $decizie) {
+            if (!$decizie->oferta || !$decizie->oferta->fisaCaz) {
+                echo 'Decizie #' . $decizie->id . ' (oferta #' . ($decizie->oferta_id ?? 'n/a') . '): nu are ofertă/fisa caz asociată. Sar peste.<br>';
+                $deciziiSarit++;
+
+                continue;
+            }
+
+            $fisaCaz = $decizie->oferta->fisaCaz;
+
+            $adreseEmail = collect([
+                $fisaCaz->userVanzari->email ?? null,
+                $fisaCaz->userComercial->email ?? null,
+                $fisaCaz->userTehnic->email ?? null,
+            ])->filter()->unique();
+
+            if ($adreseEmail->isEmpty()) {
+                echo 'Decizie #' . $decizie->id . ' (oferta #' . $decizie->oferta_id . '): nu există destinatari validați. Sar peste.<br>';
+                $deciziiSarit++;
+
+                continue;
+            }
+
+            try {
+                $dataInregistrare = Carbon::createFromFormat('d.m.Y', $decizie->data_inregistrare);
+            } catch (\Exception $exception) {
+                echo 'Decizie #' . $decizie->id . ' (oferta #' . $decizie->oferta_id . '): data înregistrare („' . $decizie->data_inregistrare . '”) nu poate fi interpretată. Sar peste.<br>';
+                $deciziiSarit++;
+
+                continue;
+            }
+
+            $primaTrimitere = (clone $dataInregistrare)->addMonthsNoOverflow(2);
+            $aDouaTrimitere = (clone $primaTrimitere)->addDays(15);
+
+            $mesajPrefix = 'Decizie #' . $decizie->id . ' (oferta #' . $decizie->oferta_id . '): ';
+            $trimis = false;
+
+            if (!$this->aFostTrimisReminderDecizieCas($decizie->id, 9)) {
+                if (Carbon::now()->greaterThanOrEqualTo($primaTrimitere)) {
+                    $this->trimiteReminderDecizieCas(
+                        $adreseEmail->all(),
+                        $decizie,
+                        'primul reminder (2 luni)',
+                        9
+                    );
+
+                    echo $mesajPrefix . 'am trimis primul reminder către: ' . implode(', ', $adreseEmail->all()) . '.<br>';
+                    $primulReminderTrimis++;
+                    $trimis = true;
+                } else {
+                    echo $mesajPrefix . 'primul reminder nu este încă scadent. Se va trimite după ' . $primaTrimitere->format('d.m.Y') . '.<br>';
+                }
+            } else {
+                echo $mesajPrefix . 'primul reminder a fost deja trimis anterior.<br>';
+            }
+
+            if ($trimis) {
+                continue;
+            }
+
+            if (!$this->aFostTrimisReminderDecizieCas($decizie->id, 10)) {
+                if (Carbon::now()->greaterThanOrEqualTo($aDouaTrimitere)) {
+                    $this->trimiteReminderDecizieCas(
+                        $adreseEmail->all(),
+                        $decizie,
+                        'al doilea reminder (2 luni și jumătate)',
+                        10
+                    );
+
+                    echo $mesajPrefix . 'am trimis al doilea reminder către: ' . implode(', ', $adreseEmail->all()) . '.<br>';
+                    $alDoileaReminderTrimis++;
+                    $trimis = true;
+                } else {
+                    echo $mesajPrefix . 'al doilea reminder nu este încă scadent. Se va trimite după ' . $aDouaTrimitere->format('d.m.Y') . '.<br>';
+                }
+            } else {
+                echo $mesajPrefix . 'al doilea reminder a fost deja trimis anterior.<br>';
+            }
+
+            if (!$trimis) {
+                $deciziiSarit++;
+            }
+        }
+
+        echo '<br>Rezumat: ' . $primulReminderTrimis . ' prim reminder(e) trimise, ' . $alDoileaReminderTrimis . ' al doilea reminder(e) trimise. ';
+        echo $deciziiSarit . ' decizii nu au necesitat acțiuni suplimentare.<br>';
+    }
+
+    protected function aFostTrimisReminderDecizieCas(int $decizieId, int $tip): bool
+    {
+        return MesajTrimisEmail::where('referinta', 4)
+            ->where('referinta_id', $decizieId)
+            ->where('tip', $tip)
+            ->exists();
+    }
+
+    protected function trimiteReminderDecizieCas(array $emailuri, Incasare $decizie, string $tipReminder, int $tipCod): void
+    {
+        Mail::to($emailuri)
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+            ->send(new OfertaDecizieCasReminder($decizie, $tipReminder));
+
+        MesajTrimisEmail::create([
+            'referinta' => 4,
+            'referinta_id' => $decizie->id,
+            'referinta2' => null,
+            'referinta2_id' => null,
+            'tip' => $tipCod,
+            'mesaj' => '',
+            'email' => implode(', ', $emailuri),
+        ]);
     }
 }
