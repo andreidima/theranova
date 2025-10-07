@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Models\Incasare;
+
 class Oferta extends Model
 {
     use HasFactory;
@@ -47,5 +49,10 @@ class Oferta extends Model
     public function incasari(): HasMany
     {
         return $this->hasMany(Incasare::class, 'oferta_id');
+    }
+
+    public function deciziiCas(): HasMany
+    {
+        return $this->hasMany(Incasare::class, 'oferta_id')->where('tip', Incasare::TIP_DECIZIE_CAS);
     }
 }

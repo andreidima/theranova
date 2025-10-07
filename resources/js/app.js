@@ -268,16 +268,79 @@ if (document.getElementById('comandaComponente') != null) {
 const incasari = createApp({
     el: '#incasari',
     data() {
+        const initialIncasari = (typeof incasariVechi !== 'undefined' && Array.isArray(incasariVechi)) ? incasariVechi : [];
+
         return {
-            incasari: incasariVechi,
+            ofertaId: typeof ofertaId !== 'undefined' ? ofertaId : null,
+            incasari: initialIncasari,
         }
     },
     created: function () {
-        console.log(incasari);
+        this.incasari = this.incasari.map((incasare) => ({
+            id: incasare.id ?? null,
+            oferta_id: incasare.oferta_id ?? this.ofertaId,
+            suma: incasare.suma ?? '',
+            data: incasare.data ?? '',
+            observatii: incasare.observatii ?? '',
+            tip: incasare.tip ?? 'incasare',
+        }));
+    },
+    methods: {
+        adaugaIncasare() {
+            this.incasari.push({
+                id: null,
+                oferta_id: this.ofertaId,
+                suma: '',
+                data: '',
+                observatii: '',
+                tip: 'incasare',
+            });
+        }
     }
 });
 // incasari.component('vue-datepicker-next', VueDatepickerNext);
 if (document.getElementById('incasari') != null) {
     incasari.mount('#incasari');
+}
+
+const deciziiCas = createApp({
+    el: '#deciziiCas',
+    data() {
+        const initialDecizii = (typeof deciziiCasVechi !== 'undefined' && Array.isArray(deciziiCasVechi)) ? deciziiCasVechi : [];
+
+        return {
+            ofertaId: typeof ofertaId !== 'undefined' ? ofertaId : null,
+            deciziiCas: initialDecizii,
+        }
+    },
+    created: function () {
+        this.deciziiCas = this.deciziiCas.map((decizie) => ({
+            id: decizie.id ?? null,
+            oferta_id: decizie.oferta_id ?? this.ofertaId,
+            suma: decizie.suma ?? '',
+            data: decizie.data ?? '',
+            data_inregistrare: decizie.data_inregistrare ?? '',
+            data_validare: decizie.data_validare ?? '',
+            observatii: decizie.observatii ?? '',
+            tip: decizie.tip ?? 'decizie_cas',
+        }));
+    },
+    methods: {
+        adaugaDecizieCas() {
+            this.deciziiCas.push({
+                id: null,
+                oferta_id: this.ofertaId,
+                suma: '',
+                data: '',
+                data_inregistrare: '',
+                data_validare: '',
+                observatii: '',
+                tip: 'decizie_cas',
+            });
+        }
+    }
+});
+if (document.getElementById('deciziiCas') != null) {
+    deciziiCas.mount('#deciziiCas');
 }
 
