@@ -295,7 +295,7 @@ class OfertaController extends Controller
                 'decizii_cas.*.data_inregistrare.required' => 'Câmpul Data înregistrare pentru decizia CAS :position este necesar.',
                 'decizii_cas.*.data_inregistrare.date' => 'Câmpul Data înregistrare pentru decizia CAS :position nu există în calendar.',
                 'decizii_cas.*.data_inregistrare.regex' => 'Câmpul Data înregistrare pentru decizia CAS :position nu este completat corect.',
-                'decizii_cas.*.nr_data.max' => 'Câmpul Nr/data pentru decizia CAS :position poate avea cel mult 255 de caractere.',
+                'decizii_cas.*.nr_data.max' => 'Câmpul Decizie CAS nr/data pentru decizia CAS :position poate avea cel mult 255 de caractere.',
                 'decizii_cas.*.data_validare.date' => 'Câmpul Data validare pentru decizia CAS :position nu există în calendar.',
                 'decizii_cas.*.data_validare.regex' => 'Câmpul Data validare pentru decizia CAS :position nu este completat corect.',
                 'decizii_cas.*.observatii.max' => 'Câmpul Observații pentru decizia CAS :position trebuie să fie maxim 5000 de caractere.',
