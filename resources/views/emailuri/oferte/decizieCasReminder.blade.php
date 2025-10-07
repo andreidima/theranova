@@ -10,7 +10,7 @@
 
             <p style="margin:0 0 16px 0;">
                 Pentru oferta
-                <a href="{{ url($decizieCas->oferta->path()) }}" target="_blank">#{{ $decizieCas->oferta->id }}</a>
+                <a href="{{ url($decizieCas->oferta->path()) }}/modifica" target="_blank">#{{ $decizieCas->oferta->id }}</a>
                 asociată fișei de caz a pacientului
                 {{ $decizieCas->oferta->fisaCaz->pacient->nume ?? '' }} {{ $decizieCas->oferta->fisaCaz->pacient->prenume ?? '' }},
                 decizia CAS înregistrată la data de {{ $decizieCas->data_inregistrare }} nu are încă completată o dată de validare.
