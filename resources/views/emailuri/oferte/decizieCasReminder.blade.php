@@ -17,6 +17,10 @@
             </p>
 
             <p style="margin:0 0 16px 0;">
+                Asigurați-vă că validarea va fi făcută în termen!
+            </p>
+
+            <p style="margin:0 0 16px 0;">
                 Acesta este {{ $tipReminder }} pentru completarea informațiilor. Vă rugăm să verificați situația și să actualizați
                 câmpul „Data validare” dacă decizia a fost deja validată.
             </p>
