@@ -143,7 +143,7 @@
                             v-model="deciziiCas[index].nr_data">
                     </div>
                     <div class="col-lg-2 mb-4">
-                        <label for="decizii_cas_data_inregistrare" class="mb-0 ps-3">Data înregistrare<span class="text-danger">*</span></label>
+                        <label for="decizii_cas_data_inregistrare" class="mb-0 ps-3">Data înregistrare</label>
                         <input
                             type="text"
                             class="form-control bg-white rounded-3"
