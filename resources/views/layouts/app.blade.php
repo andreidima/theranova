@@ -92,6 +92,11 @@
                                             Fișe Caz - export parțial
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/informatii-generale">
+                                            Informații generale
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif

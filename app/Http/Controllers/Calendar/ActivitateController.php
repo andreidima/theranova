@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Models\Calendar\Activitate;
 use App\Models\Calendar\Calendar;
 use App\Models\FisaCaz;
+use App\Models\InformatiiGenerale;
 
 class ActivitateController extends Controller
 {
@@ -108,7 +109,27 @@ class ActivitateController extends Controller
 
             $calendare = Calendar::all();
 
-            return view('calendar.activitati.index', compact('activitatiPeMaiMulteZile', 'activitatiPeOZi', 'calendare', 'searchLunaCalendar', 'searchCalendareSelectate'));
+            $coduriApartamente = InformatiiGenerale::where('variabila', 'like', 'cod_apartament_%')
+                ->orderBy('variabila')
+                ->get()
+                ->map(function (InformatiiGenerale $informatie) {
+                    $numarApartament = preg_replace('/[^0-9]/', '', $informatie->variabila) ?: '';
+
+                    return [
+                        'variabila' => $informatie->variabila,
+                        'valoare' => $informatie->valoare,
+                        'eticheta' => 'Apartament' . ($numarApartament ? ' ' . $numarApartament : ''),
+                    ];
+                });
+
+            return view('calendar.activitati.index', compact(
+                'activitatiPeMaiMulteZile',
+                'activitatiPeOZi',
+                'calendare',
+                'searchLunaCalendar',
+                'searchCalendareSelectate',
+                'coduriApartamente'
+            ));
         }
 
     }

@@ -195,6 +195,23 @@
 
             @include ('errors')
 
+            @isset($coduriApartamente)
+                <div class="px-3 pt-3">
+                    <div class="d-flex flex-wrap justify-content-center gap-3 fw-semibold">
+                        @forelse ($coduriApartamente as $codApartament)
+                            <span class="badge bg-light text-dark border border-dark rounded-3 px-3 py-2">
+                                {{ $codApartament['eticheta'] }}:
+                                <span class="text-primary">{{ $codApartament['valoare'] ?? '—' }}</span>
+                            </span>
+                        @empty
+                            <span class="badge bg-light text-dark border border-dark rounded-3 px-3 py-2">
+                                Nu există coduri pentru apartamentele din Oradea.
+                            </span>
+                        @endforelse
+                    </div>
+                </div>
+            @endisset
+
             <style>
             #lunar {
             border-collapse: collapse;
