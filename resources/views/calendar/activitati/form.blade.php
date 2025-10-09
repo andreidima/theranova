@@ -62,7 +62,7 @@
                     <option value="Apartament 3" data-cod="{{ $coduriApartamenteList['Apartament 3'] ?? '' }}" {{ old('cazare', $activitate->cazare) == "Apartament 3" ? 'selected' : '' }}>Apartament 3</option>
                 </select>
                 <div id="apartament-code-wrapper" class="small text-muted mt-2 d-none">
-                    <span class="d-block">Cod apartament Oradea:</span>
+                    <span class="fw-semibold me-1">Cod:</span>
                     <span id="apartament-code-value" class="fw-semibold text-primary"></span>
                 </div>
             </div>
