@@ -8,6 +8,7 @@ use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\ComandaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FisierController;
+use App\Http\Controllers\InformatiiGeneraleController;
 use App\Http\Controllers\ComandaComponentaController;
 use App\Http\Controllers\CronJobController;
 
@@ -60,6 +61,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/fise-caz/{fisaCaz}/comenzi-componente/export/pdf', [ComandaComponentaController::class, 'toateExport']);
 
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
+
+    Route::middleware('check.utile.access')->group(function () {
+        Route::resource('/informatii-generale', InformatiiGeneraleController::class)
+            ->parameters(['informatii-generale' => 'informatiiGenerale'])
+            ->except(['create', 'show', 'edit']);
+    });
 
     Route::get('/fisiere/{fisier}/deschide-descarca', [FisierController::class, 'deschideDescarca']);
     Route::delete('/fisiere/{fisier}/sterge', [FisierController::class, 'sterge']);
