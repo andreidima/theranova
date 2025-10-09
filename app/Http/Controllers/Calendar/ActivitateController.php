@@ -109,26 +109,12 @@ class ActivitateController extends Controller
 
             $calendare = Calendar::all();
 
-            $coduriApartamente = InformatiiGenerale::where('variabila', 'like', 'cod_apartament_%')
-                ->orderBy('variabila')
-                ->get()
-                ->map(function (InformatiiGenerale $informatie) {
-                    $numarApartament = preg_replace('/[^0-9]/', '', $informatie->variabila) ?: '';
-
-                    return [
-                        'variabila' => $informatie->variabila,
-                        'valoare' => $informatie->valoare,
-                        'eticheta' => 'Apartament' . ($numarApartament ? ' ' . $numarApartament : ''),
-                    ];
-                });
-
             return view('calendar.activitati.index', compact(
                 'activitatiPeMaiMulteZile',
                 'activitatiPeOZi',
                 'calendare',
                 'searchLunaCalendar',
-                'searchCalendareSelectate',
-                'coduriApartamente'
+                'searchCalendareSelectate'
             ));
         }
 
@@ -172,8 +158,9 @@ class ActivitateController extends Controller
         $activitate->mementouri_emailuri = auth()->user()->email ?? '';
 
         $calendare = Calendar::all();
+        $coduriApartamente = $this->getCoduriApartamente();
 
-        return view('calendar.activitati.create', compact('activitate', 'calendare'));
+        return view('calendar.activitati.create', compact('activitate', 'calendare', 'coduriApartamente'));
     }
 
     /**
@@ -213,8 +200,9 @@ class ActivitateController extends Controller
         $request->session()->get('calendarActivitateReturnUrl') ?? $request->session()->put('calendarActivitateReturnUrl', url()->previous());
 
         $calendare = Calendar::all();
+        $coduriApartamente = $this->getCoduriApartamente();
 
-        return view('calendar.activitati.edit', compact('activitate', 'calendare'));
+        return view('calendar.activitati.edit', compact('activitate', 'calendare', 'coduriApartamente'));
     }
 
     /**
@@ -302,5 +290,25 @@ class ActivitateController extends Controller
             [
             ]
         );
+    }
+
+    /**
+     * Retrieve apartment codes keyed by apartment label.
+     */
+    protected function getCoduriApartamente()
+    {
+        return InformatiiGenerale::where('variabila', 'like', 'cod_apartament_%')
+            ->orderBy('variabila')
+            ->get()
+            ->mapWithKeys(function (InformatiiGenerale $informatie) {
+                $numarApartament = preg_replace('/[^0-9]/', '', $informatie->variabila);
+
+                if (!$numarApartament) {
+                    return [];
+                }
+
+                return ['Apartament ' . $numarApartament => $informatie->valoare];
+            })
+            ->filter();
     }
 }
