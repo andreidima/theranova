@@ -111,32 +111,35 @@
     </div>
 </div>
 
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const select = document.getElementById('cazare-select');
-            const wrapper = document.getElementById('apartament-code-wrapper');
-            const valueElement = document.getElementById('apartament-code-value');
+@once
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const select = document.getElementById('cazare-select');
+                const wrapper = document.getElementById('apartament-code-wrapper');
+                const valueElement = document.getElementById('apartament-code-value');
 
-            if (!select || !wrapper || !valueElement) {
-                return;
-            }
-
-            const updateLabel = () => {
-                const selectedOption = select.options[select.selectedIndex];
-                const code = selectedOption ? selectedOption.getAttribute('data-cod') : '';
-
-                if (code) {
-                    valueElement.textContent = code;
-                    wrapper.classList.remove('d-none');
-                } else {
-                    valueElement.textContent = '';
-                    wrapper.classList.add('d-none');
+                if (!select || !wrapper || !valueElement) {
+                    return;
                 }
-            };
 
-            select.addEventListener('change', updateLabel);
-            updateLabel();
-        });
-    </script>
-@endpush
+                const updateLabel = () => {
+                    const selectedOption = select.options[select.selectedIndex];
+                    const code = selectedOption ? selectedOption.getAttribute('data-cod') : '';
+
+                    if (code) {
+                        valueElement.textContent = code;
+                        wrapper.classList.remove('d-none');
+                    } else {
+                        valueElement.textContent = '';
+                        wrapper.classList.add('d-none');
+                    }
+                };
+
+                select.addEventListener('change', updateLabel);
+                updateLabel();
+            });
+        </script>
+    @endpush
+
+@endonce
