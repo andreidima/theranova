@@ -36,10 +36,10 @@
                             <td class="text-break">{{ $informatie->variabila }}</td>
                             <td class="text-break">{{ $informatie->valoare }}</td>
                             <td class="text-end">
-                                <a href="#" class="flex me-1" data-bs-toggle="modal" data-bs-target="#modificaInformatiiGenerale{{ $informatie->id }}">
+                                <a href="#" class="d-inline-flex align-items-center text-decoration-none me-1" data-bs-toggle="modal" data-bs-target="#modificaInformatiiGenerale{{ $informatie->id }}">
                                     <span class="badge bg-primary">Modifică</span>
                                 </a>
-                                <a href="#" class="flex" data-bs-toggle="modal" data-bs-target="#stergeInformatiiGenerale{{ $informatie->id }}">
+                                <a href="#" class="d-inline-flex align-items-center text-decoration-none" data-bs-toggle="modal" data-bs-target="#stergeInformatiiGenerale{{ $informatie->id }}">
                                     <span class="badge bg-danger">Șterge</span>
                                 </a>
                             </td>
