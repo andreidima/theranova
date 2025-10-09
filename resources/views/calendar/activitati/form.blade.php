@@ -1,5 +1,9 @@
 @csrf
 
+@php
+    $coduriApartamenteList = collect($coduriApartamente ?? [])->toArray();
+@endphp
+
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px">
     <div class="col-lg-12 px-4 py-2 mb-0 mx-auto">
         <div class="row mb-0" id="datePicker">
@@ -51,12 +55,16 @@
             </div>
             <div class="col-lg-4 mb-4">
                 <label for="cazare" class="mb-0 ps-3">Cazare</label>
-                <select class="form-select bg-white rounded-3 {{ $errors->has('cazare') ? 'is-invalid' : '' }}" name="cazare">
+                <select class="form-select bg-white rounded-3 {{ $errors->has('cazare') ? 'is-invalid' : '' }}" name="cazare" id="cazare-select">
                     <option selected></option>
-                    <option value="Apartament 1" {{ old('cazare', $activitate->cazare) == "Apartament 1" ? 'selected' : '' }}>Apartament 1</option>
-                    <option value="Apartament 2" {{ old('cazare', $activitate->cazare) == "Apartament 2" ? 'selected' : '' }}>Apartament 2</option>
-                    <option value="Apartament 3" {{ old('cazare', $activitate->cazare) == "Apartament 3" ? 'selected' : '' }}>Apartament 3</option>
+                    <option value="Apartament 1" data-cod="{{ $coduriApartamenteList['Apartament 1'] ?? '' }}" {{ old('cazare', $activitate->cazare) == "Apartament 1" ? 'selected' : '' }}>Apartament 1</option>
+                    <option value="Apartament 2" data-cod="{{ $coduriApartamenteList['Apartament 2'] ?? '' }}" {{ old('cazare', $activitate->cazare) == "Apartament 2" ? 'selected' : '' }}>Apartament 2</option>
+                    <option value="Apartament 3" data-cod="{{ $coduriApartamenteList['Apartament 3'] ?? '' }}" {{ old('cazare', $activitate->cazare) == "Apartament 3" ? 'selected' : '' }}>Apartament 3</option>
                 </select>
+                <div id="apartament-code-wrapper" class="small text-muted mt-2 d-none">
+                    <span class="d-block">Cod apartament Oradea:</span>
+                    <span id="apartament-code-value" class="fw-semibold text-primary"></span>
+                </div>
             </div>
             <div class="col-lg-8 mb-4">
                 <label for="observatii" class="mb-0 ps-3">Observații</label>
@@ -102,3 +110,36 @@
         </div>
     </div>
 </div>
+
+@once
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const select = document.getElementById('cazare-select');
+                const wrapper = document.getElementById('apartament-code-wrapper');
+                const valueElement = document.getElementById('apartament-code-value');
+
+                if (!select || !wrapper || !valueElement) {
+                    return;
+                }
+
+                const updateLabel = () => {
+                    const selectedOption = select.options[select.selectedIndex];
+                    const code = selectedOption ? selectedOption.getAttribute('data-cod') : '';
+
+                    if (code) {
+                        valueElement.textContent = code;
+                        wrapper.classList.remove('d-none');
+                    } else {
+                        valueElement.textContent = '';
+                        wrapper.classList.add('d-none');
+                    }
+                };
+
+                select.addEventListener('change', updateLabel);
+                updateLabel();
+            });
+        </script>
+    @endpush
+
+@endonce
