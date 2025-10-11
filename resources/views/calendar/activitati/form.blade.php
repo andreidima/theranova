@@ -61,7 +61,7 @@
                     <option value="Apartament 2" data-cod="{{ $coduriApartamenteList['Apartament 2'] ?? '' }}" {{ old('cazare', $activitate->cazare) == "Apartament 2" ? 'selected' : '' }}>Apartament 2</option>
                     <option value="Apartament 3" data-cod="{{ $coduriApartamenteList['Apartament 3'] ?? '' }}" {{ old('cazare', $activitate->cazare) == "Apartament 3" ? 'selected' : '' }}>Apartament 3</option>
                 </select>
-                <div id="apartament-code-wrapper" class="small text-muted mt-2 d-none">
+                <div id="apartament-code-wrapper" class="small text-muted mt-2 ps-3 d-none">
                     <span class="fw-semibold me-1">Cod:</span>
                     <span id="apartament-code-value" class="fw-semibold text-primary"></span>
                 </div>
