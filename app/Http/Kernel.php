@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check.export.access' => \App\Http\Middleware\CheckExportAccess::class, // Andrei
         'check.utile.access' => \App\Http\Middleware\CheckUtileAccess::class,
+        'check.tech.access' => \App\Http\Middleware\CheckTechAccess::class,
     ];
 }

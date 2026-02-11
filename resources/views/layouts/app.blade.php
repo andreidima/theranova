@@ -42,6 +42,14 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    @php
+                        $canTechImpersonare = auth()->user()->hasRole('tech.impersonare');
+                        $canTechMigrations = auth()->user()->hasRole('tech.migrations');
+                        $canTechCronjobs = auth()->user()->hasRole('tech.cronjobs');
+                        $showTechMenu = $canTechImpersonare || $canTechMigrations || $canTechCronjobs;
+                        $isImpersonating = session()->has('impersonator_id');
+                    @endphp
+
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item me-3">
@@ -100,6 +108,38 @@
                                 </ul>
                             </li>
                         @endif
+
+                        @if($showTechMenu)
+                            <li class="nav-item me-3 dropdown">
+                                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdownTech" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-screwdriver-wrench me-1"></i>
+                                    Tech
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownTech">
+                                    @if($canTechImpersonare)
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('tech.impersonare.index') }}">
+                                                Impersonare utilizatori
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($canTechMigrations)
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('tech.migrations.index') }}">
+                                                Migrations
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($canTechCronjobs)
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('tech.cronjobs.index') }}">
+                                                Cronjobs
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                        @endif
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -124,6 +164,16 @@
                                 </a>
 
                                 <ul class="dropdown-menu" aria-labelledby="navbarAuthentication">
+                                    @if($isImpersonating)
+                                        <li>
+                                            <form method="POST" action="{{ route('tech.impersonare.stop') }}">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-warning">
+                                                    Opreste impersonarea
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @endif
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();

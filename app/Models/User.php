@@ -63,17 +63,18 @@ class User extends Authenticatable
     }
 
     // Verificare daca userul are anumite drepturi
-    public function hasRole($roleNume)
+    public function hasRole($roleNume): bool
     {
-        foreach ($this->roles()->get() as $role)
-        {
-            if ($role->nume == $roleNume)
-            {
-                return true;
-            }
-        }
+        return $this->roles()
+            ->where('nume', $roleNume)
+            ->exists();
+    }
 
-        return false;
+    public function hasAnyRole(array $roleNames): bool
+    {
+        return $this->roles()
+            ->whereIn('nume', $roleNames)
+            ->exists();
     }
 
     public function numarEmailuriFisaCaz($fisaCazId)

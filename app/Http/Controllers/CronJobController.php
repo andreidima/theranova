@@ -131,7 +131,7 @@ class CronJobController extends Controller
                 $validator = Validator::make(['emails' => $emails], ['emails.*' => 'required|email:rfc,dns']);
                 if ($validator->fails()) {
                     echo 'Nu toate emailurile sunt corecte';
-                    exit;
+                    return;
                 }
 
                 // Trimitere memento prin email

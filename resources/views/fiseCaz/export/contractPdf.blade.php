@@ -146,10 +146,6 @@
         </ul>
         Plata se va face in contul SC Theranova Protezare SRL deschis la:
         <br>
-        Banca Raiffeisen Sucursala Oradea, cont <b>IBAN RON: RO28 RZBR 0000 0600 1973 1435</b>
-        <br>
-        sau  la
-        <br>
         Banca Transilvania Sucursala Oradea, cont  <b>IBAN RON: RO71BTRL00501202765924XX</b>
         <br>
         <b>5.5. Predarea/primirea dispozitivelor medicale</b>

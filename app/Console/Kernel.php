@@ -12,7 +12,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        foreach (config('cronjobs.jobs', []) as $jobConfig) {
+            if (empty($jobConfig['command']) || empty($jobConfig['cron'])) {
+                continue;
+            }
+
+            $schedule->command($jobConfig['command'])
+                ->cron($jobConfig['cron'])
+                ->withoutOverlapping();
+        }
     }
 
     /**

@@ -10,7 +10,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FisierController;
 use App\Http\Controllers\InformatiiGeneraleController;
 use App\Http\Controllers\ComandaComponentaController;
-use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\Tech\ImpersonareController;
+use App\Http\Controllers\Tech\MigrationController;
+use App\Http\Controllers\Tech\CronjobDashboardController;
+use App\Http\Controllers\Tech\CronjobTriggerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +32,9 @@ Route::get('/asteptare-aprobare', [RegisterController::class, 'register']);
 
 Route::redirect('/', '/acasa');
 
-Route::get('/cronjobs/trimite-email/{key}', [CronJobController::class, 'trimiteEmail']);
-Route::get('/cronjobs/trimite-mementouri-activitati-calendar/{key}', [CronJobController::class, 'trimiteMementouriActivitatiCalendar']);
-Route::get('/cronjobs/trimite-reminder-decizii-cas/{key}', [CronJobController::class, 'trimiteReminderDeciziiCas']);
+Route::get('/cronjobs/trimite-email/{key}', [CronjobTriggerController::class, 'trimiteEmail']);
+Route::get('/cronjobs/trimite-mementouri-activitati-calendar/{key}', [CronjobTriggerController::class, 'trimiteMementouriActivitatiCalendar']);
+Route::get('/cronjobs/trimite-reminder-decizii-cas/{key}', [CronjobTriggerController::class, 'trimiteReminderDeciziiCas']);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::view('/acasa', 'acasa')->name('acasa');
@@ -75,10 +78,31 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/calendar/mod-afisare-lunar/activitati/', [App\Http\Controllers\Calendar\ActivitateController::class, 'index']);
     Route::resource('/calendar/activitati', App\Http\Controllers\Calendar\ActivitateController::class)->parameters(['activitati' => 'activitate']);
 
+    Route::prefix('/tech')->name('tech.')->group(function () {
+        Route::post('/impersonare-utilizatori/opreste', [ImpersonareController::class, 'stop'])
+            ->name('impersonare.stop');
+
+        Route::middleware('check.tech.access:tech.impersonare')->group(function () {
+            Route::get('/impersonare-utilizatori', [ImpersonareController::class, 'index'])
+                ->name('impersonare.index');
+            Route::post('/impersonare-utilizatori/{user}/porneste', [ImpersonareController::class, 'start'])
+                ->name('impersonare.start');
+        });
+
+        Route::middleware('check.tech.access:tech.migrations')->group(function () {
+            Route::get('/migrations', [MigrationController::class, 'index'])
+                ->name('migrations.index');
+            Route::post('/migrations/ruleaza-pending', [MigrationController::class, 'runPending'])
+                ->name('migrations.run-pending');
+        });
+
+        Route::middleware('check.tech.access:tech.cronjobs')->group(function () {
+            Route::get('/cronjobs', [CronjobDashboardController::class, 'index'])
+                ->name('cronjobs.index');
+        });
+    });
+
 
     // To delete everything about $fisaCaz->programare_atelier (database and app code) at 01.06.2024
 
 });
-
-
-
