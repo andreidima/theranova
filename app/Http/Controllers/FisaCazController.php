@@ -15,6 +15,7 @@ use App\Models\DataMedicala;
 use App\Models\Cerinta;
 use App\Models\Fisier;
 use App\Models\Comanda;
+use App\Models\Oferta;
 
 use Carbon\Carbon;
 
@@ -63,15 +64,17 @@ class FisaCazController extends Controller
                 return $query->whereBetween('programare_atelier', [strtok($searchProgramareAtelier, ','), Carbon::parse(strtok( '' ))->endOfDay()]);
             })
             ->when($searchAcceptata !== null && $searchAcceptata !== '', function ($query) use ($searchAcceptata) {
-                if ($searchAcceptata == '1') {
+                if ((int) $searchAcceptata === Oferta::STATUS_ACCEPTATA) {
                     // Filter for accepted offer
                     $query->whereHas('ofertaAcceptata');
-                } elseif ($searchAcceptata == '0') {
+                } elseif ((int) $searchAcceptata === Oferta::STATUS_NEACCEPTATA) {
                     // Filter for non-accepted offer
                     $query->whereHas('ofertaNeacceptata');
-                } elseif ($searchAcceptata == '2') {
+                } elseif ((int) $searchAcceptata === Oferta::STATUS_IN_ASTEPTARE) {
                     // Filter for pending offer (in asteptare)
                     $query->whereHas('ofertaInAsteptare');
+                } elseif ((int) $searchAcceptata === Oferta::STATUS_ARHIVATA) {
+                    $query->whereHas('ofertaArhivata');
                 }
             })
             ->when($searchUserVanzari, function ($query, $searchUserVanzari) {
@@ -465,7 +468,7 @@ class FisaCazController extends Controller
             return back()->with('error', 'Nu există adrese de email către care să se trimită mesajul');
         }
         $trimitereEmail = Mail::to($usersEmails)
-            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
             ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $comanda));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([

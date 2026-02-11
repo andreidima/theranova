@@ -24,6 +24,11 @@ class CronjobTriggerController extends Controller
         return $this->run($key, 'trimite-reminder-decizii-cas', $runner);
     }
 
+    public function trimiteReminderOferteInAsteptare(string $key, CronJobRunner $runner): Response
+    {
+        return $this->run($key, 'trimite-reminder-oferte-in-asteptare', $runner);
+    }
+
     protected function run(string $providedKey, string $jobKey, CronJobRunner $runner): Response
     {
         $databaseKey = (string) DB::table('variabile')

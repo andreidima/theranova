@@ -85,8 +85,13 @@
     <main>
         <table>
             <tr>
-                <th>ANUL</th>
-                <th>LUNA</th>
+                @if ($dimensiune == 'partial')
+                    <th>LUNA</th>
+                    <th>ANUL</th>
+                @else
+                    <th>ANUL</th>
+                    <th>LUNA</th>
+                @endif
                 <th>NUME PACIENT</th>
 
                 @if ($dimensiune == 'intreg')
@@ -95,12 +100,15 @@
 
                 <th>JUDET</th>
 
-                @if ($dimensiune == 'intreg')
-                    <th>TELEFON<br>(pacient/<br>apartinator)</th>
-                @endif
-
                 <th>TIP PROTEZA</th>
-                <th>valoare<br>-lei</th>
+                @if ($dimensiune == 'intreg')
+                    <th>Acceptata</th>
+                    <th>Neacceptata</th>
+                    <th>In asteptare</th>
+                    <th>Arhivata</th>
+                @elseif ($dimensiune == 'partial')
+                    <th>valoare<br>-lei</th>
+                @endif
 
                 @if ($dimensiune == 'intreg')
                     <th>DECIZIE<br>sau<br>CASH<br>sau<br>VOUCHER</th>
@@ -115,12 +123,21 @@
             </tr>
             @foreach ($fiseCaz as $fisaCaz)
                 <tr>
-                    <td>
-                        {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('YYYY') : '' }}
-                    </td>
-                    <td>
-                        {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('MM') : '' }}
-                    </td>
+                    @if ($dimensiune == 'partial')
+                        <td>
+                            {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('MM') : '' }}
+                        </td>
+                        <td>
+                            {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('YYYY') : '' }}
+                        </td>
+                    @else
+                        <td>
+                            {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('YYYY') : '' }}
+                        </td>
+                        <td>
+                            {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('MM') : '' }}
+                        </td>
+                    @endif
                     <td>
                         {{ $fisaCaz->pacient->nume ?? '' }} {{ $fisaCaz->pacient->prenume ?? ''}}
                     </td>
@@ -135,47 +152,44 @@
                         {{ $fisaCaz->pacient->judet ?? '' }}
                     </td>
 
-
-                    @if ($dimensiune == 'intreg')
-                        <td>
-                            @if ($fisaCaz->pacient->telefon)
-                                {{ $fisaCaz->pacient->telefon ?? '' }}
-                                <br>
-                            @endif
-                                @foreach (($fisaCaz->pacient->apartinatori ?? []) as $apartinator)
-                                    @if ($apartinator->telefon)
-                                        {{-- {{ $apartinator->nume }} {{ $apartinator->prenume }}: {{ $apartinator->telefon }} --}}
-                                        {{ $apartinator->telefon }}
-                                        <br>
-                                    @endif
-                                @endforeach
-                        </td>
-                    @endif
-
                     <td>
                         {{ $fisaCaz->tip_lucrare_solicitata }}
                     </td>
 
                     @if ($dimensiune == 'intreg')
+                        @php
+                            $valoriAcceptata = $fisaCaz->oferte
+                                ->where('acceptata', 1)
+                                ->pluck('pret')
+                                ->filter(fn ($valoare) => $valoare !== null && $valoare !== '')
+                                ->implode(', ');
+                            $valoriNeacceptata = $fisaCaz->oferte
+                                ->where('acceptata', 0)
+                                ->pluck('pret')
+                                ->filter(fn ($valoare) => $valoare !== null && $valoare !== '')
+                                ->implode(', ');
+                            $valoriInAsteptare = $fisaCaz->oferte
+                                ->where('acceptata', 2)
+                                ->pluck('pret')
+                                ->filter(fn ($valoare) => $valoare !== null && $valoare !== '')
+                                ->implode(', ');
+                            $valoriArhivata = $fisaCaz->oferte
+                                ->where('acceptata', 3)
+                                ->pluck('pret')
+                                ->filter(fn ($valoare) => $valoare !== null && $valoare !== '')
+                                ->implode(', ');
+                        @endphp
                         <td>
-                            {{-- {{ $fisaCaz->ofertaAcceptata->pret ?? '' }} --}}
-                            @foreach ($fisaCaz->oferte as $oferta)
-                                {{ $oferta->pret }} -
-                                @switch ($oferta->acceptata)
-                                    @case(0)
-                                        Neacceptată
-                                        @break
-                                    @case(1)
-                                        Acceptată
-                                        @break
-                                    @case(2)
-                                        În așteptare
-                                        @break
-                                    @default
-                                        nedefinită
-                                @endswitch
-                                <br>
-                            @endforeach
+                            {{ $valoriAcceptata }}
+                        </td>
+                        <td>
+                            {{ $valoriNeacceptata }}
+                        </td>
+                        <td>
+                            {{ $valoriInAsteptare }}
+                        </td>
+                        <td>
+                            {{ $valoriArhivata }}
                         </td>
                     @elseif ($dimensiune == 'partial')
                         <td>

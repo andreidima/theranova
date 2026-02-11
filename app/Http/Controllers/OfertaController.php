@@ -255,7 +255,7 @@ class OfertaController extends Controller
                 'obiect_contract' => 'required|max:500',
                 'pret' => 'required|numeric|between:0,999999',
                 'observatii' => 'nullable|max:2000',
-                'acceptata' => 'required',
+                'acceptata' => 'required|in:' . implode(',', array_keys(Oferta::statusLabels())),
                 'fisier' => [
                     File::types(['pdf', 'jpg'])
                         // ->min(1024)

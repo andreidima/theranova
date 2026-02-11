@@ -74,6 +74,7 @@
                                 <option value="2" {{ ($searchAcceptata == '2') ? 'selected' : '' }}>În așteptare</option>
                                 <option value="1" {{ ($searchAcceptata == '1') ? 'selected' : '' }}>DA</option>
                                 <option value="0" {{ ($searchAcceptata == '0') ? 'selected' : '' }}>NU</option>
+                                <option value="3" {{ ($searchAcceptata == '3') ? 'selected' : '' }}>Arhivata</option>
                             </select>
                         </div>
                         <div class="col-lg-3">
@@ -214,6 +215,8 @@
                                                 <i class="fa-solid fa-thumbs-down text-danger"></i>
                                             @elseif ($oferta->acceptata == "2")
                                                 <i class="fa-solid fa-exclamation-triangle text-warning"></i>
+                                            @elseif ($oferta->acceptata == "3")
+                                                <i class="fa-solid fa-box-archive text-secondary"></i>
                                             @endif
                                             {{ $oferta->pret }}
 

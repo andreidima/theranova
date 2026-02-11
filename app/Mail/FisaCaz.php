@@ -47,11 +47,11 @@ class FisaCaz extends Mailable
                                 :
                                 (
                                     ($this->tipEmail == "comanda") ?
-                                        'Fișă comandă'
+                                        'Comanda componente'
                                         :
                                         (
                                             ($this->tipEmail == "comandaVersiuneNoua") ?
-                                            'Fișă comandă'
+                                            'Comanda componente'
                                             :
                                             $this->tipEmail
                                         )

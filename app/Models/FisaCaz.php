@@ -101,7 +101,7 @@ class FisaCaz extends Model
      */
     public function ofertaAcceptata(): HasOne
     {
-        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', 1);
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', Oferta::STATUS_ACCEPTATA);
     }
 
     /**
@@ -111,7 +111,7 @@ class FisaCaz extends Model
      */
     public function ofertaNeacceptata(): HasOne
     {
-        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', 0);
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', Oferta::STATUS_NEACCEPTATA);
     }
 
     /**
@@ -121,7 +121,12 @@ class FisaCaz extends Model
      */
     public function ofertaInAsteptare(): HasOne
     {
-        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', 2);
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', Oferta::STATUS_IN_ASTEPTARE);
+    }
+
+    public function ofertaArhivata(): HasOne
+    {
+        return $this->hasOne(Oferta::class, 'fisa_caz_id')->where('acceptata', Oferta::STATUS_ARHIVATA);
     }
 
     /**

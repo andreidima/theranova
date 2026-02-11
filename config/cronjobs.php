@@ -20,5 +20,11 @@ return [
             'http_path' => '/cronjobs/trimite-reminder-decizii-cas/{key}',
             'cron' => env('CRON_REMINDER_DECIZII_CAS_CRON', '15 8 * * *'),
         ],
+        'trimite-reminder-oferte-in-asteptare' => [
+            'display_name' => 'Trimite remindere oferte in asteptare',
+            'command' => 'cronjobs:trimite-reminder-oferte-in-asteptare',
+            'http_path' => '/cronjobs/trimite-reminder-oferte-in-asteptare/{key}',
+            'cron' => env('CRON_REMINDER_OFERTE_IN_ASTEPTARE_CRON', '20 8 * * *'),
+        ],
     ],
 ];

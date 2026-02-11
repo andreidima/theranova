@@ -62,6 +62,7 @@
                     <option value="2" {{ (old('acceptata', $oferta->acceptata ?? '') == "2") ? 'selected' : '' }}>În așteptare</option>
                     <option value="1" {{ (old('acceptata', $oferta->acceptata ?? '') == "1") ? 'selected' : '' }}>DA</option>
                     <option value="0" {{ (old('acceptata', $oferta->acceptata ?? '') == "0") ? 'selected' : '' }}>NU</option>
+                    <option value="3" {{ (old('acceptata', $oferta->acceptata ?? '') == "3") ? 'selected' : '' }}>Arhivata</option>
                 </select>
             </div>
             <div class="col-lg-12 mb-4">

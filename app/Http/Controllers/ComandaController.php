@@ -91,7 +91,7 @@ class ComandaController extends Controller
         }
 
         if ($comanda->sosita == '1') {
-            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită', null, $comanda);
+            $this->trimitePrinEmailCatreUtilizator($fisaCaz, null, $comanda, 'Comanda sosită');
         }
 
         return redirect($request->session()->get('comandaReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost adăugată cu succes!');
@@ -188,7 +188,7 @@ class ComandaController extends Controller
         }
 
         if ($comanda->wasChanged('sosita') && ($comanda->sosita == '1')) {
-            $this->trimitePrinEmailCatreUtilizator($fisaCaz, 'Comanda sosită', null, $comanda);
+            $this->trimitePrinEmailCatreUtilizator($fisaCaz, null, $comanda, 'Comanda sosită');
         }
 
         return redirect($request->session()->get('comandaReturnUrl') ?? ('/fise-caz'))->with('status', 'Comanda de componente pentru pacientul „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume) . '” a fost modificată cu succes!');
@@ -282,7 +282,7 @@ class ComandaController extends Controller
         return $pdf->stream();
     }
 
-    public function trimitePrinEmailCatreUtilizator(FisaCaz $fisaCaz, $tipEmail=null, $mesaj, $comanda)
+    public function trimitePrinEmailCatreUtilizator(FisaCaz $fisaCaz, $mesaj, $comanda, $tipEmail = null)
     {
         // dd('here');
         $validator = Validator::make(
@@ -306,7 +306,7 @@ class ComandaController extends Controller
         ($fisaCaz->userTehnic->email ?? null) ? array_push($adreseEmail, $fisaCaz->userTehnic->email) : '';
 
         Mail::to($adreseEmail)
-            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
             ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $mesaj, $comanda));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([

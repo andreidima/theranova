@@ -93,6 +93,10 @@ class CronJobRunner
                 $controller->trimiteReminderDeciziiCas($cronJobKey);
                 break;
 
+            case 'trimite-reminder-oferte-in-asteptare':
+                $controller->trimiteReminderOferteInAsteptare($cronJobKey);
+                break;
+
             default:
                 throw new InvalidArgumentException('Cron job necunoscut: ' . $jobKey);
         }

@@ -13,8 +13,23 @@ class Oferta extends Model
 {
     use HasFactory;
 
+    public const STATUS_NEACCEPTATA = 0;
+    public const STATUS_ACCEPTATA = 1;
+    public const STATUS_IN_ASTEPTARE = 2;
+    public const STATUS_ARHIVATA = 3;
+
     protected $table = 'oferte';
     protected $guarded = [];
+
+    public static function statusLabels(): array
+    {
+        return [
+            self::STATUS_NEACCEPTATA => 'Neacceptata',
+            self::STATUS_ACCEPTATA => 'Acceptata',
+            self::STATUS_IN_ASTEPTARE => 'In asteptare',
+            self::STATUS_ARHIVATA => 'Arhivata',
+        ];
+    }
 
     public function path()
     {

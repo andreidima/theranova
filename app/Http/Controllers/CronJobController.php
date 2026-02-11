@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Models\FisaCaz;
 use App\Models\Incasare;
+use App\Models\Oferta;
 use App\Models\MesajTrimisEmail;
 
 use App\Mail\OfertaDecizieCasReminder;
+use App\Mail\OferteInAsteptareReminder;
 
 class CronJobController extends Controller
 {
@@ -77,7 +79,7 @@ class CronJobController extends Controller
             $tipEmail = $tip_proteza;
 
             Mail::to($adreseEmail)
-                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
                 // ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, null, null));
             // Mail::to(['danatudorache@theranova.ro', 'andrei.dima@usm.ro'])
                 ->send(new \App\Mail\FisaCazReminder($fisaCaz, $tip_proteza));
@@ -269,6 +271,161 @@ class CronJobController extends Controller
         echo $deciziiSarit . ' decizii nu au necesitat acțiuni suplimentare.<br>';
     }
 
+    public function trimiteReminderOferteInAsteptare($key = null)
+    {
+        if (is_null($keyDB = DB::table('variabile')->where('nume', 'cron_job_key')->get()->first()->valoare ?? null) || is_null($key) || ($keyDB !== $key)) {
+            echo 'Cheia pentru Cron Joburi este incorectÄƒ!';
+            return;
+        }
+
+        echo 'Cron job: trimite remindere pentru ofertele in asteptare mai vechi de 3 luni.<br><br>';
+
+        $milestones = $this->milestonesReminderOferteInAsteptare();
+        $tipRetrimitere = $this->tipReminderOfertaInAsteptareRetrimitere();
+        $zileRetrimitere = $this->intervalRetrimitereReminderOfertaInAsteptareZile();
+        $tipuriInitiale = collect($milestones)->pluck('tip')->map(fn ($tip) => (int) $tip)->all();
+        $tipuriReminder = array_values(array_unique(array_merge($tipuriInitiale, [$tipRetrimitere])));
+        $minMonths = collect($milestones)->min('months') ?? 3;
+
+        $oferte = Oferta::with(['fisaCaz.pacient', 'fisaCaz.userVanzari', 'fisaCaz.userComercial', 'fisaCaz.userTehnic'])
+            ->where('acceptata', Oferta::STATUS_IN_ASTEPTARE)
+            ->whereNotNull('created_at')
+            ->where('created_at', '<=', Carbon::now()->subMonthsNoOverflow($minMonths))
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        if ($oferte->isEmpty()) {
+            echo 'Nu exista oferte eligibile in acest moment.';
+
+            return;
+        }
+
+        $groups = [];
+        $oferteSarite = 0;
+
+        foreach ($oferte as $oferta) {
+            if (!$oferta->fisaCaz || !$oferta->fisaCaz->pacient) {
+                echo 'Oferta #' . $oferta->id . ': nu are fisa caz/pacient asociat. Sar peste.<br>';
+                $oferteSarite++;
+
+                continue;
+            }
+
+            $emailuri = collect([
+                $oferta->fisaCaz->userVanzari->email ?? null,
+                $oferta->fisaCaz->userComercial->email ?? null,
+                $oferta->fisaCaz->userTehnic->email ?? null,
+            ])->filter()->unique()->sort()->values();
+
+            if ($emailuri->isEmpty()) {
+                echo 'Oferta #' . $oferta->id . ': nu are destinatari validi. Sar peste.<br>';
+                $oferteSarite++;
+
+                continue;
+            }
+
+            $createdAt = Carbon::parse($oferta->created_at);
+            $tipDeTrimis = null;
+            $labelDeTrimis = null;
+
+            foreach ($milestones as $milestone) {
+                $dueAt = (clone $createdAt)->addMonthsNoOverflow($milestone['months']);
+                if (Carbon::now()->lt($dueAt)) {
+                    continue;
+                }
+
+                if ($this->aFostTrimisReminderOfertaInAsteptare($oferta->id, $milestone['tip'])) {
+                    continue;
+                }
+
+                $tipDeTrimis = (int) $milestone['tip'];
+                $labelDeTrimis = $milestone['label'];
+                break;
+            }
+
+            if (is_null($tipDeTrimis)) {
+                $ultimulReminder = $this->ultimulReminderOfertaInAsteptare($oferta->id, $tipuriReminder);
+                if ($ultimulReminder) {
+                    $dataUltimReminder = Carbon::parse($ultimulReminder->created_at);
+                    if ($dataUltimReminder->lte(Carbon::now()->subDays($zileRetrimitere))) {
+                        $tipDeTrimis = $tipRetrimitere;
+                        $labelDeTrimis = 'retrimis dupa ' . $zileRetrimitere . ' zile';
+                    }
+                }
+            }
+
+            if (is_null($tipDeTrimis)) {
+                $oferteSarite++;
+                continue;
+            }
+
+            // Grouping by exact recipient set minimizes number of sent emails.
+            $groupKey = implode('|', $emailuri->all());
+            if (!isset($groups[$groupKey])) {
+                $groups[$groupKey] = [
+                    'emails' => $emailuri->all(),
+                    'oferte' => [],
+                ];
+            }
+
+            $groups[$groupKey]['oferte'][$oferta->id] = [
+                'id' => $oferta->id,
+                'tip' => $tipDeTrimis,
+                'label' => $labelDeTrimis,
+                'pacient' => trim(($oferta->fisaCaz->pacient->nume ?? '') . ' ' . ($oferta->fisaCaz->pacient->prenume ?? '')),
+                'link_modificare' => url($oferta->path() . '/modifica'),
+                'created_at' => $createdAt->format('d.m.Y'),
+                'vechime_zile' => $createdAt->diffInDays(Carbon::now()),
+            ];
+        }
+
+        if (empty($groups)) {
+            echo 'Nu exista oferte de notificat (toate sunt deja notificate sau neeligibile).';
+
+            return;
+        }
+
+        $emailuriTrimise = 0;
+        $oferteNotificate = 0;
+        $oferteNotificateInitial = 0;
+        $oferteNotificateRetrimise = 0;
+
+        foreach ($groups as $group) {
+            $oferteDeTrimis = collect(array_values($group['oferte']));
+
+            Mail::to($group['emails'])
+                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+                ->send(new OferteInAsteptareReminder($oferteDeTrimis));
+
+            foreach ($oferteDeTrimis as $ofertaInfo) {
+                MesajTrimisEmail::create([
+                    'referinta' => 5, // Oferta
+                    'referinta_id' => $ofertaInfo['id'],
+                    'referinta2' => null,
+                    'referinta2_id' => null,
+                    'tip' => $ofertaInfo['tip'],
+                    'mesaj' => $ofertaInfo['label'],
+                    'email' => implode(', ', $group['emails']),
+                ]);
+
+                if ((int) $ofertaInfo['tip'] === $tipRetrimitere) {
+                    $oferteNotificateRetrimise++;
+                } else {
+                    $oferteNotificateInitial++;
+                }
+
+                $oferteNotificate++;
+            }
+
+            $emailuriTrimise++;
+            echo 'Am trimis reminder catre: ' . implode(', ', $group['emails']) . ' pentru ' . $oferteDeTrimis->count() . ' oferta(e).<br>';
+        }
+
+        echo '<br>Rezumat: ' . $emailuriTrimise . ' email(uri) trimise, ' . $oferteNotificate . ' oferta(e) notificate. ';
+        echo $oferteNotificateInitial . ' initiale, ' . $oferteNotificateRetrimise . ' retrimise. ';
+        echo $oferteSarite . ' oferta(e) fara actiuni suplimentare.<br>';
+    }
+
     protected function aFostTrimisReminderDecizieCas(int $decizieId, int $tip): bool
     {
         return MesajTrimisEmail::where('referinta', 4)
@@ -277,10 +434,48 @@ class CronJobController extends Controller
             ->exists();
     }
 
+    protected function milestonesReminderOferteInAsteptare(): array
+    {
+        return [
+            [
+                'months' => 3,
+                'tip' => 11,
+                'label' => 'primul reminder (3 luni)',
+            ],
+        ];
+    }
+
+    protected function aFostTrimisReminderOfertaInAsteptare(int $ofertaId, int $tip): bool
+    {
+        return MesajTrimisEmail::where('referinta', 5)
+            ->where('referinta_id', $ofertaId)
+            ->where('tip', $tip)
+            ->exists();
+    }
+
+    protected function tipReminderOfertaInAsteptareRetrimitere(): int
+    {
+        return 12;
+    }
+
+    protected function intervalRetrimitereReminderOfertaInAsteptareZile(): int
+    {
+        return 7;
+    }
+
+    protected function ultimulReminderOfertaInAsteptare(int $ofertaId, array $tipuri): ?MesajTrimisEmail
+    {
+        return MesajTrimisEmail::where('referinta', 5)
+            ->where('referinta_id', $ofertaId)
+            ->whereIn('tip', $tipuri)
+            ->orderByDesc('created_at')
+            ->first();
+    }
+
     protected function trimiteReminderDecizieCas(array $emailuri, Incasare $decizie, string $tipReminder, int $tipCod): void
     {
         Mail::to($emailuri)
-            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
             ->send(new OfertaDecizieCasReminder($decizie, $tipReminder));
 
         MesajTrimisEmail::create([
