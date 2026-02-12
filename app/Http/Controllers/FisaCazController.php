@@ -356,13 +356,35 @@ class FisaCazController extends Controller
         $request->validate(
             [
                 'data_predare' => 'nullable|date',
+                'facturat' => 'nullable|boolean',
+                'bonusat' => 'nullable|boolean',
             ],
         );
 
+        if ($request->has('bonusat') && !$this->userPoateModificaBonusat()) {
+            return back()->with('error', 'Nu ai drepturile necesare pentru modificarea campului Bonusat.');
+        }
+
         $fisaCaz->protezare = $request->data_predare ? Carbon::parse($request->data_predare) : null;
+        if ($request->has('facturat')) {
+            $fisaCaz->facturat = $request->boolean('facturat');
+        }
+        if ($request->has('bonusat') && $this->userPoateModificaBonusat()) {
+            $fisaCaz->bonusat = $request->boolean('bonusat');
+        }
         $fisaCaz->save();
 
-        return back()->with('status', 'Data de predate pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '”  a fost setată cu succes!');
+        return back()->with('status', 'Datele de predare pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” au fost setate cu succes!');
+    }
+
+    protected function userPoateModificaBonusat(): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+
+        return $user->hasRole('bonusat_edit');
     }
 
     public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
@@ -521,7 +543,7 @@ class FisaCazController extends Controller
                 'cerinte:fisa_caz_id,sursa_buget',
                 'oferte:fisa_caz_id,pret,acceptata',
                 'ofertaAcceptata:fisa_caz_id,pret')
-            ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare')
+            ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare', 'facturat', 'bonusat')
             ->orderBy('protezare', 'asc')
             ->get();
 

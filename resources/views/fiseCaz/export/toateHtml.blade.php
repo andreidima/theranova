@@ -117,6 +117,11 @@
                 <th>PERSOANA<br>VANZARI</th>
                 <th>PERSOANA<br>TEHNIC</th>
 
+                @if ($dimensiune == 'partial')
+                    <th>FACTURA</th>
+                    <th>BONUSAT</th>
+                @endif
+
                 @if ($dimensiune == 'intreg')
                     <th>SURSA:<br>De unde a aflat de Theranova</th>
                 @endif
@@ -209,6 +214,15 @@
                         <td>
                             {{ ($fisaCaz->userTehnic->name ?? '') }}
                         </td>
+
+                    @if ($dimensiune == 'partial')
+                        <td>
+                            {{ ((int) ($fisaCaz->facturat ?? 0) === 1) ? 'Da' : 'Nu' }}
+                        </td>
+                        <td>
+                            {{ ((int) ($fisaCaz->bonusat ?? 0) === 1) ? 'Da' : 'Nu' }}
+                        </td>
+                    @endif
 
                     @if ($dimensiune == 'intreg')
                         <td>

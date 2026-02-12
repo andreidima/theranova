@@ -771,6 +771,11 @@
                             <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body" style="text-align:left;">
+                            @php
+                                $facturatBifat = ((int) ($fisaCaz->facturat ?? 0) === 1);
+                                $bonusatBifat = ((int) ($fisaCaz->bonusat ?? 0) === 1);
+                                $poateModificaBonusat = auth()->user() && auth()->user()->hasRole('bonusat_edit');
+                            @endphp
                             <div class="col-lg-12 mb-4">
                                 <label for="data_predare" class="mb-0 ps-3">Dată predare</label>
                                 <input
@@ -781,6 +786,54 @@
                                     value="{{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}"
                                     >
                             </div>
+                            <div class="form-check ms-3 mb-2">
+                                <input type="hidden" name="facturat" value="0">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value="1"
+                                    id="facturat{{ $fisaCaz->id }}"
+                                    name="facturat"
+                                    {{ $facturatBifat ? 'checked' : '' }}
+                                >
+                                <label class="form-check-label" for="facturat{{ $fisaCaz->id }}">
+                                    Facturat
+                                </label>
+                            </div>
+
+                            @if ($poateModificaBonusat)
+                                <div class="form-check ms-3 mb-2">
+                                    <input type="hidden" name="bonusat" value="0">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        value="1"
+                                        id="bonusat{{ $fisaCaz->id }}"
+                                        name="bonusat"
+                                        {{ $bonusatBifat ? 'checked' : '' }}
+                                    >
+                                    <label class="form-check-label" for="bonusat{{ $fisaCaz->id }}">
+                                        Bonusat
+                                    </label>
+                                </div>
+                            @else
+                                <div class="form-check ms-3 mb-2">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        value="1"
+                                        id="bonusatReadonly{{ $fisaCaz->id }}"
+                                        {{ $bonusatBifat ? 'checked' : '' }}
+                                        disabled
+                                    >
+                                    <label class="form-check-label" for="bonusatReadonly{{ $fisaCaz->id }}">
+                                        Bonusat
+                                    </label>
+                                    <small class="text-muted d-block">
+                                        Vizibil doar in citire. Doar utilizatorii autorizati il pot modifica.
+                                    </small>
+                                </div>
+                            @endif
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
