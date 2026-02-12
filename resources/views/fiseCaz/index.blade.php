@@ -782,7 +782,7 @@
                                     >
                             </div>
                             <div class="col-lg-12 mb-2">
-                                <label for="luna_bonus{{ $fisaCaz->id }}" class="mb-0 ps-3">Luna bonus</label>
+                                <label for="luna_bonus{{ $fisaCaz->id }}" class="mb-0 ps-3">Luna facturare</label>
                                 <input
                                     type="month"
                                     class="form-control rounded-3"

@@ -306,7 +306,7 @@ class ComandaController extends Controller
         ($fisaCaz->userTehnic->email ?? null) ? array_push($adreseEmail, $fisaCaz->userTehnic->email) : '';
 
         Mail::to($adreseEmail)
-            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
             ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $mesaj, $comanda));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([

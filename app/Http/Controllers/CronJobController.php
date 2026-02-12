@@ -79,9 +79,9 @@ class CronJobController extends Controller
             $tipEmail = $tip_proteza;
 
             Mail::to($adreseEmail)
-                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
                 // ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, null, null));
-            // Mail::to(['danatudorache@theranova.ro', 'andrei.dima@usm.ro'])
+            // Mail::to(['danatudorache@theranova.ro'])
                 ->send(new \App\Mail\FisaCazReminder($fisaCaz, $tip_proteza));
 
             $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
@@ -394,7 +394,7 @@ class CronJobController extends Controller
             $oferteDeTrimis = collect(array_values($group['oferte']));
 
             Mail::to($group['emails'])
-                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+                ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
                 ->send(new OferteInAsteptareReminder($oferteDeTrimis));
 
             foreach ($oferteDeTrimis as $ofertaInfo) {
@@ -475,7 +475,7 @@ class CronJobController extends Controller
     protected function trimiteReminderDecizieCas(array $emailuri, Incasare $decizie, string $tipReminder, int $tipCod): void
     {
         Mail::to($emailuri)
-            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
             ->send(new OfertaDecizieCasReminder($decizie, $tipReminder));
 
         MesajTrimisEmail::create([

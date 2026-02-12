@@ -467,7 +467,7 @@ class FisaCazController extends Controller
     //     }
 
     //     $trimitereEmail = Mail::to($user->email)
-    //         ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+    //         ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
     //         ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $user->name));
 
     //     $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
@@ -505,7 +505,7 @@ class FisaCazController extends Controller
             return back()->with('error', 'Nu există adrese de email către care să se trimită mesajul');
         }
         $trimitereEmail = Mail::to($usersEmails)
-            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro', 'andrei.dima@usm.ro'])
+            ->cc(['danatudorache@theranova.ro', 'adrianples@theranova.ro'])
             ->send(new \App\Mail\FisaCaz($fisaCaz, $tipEmail, $request->mesaj, $comanda));
 
         $mesajTrimisEmail = \App\Models\MesajTrimisEmail::create([
