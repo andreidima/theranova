@@ -35,12 +35,24 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="col-lg-3">
+                    <label class="form-label mb-1">Prag minim total bonus / utilizator</label>
+                    <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        name="min_user_total"
+                        class="form-control rounded-3"
+                        value="{{ $minUserTotal > 0 ? $minUserTotal : '' }}"
+                        placeholder="ex: 1000"
+                    >
+                </div>
             @endif
             <div class="col-lg-3">
                 <button class="btn btn-primary rounded-3" type="submit">Filtreaza</button>
                 <a
                     class="btn btn-success rounded-3"
-                    href="{{ route('bonusuri.export', ['month' => $month, 'user_id' => $selectedUserId]) }}"
+                    href="{{ route('bonusuri.export', ['month' => $month, 'user_id' => $selectedUserId, 'min_user_total' => $minUserTotal]) }}"
                 >
                     Export Excel
                 </a>

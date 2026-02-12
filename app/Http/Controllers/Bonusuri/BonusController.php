@@ -53,6 +53,7 @@ class BonusController extends Controller
                 ? User::query()->select('id', 'name')->where('activ', 1)->orderBy('name')->get()
                 : collect(),
             'selectedUserId' => $data['selectedUserId'] > 0 ? $data['selectedUserId'] : null,
+            'minUserTotal' => (int) $data['minUserTotal'],
         ]);
     }
 
@@ -62,10 +63,14 @@ class BonusController extends Controller
         $rows = $data['rows'];
         $month = $data['month'];
         $selectedUserId = $data['selectedUserId'];
+        $minUserTotal = $data['minUserTotal'];
 
         $fileName = 'bonusuri-lunar-' . $month;
         if ($selectedUserId > 0) {
             $fileName .= '-user-' . $selectedUserId;
+        }
+        if ($minUserTotal > 0) {
+            $fileName .= '-prag-' . $minUserTotal;
         }
         $fileName .= '.xlsx';
 
@@ -129,6 +134,7 @@ class BonusController extends Controller
         $month = $this->validatedMonth($request->input('month'));
         $monthStart = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
         $selectedUserId = $canViewAll ? (int) $request->input('user_id', 0) : 0;
+        $minUserTotal = $canViewAll ? max(0, (int) $request->input('min_user_total', 0)) : 0;
 
         $query = FisaCaz::query()
             ->with([
@@ -235,11 +241,28 @@ class BonusController extends Controller
             }
         }
 
+        if ($minUserTotal > 0) {
+            $eligibleUserIds = $rows
+                ->groupBy('user_id')
+                ->filter(function (Collection $userRows) use ($minUserTotal) {
+                    return (int) $userRows->sum('bonus_total') >= $minUserTotal;
+                })
+                ->keys()
+                ->all();
+
+            $rows = $rows
+                ->filter(function (array $row) use ($eligibleUserIds) {
+                    return in_array($row['user_id'], $eligibleUserIds, true);
+                })
+                ->values();
+        }
+
         return [
             'rows' => $this->sortRows($rows),
             'month' => $month,
             'canViewAll' => $canViewAll,
             'selectedUserId' => $selectedUserId,
+            'minUserTotal' => $minUserTotal,
         ];
     }
 
