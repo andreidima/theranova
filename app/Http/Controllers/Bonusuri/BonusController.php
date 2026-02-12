@@ -10,11 +10,156 @@ use App\Services\BonusCalculatorService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BonusController extends Controller
 {
     public function index(Request $request, BonusCalculatorService $bonusCalculatorService): View
+    {
+        $data = $this->collectRows($request, $bonusCalculatorService);
+        $rows = $data['rows'];
+
+        $sumar = [
+            'total_bonus' => (int) $rows->sum('bonus_total'),
+            'pozitii' => (int) $rows->count(),
+            'fise_unice' => (int) $rows->pluck('fisa_caz_id')->unique()->count(),
+        ];
+
+        $perPage = 50;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $rowsPage = $rows->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $paginator = new LengthAwarePaginator(
+            $rowsPage,
+            $rows->count(),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return view('bonusuri.index', [
+            'rows' => $paginator,
+            'sumar' => $sumar,
+            'month' => $data['month'],
+            'canViewAll' => $data['canViewAll'],
+            'users' => $data['canViewAll']
+                ? User::query()->select('id', 'name')->where('activ', 1)->orderBy('name')->get()
+                : collect(),
+            'selectedUserId' => $data['selectedUserId'] > 0 ? $data['selectedUserId'] : null,
+        ]);
+    }
+
+    public function export(Request $request, BonusCalculatorService $bonusCalculatorService): StreamedResponse
+    {
+        $data = $this->collectRows($request, $bonusCalculatorService);
+        $rows = $data['rows'];
+        $month = $data['month'];
+        $selectedUserId = $data['selectedUserId'];
+
+        $fileName = 'bonusuri-lunar-' . $month;
+        if ($selectedUserId > 0) {
+            $fileName .= '-user-' . $selectedUserId;
+        }
+        $fileName .= '.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            fputcsv($handle, [
+                'Pacient nume',
+                'Pacient prenume',
+                'Fisa caz',
+                'Utilizator',
+                'Rol',
+                'Lucrare',
+                'Amputatie',
+                'Oferta lei',
+                'Bonus fix',
+                'Bonus procent',
+                'Bonus total',
+                'Luna bonus',
+            ], ';');
+
+            foreach ($rows as $row) {
+                fputcsv($handle, [
+                    $row['pacient_nume'],
+                    $row['pacient_prenume'],
+                    $row['fisa_caz_id'],
+                    $row['user_name'],
+                    $row['rol'],
+                    $row['lucrare_denumire'],
+                    $row['amputatie'],
+                    $row['valoare_oferta'],
+                    $row['bonus_fix'],
+                    $row['bonus_procent'],
+                    $row['bonus_total'],
+                    Carbon::parse($row['luna_bonus'])->format('m.Y'),
+                ], ';');
+            }
+
+            fclose($handle);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    public function situatii(Request $request): View
+    {
+        $canViewAll = $request->user()->hasRole('bonusuri.view_all');
+
+        $query = FisaCaz::query()
+            ->with([
+                'pacient:id,nume,prenume',
+                'userVanzari:id,name',
+                'userTehnic:id,name',
+                'oferte' => function ($q) {
+                    $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA)
+                        ->orderBy('oferte.created_at')
+                        ->orderBy('oferte.id');
+                },
+            ])
+            ->whereHas('oferte', function ($q) {
+                $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA);
+            })
+            ->where(function ($q) {
+                $q->whereNull('protezare')
+                    ->orWhereNull('luna_bonus');
+            });
+
+        if (!$canViewAll) {
+            $query->where(function ($q) use ($request) {
+                $q->where('user_vanzari', $request->user()->id)
+                    ->orWhere('user_tehnic', $request->user()->id);
+            });
+        }
+
+        $fiseCaz = $query
+            ->orderByDesc('id')
+            ->paginate(100)
+            ->withQueryString();
+
+        return view('bonusuri.situatii', [
+            'fiseCaz' => $fiseCaz,
+            'canViewAll' => $canViewAll,
+        ]);
+    }
+
+    protected function validatedMonth(?string $month): string
+    {
+        if (is_string($month) && preg_match('/^\d{4}\-\d{2}$/', $month)) {
+            return $month;
+        }
+
+        return now()->format('Y-m');
+    }
+
+    protected function collectRows(Request $request, BonusCalculatorService $bonusCalculatorService): array
     {
         $canViewAll = $request->user()->hasRole('bonusuri.view_all');
 
@@ -56,7 +201,6 @@ class BonusController extends Controller
         }
 
         $fiseCaz = $query->orderByDesc('id')->get();
-
         $rows = collect();
 
         foreach ($fiseCaz as $fisaCaz) {
@@ -128,7 +272,17 @@ class BonusController extends Controller
             }
         }
 
-        $rows = $rows
+        return [
+            'rows' => $this->sortRows($rows),
+            'month' => $month,
+            'canViewAll' => $canViewAll,
+            'selectedUserId' => $selectedUserId,
+        ];
+    }
+
+    protected function sortRows(Collection $rows): Collection
+    {
+        return $rows
             ->sortBy([
                 ['pacient_nume', 'asc'],
                 ['pacient_prenume', 'asc'],
@@ -136,87 +290,5 @@ class BonusController extends Controller
                 ['rol', 'asc'],
             ])
             ->values();
-
-        $sumar = [
-            'total_bonus' => (int) $rows->sum('bonus_total'),
-            'pozitii' => (int) $rows->count(),
-            'fise_unice' => (int) $rows->pluck('fisa_caz_id')->unique()->count(),
-        ];
-
-        $perPage = 50;
-        $page = LengthAwarePaginator::resolveCurrentPage();
-        $rowsPage = $rows->slice(($page - 1) * $perPage, $perPage)->values();
-
-        $paginator = new LengthAwarePaginator(
-            $rowsPage,
-            $rows->count(),
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-            ]
-        );
-
-        return view('bonusuri.index', [
-            'rows' => $paginator,
-            'sumar' => $sumar,
-            'month' => $month,
-            'canViewAll' => $canViewAll,
-            'users' => $canViewAll
-                ? User::query()->select('id', 'name')->where('activ', 1)->orderBy('name')->get()
-                : collect(),
-            'selectedUserId' => $selectedUserId > 0 ? $selectedUserId : null,
-        ]);
-    }
-
-    public function situatii(Request $request): View
-    {
-        $canViewAll = $request->user()->hasRole('bonusuri.view_all');
-
-        $query = FisaCaz::query()
-            ->with([
-                'pacient:id,nume,prenume',
-                'userVanzari:id,name',
-                'userTehnic:id,name',
-                'oferte' => function ($q) {
-                    $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA)
-                        ->orderBy('oferte.created_at')
-                        ->orderBy('oferte.id');
-                },
-            ])
-            ->whereHas('oferte', function ($q) {
-                $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA);
-            })
-            ->where(function ($q) {
-                $q->whereNull('protezare')
-                    ->orWhereNull('luna_bonus');
-            });
-
-        if (!$canViewAll) {
-            $query->where(function ($q) use ($request) {
-                $q->where('user_vanzari', $request->user()->id)
-                    ->orWhere('user_tehnic', $request->user()->id);
-            });
-        }
-
-        $fiseCaz = $query
-            ->orderByDesc('id')
-            ->paginate(100)
-            ->withQueryString();
-
-        return view('bonusuri.situatii', [
-            'fiseCaz' => $fiseCaz,
-            'canViewAll' => $canViewAll,
-        ]);
-    }
-
-    protected function validatedMonth(?string $month): string
-    {
-        if (is_string($month) && preg_match('/^\d{4}\-\d{2}$/', $month)) {
-            return $month;
-        }
-
-        return now()->format('Y-m');
     }
 }

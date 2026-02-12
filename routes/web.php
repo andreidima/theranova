@@ -105,8 +105,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
-    Route::prefix('/bonusuri')->name('bonusuri.')->middleware('check.tech.access:bonusuri.access')->group(function () {
+    Route::prefix('/bonusuri')->name('bonusuri.')->group(function () {
         Route::get('/', [BonusController::class, 'index'])->name('index');
+        Route::get('/export', [BonusController::class, 'export'])->name('export');
         Route::get('/situatii-de-rezolvat', [BonusController::class, 'situatii'])->name('situatii');
 
         Route::get('/configurare', [ConfigurareController::class, 'index'])

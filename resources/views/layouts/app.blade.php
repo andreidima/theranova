@@ -47,7 +47,7 @@
                         $canTechMigrations = auth()->user()->hasRole('tech.migrations');
                         $canTechCronjobs = auth()->user()->hasRole('tech.cronjobs');
                         $showTechMenu = $canTechImpersonare || $canTechMigrations || $canTechCronjobs;
-                        $canBonusuriAccess = auth()->user()->hasRole('bonusuri.access');
+                        $canBonusuriAccess = true;
                         $canBonusuriEdit = auth()->user()->hasRole('bonusuri.edit');
                         $isImpersonating = session()->has('impersonator_id');
                     @endphp                    <!-- Left Side Of Navbar -->

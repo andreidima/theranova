@@ -38,6 +38,12 @@
             @endif
             <div class="col-lg-3">
                 <button class="btn btn-primary rounded-3" type="submit">Filtreaza</button>
+                <a
+                    class="btn btn-success rounded-3"
+                    href="{{ route('bonusuri.export', ['month' => $month, 'user_id' => $selectedUserId]) }}"
+                >
+                    Export Excel
+                </a>
             </div>
         </form>
 
