@@ -40,27 +40,27 @@
                 <tbody>
                     @forelse($lucrari as $lucrare)
                         @php
-                            $poateFiStearsa = ((int) $lucrare->fise_caz_count === 0) && ((int) $lucrare->bonusuri_count === 0);
+                            $poateFiStearsa = ((int) $lucrare->fise_caz_count === 0);
                         @endphp
                         <tr>
                             <td>{{ $lucrare->denumire }}</td>
                             <td><span class="fw-bold">{{ $lucrare->cod }}</span></td>
                             <td>{{ $lucrare->activ ? 'Da' : 'Nu' }}</td>
                             <td>
-                                Fișe caz: <strong>{{ $lucrare->fise_caz_count }}</strong><br>
-                                Bonusuri: <strong>{{ $lucrare->bonusuri_count }}</strong>
+                                Fise caz: <strong>{{ $lucrare->fise_caz_count }}</strong><br>
+                                Intervale: <strong>{{ $lucrare->intervale_bonus_count }}</strong>
                             </td>
                             <td style="min-width: 320px;" class="align-middle">
                                 @forelse($lucrare->intervaleBonus as $interval)
-                                    @php
-                                        $poateFiStersInterval = ((int) $interval->bonusuri_count === 0);
-                                    @endphp
                                     <div class="border rounded-3 p-2 mb-2">
                                         <div class="small">
                                             Interval valoare:
                                             {{ (int) $interval->min_valoare }}
                                             -
                                             {{ is_null($interval->max_valoare) ? 'INF' : (int) $interval->max_valoare }} lei
+                                            |
+                                            Amputatie:
+                                            {{ $interval->amputatie ?: 'Toate amputatiile' }}
                                         </div>
                                         <div class="small text-muted d-inline-flex align-items-center flex-nowrap gap-1">
                                             <span class="text-nowrap">
@@ -81,7 +81,7 @@
                                                 type="button"
                                                 class="btn btn-sm btn-outline-danger py-0 px-1 flex-shrink-0"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#{{ $poateFiStersInterval ? 'stergeInterval' . $interval->id : 'stergeIntervalBlocat' . $interval->id }}"
+                                                data-bs-target="#stergeInterval{{ $interval->id }}"
                                                 title="Sterge interval"
                                                 >
                                                 <i class="fa-solid fa-trash"></i>
@@ -197,6 +197,10 @@
                             <label class="form-label mb-1">Bonus procent</label>
                             <input type="number" step="1" min="0" max="100" name="bonus_procent" class="form-control rounded-3" required>
                         </div>
+                        <div class="col-12">
+                            <label class="form-label mb-1">Amputatie (optional)</label>
+                            <input type="text" name="amputatie" class="form-control rounded-3" list="amputatiiDisponibileList" placeholder="Lasa gol pentru toate amputatiile">
+                        </div>
                         <div class="col-6">
                             <label class="form-label mb-1">Valid de la</label>
                             <input type="date" name="valid_from" class="form-control rounded-3">
@@ -287,8 +291,7 @@
                 </div>
                 <div class="modal-body">
                     Lucrarea <strong>{{ $lucrare->denumire }}</strong> este blocata pentru stergere.<br>
-                    Fișe caz: <strong>{{ $lucrare->fise_caz_count }}</strong><br>
-                    Bonusuri: <strong>{{ $lucrare->bonusuri_count }}</strong>
+                    Fise caz: <strong>{{ $lucrare->fise_caz_count }}</strong>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Inchide</button>
@@ -329,6 +332,10 @@
                                 <div class="col-6">
                                     <label class="form-label mb-1">Bonus procent</label>
                                     <input type="number" step="1" min="0" max="100" name="bonus_procent" value="{{ $interval->bonus_procent }}" class="form-control rounded-3" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label mb-1">Amputatie (optional)</label>
+                                    <input type="text" name="amputatie" value="{{ $interval->amputatie }}" class="form-control rounded-3" list="amputatiiDisponibileList" placeholder="Lasa gol pentru toate amputatiile">
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label mb-1">Valid de la</label>
@@ -377,25 +384,11 @@
                 </form>
             </div>
         </div>
-
-        <div class="modal fade text-dark" id="stergeIntervalBlocat{{ $interval->id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning">
-                        <h5 class="modal-title">Intervalul nu poate fi sters</h5>
-                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Intervalul
-                        <strong>{{ (int) $interval->min_valoare }} - {{ is_null($interval->max_valoare) ? 'INF' : (int) $interval->max_valoare }} lei</strong>
-                        este folosit in <strong>{{ (int) $interval->bonusuri_count }}</strong> bonus(uri).
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Inchide</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     @endforeach
 @endforeach
+<datalist id="amputatiiDisponibileList">
+    @foreach($amputatiiDisponibile as $amputatie)
+        <option value="{{ $amputatie }}"></option>
+    @endforeach
+</datalist>
 @endsection

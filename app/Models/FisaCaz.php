@@ -14,6 +14,9 @@ class FisaCaz extends Model
 
     protected $table = 'fise_caz';
     protected $guarded = [];
+    protected $casts = [
+        'luna_bonus' => 'date',
+    ];
 
     public function path()
     {
@@ -217,10 +220,5 @@ class FisaCaz extends Model
     public function activitati(): HasMany
     {
         return $this->hasMany(Calendar\Activitate::class, 'fisa_caz_id')->orderBy('data_inceput');
-    }
-
-    public function bonusuri(): HasMany
-    {
-        return $this->hasMany(Bonus::class, 'fisa_caz_id');
     }
 }

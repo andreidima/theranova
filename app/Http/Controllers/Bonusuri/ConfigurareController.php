@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Bonusuri;
 
 use App\Http\Controllers\Controller;
+use App\Models\DataMedicala;
 use App\Models\Lucrare;
 use App\Models\LucrareBonusInterval;
 use Illuminate\Http\RedirectResponse;
@@ -18,20 +19,28 @@ class ConfigurareController extends Controller
     public function index(): View
     {
         $lucrari = Lucrare::query()
-            ->with([
-                'intervaleBonus' => function ($query) {
-                    $query->withCount('bonusuri');
-                },
-            ])
-            ->withCount(['fiseCaz', 'bonusuri', 'intervaleBonus'])
+            ->with(['intervaleBonus'])
+            ->withCount(['fiseCaz', 'intervaleBonus'])
             ->orderBy('denumire')
             ->get();
 
         $lucrariActive = $lucrari->where('activ', true)->values();
+        $amputatiiDisponibile = collect();
+        if (Schema::hasTable('date_medicale')) {
+            $amputatiiDisponibile = DataMedicala::query()
+                ->select('amputatie')
+                ->whereNotNull('amputatie')
+                ->where('amputatie', '!=', '')
+                ->distinct()
+                ->orderBy('amputatie')
+                ->pluck('amputatie')
+                ->values();
+        }
 
         return view('bonusuri.configurare', [
             'lucrari' => $lucrari,
             'lucrariActive' => $lucrariActive,
+            'amputatiiDisponibile' => $amputatiiDisponibile,
         ]);
     }
 
@@ -73,12 +82,13 @@ class ConfigurareController extends Controller
             'max_valoare' => 'nullable|integer|min:0|max:999999',
             'bonus_fix' => 'required|integer|min:0|max:999999',
             'bonus_procent' => 'required|integer|min:0|max:100',
+            'amputatie' => 'nullable|string|max:150',
             'valid_from' => 'nullable|date',
             'valid_to' => 'nullable|date|after_or_equal:valid_from',
             'activ' => 'nullable|boolean',
         ]);
 
-        if (isset($validated['max_valoare']) && $validated['max_valoare'] !== null && (float) $validated['max_valoare'] < (float) $validated['min_valoare']) {
+        if (isset($validated['max_valoare']) && $validated['max_valoare'] !== null && (int) $validated['max_valoare'] < (int) $validated['min_valoare']) {
             return back()->with('error', 'Max valoare trebuie sa fie mai mare sau egala cu Min valoare.');
         }
 
@@ -88,6 +98,7 @@ class ConfigurareController extends Controller
             'max_valoare' => isset($validated['max_valoare']) ? (int) $validated['max_valoare'] : null,
             'bonus_fix' => (int) $validated['bonus_fix'],
             'bonus_procent' => (int) $validated['bonus_procent'],
+            'amputatie' => $this->normalizeAmputatie($validated['amputatie'] ?? null),
             'valid_from' => $validated['valid_from'] ?? null,
             'valid_to' => $validated['valid_to'] ?? null,
             'activ' => $request->boolean('activ', true),
@@ -103,12 +114,13 @@ class ConfigurareController extends Controller
             'max_valoare' => 'nullable|integer|min:0|max:999999',
             'bonus_fix' => 'required|integer|min:0|max:999999',
             'bonus_procent' => 'required|integer|min:0|max:100',
+            'amputatie' => 'nullable|string|max:150',
             'valid_from' => 'nullable|date',
             'valid_to' => 'nullable|date|after_or_equal:valid_from',
             'activ' => 'nullable|boolean',
         ]);
 
-        if (isset($validated['max_valoare']) && $validated['max_valoare'] !== null && (float) $validated['max_valoare'] < (float) $validated['min_valoare']) {
+        if (isset($validated['max_valoare']) && $validated['max_valoare'] !== null && (int) $validated['max_valoare'] < (int) $validated['min_valoare']) {
             return back()->with('error', 'Max valoare trebuie sa fie mai mare sau egala cu Min valoare.');
         }
 
@@ -117,6 +129,7 @@ class ConfigurareController extends Controller
             'max_valoare' => isset($validated['max_valoare']) ? (int) $validated['max_valoare'] : null,
             'bonus_fix' => (int) $validated['bonus_fix'],
             'bonus_procent' => (int) $validated['bonus_procent'],
+            'amputatie' => $this->normalizeAmputatie($validated['amputatie'] ?? null),
             'valid_from' => $validated['valid_from'] ?? null,
             'valid_to' => $validated['valid_to'] ?? null,
             'activ' => $request->boolean('activ', false),
@@ -127,11 +140,6 @@ class ConfigurareController extends Controller
 
     public function stergeInterval(LucrareBonusInterval $interval): RedirectResponse
     {
-        $numarBonusuri = $interval->bonusuri()->count();
-        if ($numarBonusuri > 0) {
-            return back()->with('error', 'Intervalul nu poate fi sters: este folosit in ' . $numarBonusuri . ' bonus(uri).');
-        }
-
         $interval->delete();
 
         return back()->with('status', 'Intervalul a fost sters.');
@@ -179,12 +187,7 @@ class ConfigurareController extends Controller
     {
         $numarFise = $lucrare->fiseCaz()->count();
         if ($numarFise > 0) {
-            return back()->with('error', 'Lucrarea nu poate fi stearsa: este folosita in ' . $numarFise . ' fișa(e) caz.');
-        }
-
-        $numarBonusuri = $lucrare->bonusuri()->count();
-        if ($numarBonusuri > 0) {
-            return back()->with('error', 'Lucrarea nu poate fi stearsa: are ' . $numarBonusuri . ' bonus(uri) istorice.');
+            return back()->with('error', 'Lucrarea nu poate fi stearsa: este folosita in ' . $numarFise . ' fisa(e) caz.');
         }
 
         $lucrare->delete();
@@ -218,5 +221,16 @@ class ConfigurareController extends Controller
         $value = trim($value);
 
         return Str::upper($value);
+    }
+
+    protected function normalizeAmputatie(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = preg_replace('/\s+/u', ' ', trim($value)) ?? '';
+
+        return $value === '' ? null : $value;
     }
 }

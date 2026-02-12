@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LucrareBonusInterval extends Model
 {
@@ -26,10 +25,5 @@ class LucrareBonusInterval extends Model
     public function lucrare(): BelongsTo
     {
         return $this->belongsTo(Lucrare::class, 'lucrare_id');
-    }
-
-    public function bonusuri(): HasMany
-    {
-        return $this->hasMany(Bonus::class, 'interval_id');
     }
 }

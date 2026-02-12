@@ -3,75 +3,170 @@
 namespace App\Http\Controllers\Bonusuri;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bonus;
-use App\Models\BonusIstoric;
 use App\Models\FisaCaz;
 use App\Models\Oferta;
 use App\Models\User;
 use App\Services\BonusCalculatorService;
 use Carbon\Carbon;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 
 class BonusController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, BonusCalculatorService $bonusCalculatorService): View
     {
         $canViewAll = $request->user()->hasRole('bonusuri.view_all');
-        $canEdit = $request->user()->hasRole('bonusuri.edit');
 
         $month = $this->validatedMonth($request->input('month'));
         $monthStart = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
-        $monthEnd = (clone $monthStart)->endOfMonth();
+        $selectedUserId = $canViewAll ? (int) $request->input('user_id', 0) : 0;
 
-        $query = Bonus::query()
+        $query = FisaCaz::query()
             ->with([
-                'fisaCaz.pacient:id,nume,prenume',
-                'oferta:id,fisa_caz_id,pret,acceptata',
-                'user:id,name,email',
-                'lucrare:id,denumire,cod',
-                'istoric.user:id,name',
+                'pacient:id,nume,prenume',
+                'userVanzari:id,name,email',
+                'userTehnic:id,name,email',
+                'lucrare:id,denumire,cod,activ',
+                'latestDateMedicale' => function ($q) {
+                    $q->select('date_medicale.id', 'date_medicale.fisa_caz_id', 'date_medicale.amputatie');
+                },
+                'oferte' => function ($q) {
+                    $q->select('oferte.id', 'oferte.fisa_caz_id', 'oferte.pret', 'oferte.acceptata', 'oferte.created_at')
+                        ->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA)
+                        ->orderBy('oferte.created_at')
+                        ->orderBy('oferte.id');
+                },
             ])
-            ->where(function ($q) use ($monthStart, $monthEnd) {
-                $q->whereBetween('data_plata', [$monthStart->toDateString(), $monthEnd->toDateString()])
-                    ->orWhere(function ($inner) use ($monthStart, $monthEnd) {
-                        $inner->whereNull('data_plata')
-                            ->whereBetween('luna_merit', [$monthStart->toDateString(), $monthEnd->toDateString()]);
-                    });
+            ->whereDate('luna_bonus', $monthStart->toDateString())
+            ->whereHas('oferte', function ($q) {
+                $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA);
             });
 
-        if ($canViewAll) {
-            if ($request->filled('user_id')) {
-                $query->where('user_id', (int) $request->input('user_id'));
-            }
-        } else {
-            $query->where('user_id', $request->user()->id);
+        if (!$canViewAll) {
+            $query->where(function ($q) use ($request) {
+                $q->where('user_vanzari', $request->user()->id)
+                    ->orWhere('user_tehnic', $request->user()->id);
+            });
+        } elseif ($selectedUserId > 0) {
+            $query->where(function ($q) use ($selectedUserId) {
+                $q->where('user_vanzari', $selectedUserId)
+                    ->orWhere('user_tehnic', $selectedUserId);
+            });
         }
 
+        $fiseCaz = $query->orderByDesc('id')->get();
+
+        $rows = collect();
+
+        foreach ($fiseCaz as $fisaCaz) {
+            $ofertaAcceptata = $fisaCaz->oferte->first();
+            if (!$ofertaAcceptata) {
+                continue;
+            }
+
+            $lucrare = $fisaCaz->lucrare;
+            if (!$lucrare) {
+                $lucrare = $bonusCalculatorService->rezolvaLucrarePentruFisa($fisaCaz);
+            }
+            if (!$lucrare || !(bool) $lucrare->activ) {
+                continue;
+            }
+
+            if (empty($fisaCaz->luna_bonus)) {
+                continue;
+            }
+
+            $valoareOferta = (int) round((float) ($ofertaAcceptata->pret ?? 0));
+            $lunaBonusDate = Carbon::parse($fisaCaz->luna_bonus)->startOfMonth();
+            $amputatieFisa = $fisaCaz->latestDateMedicale->amputatie ?? null;
+            $interval = $bonusCalculatorService->gasesteIntervalBonus($lucrare->id, $valoareOferta, $lunaBonusDate, $amputatieFisa);
+
+            if (!$interval) {
+                continue;
+            }
+
+            $roluri = [
+                'vanzari' => (int) ($fisaCaz->user_vanzari ?? 0),
+                'tehnic' => (int) ($fisaCaz->user_tehnic ?? 0),
+            ];
+
+            foreach ($roluri as $rol => $userId) {
+                if ($userId <= 0) {
+                    continue;
+                }
+
+                if (!$canViewAll && $userId !== (int) $request->user()->id) {
+                    continue;
+                }
+
+                if ($canViewAll && $selectedUserId > 0 && $selectedUserId !== $userId) {
+                    continue;
+                }
+
+                $bonusFix = (int) $interval->bonus_fix;
+                $bonusProcent = (int) $interval->bonus_procent;
+                $bonusTotal = $bonusCalculatorService->calculeazaBonusTotal($valoareOferta, $bonusFix, $bonusProcent);
+
+                $rows->push([
+                    'fisa_caz_id' => (int) $fisaCaz->id,
+                    'pacient_nume' => (string) ($fisaCaz->pacient->nume ?? ''),
+                    'pacient_prenume' => (string) ($fisaCaz->pacient->prenume ?? ''),
+                    'user_id' => $userId,
+                    'user_name' => $rol === 'vanzari'
+                        ? (string) ($fisaCaz->userVanzari->name ?? '-')
+                        : (string) ($fisaCaz->userTehnic->name ?? '-'),
+                    'rol' => $rol,
+                    'lucrare_denumire' => (string) $lucrare->denumire,
+                    'amputatie' => $bonusCalculatorService->normalizeAmputatie($interval->amputatie) ?? 'Toate amputatiile',
+                    'valoare_oferta' => $valoareOferta,
+                    'bonus_fix' => $bonusFix,
+                    'bonus_procent' => $bonusProcent,
+                    'bonus_total' => $bonusTotal,
+                    'luna_bonus' => $lunaBonusDate->toDateString(),
+                ]);
+            }
+        }
+
+        $rows = $rows
+            ->sortBy([
+                ['pacient_nume', 'asc'],
+                ['pacient_prenume', 'asc'],
+                ['fisa_caz_id', 'asc'],
+                ['rol', 'asc'],
+            ])
+            ->values();
+
         $sumar = [
-            'total_bonus' => (float) (clone $query)->sum('bonus_total'),
-            'total_platite' => (float) (clone $query)->where('status', Bonus::STATUS_PLATIT)->sum('bonus_total'),
-            'total_neplatite' => (float) (clone $query)->where('status', '!=', Bonus::STATUS_PLATIT)->sum('bonus_total'),
+            'total_bonus' => (int) $rows->sum('bonus_total'),
+            'pozitii' => (int) $rows->count(),
+            'fise_unice' => (int) $rows->pluck('fisa_caz_id')->unique()->count(),
         ];
 
-        $bonusuri = $query
-            ->orderByRaw('COALESCE(data_plata, luna_merit) desc')
-            ->orderByDesc('id')
-            ->paginate(50)
-            ->withQueryString();
+        $perPage = 50;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $rowsPage = $rows->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $paginator = new LengthAwarePaginator(
+            $rowsPage,
+            $rows->count(),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
 
         return view('bonusuri.index', [
-            'bonusuri' => $bonusuri,
+            'rows' => $paginator,
             'sumar' => $sumar,
             'month' => $month,
             'canViewAll' => $canViewAll,
-            'canEdit' => $canEdit,
-            'statusuri' => Bonus::statusuri(),
             'users' => $canViewAll
                 ? User::query()->select('id', 'name')->where('activ', 1)->orderBy('name')->get()
                 : collect(),
-            'selectedUserId' => $request->input('user_id'),
+            'selectedUserId' => $selectedUserId > 0 ? $selectedUserId : null,
         ]);
     }
 
@@ -85,18 +180,17 @@ class BonusController extends Controller
                 'userVanzari:id,name',
                 'userTehnic:id,name',
                 'oferte' => function ($q) {
-                    $q->where('acceptata', Oferta::STATUS_ACCEPTATA)
-                        ->orderBy('created_at')
-                        ->orderBy('id');
+                    $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA)
+                        ->orderBy('oferte.created_at')
+                        ->orderBy('oferte.id');
                 },
             ])
             ->whereHas('oferte', function ($q) {
-                $q->where('acceptata', Oferta::STATUS_ACCEPTATA);
+                $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA);
             })
             ->where(function ($q) {
                 $q->whereNull('protezare')
-                    ->orWhereNull('facturat')
-                    ->orWhere('facturat', 0);
+                    ->orWhereNull('luna_bonus');
             });
 
         if (!$canViewAll) {
@@ -115,79 +209,6 @@ class BonusController extends Controller
             'fiseCaz' => $fiseCaz,
             'canViewAll' => $canViewAll,
         ]);
-    }
-
-    public function calculeaza(Request $request, BonusCalculatorService $bonusCalculatorService): RedirectResponse
-    {
-        if (!$request->user()->hasRole('bonusuri.edit')) {
-            abort(403);
-        }
-
-        $rezultat = $bonusCalculatorService->calculeazaBonusuriEligibile($request->user()->id);
-
-        return back()->with('status', 'Calcul finalizat. Fișe eligibile: ' . $rezultat['fise_eligibile']
-            . ', bonusuri generate: ' . $rezultat['bonusuri_generate']
-            . ', fișe marcate bonusat: ' . $rezultat['fise_bonusate']
-            . ', fără interval: ' . $rezultat['fise_fara_interval'] . '.');
-    }
-
-    public function actualizeaza(Request $request, Bonus $bonus): RedirectResponse
-    {
-        if (!$request->user()->hasRole('bonusuri.edit')) {
-            abort(403);
-        }
-
-        $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', Bonus::statusuri()),
-            'bonus_fix' => 'required|integer|min:0|max:999999',
-            'bonus_procent' => 'required|integer|min:0|max:100',
-            'bonus_total' => 'nullable|integer|min:0|max:999999',
-            'data_plata' => 'nullable|date',
-            'observatii' => 'nullable|string|max:2000',
-        ]);
-
-        $statusVechi = $bonus->status;
-        $valoareVeche = (int) $bonus->bonus_total;
-
-        $bonusFix = (int) $validated['bonus_fix'];
-        $bonusProcent = (int) $validated['bonus_procent'];
-        $bonusTotalCalculat = (int) round($bonusFix + (((int) $bonus->valoare_oferta) * $bonusProcent / 100));
-
-        $bonus->status = $validated['status'];
-        $bonus->bonus_fix = $bonusFix;
-        $bonus->bonus_procent = $bonusProcent;
-        $bonus->bonus_total = isset($validated['bonus_total'])
-            ? (int) $validated['bonus_total']
-            : $bonusTotalCalculat;
-        $bonus->observatii = $validated['observatii'] ?? null;
-
-        if ($bonus->status === Bonus::STATUS_PLATIT) {
-            $bonus->data_plata = !empty($validated['data_plata']) ? Carbon::parse($validated['data_plata'])->toDateString() : Carbon::today()->toDateString();
-            $bonus->platit_de_user_id = $request->user()->id;
-            if (empty($bonus->approved_at)) {
-                $bonus->approved_at = now();
-            }
-        } else {
-            $bonus->data_plata = !empty($validated['data_plata']) ? Carbon::parse($validated['data_plata'])->toDateString() : null;
-            if ($bonus->status === Bonus::STATUS_APROBAT && empty($bonus->approved_at)) {
-                $bonus->approved_at = now();
-            }
-        }
-
-        $bonus->save();
-
-        BonusIstoric::create([
-            'bonus_id' => $bonus->id,
-            'actiune' => 'actualizare_manuala',
-            'status' => $bonus->status,
-            'bonus_total' => $bonus->bonus_total,
-            'data_plata' => $bonus->data_plata,
-            'user_id' => $request->user()->id,
-            'detalii' => 'Status: ' . $statusVechi . ' -> ' . $bonus->status
-                . '; Bonus: ' . $valoareVeche . ' -> ' . (int) $bonus->bonus_total,
-        ]);
-
-        return back()->with('status', 'Bonusul a fost actualizat cu succes.');
     }
 
     protected function validatedMonth(?string $month): string

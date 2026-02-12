@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\FisaCaz;
 use App\Models\User;
@@ -369,35 +370,36 @@ class FisaCazController extends Controller
         $request->validate(
             [
                 'data_predare' => 'nullable|date',
-                'facturat' => 'nullable|boolean',
-                'bonusat' => 'nullable|boolean',
+                'luna_bonus' => 'nullable|date_format:Y-m',
             ],
         );
 
-        if ($request->has('bonusat') && !$this->userPoateModificaBonusat()) {
-            return back()->with('error', 'Nu ai drepturile necesare pentru modificarea campului Bonusat.');
-        }
+        $lunaBonusVeche = $fisaCaz->luna_bonus
+            ? Carbon::parse($fisaCaz->luna_bonus)->startOfMonth()->toDateString()
+            : null;
 
         $fisaCaz->protezare = $request->data_predare ? Carbon::parse($request->data_predare) : null;
-        if ($request->has('facturat')) {
-            $fisaCaz->facturat = $request->boolean('facturat');
-        }
-        if ($request->has('bonusat') && $this->userPoateModificaBonusat()) {
-            $fisaCaz->bonusat = $request->boolean('bonusat');
-        }
+        $fisaCaz->luna_bonus = $request->filled('luna_bonus')
+            ? Carbon::createFromFormat('Y-m', (string) $request->input('luna_bonus'))->startOfMonth()->toDateString()
+            : null;
         $fisaCaz->save();
 
-        return back()->with('status', 'Datele de predare pentru Fișa Caz a pacientului „' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '” au fost setate cu succes!');
-    }
+        $lunaBonusNoua = $fisaCaz->luna_bonus
+            ? Carbon::parse($fisaCaz->luna_bonus)->startOfMonth()->toDateString()
+            : null;
 
-    protected function userPoateModificaBonusat(): bool
-    {
-        $user = auth()->user();
-        if (!$user) {
-            return false;
+        if ($lunaBonusVeche !== $lunaBonusNoua && Schema::hasTable('fise_caz_luna_bonus_istoric')) {
+            DB::table('fise_caz_luna_bonus_istoric')->insert([
+                'fisa_caz_id' => $fisaCaz->id,
+                'luna_bonus_veche' => $lunaBonusVeche,
+                'luna_bonus_noua' => $lunaBonusNoua,
+                'user_id' => auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
-        return $user->hasRole('bonusat_edit');
+        return back()->with('status', 'Datele de predare pentru Fisa Caz a pacientului "' . ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') . '" au fost setate cu succes!');
     }
 
     public function adaugaModificaFisaMasuri(Request $request, FisaCaz $fisaCaz)
@@ -556,7 +558,7 @@ class FisaCazController extends Controller
                 'cerinte:fisa_caz_id,sursa_buget',
                 'oferte:fisa_caz_id,pret,acceptata',
                 'ofertaAcceptata:fisa_caz_id,pret')
-            ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare', 'facturat', 'bonusat')
+            ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare', 'luna_bonus')
             ->orderBy('protezare', 'asc')
             ->get();
 

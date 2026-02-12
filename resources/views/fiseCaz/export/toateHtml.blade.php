@@ -118,8 +118,8 @@
                 <th>PERSOANA<br>TEHNIC</th>
 
                 @if ($dimensiune == 'partial')
-                    <th>FACTURA</th>
-                    <th>BONUSAT</th>
+                    <th>DATA PREDARE</th>
+                    <th>LUNA BONUS</th>
                 @endif
 
                 @if ($dimensiune == 'intreg')
@@ -217,10 +217,10 @@
 
                     @if ($dimensiune == 'partial')
                         <td>
-                            {{ ((int) ($fisaCaz->facturat ?? 0) === 1) ? 'Da' : 'Nu' }}
+                            {{ $fisaCaz->protezare ? Carbon::parse($fisaCaz->protezare)->isoFormat('DD.MM.YYYY') : '' }}
                         </td>
                         <td>
-                            {{ ((int) ($fisaCaz->bonusat ?? 0) === 1) ? 'Da' : 'Nu' }}
+                            {{ $fisaCaz->luna_bonus ? Carbon::parse($fisaCaz->luna_bonus)->isoFormat('MM.YYYY') : '' }}
                         </td>
                     @endif
 

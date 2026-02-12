@@ -23,9 +23,4 @@ class Lucrare extends Model
     {
         return $this->hasMany(FisaCaz::class, 'tip_lucrare_solicitata_id');
     }
-
-    public function bonusuri(): HasMany
-    {
-        return $this->hasMany(Bonus::class, 'lucrare_id');
-    }
 }

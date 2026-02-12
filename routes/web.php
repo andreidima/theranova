@@ -108,12 +108,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('/bonusuri')->name('bonusuri.')->middleware('check.tech.access:bonusuri.access')->group(function () {
         Route::get('/', [BonusController::class, 'index'])->name('index');
         Route::get('/situatii-de-rezolvat', [BonusController::class, 'situatii'])->name('situatii');
-        Route::post('/calculeaza-eligibile', [BonusController::class, 'calculeaza'])
-            ->middleware('check.tech.access:bonusuri.edit')
-            ->name('calculeaza');
-        Route::patch('/{bonus}/actualizeaza', [BonusController::class, 'actualizeaza'])
-            ->middleware('check.tech.access:bonusuri.edit')
-            ->name('actualizeaza');
 
         Route::get('/configurare', [ConfigurareController::class, 'index'])
             ->middleware('check.tech.access:bonusuri.edit')

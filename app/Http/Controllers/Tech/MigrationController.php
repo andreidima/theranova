@@ -69,7 +69,7 @@ class MigrationController extends Controller
             ->map(function ($file) {
                 return Str::replaceLast('.php', '', $file->getFilename());
             })
-            ->sort()
+            ->sortDesc()
             ->values();
     }
 
