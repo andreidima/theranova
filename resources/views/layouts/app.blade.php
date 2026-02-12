@@ -47,10 +47,10 @@
                         $canTechMigrations = auth()->user()->hasRole('tech.migrations');
                         $canTechCronjobs = auth()->user()->hasRole('tech.cronjobs');
                         $showTechMenu = $canTechImpersonare || $canTechMigrations || $canTechCronjobs;
+                        $canBonusuriAccess = auth()->user()->hasRole('bonusuri.access');
+                        $canBonusuriEdit = auth()->user()->hasRole('bonusuri.edit');
                         $isImpersonating = session()->has('impersonator_id');
-                    @endphp
-
-                    <!-- Left Side Of Navbar -->
+                    @endphp                    <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item me-3">
                             <a class="nav-link active" aria-current="page" href="/pacienti">
@@ -85,6 +85,33 @@
                                 </li>
                             </ul>
                         </li>
+                        @if($canBonusuriAccess)
+                            <li class="nav-item me-3 dropdown">
+                                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdownBonusuri" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-coins me-1"></i>
+                                    Bonusuri
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownBonusuri">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('bonusuri.index') }}">
+                                            Bonusuri lunare
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('bonusuri.situatii') }}">
+                                            Situații de rezolvat
+                                        </a>
+                                    </li>
+                                    @if($canBonusuriEdit)
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('bonusuri.configurare.index') }}">
+                                                Configurare bonusuri
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                        @endif
                         @if(in_array(auth()->user()->id, [1, 2]))
                             <li class="nav-item me-3 dropdown">
                                 <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

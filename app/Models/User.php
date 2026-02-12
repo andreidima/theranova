@@ -81,4 +81,9 @@ class User extends Authenticatable
     {
         return MesajeTrimiseEmail::where('referinta_id', $fisaCazId)->where('referinta2_id', $this->id)->count();
     }
+
+    public function bonusuri(): HasMany
+    {
+        return $this->hasMany(Bonus::class, 'user_id');
+    }
 }

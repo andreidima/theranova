@@ -7,6 +7,7 @@ use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Schema;
 
 use App\Models\FisaCaz;
 use App\Models\User;
@@ -16,6 +17,7 @@ use App\Models\Cerinta;
 use App\Models\Fisier;
 use App\Models\Comanda;
 use App\Models\Oferta;
+use App\Services\BonusCalculatorService;
 
 use Carbon\Carbon;
 
@@ -131,7 +133,8 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 
-        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id', 'programare_atelier', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $this->syncTipLucrareSolicitataId($fisaCaz);
 
         if ($request->dateMedicale){
             foreach ($request->dateMedicale as $date) {
@@ -187,7 +190,8 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 // dd($request);
-        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id', 'programare_atelier', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $this->syncTipLucrareSolicitataId($fisaCaz);
 
         if ($request->dateMedicale){
             foreach ($request->dateMedicale as $date) {
@@ -318,6 +322,15 @@ class FisaCazController extends Controller
                 'cerinte.*.observatii.max' => 'Câmpul observații trebuie să aibă maxim 2000 de caractere.',
             ]
         );
+    }
+
+    protected function syncTipLucrareSolicitataId(FisaCaz $fisaCaz): void
+    {
+        if (!Schema::hasTable('lucrari') || !Schema::hasColumn('fise_caz', 'tip_lucrare_solicitata_id')) {
+            return;
+        }
+
+        app(BonusCalculatorService::class)->rezolvaLucrarePentruFisa($fisaCaz);
     }
 
     public function fisaCazAdaugaResursa(Request $request, $resursa = null)

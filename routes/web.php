@@ -14,6 +14,8 @@ use App\Http\Controllers\Tech\ImpersonareController;
 use App\Http\Controllers\Tech\MigrationController;
 use App\Http\Controllers\Tech\CronjobDashboardController;
 use App\Http\Controllers\Tech\CronjobTriggerController;
+use App\Http\Controllers\Bonusuri\BonusController;
+use App\Http\Controllers\Bonusuri\ConfigurareController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,6 +103,39 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/cronjobs', [CronjobDashboardController::class, 'index'])
                 ->name('cronjobs.index');
         });
+    });
+
+    Route::prefix('/bonusuri')->name('bonusuri.')->middleware('check.tech.access:bonusuri.access')->group(function () {
+        Route::get('/', [BonusController::class, 'index'])->name('index');
+        Route::get('/situatii-de-rezolvat', [BonusController::class, 'situatii'])->name('situatii');
+        Route::post('/calculeaza-eligibile', [BonusController::class, 'calculeaza'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('calculeaza');
+        Route::patch('/{bonus}/actualizeaza', [BonusController::class, 'actualizeaza'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('actualizeaza');
+
+        Route::get('/configurare', [ConfigurareController::class, 'index'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.index');
+        Route::post('/configurare/lucrari', [ConfigurareController::class, 'adaugaLucrare'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.lucrari.store');
+        Route::patch('/configurare/lucrari/{lucrare}', [ConfigurareController::class, 'actualizeazaLucrare'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.lucrari.update');
+        Route::delete('/configurare/lucrari/{lucrare}', [ConfigurareController::class, 'stergeLucrare'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.lucrari.delete');
+        Route::post('/configurare/intervale', [ConfigurareController::class, 'adaugaInterval'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.intervale.store');
+        Route::patch('/configurare/intervale/{interval}', [ConfigurareController::class, 'actualizeazaInterval'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.intervale.update');
+        Route::delete('/configurare/intervale/{interval}', [ConfigurareController::class, 'stergeInterval'])
+            ->middleware('check.tech.access:bonusuri.edit')
+            ->name('configurare.intervale.delete');
     });
 
 
