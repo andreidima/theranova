@@ -284,6 +284,7 @@ class BonusController extends Controller
     {
         return $rows
             ->sortBy([
+                ['user_name', 'asc'],
                 ['pacient_nume', 'asc'],
                 ['pacient_prenume', 'asc'],
                 ['fisa_caz_id', 'asc'],
