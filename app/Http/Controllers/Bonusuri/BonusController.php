@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Bonusuri;
 
+use App\Exports\BonusuriLunareExport;
 use App\Http\Controllers\Controller;
 use App\Models\FisaCaz;
 use App\Models\Oferta;
@@ -12,7 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class BonusController extends Controller
 {
@@ -54,7 +56,7 @@ class BonusController extends Controller
         ]);
     }
 
-    public function export(Request $request, BonusCalculatorService $bonusCalculatorService): StreamedResponse
+    public function export(Request $request, BonusCalculatorService $bonusCalculatorService): BinaryFileResponse
     {
         $data = $this->collectRows($request, $bonusCalculatorService);
         $rows = $data['rows'];
@@ -65,48 +67,9 @@ class BonusController extends Controller
         if ($selectedUserId > 0) {
             $fileName .= '-user-' . $selectedUserId;
         }
-        $fileName .= '.csv';
+        $fileName .= '.xlsx';
 
-        return response()->streamDownload(function () use ($rows) {
-            $handle = fopen('php://output', 'w');
-            fwrite($handle, "\xEF\xBB\xBF");
-
-            fputcsv($handle, [
-                'Pacient nume',
-                'Pacient prenume',
-                'Fisa caz',
-                'Utilizator',
-                'Rol',
-                'Lucrare',
-                'Amputatie',
-                'Oferta lei',
-                'Bonus fix',
-                'Bonus procent',
-                'Bonus total',
-                'Luna bonus',
-            ], ';');
-
-            foreach ($rows as $row) {
-                fputcsv($handle, [
-                    $row['pacient_nume'],
-                    $row['pacient_prenume'],
-                    $row['fisa_caz_id'],
-                    $row['user_name'],
-                    $row['rol'],
-                    $row['lucrare_denumire'],
-                    $row['amputatie'],
-                    $row['valoare_oferta'],
-                    $row['bonus_fix'],
-                    $row['bonus_procent'],
-                    $row['bonus_total'],
-                    Carbon::parse($row['luna_bonus'])->format('m.Y'),
-                ], ';');
-            }
-
-            fclose($handle);
-        }, $fileName, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-        ]);
+        return Excel::download(new BonusuriLunareExport($rows), $fileName);
     }
 
     public function situatii(Request $request): View

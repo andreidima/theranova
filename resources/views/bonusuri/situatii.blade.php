@@ -14,7 +14,7 @@
         @include ('errors')
 
         <div class="alert alert-info">
-            Fise caz cu oferta acceptata, dar fara <strong>Data predare</strong> sau fara <strong>Luna bonus</strong>.
+            Fise caz cu oferta acceptata, dar fara <strong>Data predare</strong> sau nefacturata (<strong>Luna facturare</strong>).
             @if($canViewAll)
                 Se afiseaza toate fisele.
             @else

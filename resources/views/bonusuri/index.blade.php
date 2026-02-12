@@ -14,7 +14,7 @@
         @include ('errors')
 
         <div class="alert alert-info mb-3">
-            Lista este calculata dinamic pe baza lunii selectate in campul <strong>Luna bonus</strong> din fiecare fisa caz.
+            Lista este calculata dinamic pe baza lunii selectate in campul <strong>Luna facturare</strong> din fiecare fisa caz.
             Se foloseste prima oferta acceptata si intervalul activ corespunzator lucrarii.
         </div>
 
