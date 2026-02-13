@@ -289,7 +289,11 @@ class BonusController extends Controller
 
     protected function downloadTemplateExport(Collection $rows, string $month, string $fileName): StreamedResponse|BinaryFileResponse
     {
-        $templatePath = storage_path('app/templates/bonusuri_template.xlsx');
+        $templatePath = resource_path('templates/bonusuri_template.xlsx');
+        if (!file_exists($templatePath)) {
+            $templatePath = storage_path('app/templates/bonusuri_template.xlsx');
+        }
+
         if (!file_exists($templatePath)) {
             return \Maatwebsite\Excel\Facades\Excel::download(new BonusuriLunareExport($rows), $fileName);
         }
