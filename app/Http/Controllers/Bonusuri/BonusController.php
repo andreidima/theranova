@@ -12,9 +12,14 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class BonusController extends Controller
 {
@@ -57,7 +62,7 @@ class BonusController extends Controller
         ]);
     }
 
-    public function export(Request $request, BonusCalculatorService $bonusCalculatorService): BinaryFileResponse
+    public function export(Request $request, BonusCalculatorService $bonusCalculatorService): StreamedResponse|BinaryFileResponse
     {
         $data = $this->collectRows($request, $bonusCalculatorService);
         $rows = $data['rows'];
@@ -74,7 +79,7 @@ class BonusController extends Controller
         }
         $fileName .= '.xlsx';
 
-        return Excel::download(new BonusuriLunareExport($rows), $fileName);
+        return $this->downloadTemplateExport($rows, $month, $fileName);
     }
 
     public function situatii(Request $request): View
@@ -83,7 +88,7 @@ class BonusController extends Controller
 
         $query = FisaCaz::query()
             ->with([
-                'pacient:id,nume,prenume',
+                'pacient:id,nume,prenume,localitate,judet',
                 'userVanzari:id,name',
                 'userTehnic:id,name',
                 'oferte' => function ($q) {
@@ -138,7 +143,7 @@ class BonusController extends Controller
 
         $query = FisaCaz::query()
             ->with([
-                'pacient:id,nume,prenume',
+                'pacient:id,nume,prenume,localitate,judet',
                 'userVanzari:id,name,email',
                 'userTehnic:id,name,email',
                 'lucrare:id,denumire,cod,activ',
@@ -231,12 +236,15 @@ class BonusController extends Controller
                         : (string) ($fisaCaz->userTehnic->name ?? '-'),
                     'rol' => $rol,
                     'lucrare_denumire' => (string) $lucrare->denumire,
+                    'lucrare_cod' => (string) ($lucrare->cod ?? ''),
                     'amputatie' => $bonusCalculatorService->normalizeAmputatie($interval->amputatie) ?? 'Toate amputatiile',
                     'valoare_oferta' => $valoareOferta,
                     'bonus_fix' => $bonusFix,
                     'bonus_procent' => $bonusProcent,
                     'bonus_total' => $bonusTotal,
                     'luna_bonus' => $lunaBonusDate->toDateString(),
+                    'pacient_localitate' => (string) ($fisaCaz->pacient->localitate ?? ''),
+                    'pacient_judet' => (string) ($fisaCaz->pacient->judet ?? ''),
                 ]);
             }
         }
@@ -277,5 +285,127 @@ class BonusController extends Controller
                 ['rol', 'asc'],
             ])
             ->values();
+    }
+
+    protected function downloadTemplateExport(Collection $rows, string $month, string $fileName): StreamedResponse|BinaryFileResponse
+    {
+        $templatePath = storage_path('app/templates/bonusuri_template.xlsx');
+        if (!file_exists($templatePath)) {
+            return \Maatwebsite\Excel\Facades\Excel::download(new BonusuriLunareExport($rows), $fileName);
+        }
+
+        $templateRows = $this->buildTemplateRows($rows, $month);
+        $spreadsheet = IOFactory::load($templatePath);
+        $sheet = $spreadsheet->getSheetByName('GENERAL') ?: $spreadsheet->getSheet(0);
+        $sheet->getColumnDimension('J')->setWidth($sheet->getColumnDimension('L')->getWidth());
+
+        $startRow = 9;
+        $maxRow = max($startRow, $sheet->getHighestRow());
+        $rowsToClear = max(1, $maxRow - $startRow + 1);
+
+        $emptyRows = array_fill(0, $rowsToClear, array_fill(0, 15, ''));
+        $sheet->fromArray($emptyRows, null, "A{$startRow}");
+
+        $line = $startRow;
+        $sumValoare = 0;
+        $sumBonusVanzari = 0;
+
+        foreach ($templateRows as $row) {
+            $sheet->duplicateStyle($sheet->getStyle("A{$startRow}:O{$startRow}"), "A{$line}:O{$line}");
+
+            $sheet->setCellValue("A{$line}", $row['nr_crt']);
+            $sheet->setCellValue("B{$line}", $row['luna']);
+            $sheet->setCellValue("C{$line}", $row['an']);
+            $sheet->setCellValue("D{$line}", $row['nume_pacient']);
+            $sheet->setCellValue("E{$line}", $row['localitate']);
+            $sheet->setCellValue("F{$line}", $row['dispozitiv']);
+            $sheet->setCellValue("G{$line}", $row['cod']);
+            $sheet->setCellValue("H{$line}", $row['valoare_cu_tva']);
+            $sheet->setCellValue("I{$line}", $row['valoare_bonus']);
+            $sheet->setCellValue("J{$line}", $row['rm']);
+            $sheet->setCellValue("K{$line}", $row['bonus_rm']);
+            $sheet->setCellValue("L{$line}", $row['tehnic']);
+            $sheet->setCellValue("M{$line}", $row['bonus_tehnic']);
+            $sheet->setCellValue("N{$line}", $row['fara_agent']);
+            $sheet->setCellValue("O{$line}", $row['observatii']);
+            $sheet->getStyle("A{$line}:O{$line}")->getFont()->getColor()->setARGB(Color::COLOR_BLACK);
+            $sheet->getStyle("D{$line}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $sheet->getStyle("F{$line}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $sheet->getStyle("G{$line}")->getFont()->setBold(true);
+            $sheet->getStyle("H{$line}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle("I{$line}")->getFont()->getColor()->setARGB(Color::COLOR_RED);
+
+            $sumValoare += (int) $row['valoare_cu_tva'];
+            $sumBonusVanzari += (int) $row['bonus_rm'];
+            $line++;
+        }
+
+        $sheet->setCellValue('H4', $sumValoare);
+        $sheet->setCellValue('K4', $sumBonusVanzari);
+        $sheet->setSelectedCell('A1');
+        $sheet->setTopLeftCell('A1');
+
+        return response()->streamDownload(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    protected function buildTemplateRows(Collection $rows, string $month): Collection
+    {
+        $monthDate = Carbon::createFromFormat('Y-m', $month)->locale('ro');
+        $monthLabel = ucfirst($monthDate->isoFormat('MMMM'));
+        $year = (int) $monthDate->year;
+
+        return $rows
+            ->groupBy('fisa_caz_id')
+            ->map(function (Collection $group, int|string $fisaCazId) use ($monthLabel, $year) {
+                $first = $group->first();
+                $rowVanzari = $group->firstWhere('rol', 'vanzari');
+                $rowTehnic = $group->firstWhere('rol', 'tehnic');
+                $localitate = trim((string) ($first['pacient_localitate'] ?? ''));
+                if ($localitate === '') {
+                    $localitate = trim((string) ($first['pacient_judet'] ?? ''));
+                }
+
+                $bonusFix = (int) ($first['bonus_fix'] ?? 0);
+                $bonusProcent = (int) ($first['bonus_procent'] ?? 0);
+                $valoareBonus = '';
+                if ($bonusFix > 0 && $bonusProcent > 0) {
+                    $valoareBonus = "Fix {$bonusFix} + {$bonusProcent}%";
+                } elseif ($bonusFix > 0) {
+                    $valoareBonus = (string) $bonusFix;
+                } elseif ($bonusProcent > 0) {
+                    $valoareBonus = "{$bonusProcent}%";
+                }
+
+                $numePacient = trim((string) ($first['pacient_nume'] ?? '') . ' ' . (string) ($first['pacient_prenume'] ?? ''));
+
+                return [
+                    'nr_crt' => 0,
+                    'luna' => $monthLabel,
+                    'an' => $year,
+                    'nume_pacient' => Str::title(mb_strtolower($numePacient)),
+                    'localitate' => $localitate,
+                    'dispozitiv' => (string) ($first['lucrare_denumire'] ?? ''),
+                    'cod' => mb_strtoupper((string) ($first['lucrare_cod'] ?? '')),
+                    'valoare_cu_tva' => (int) ($first['valoare_oferta'] ?? 0),
+                    'valoare_bonus' => $valoareBonus,
+                    'rm' => $rowVanzari['user_name'] ?? '',
+                    'bonus_rm' => '',
+                    'tehnic' => $rowTehnic['user_name'] ?? '',
+                    'bonus_tehnic' => '',
+                    'fara_agent' => '',
+                    'observatii' => '',
+                ];
+            })
+            ->values()
+            ->map(function (array $row, int $index) {
+                $row['nr_crt'] = $index + 1;
+
+                return $row;
+            });
     }
 }
