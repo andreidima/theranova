@@ -81,7 +81,6 @@
                         <th class="culoare2 text-white">Oferta</th>
                         <th class="culoare2 text-white">Formula</th>
                         <th class="culoare2 text-white">Bonus</th>
-                        <th class="culoare2 text-white">Luna bonus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,11 +100,10 @@
                                 %: {{ (int) $row['bonus_procent'] }}
                             </td>
                             <td><strong>{{ number_format((int) $row['bonus_total'], 0, ',', '.') }} lei</strong></td>
-                            <td>{{ \Carbon\Carbon::parse($row['luna_bonus'])->format('m.Y') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center">Nu exista bonusuri eligibile in perioada selectata.</td>
+                            <td colspan="8" class="text-center">Nu exista bonusuri eligibile in perioada selectata.</td>
                         </tr>
                     @endforelse
                 </tbody>

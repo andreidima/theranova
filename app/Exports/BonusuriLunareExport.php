@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -29,7 +28,6 @@ class BonusuriLunareExport implements FromCollection, WithHeadings, ShouldAutoSi
             'Bonus fix',
             'Bonus procent',
             'Bonus total',
-            'Luna bonus',
         ];
     }
 
@@ -48,7 +46,6 @@ class BonusuriLunareExport implements FromCollection, WithHeadings, ShouldAutoSi
                 $row['bonus_fix'],
                 $row['bonus_procent'],
                 $row['bonus_total'],
-                Carbon::parse($row['luna_bonus'])->format('m.Y'),
             ];
         });
     }

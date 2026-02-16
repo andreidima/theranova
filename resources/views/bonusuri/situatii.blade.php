@@ -32,7 +32,6 @@
                         <th class="culoare2 text-white">Tehnic</th>
                         <th class="culoare2 text-white">Prima oferta acceptata</th>
                         <th class="culoare2 text-white">Data predare</th>
-                        <th class="culoare2 text-white">Luna bonus</th>
                         <th class="culoare2 text-white">Actiune</th>
                     </tr>
                 </thead>
@@ -54,14 +53,13 @@
                                 @endif
                             </td>
                             <td>{{ $fisaCaz->protezare ? \Carbon\Carbon::parse($fisaCaz->protezare)->format('d.m.Y') : '-' }}</td>
-                            <td>{{ $fisaCaz->luna_bonus ? \Carbon\Carbon::parse($fisaCaz->luna_bonus)->format('m.Y') : '-' }}</td>
                             <td>
-                                <a href="/fise-caz/{{ $fisaCaz->id }}" class="btn btn-sm btn-primary" target="_blank">Deschide fisa</a>
+                                <a href="/fise-caz?searchFisaId={{ $fisaCaz->id }}" class="btn btn-sm btn-primary" target="_blank">Deschide fisa</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center">Nu exista situatii restante.</td>
+                            <td colspan="7" class="text-center">Nu exista situatii restante.</td>
                         </tr>
                     @endforelse
                 </tbody>

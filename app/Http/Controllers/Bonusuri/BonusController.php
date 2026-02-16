@@ -101,8 +101,7 @@ class BonusController extends Controller
                 $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA);
             })
             ->where(function ($q) {
-                $q->whereNull('protezare')
-                    ->orWhereNull('luna_bonus');
+                $q->whereNull('protezare');
             });
 
         if (!$canViewAll) {
@@ -157,7 +156,8 @@ class BonusController extends Controller
                         ->orderBy('oferte.id');
                 },
             ])
-            ->whereDate('luna_bonus', $monthStart->toDateString())
+            ->whereYear('protezare', $monthStart->year)
+            ->whereMonth('protezare', $monthStart->month)
             ->whereHas('oferte', function ($q) {
                 $q->where('oferte.acceptata', Oferta::STATUS_ACCEPTATA);
             });
@@ -191,14 +191,14 @@ class BonusController extends Controller
                 continue;
             }
 
-            if (empty($fisaCaz->luna_bonus)) {
+            if (empty($fisaCaz->protezare)) {
                 continue;
             }
 
             $valoareOferta = (int) round((float) ($ofertaAcceptata->pret ?? 0));
-            $lunaBonusDate = Carbon::parse($fisaCaz->luna_bonus)->startOfMonth();
+            $dataPredare = Carbon::parse($fisaCaz->protezare);
             $amputatieFisa = $fisaCaz->latestDateMedicale->amputatie ?? null;
-            $interval = $bonusCalculatorService->gasesteIntervalBonus($lucrare->id, $valoareOferta, $lunaBonusDate, $amputatieFisa);
+            $interval = $bonusCalculatorService->gasesteIntervalBonus($lucrare->id, $valoareOferta, $dataPredare, $amputatieFisa);
 
             if (!$interval) {
                 continue;
@@ -242,7 +242,6 @@ class BonusController extends Controller
                     'bonus_fix' => $bonusFix,
                     'bonus_procent' => $bonusProcent,
                     'bonus_total' => $bonusTotal,
-                    'luna_bonus' => $lunaBonusDate->toDateString(),
                     'pacient_localitate' => (string) ($fisaCaz->pacient->localitate ?? ''),
                     'pacient_judet' => (string) ($fisaCaz->pacient->judet ?? ''),
                 ]);

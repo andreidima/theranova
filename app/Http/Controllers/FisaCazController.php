@@ -34,6 +34,7 @@ class FisaCazController extends Controller
         $request->session()->forget(['fisaCazReturnUrl', 'ofertaReturnUrl', 'comandaReturnUrl', 'comandaComponentaReturnUrl', 'comandaComponenteReturnUrl']);
 
         $searchNume = $request->searchNume;
+        $searchFisaId = $request->searchFisaId;
         $searchInterval = $request->searchInterval;
         $searchProgramareAtelier = $request->searchProgramareAtelier;
         $searchTipLucrareSolicitata = $request->searchTipLucrareSolicitata;
@@ -56,6 +57,9 @@ class FisaCazController extends Controller
                     });
                 }
                 return $query;
+            })
+            ->when($searchFisaId, function ($query, $searchFisaId) {
+                $query->where('id', (int) $searchFisaId);
             })
             ->when($searchTipLucrareSolicitata, function ($query, $searchTipLucrareSolicitata) {
                 $query->where('tip_lucrare_solicitata', $searchTipLucrareSolicitata);
@@ -101,7 +105,7 @@ class FisaCazController extends Controller
 
         $useri = User::select('id', 'name', 'role')->orderBy('name')->get();
 
-        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchInterval', 'searchProgramareAtelier', 'searchTipLucrareSolicitata', 'searchAcceptata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
+        return view('fiseCaz.index', compact('fiseCaz', 'useri', 'searchNume', 'searchFisaId', 'searchInterval', 'searchProgramareAtelier', 'searchTipLucrareSolicitata', 'searchAcceptata', 'searchUserVanzari', 'searchUserComercial', 'searchUserTehnic'));
     }
 
     /**
