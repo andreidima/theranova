@@ -158,7 +158,7 @@
                     </td>
 
                     <td>
-                        {{ $fisaCaz->tip_lucrare_solicitata }}
+                        {{ $fisaCaz->tip_lucrare_denumire }}
                     </td>
 
                     @if ($dimensiune == 'intreg')

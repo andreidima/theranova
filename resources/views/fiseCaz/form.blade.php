@@ -11,7 +11,7 @@
     dateMedicale =  {!! json_encode(old('dateMedicale', $fisaCaz->dateMedicale()->get()) ?? []) !!}
     cerinte =  {!! json_encode(old('cerinte', $fisaCaz->cerinte()->get()) ?? []) !!}
 
-    tipLucrareSolicitataVeche = {!! json_encode(old('tip_lucrare_solicitata', ($fisaCaz->tip_lucrare_solicitata ?? "")) ?? "") !!}
+    tipLucrareSolicitataVeche = {!! json_encode(old('tip_lucrare_solicitata', ($fisaCaz->tip_lucrare_denumire ?? "")) ?? "") !!}
 </script>
 
 <div class="row mb-0 px-3 d-flex border-radius: 0px 0px 40px 40px" id="fisaCazForm">
@@ -39,20 +39,20 @@
                             v-model="tip_lucrare_solicitata"
                             >
                             <option value="" selected></option>
-                            <option value="AK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK provizorie" ? 'selected' : '' }}>AK provizorie</option>
-                            <option value="AK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "AK definitivă" ? 'selected' : '' }}>AK definitivă</option>
-                            <option value="BK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK provizorie" ? 'selected' : '' }}>BK provizorie</option>
-                            <option value="BK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "BK definitivă" ? 'selected' : '' }}>BK definitivă</option>
-                            <option value="Disp mers" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Disp mers" ? 'selected' : '' }}>Disp mers</option>
-                            <option value="Fotoliu" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Fotoliu" ? 'selected' : '' }}>Fotoliu</option>
-                            <option value="Modificări" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Modificări" ? 'selected' : '' }}>Modificări</option>
-                            <option value="Orteză" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Orteză" ? 'selected' : '' }}>Orteză</option>
-                            <option value="PMS" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "PMS" ? 'selected' : '' }}>PMS</option>
-                            <option value="PPP" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "PPP" ? 'selected' : '' }}>PPP</option>
-                            <option value="Manșon" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Manșon" ? 'selected' : '' }}>Manșon</option>
-                            <option value="Proteză sân" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Proteză sân" ? 'selected' : '' }}>Proteză sân</option>
-                            <option value="Proteză sân+sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Proteză sân+sutien" ? 'selected' : '' }}>Proteză sân+sutien</option>
-                            <option value="Sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata ?? '')) == "Sutien" ? 'selected' : '' }}>Sutien</option>
+                            <option value="AK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "AK provizorie" ? 'selected' : '' }}>AK provizorie</option>
+                            <option value="AK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "AK definitivă" ? 'selected' : '' }}>AK definitivă</option>
+                            <option value="BK provizorie" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "BK provizorie" ? 'selected' : '' }}>BK provizorie</option>
+                            <option value="BK definitivă" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "BK definitivă" ? 'selected' : '' }}>BK definitivă</option>
+                            <option value="Disp mers" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Disp mers" ? 'selected' : '' }}>Disp mers</option>
+                            <option value="Fotoliu" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Fotoliu" ? 'selected' : '' }}>Fotoliu</option>
+                            <option value="Modificări" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Modificări" ? 'selected' : '' }}>Modificări</option>
+                            <option value="Orteză" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Orteză" ? 'selected' : '' }}>Orteză</option>
+                            <option value="PMS" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "PMS" ? 'selected' : '' }}>PMS</option>
+                            <option value="PPP" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "PPP" ? 'selected' : '' }}>PPP</option>
+                            <option value="Manșon" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Manșon" ? 'selected' : '' }}>Manșon</option>
+                            <option value="Proteză sân" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Proteză sân" ? 'selected' : '' }}>Proteză sân</option>
+                            <option value="Proteză sân+sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Proteză sân+sutien" ? 'selected' : '' }}>Proteză sân+sutien</option>
+                            <option value="Sutien" {{ (old('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_denumire ?? '')) == "Sutien" ? 'selected' : '' }}>Sutien</option>
                         </select>
                     </div>
                     {{-- <div class="col-lg-2 mb-4 text-center">

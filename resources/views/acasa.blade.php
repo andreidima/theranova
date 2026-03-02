@@ -43,13 +43,17 @@
                         //             ->whereYear('protezare', now());
                         //     })
                         //     ->get();
-                        $fiseCazAnulCurent = \App\Models\FisaCaz::select('tip_lucrare_solicitata')
+                        $fiseCazAnulCurent = \App\Models\FisaCaz::with('lucrare:id,denumire')
+                            ->select('id', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id')
                             ->whereYear('protezare', now())
                             ->get();
-                        $fiseCazLunaCurenta = \App\Models\FisaCaz::select('tip_lucrare_solicitata')
+                        $fiseCazLunaCurenta = \App\Models\FisaCaz::with('lucrare:id,denumire')
+                            ->select('id', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id')
                             ->whereMonth('protezare', now())
                             ->whereYear('protezare', now())
                             ->get();
+                        $grupuriAn = $fiseCazAnulCurent->groupBy(fn ($fisaCaz) => $fisaCaz->tip_lucrare_denumire ?: 'Necompletat')->sortKeys();
+                        $grupuriLuna = $fiseCazLunaCurenta->groupBy(fn ($fisaCaz) => $fisaCaz->tip_lucrare_denumire ?: 'Necompletat');
                     @endphp
                     <table>
                         <tr>
@@ -57,16 +61,16 @@
                             <th class="px-4">{{ now()->isoFormat('MM.YYYY') }}</th>
                             <th class="px-4">{{ now()->year }}</th>
                         </tr>
-                    @foreach ($fiseCazAnulCurent->unique('tip_lucrare_solicitata')->sortBy('tip_lucrare_solicitata') as $fisaCaz)
+                    @foreach ($grupuriAn as $denumireLucrare => $fisePentruLucrare)
                         <tr>
                             <td class="text-start">
-                                {{ $fisaCaz->tip_lucrare_solicitata }}
+                                {{ $denumireLucrare }}
                             </td>
                             <th>
-                                {{ $fiseCazLunaCurenta->where('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata)->count() }}
+                                {{ $grupuriLuna->get($denumireLucrare, collect())->count() }}
                             </th>
                             <th>
-                                {{ $fiseCazAnulCurent->where('tip_lucrare_solicitata', $fisaCaz->tip_lucrare_solicitata)->count() }}
+                                {{ $fisePentruLucrare->count() }}
                             </th>
                         </tr>
                     @endforeach
@@ -128,4 +132,3 @@
 
 </div>
 @endsection
-

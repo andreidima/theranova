@@ -23,7 +23,7 @@ class FisaCaz extends Mailable
         public \App\Models\FisaCaz $fisaCaz,
         public $tipEmail,
         public $mesaj = null,
-        public \App\Models\Comanda $comanda,
+        public ?\App\Models\Comanda $comanda = null,
         // public $userName = null
         )
     {
@@ -57,7 +57,7 @@ class FisaCaz extends Mailable
                                         )
                                 )
                         )
-                ) . ' - pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . $this->fisaCaz->tip_lucrare_solicitata,
+                ) . ' - pacient ' . ($this->fisaCaz->pacient->nume ?? '') . ' ' . ($this->fisaCaz->pacient->prenume ?? '') . ' - proteză ' . $this->fisaCaz->tip_lucrare_denumire,
         );
     }
 

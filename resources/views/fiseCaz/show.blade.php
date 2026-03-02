@@ -1,11 +1,7 @@
 @php
     use \Carbon\Carbon;
 
-    if (in_array($fisaCaz->tip_lucrare_solicitata, ['Disp mers', "Fotoliu", "Orteză", "Proteză sân", "Proteză sân+sutien", "Sutien"])){
-        $showAllFields = false;
-    } else {
-        $showAllFields = true;
-    }
+    $showAllFields = $fisaCaz->areCampuriMedicaleExtinse();
 @endphp
 
 @extends ('layouts.app')
@@ -43,7 +39,7 @@
                                     Tip lucrare solicitată
                                 </td>
                                 <td>
-                                    {{ $fisaCaz->tip_lucrare_solicitata }}
+                                    {{ $fisaCaz->tip_lucrare_denumire }}
                                 </td>
                             </tr>
                             @if ($showAllFields)

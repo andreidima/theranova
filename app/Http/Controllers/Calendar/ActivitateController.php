@@ -143,7 +143,7 @@ class ActivitateController extends Controller
 
             $activitate->fisa_caz_id = $fisaCaz->id;
             $activitate->descriere = ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '')
-                                        . ', ' . $fisaCaz->tip_lucrare_solicitata
+                                        . ', ' . $fisaCaz->tip_lucrare_denumire
                                         . ' - ' . $userTehnic . '/' . $userVanzari;
 
             // Lucrarile cu tehnicieni Ionut Miron si Alex Oprea sunt pe Bucuresti, altfel se pune Oradea

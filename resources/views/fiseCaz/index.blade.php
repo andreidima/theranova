@@ -200,7 +200,7 @@
                                     </a>
                                 </td>
                                 <td class="">
-                                    {{ $fisaCaz->tip_lucrare_solicitata }}
+                                    {{ $fisaCaz->tip_lucrare_denumire }}
                                     <br>
                                     {{ $fisaCaz->data ? Carbon::parse($fisaCaz->data)->isoFormat('DD.MM.YYYY') : '' }}
                                     <br>

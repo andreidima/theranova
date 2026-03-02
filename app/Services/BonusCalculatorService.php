@@ -11,27 +11,37 @@ use Illuminate\Support\Str;
 
 class BonusCalculatorService
 {
-    public function rezolvaLucrarePentruFisa(FisaCaz $fisaCaz): ?Lucrare
+    public function rezolvaLucrarePentruFisa(FisaCaz $fisaCaz, ?string $denumirePreferata = null): ?Lucrare
     {
-        if (!empty($fisaCaz->tip_lucrare_solicitata_id)) {
+        $denumire = $this->normalizeDenumire($denumirePreferata ?? $fisaCaz->tip_lucrare_solicitata);
+        $lucrare = null;
+
+        if ($denumire !== '') {
+            $lucrare = Lucrare::firstOrCreate(
+                ['denumire' => $denumire],
+                ['cod' => $this->genereazaCodLucrareUnic($denumire), 'activ' => 1]
+            );
+        } elseif (!empty($fisaCaz->tip_lucrare_solicitata_id)) {
             $lucrare = Lucrare::find($fisaCaz->tip_lucrare_solicitata_id);
-            if ($lucrare) {
-                return $lucrare;
-            }
         }
 
-        $denumire = trim((string) $fisaCaz->tip_lucrare_solicitata);
-        if ($denumire === '') {
+        if (!$lucrare) {
             return null;
         }
 
-        $lucrare = Lucrare::firstOrCreate(
-            ['denumire' => $denumire],
-            ['cod' => $this->genereazaCodLucrareUnic($denumire), 'activ' => 1]
-        );
+        $updates = [];
 
-        if (Schema::hasColumn('fise_caz', 'tip_lucrare_solicitata_id')) {
-            $fisaCaz->tip_lucrare_solicitata_id = $lucrare->id;
+        if (Schema::hasColumn('fise_caz', 'tip_lucrare_solicitata_id')
+            && (int) $fisaCaz->tip_lucrare_solicitata_id !== (int) $lucrare->id) {
+            $updates['tip_lucrare_solicitata_id'] = $lucrare->id;
+        }
+
+        if ((string) $fisaCaz->tip_lucrare_solicitata !== (string) $lucrare->denumire) {
+            $updates['tip_lucrare_solicitata'] = $lucrare->denumire;
+        }
+
+        if ($updates !== []) {
+            $fisaCaz->forceFill($updates);
             $fisaCaz->save();
         }
 
@@ -120,5 +130,14 @@ class BonusCalculatorService
         $value = preg_replace('/\s+/u', ' ', trim($value)) ?? '';
 
         return $value === '' ? null : $value;
+    }
+
+    public function normalizeDenumire(?string $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        return preg_replace('/\s+/u', ' ', trim($value)) ?? '';
     }
 }

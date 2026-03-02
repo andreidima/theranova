@@ -12,6 +12,18 @@ class FisaCaz extends Model
 {
     use HasFactory;
 
+    public const TIPURI_CU_CAMPURI_REDUSE = [
+        'Disp mers',
+        'Fotoliu',
+        'Orteza',
+        'Orteză',
+        'Proteza san',
+        'Proteză sân',
+        'Proteza san+sutien',
+        'Proteză sân+sutien',
+        'Sutien',
+    ];
+
     protected $table = 'fise_caz';
     protected $guarded = [];
     protected $casts = [
@@ -66,6 +78,16 @@ class FisaCaz extends Model
     public function lucrare(): BelongsTo
     {
         return $this->belongsTo(Lucrare::class, 'tip_lucrare_solicitata_id');
+    }
+
+    public function getTipLucrareDenumireAttribute(): string
+    {
+        return trim((string) ($this->lucrare->denumire ?? $this->attributes['tip_lucrare_solicitata'] ?? ''));
+    }
+
+    public function areCampuriMedicaleExtinse(): bool
+    {
+        return !in_array($this->tip_lucrare_denumire, self::TIPURI_CU_CAMPURI_REDUSE, true);
     }
 
     /**

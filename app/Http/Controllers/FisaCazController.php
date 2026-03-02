@@ -17,6 +17,7 @@ use App\Models\DataMedicala;
 use App\Models\Cerinta;
 use App\Models\Fisier;
 use App\Models\Comanda;
+use App\Models\Lucrare;
 use App\Models\Oferta;
 use App\Services\BonusCalculatorService;
 
@@ -43,7 +44,7 @@ class FisaCazController extends Controller
         $searchUserComercial = $request->searchUserComercial;
         $searchUserTehnic = $request->searchUserTehnic;
 
-        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'oferte.incasari', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda',
+        $fiseCaz = FisaCaz::with('pacient', 'userVanzari', 'userComercial', 'userTehnic', 'lucrare', 'oferte.fisiere', 'oferte.fisaCaz.pacient', 'oferte.incasari', 'dateMedicale', 'comenziComponente', 'fisiereComanda', 'fisiereFisaMasuri', 'emailuriFisaCaz', 'emailuriOferta', 'emailuriComanda',
             'comenzi.fisaCaz', 'comenzi.componente', 'comenzi.componente', 'comenzi.fisiere', 'comenzi.emailuriTrimise', 'activitate', 'activitati')
             // ->withCount('emailuriFisaCazUserVanzari', 'emailuriFisaCazUserComercial', 'emailuriFisaCazUserTehnic', 'emailuriOfertaUserVanzari', 'emailuriOfertaUserComercial', 'emailuriOfertaUserTehnic', 'emailuriComandaUserVanzari', 'emailuriComandaUserComercial', 'emailuriComandaUserTehnic')
             ->when($searchNume, function ($query, $searchNume) {
@@ -62,7 +63,15 @@ class FisaCazController extends Controller
                 $query->where('id', (int) $searchFisaId);
             })
             ->when($searchTipLucrareSolicitata, function ($query, $searchTipLucrareSolicitata) {
-                $query->where('tip_lucrare_solicitata', $searchTipLucrareSolicitata);
+                $lucrareIds = Lucrare::withTrashed()
+                    ->where('denumire', $searchTipLucrareSolicitata)
+                    ->pluck('id');
+
+                if ($lucrareIds->isNotEmpty()) {
+                    $query->whereIn('tip_lucrare_solicitata_id', $lucrareIds);
+                } else {
+                    $query->where('tip_lucrare_solicitata', $searchTipLucrareSolicitata);
+                }
             })
             ->when($searchInterval, function ($query, $searchInterval) {
                 return $query->whereBetween('protezare', [strtok($searchInterval, ','), strtok( '' )]);
@@ -138,7 +147,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 
-        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id', 'programare_atelier', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz = FisaCaz::create($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare', 'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
         $this->syncTipLucrareSolicitataId($fisaCaz);
 
         if ($request->dateMedicale){
@@ -195,7 +204,7 @@ class FisaCazController extends Controller
     {
         $this->validateRequest($request);
 // dd($request);
-        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id', 'programare_atelier', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
+        $fisaCaz->update($request->only(['data', 'tip_lucrare_solicitata', 'programare_atelier', 'compresie_manson', 'protezare',  'user_vanzari', 'user_comercial', 'user_tehnic', 'pacient_id', 'observatii']));
         $this->syncTipLucrareSolicitataId($fisaCaz);
 
         if ($request->dateMedicale){
@@ -335,7 +344,7 @@ class FisaCazController extends Controller
             return;
         }
 
-        app(BonusCalculatorService::class)->rezolvaLucrarePentruFisa($fisaCaz);
+        app(BonusCalculatorService::class)->rezolvaLucrarePentruFisa($fisaCaz, $fisaCaz->tip_lucrare_solicitata);
     }
 
     public function fisaCazAdaugaResursa(Request $request, $resursa = null)
@@ -559,10 +568,11 @@ class FisaCazController extends Controller
                 'pacient.apartinatori:pacient_id,nume,prenume,telefon',
                 'userVanzari:id,name',
                 'userTehnic:id,name',
+                'lucrare:id,denumire',
                 'cerinte:fisa_caz_id,sursa_buget',
                 'oferte:fisa_caz_id,pret,acceptata',
                 'ofertaAcceptata:fisa_caz_id,pret')
-            ->select('id', 'tip_lucrare_solicitata', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare', 'luna_bonus')
+            ->select('id', 'tip_lucrare_solicitata', 'tip_lucrare_solicitata_id', 'user_vanzari', 'user_tehnic', 'pacient_id', 'protezare', 'luna_bonus')
             ->orderBy('protezare', 'asc')
             ->get();
 

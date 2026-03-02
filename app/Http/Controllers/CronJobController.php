@@ -25,15 +25,13 @@ class CronJobController extends Controller
         }
 
         // Mail reminder pentru 'AK provizorie', dupa 8 luni / 'BK provizorie', dupa 5 luni
-        $fiseCaz = FisaCaz::with('dateMedicale', 'userVanzari', 'userComercial', 'userTehnic')
+        $fiseCaz = FisaCaz::with('dateMedicale', 'userVanzari', 'userComercial', 'userTehnic', 'lucrare')
             ->where(function ($query) {
                 $query->whereDoesntHave('emailReminderAKProvizorie')
-                // ->whereHas('dateMedicale', function($query){
-                //     $query->where('tip_proteza', 'AK provizorie');
-                // })
-                ->where('tip_lucrare_solicitata', 'AK provizorie')
+                ->whereHas('lucrare', function ($lucrareQuery) {
+                    $lucrareQuery->where('denumire', 'AK provizorie');
+                })
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(8))
-                // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(9))
                 ->where(function ($query) {
                     $query->whereNull('stare')
                         ->orWhere('stare', 1);
@@ -41,12 +39,10 @@ class CronJobController extends Controller
             })
             ->orWhere(function ($query) {
                 $query->whereDoesntHave('emailReminderBKProvizorie')
-                // ->whereHas('dateMedicale', function($query){
-                //     $query->where('tip_proteza', 'BK provizorie');
-                // })
-                ->where('tip_lucrare_solicitata', 'BK provizorie')
+                ->whereHas('lucrare', function ($lucrareQuery) {
+                    $lucrareQuery->where('denumire', 'BK provizorie');
+                })
                 ->whereDate('protezare' ,'<', Carbon::now()->subMonthNoOverflow(5))
-                // ->whereDate('protezare' ,'>', Carbon::now()->subMonthNoOverflow(6))
                 ->where(function ($query) {
                     $query->whereNull('stare')
                         ->orWhere('stare', 1);
@@ -75,7 +71,7 @@ class CronJobController extends Controller
                 return ;
             }
 
-            $tip_proteza = $fisaCaz->tip_lucrare_solicitata;
+            $tip_proteza = $fisaCaz->tip_lucrare_denumire;
             $tipEmail = $tip_proteza;
 
             Mail::to($adreseEmail)
