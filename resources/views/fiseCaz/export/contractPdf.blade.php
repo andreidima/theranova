@@ -287,11 +287,8 @@
         <br>
 
         <p>Prezentul act se încheie în 2 exemplare, câte unul de fiecare parte.</p>
-    </main>
 
-    <div style="page-break-after: always;"></div>
-
-    <main>
+        <div style="page-break-after: always;"></div>
 
         <p><b>*) Anexele la contract:</b></p>
         <br>
@@ -345,6 +342,9 @@
         <p>Localitatea: ......................................................</p>
 
         <div style="page-break-after: always;"></div>
+    </main>
+
+    <main>
 
         <p><b>ANEXA NR. 1</b></p>
         <p class="text-center"><b>NOTA DE INFORMARE SI ACORD PRELUCRARE DATE PERSONALE</b></p>
