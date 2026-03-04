@@ -1,37 +1,36 @@
 @php
     use Carbon\Carbon;
+
+    $pacient = $fisaCaz->pacient;
+    $oferta = $fisaCaz->ofertaAcceptata;
+    $numePacient = trim(($pacient->nume ?? '') . ' ' . ($pacient->prenume ?? ''));
+    $serieBuletin = substr((string) ($pacient->serie_numar_buletin ?? ''), 0, 2);
+    $numarBuletin = preg_replace('/[^0-9]/', '', (string) ($pacient->serie_numar_buletin ?? ''));
 @endphp
 
-<!DOCTYPE  html>
+<!DOCTYPE html>
 <html lang="ro">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
     <title>Contract</title>
     <style>
-        /* html {
-            margin: 0px 0px;
-        } */
-        /** Define the margins of your page **/
         @page {
-            margin: 0px 0px;
+            margin: 0;
         }
 
         header {
             position: fixed;
             top: 20px;
-            left: 0px;
-            right: 0px;
+            left: 0;
+            right: 0;
             height: 250px;
         }
 
         body {
             font-family: DejaVu Sans, sans-serif;
-            /* font-family: Arial, Helvetica, sans-serif; */
             font-size: 12px;
-            /* margin-top: 1cm; */
             margin-top: 4cm;
             margin-left: 2cm;
             margin-right: 2cm;
@@ -39,377 +38,394 @@
         }
 
         * {
-            /* padding: 0; */
             text-indent: 0;
             text-align: justify;
+            box-sizing: border-box;
         }
 
-        table{
-            border-collapse:collapse;
-            margin: 0px;
-            padding: 5px;
-            margin-top: 0px;
-            border-style: solid;
-            border-width: 0px;
+        p {
+            margin: 0 0 6px 0;
+        }
+
+        ul {
+            margin: 4px 0 6px 18px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        table {
+            border-collapse: collapse;
             width: 100%;
-            word-wrap:break-word;
+            word-wrap: break-word;
         }
 
-        th, td {
-            padding: 1px 10px;
-            border-width: 0px;
-            border-style: solid;
+        th,
+        td {
+            padding: 4px 6px;
+            border: 1px solid #000;
+            vertical-align: top;
+        }
 
+        .no-border td,
+        .no-border th {
+            border: 0;
+            padding: 2px 0;
         }
-        tr {
-            border-style: solid;
-            border-width: 0px;
+
+        .text-center {
+            text-align: center;
         }
-        hr {
-            display: block;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-            margin-left: auto;
-            margin-right: auto;
-            border-style: inset;
-            border-width: 0.5px;
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+
+        .mt-12 {
+            margin-top: 12px;
+        }
+
+        .signature-line {
+            display: inline-block;
+            min-width: 210px;
+            border-bottom: 1px solid #000;
+            height: 14px;
+            vertical-align: bottom;
+        }
+
+        .consent-box {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #000;
+            vertical-align: middle;
+            margin: 0 6px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            text-align: center;
+            min-height: 22px;
+        }
+
+        .schedule-table td.text-left {
+            text-align: left;
         }
     </style>
 </head>
 
 <body>
-    <header style="margin:0px 0px 0px 0px; text-align: center;">
-        <img src="{{ asset('images/logo2-400x103.jpg') }}" width="400px">
+    <header style="margin: 0; text-align: center;">
+        <img src="{{ asset('images/logo2-400x103.jpg') }}" width="400" alt="Theranova">
     </header>
 
-    <main style="
-            background-image: url('{{ asset('images/contractBackground.jpg') }}');
-            background-size: 100%;
-            background-repeat: no-repeat;">
-
-        {{-- <div style="page-break-after: always"> --}}
-        <p style="font-size:150%; text-align: center;">CONTRACT DE PRESTĂRI SERVICII</p>
-        <p style="font-size:120%; text-align: center;">
-            Nr. {{ $fisaCaz->ofertaAcceptata->contract_nr ?? '________' }}
-            din data de {{ ($fisaCaz->ofertaAcceptata->contract_data ?? null) ? Carbon::parse($fisaCaz->ofertaAcceptata->contract_data)->isoFormat('DD.MM.YYYY') : '_________________' }}
+    <main style="background-image: url('{{ asset('images/contractBackground.jpg') }}'); background-size: 100%; background-repeat: no-repeat;">
+        <p class="text-center" style="font-size: 150%;"><b>CONTRACT DE PRESTĂRI SERVICII</b></p>
+        <p class="text-center" style="font-size: 120%;">
+            Nr. {{ $oferta->contract_nr ?? '________' }}
+            din data de {{ ($oferta->contract_data ?? null) ? Carbon::parse($oferta->contract_data)->isoFormat('DD.MM.YYYY') : '_________________' }}
         </p>
 
         <br>
         <br>
-        <p><b>1. Părțile contractante</b>:</p>
-        <p><b>1.1. S.C. THERANOVA PROTEZARE S.R.L.</b>, denumit în continuare furnizor de servicii, cu sediul în Oradea, str. Eroul Necunoscut, nr. 2 judeţul Bihor, înregistrat la ORC Bihor sub nr. J05/1172/11.09.2003, codul de înregistrare fiscală RO 15736030, reprezentat prin Jaco du Plessis, în calitate de administrator</p>
-        <p>
-            <b>1.2 {{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, denumit în continuare beneficiar, domiciliat în localitatea {{ $fisaCaz->pacient->localitate ?? '' }}, {{ $fisaCaz->pacient->adresa ?? '' }} , judeţul/ sectorul {{ $fisaCaz->pacient->judet ?? '' }}, codul numeric personal {{ $fisaCaz->pacient->cnp ?? '' }},
-            posesor al B.I./C.I. seria {{ substr(($fisaCaz->pacient->serie_numar_buletin ?? ''), 0, 2) }}, nr. {{ preg_replace('/[^0-9]/', '', ($fisaCaz->pacient->serie_numar_buletin)) }},
-            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ? Carbon::parse($fisaCaz->pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }}.
-        </p>
+
+        <p><b>1. Părțile contractante:</b></p>
+        <p><b>1.1. S.C. THERANOVA PROTEZARE S.R.L.</b>, denumit în continuare furnizor de servicii, cu sediul în Oradea, str. Eroul Necunoscut, nr. 2 județul Bihor, înregistrat la ORC Bihor sub nr. J05/1172/11.09.2003, codul de înregistrare fiscală RO 15736030, reprezentat prin Jaco du Plessis, în calitate de administrator.</p>
+        <p><b>1.2. {{ $numePacient }}</b>, denumit în continuare beneficiar, domiciliat în localitatea {{ $pacient->localitate ?? '' }}, str. {{ $pacient->adresa ?? '' }}, județul/sectorul {{ $pacient->judet ?? '' }}, codul numeric personal {{ $pacient->cnp ?? '' }}, posesor al B.I./C.I. seria {{ $serieBuletin }}, nr. {{ $numarBuletin }}, eliberat/eliberată la data de {{ $pacient->data_eliberare_buletin ? Carbon::parse($pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }}.</p>
+
         <br>
 
-        <p><b>2. Obiectul contractului</b> constă în realizarea unui act de protezare/ortezare sub forma confecţionării <b>{{ $fisaCaz->ofertaAcceptata->obiect_contract ?? '' }}</b>, pentru beneficiar, în condiţiile şi la preţul stabilit în prezentul act juridic.</p>
+        <p><b>2. Obiectul contractului</b> constă în realizarea unui act de protezare/ortezare sub forma confecționării <b>{{ $oferta->obiect_contract ?? '' }}</b>, pentru beneficiar, în condițiile și la prețul stabilit în prezentul act juridic.</p>
 
+        <p><b>3. Durata contractului</b> se stabilește de comun acord cu beneficiarul.</p>
+        <p><b>3.1.</b> Durata contractului poate fi prelungită prin act adițional, cu acordul părților.</p>
 
-        <p>
-            <b>3. Durata contractului</b> se stabilește de comun acord cu beneficiarul.
-            <br>
-            <b>3.1.</b> Durata contractului poate fi prelungită prin act adiţional, cu acordul părţilor.
-        </p>
+        <p><b>4. Prețul</b> stabilit pentru furnizarea serviciilor de protezare este de <b>{{ $oferta->pret ?? '' }} lei</b>.</p>
+        <p>S.C. THERANOVA PROTEZARE S.R.L. nu își asumă răspunderea pentru modificarea prețurilor practicate de către producător.</p>
 
-        <b>4. Preţul</b> stabilit pentru furnizarea serviciilor de protezare este de <b>{{ $fisaCaz->ofertaAcceptata->pret ?? '' }} lei</b>.
-        <br>
-        S.C. THERANOVA PROTEZARE S.R.L. nu își asumă răspunderea pentru modificarea prețurilor practicate de către producător.
-        <br>
         <br>
 
-        <b>5. Etapele furnizării serviciilor de protezare</b>
-        <br>
-        <b>5.1. Redactarea ofertei de preţ</b>
-        <br>
-        Oferta de preţ este un material informativ redactat de <b>S.C. THERANOVA PROTEZARE S.R.L.</b>, în calitate de furnizor de servicii de protezare, care conţine detalii referitoare la producătorul, calitatea, cantitatea şi preţul viitoarei proteze/orteze.
-        <br>
-        Documentul este valabil 10 zile lucrătoare şi nu generează drepturi sau obligaţii în favoarea/sarcina nici uneia dintre părţi. Oferta de preţ reprezintă parte integrantă a prezentului contract - <b>anexa nr. 2</b>.
-        <br>
-        <b>5.2. Transmiterea notei de comandă</b>
-        <br>
-        Nota de comandă este un document semnat şi transmis furnizorului de servicii de protezare/ortezare de către beneficiar,  în concordanţă cu informaţiile din cuprinsul ofertei de preţ. Transmiterea notei de comandă reprezintă acordul de voinţă al beneficiarului cu privire la contractarea serviciilor furnizorului de proteze/orteze. Nota de comandă reprezintă parte integrantă a ofertei de preț - <b>anexa nr. 2</b>.
-        <br>
-        <b>5.3. Completarea fişei individuale de măsurători</b>
-        <br>
-        În baza notei de comandă transmise de către beneficiar se efectuează măsurători în vederea completării datelor tehnice necesare confecţionării protezei provizorii sau definitive. Fişa individuală de măsurători este parte integrantă a prezentului contract - <b>anexa nr. 3</b>.
-        <br>
-        <b>5.4. Condiţii de plată</b>
-        <br>
-        Indiferent de varianta de achiziție pentru care optează beneficiarul - plata integrală sau prin Casa de Asigurări de Sănătate beneficiarul va achita furnizorului contravaloarea dispozitivului medical după cum urmează:
-        <ul style="margin: 0px">
-            <li>la deschiderea comenzii va achita un avans de 70% din valoarea dispozitivelor medicale (cei care dețin o decizie eliberată de cate CAS a cărei valoare nu acoperă integral cuantumul avansului  vor trebui sa achite diferența),</li>
-            <li>20% la predarea primei proteze/orteze intermediare</li>
+        <p><b>5. Etapele furnizării serviciilor de protezare</b></p>
+        <p><b>5.1. Redactarea ofertei de preț</b></p>
+        <p>Oferta de preț este un material informativ redactat de <b>S.C. THERANOVA PROTEZARE S.R.L.</b>, în calitate de furnizor de servicii de protezare, care conține detalii referitoare la producătorul, calitatea, cantitatea și prețul viitoarei proteze/orteze.</p>
+        <p>Documentul este valabil 10 zile lucrătoare și nu generează drepturi sau obligații în favoarea/sarcina nici uneia dintre părți. Oferta de preț reprezintă parte integrantă a prezentului contract - <b>anexa nr. 2</b>.</p>
+
+        <p><b>5.2. Transmiterea notei de comandă</b></p>
+        <p>Nota de comandă este un document semnat și transmis furnizorului de servicii de protezare/ortezare de către beneficiar, în concordanță cu informațiile din cuprinsul ofertei de preț. Transmiterea notei de comandă reprezintă acordul de voință al beneficiarului cu privire la contractarea serviciilor furnizorului de proteze/orteze. Nota de comandă reprezintă parte integrantă a ofertei de preț - <b>anexa nr. 2</b>.</p>
+
+        <p><b>5.3. Completarea fișei individuale de măsurători</b></p>
+        <p>În baza notei de comandă transmise de către beneficiar se efectuează măsurători în vederea completării datelor tehnice necesare confecționării protezei provizorii sau definitive. Fișa individuală de măsurători este parte integrantă a prezentului contract - <b>anexa nr. 3</b>.</p>
+
+        <p><b>5.4. Condiții de plată</b></p>
+        <p>Indiferent de varianta de achiziție pentru care optează beneficiarul - plata integrală sau prin Casa de Asigurări de Sănătate beneficiarul va achita furnizorului contravaloarea dispozitivului medical după cum urmează:</p>
+        <ul>
+            <li>la deschiderea comenzii va achita un avans de 70% din valoarea dispozitivelor medicale (cei care dețin o decizie eliberată de cate CAS a cărei valoare nu acoperă integral cuantumul avansului vor trebui sa achite diferența),</li>
+            <li>20% la predarea primei proteze/orteze intermediare,</li>
             <li>10% la livrarea protezei/ortezei finale.</li>
         </ul>
-        Plata se va face in contul SC Theranova Protezare SRL deschis la:
+        <p>Plata se va face in contul SC Theranova Protezare SRL deschis la:</p>
+        <p><b>Banca Transilvania Sucursala Oradea, cont IBAN RON: RO71BTRL00501202765924XX</b></p>
+
+        <p><b>5.5. Predarea/primirea dispozitivelor medicale</b></p>
+        <p><b><i>Predarea protezei finale se va face pentru pacienții aflați la prima protezare, în termen de maximum 5 luni de la predarea protezei provizorii, iar pentru pacienții purtători de proteze în termen de maximum 3 luni.</i></b> Data predării/primirii protezei finale se va stabili de comun acord cu beneficiarul în intervalul menționat anterior la sediul furnizorului de servicii de protezare în intervalul orar de funcționare a instituției. Procesul verbal de predare-primire este însoțit de certificatul de garanție al dispozitivului medical.</p>
+        <p>În cazul nerespectării datei stabilite de comun acord se va fixa o nouă dată în acest sens, dată care nu poate să depășească 7 zile calendaristice de la data programării inițiale. Dacă beneficiarul refuză sau nu se prezintă la data stabilită, furnizorului de servicii de protezare/ortezare nu-i va putea imputa nepredarea la termen a dispozitivelor medicale. Pentru pacienții care amână nejustificat predarea protezei finale, după cea de a doua programare neonorată, centrul de protezare/ortezare va considera procesul de protezare încheiat la stadiul actual al protezei, urmând ca pentru definitivarea protezei să se emită o nouă ofertă.</p>
+        <p>În cazul în care beneficiarul nu se prezintă la programare, renunță la comandă sau refuză ridicarea dispozitivului medical, avansul achitat nu se restituie de către furnizor, suma încasată reprezentând despăgubiri pentru daunele provocate prin denunțarea contractului.</p>
+        <p>Pacientul declară că a luat la cunoștință că, în situația în care decizia CAS nu este obținută în termenul menționat anterior, contravaloarea etapelor tehnice de protezare deja efectuate nu se restituie și nu se scade din contribuția de asigurat.</p>
+
+        <p class="mb-8">Semnătura: <span class="signature-line"></span></p>
+
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Nr. crt.</th>
+                    <th style="width: 28%;">Etapa predare</th>
+                    <th style="width: 22%;">Data programare</th>
+                    <th style="width: 20%;">Data predare</th>
+                    <th style="width: 20%;">Semnătura pacient</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1.</td>
+                    <td class="text-left">Proteza provizorie</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>2.</td>
+                    <td class="text-left">Proteza definitivă</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><b>Termenul de garanție privind execuția este de 14 zile pentru proteza provizorie - cupa diagnostic, respectiv de 24 luni pentru proteza definitivă.</b> Garanția de conformitate a produselor este de 24 luni. Termenul de garanție este de 24 luni pentru componentele structurale și manoperă.</p>
+        <p><b>Garanția se referă la manopera pentru executarea cupei protetice, iar pentru restul componentelor dispozitivului medical (labă protetică, tub, adaptoare, liner silicon, articulație genunchi etc.) garanția și termenul de garanție al respectivelor produse este asigurată de către producător și intră în vigoare din momentul în care sunt puse în folosință, adică predarea protezei provizorii cu componentele protetice achiziționate.</b> Garanția pentru întreg dispozitivul medical nu este valabilă în cazul în care defecțiunea apare din culpa beneficiarului prin nerespectarea instrucțiunilor de manipulare, precum și în cazurile în care reparațiile se impun din pricina schimbării condițiilor anatomice și/sau fiziologice ale beneficiarului (exemplu modificări de volum ale bontului). Procesul verbal de predare primire - anexa 4 - și certificatul de garanție - <b>anexa 5</b> - sunt părți integrante ale prezentului contract.</p>
+
         <br>
-        Banca Transilvania Sucursala Oradea, cont  <b>IBAN RON: RO71BTRL00501202765924XX</b>
+
+        <p><b>6. Drepturile părților</b></p>
+        <p><b>6.1. Furnizorul de servicii de protezare/ortezare are următoarele drepturi:</b></p>
+        <p>a) Să beneficieze la termenele stabilite de plata avansului/prețului dispozitivelor medicale furnizate beneficiarului în conformitate cu nota de comandă transmisă de acesta și a fișei individuale de măsurători;</p>
+        <p>b) Să beneficieze de returnarea protezei/ortezei provizorii în momentul finalizării și predării către beneficiar a protezei definitive (nereturnarea protezei provizorii implică cheltuieli suplimentare care nu sunt cuprinse în preț - peste valoarea ofertei);</p>
+        <p>c) Să beneficieze de acoperirea eventualelor prejudicii rezultate din culpa beneficiarului conform reglementărilor de la <b>pct. 8</b> ale prezentului contract.</p>
+
+        <p><b>6.2. Beneficiarul are următoarele drepturi:</b></p>
+        <p>a) Să beneficieze de dispozitive medicale conform măsurătorilor consemnate în fișa individuală de măsurători semnată de acesta;</p>
+        <p>b) Să primească dispozitivele medicale la data stabilită de comun accord cu furnizorul de dispozitive medicale;</p>
+        <p>c) Să beneficieze de instrucțiuni corespunzătoare în vederea utilizării în condiții optime a dispozitivelor medicale;</p>
+        <p>d) Să beneficieze cu titlu gratuit de service în perioada de garanție a dispozitivelor medicale și contra cost, ulterior expirării acestui termen.</p>
+
         <br>
-        <b>5.5. Predarea/primirea dispozitivelor medicale</b>
+
+        <p><b>7. Obligațiile părților</b></p>
+        <p><b>7.1. Furnizorul de servicii de protezare/ortezare are următoarele obligații:</b></p>
+        <p>a) Să confecționeze dispozitivele medicale conform măsurătorilor consemnate în fișa de măsurători individuale semnată de beneficiar, fără a fi răspunzător de schimbările anatomice și/sau fiziologice ale bontului apărute de la luarea mulajului până la predarea protezei;</p>
+        <p>b) Să predea dispozitivele medicale la data stabilită de comun acord cu beneficiarul dispozitivului medical prin proces-verbal semnat de ambele părți;</p>
+        <p>c) Să acorde instrucțiunile necesare pentru folosirea optimă a dispozitivelor medicale;</p>
+        <p>d) Să asigure service cu titlu gratuit în perioada de garanție la sediul societății, conform programului zilnic de lucru;</p>
+        <p>e) Să asigure service contra cost după expirarea termenului de garanție;</p>
+        <p>f) Tehnicianul se angajează să recomande pacientului varianta optimă de protezare, refuzul pacientului de a urma indicațiile consemnat prin proces-verbal absolvă de orice răspundere Centrul de Protezare și Ortezare Theranova.</p>
+
+        <p><b>7.2. Beneficiarul are următoarele obligații:</b></p>
+        <p>a) Să se prezinte la furnizorul de servicii în vederea protezării definitive/provizorii în termenele stabilite de comun accord;</p>
+        <p>b) Să depună toată diligența în vederea obținerii deciziei care atestă cofinanțarea dispozitivului medical prin sistemul de asigurări sociale de sănătate, în cazul în care beneficiarul agreează această variantă de cofinanțare;</p>
+        <p>c) Să fie prezent la data stabilită de comun acord pentru predarea dispozitivului medical; în caz contrar furnizorul de servicii va proceda la transmiterea dispozitivului medical sub formă de colet poștal;</p>
+        <p>d) Să folosească și să întrețină dispozitivele medicale conform instrucțiunilor furnizorului de servicii;</p>
+        <p>e) Să plătească în conformitate cu cele stipulate la pct. 5.4;</p>
+        <p>f) Să predea furnizorului de servicii proteza provizorie în momentul obținerii protezei definitive;</p>
+        <p>g) Să prezinte certificatul de garanție în vederea înregistrării tuturor intervențiilor care au loc în perioada de garanție;</p>
+        <p>h) Să informeze Centrul de Protezare și Ortezare Theranova în cel mai scurt timp de la data apariției, asupra problemelor pe care le identifică pe durata utilizării dispozitivului medical furnizat;</p>
+        <p>i) Să acopere eventualele prejudicii cauzate furnizorului de servicii din culpa sa conform reglementărilor de la pct. 8 ale prezentului contract;</p>
+        <p>j) În cazul în care pacientul dorește o anumită soluție de protezare, acesta își va asuma răspunderea pentru eventualele prejudicii sau inconveniente ulterioare;</p>
+        <p>k) În cazul în care primește spre folosință, în perioada de probă sau pe perioada asigurării service-ului, anumite componente protetice (picior protetic, articulație genunchi, mână protetică i-Limb, mână protetică BeBionic etc.), acesta este obligat să le restituie, la finele perioadei respective, în aceeași stare de funcționare ca și cea inițială, orice pagube rezultate urmare a nerestituirii, utilizării necorespunzătoare a acestora sau din orice alte motive imputabile acestuia, vor fi suportate integral de către acesta.</p>
+
         <br>
-        <b><i>Predarea protezei finale se va face in termen de maxim 9 luni de la predarea protezei intermediare.</i> Data predarii/primirii protezei finale se va stabili de comun acord cu beneficiarul in intervalul mentionat anterior la sediul furnizorului de servicii de protezare în intervalul orar de functionare a institutiei.</b>
-        În cazul nerespectării datei stabilite de comun acord se va fixa o noua data in acest sens.
-        Daca beneficiarul refuza sau nu se prezinta la data stabilita, furnizorului de servicii de protezare/ortezare nu-i va putea fi opusa nepredarea la termen a dispozitivelor medicale.
-        <i>In masura in care exista posibilitatea transmiterii prin colet postal a dispozitivelor medicale clientului, furnizorul va proceda la transmiterea acestora, la solicitarea expresa a beneficiarului adresata prin comunicare scrisa/email cu confirmare de primire a solicitarii si a predării coletului</i>.
-        Procesul verbal de predare-primire este însoţit de certificatul de garanţie al dispozitivului medical.
-        <b>Termenul de garanţie privind execuția este de 1 luna pentru proteza provizorie - cupa diagnostic, respectiv de 24 luni pentru proteza definitivă</b>.
-        Garantia de conformitate a produselor este de 24 luni. Termenul de garantie este de 24 luni pentru componentele structurale si manopera.
+
+        <p><b>8. Riscuri contractuale</b></p>
+        <p>Beneficiarul răspunde pentru cheltuielile contractate de furnizorul de servicii în vederea confecționării dispozitivelor medicale în cazul în care solicită rezilierea contractului. În astfel de situații, beneficiarul va fi obligat la plata integrală a sumelor investite de către furnizorul de servicii în vederea acoperirii tuturor cheltuielilor și a prejudiciului acestuia.</p>
+
         <br>
-        <b>Garanția se referă la manopera pentru executarea cupei protetice, iar pentru restul componentelor dispozitivului medical (labă protetică, tub, adaptoare, liner silicon, articulatie genunchi etc) garanția si termenul de garantie al respectivelor produse este asigurata de către producator si intra in vigoare din momentul in care sunt puse in folosinta adica predarea protezei provizorii cu componentele protetice achizitionate.</b>
-        Garanţia pentru intreg dispozitivul medical nu este valabilă în cazul în care defecţiunea apare din culpa beneficiarului prin nerespectarea instrucţiunilor de manipulare, precum şi în cazurile în care reparaţiile se impun din pricina schimbării condiţiilor anatomice şi/sau fiziologice ale beneficiarului (exemplu modificări de volum ale bontului). Procesul verbal de predare primire - anexa 4 - şi certificatul de garanţie - <b>anexa 5</b> - sunt părţi integrante ale prezentului contract.
+
+        <p><b>9. Încetarea contractului</b></p>
+        <p>Constituie motiv de încetare a prezentului contract următoarele:</p>
+        <p>a) Expirarea duratei pentru care a fost încheiat contractul;</p>
+        <p>b) Acordul părților privind încetarea contractului;</p>
+        <p>c) Scopul contractului a fost atins;</p>
+        <p>d) Forța majoră, dacă este invocată;</p>
+        <p>e) În caz de deces/desființare a uneia din părțile contractante.</p>
+
+        <br>
+
+        <p><b>10. Dispoziții finale</b></p>
+        <p>Părțile contractante au dreptul, pe durata îndeplinirii prezentului contract, de a conveni modificarea clauzelor acestuia prin act adițional numai în cazul apariției unor circumstanțe care lezează interesele legitime ale acestora și care nu au putut fi prevăzute la data încheierii prezentului contract. Prevederile prezentului contract se vor completa cu prevederile legislației în vigoare în domeniu. Limba care guvernează prezentul contract este limba română. Prezentul contract va fi interpretat conform legilor din România. Eventualele litigii se vor soluționa pe cale amiabilă, iar în caz de neînțelegeri de către instanțele judecătorești competente de la sediul furnizorului de servicii.</p>
+
+        <br>
+
+        <p><b>Toate componentele folosite de S.C. THERANOVA PROTEZARE S.R.L. la confecționarea dispozitivelor medicale sunt certificate și sunt în concordanță cu normele și standardele UE.</b></p>
+        <p><b>Beneficiarul a fost informat referitor la posibilitatea apariției unor reacții adverse la anumite produse ce intră în alcătuirea dispozitivelor medicale.</b></p>
+
         <br>
         <br>
 
-        <b>6. Drepturile părţilor</b>
-        <br>
-        <b>6.1. Furnizorul de servicii de protezare/ortezare are următoarele drepturi:</b>
-        <br>
-        a) Să beneficieze la termenele stabilite de plata avansului/preţului dispozitivelor medicale furnizate beneficiarului în conformitate cu nota de comandă transmisă de acesta şi a fişei individuale de măsurători;
-        <br>
-        b) Să beneficieze de returnarea protezei/ortezei provizorii în momentul finalizării şi predării către beneficiar a  protezei definitive (nereturnarea protezei provizorii implică cheltuieli suplimentare care nu sunt cuprinse in preț - peste valoarea ofertei);
-        <br>
-        c) Să beneficieze de acoperirea eventualelor prejudicii rezultate din culpa beneficiarului conform reglementărilor de la <b>pct. 8</b> ale prezentului contract
-        <br>
-        <b>6.2. Beneficiarul are următoarele drepturi:</b>
-        <br>
-        a) Să beneficieze de dispozitive medicale conform măsurătorilor consemnate în fişa individuală de măsurători semnată de acesta;
-        <br>
-        b) Să primească dispozitivele medicale la data stabilită de comun accord cu furnizorul de dispozitive medicale;
-        <br>
-        c) Să beneficieze de instrucţiuni corespunzătoare în vederea utilizării în condiţii optime a dispozitivelor medicale;
-        <br>
-        d) Să beneficieze cu titlu gratuit de service în perioada de garanţie a dispozitivelor medicale şi contra cost, ulterior expirării acestui termen.
-        <br>
+        <p>Subsemnatul <b>{{ $numePacient }}</b> declar că sunt de acord cu prelucrarea datelor cu caracter personal pentru realizarea obiectului prezentului contract.</p>
+        <p><span class="consent-box"></span> Beneficiarul este de acord pentru folosirea imaginii lui în scopul unei mai bune informări a publicului asupra multiplelor posibilități moderne de protezare/ortezare.</p>
+
         <br>
 
-        <b>7. Obligaţiile părţilor</b>
-        <br>
-        <b>7.1. Furnizorul de servicii de protezare/ortezare are următoarele obligaţii:</b>
-        <br>
-        a) Să confecţioneze dispozitivele medicale conform măsurătorilor consemnate în fişa de măsurători individuale semnată de beneficiar, fără a fi răspunzător de schimbările anatomice şi/sau fiziologice ale bontului apărute de la luarea mulajului până la predarea protezei;
-        <br>
-        b) Să predea dispozitivele medicale la data stabilită de comun acord cu beneficiarul dispozitivului medical prin proces-verbal semnat de ambele părți
-        <br>
-        c) Să acorde instrucţiunile necesare pentru folosirea optimă a dispozitivelor medicale;
-        <br>
-        d) Să asigure service cu titlu gratuit în  perioada de garanţie la sediul societăţii, conform programului zilnic de lucru;
-        <br>
-        e) Să asigure service contra cost după expirarea termenului de garanţie;
-        <br>
-        f) Tehnicianul se angajează sa recomande pacientului varianta optima de protezare, refuzul pacientului de a urma indicațiile consemnat prin proces-verbal absolvă de orice răspundere  Centrul de Protezare si Ortezare Theranova.
-        <br>
-        <br>
+        <p>Prezentul act se încheie în 2 exemplare, câte unul de fiecare parte.</p>
 
-        <b>7.2. Beneficiarul are următoarele obligaţii:</b>
-        <br>
-        a) Să se prezinte la furnizorul de servicii în vederea protezării definitive/provizorii în termenele stabilite de comun accord;
-        <br>
-        b) Să depună toată diligenţa în vederea obţinerii deciziei care atestă cofinanţarea dispozitivului medical prin sistemul de asigurări sociale de sănătate, in cazul in care beneficiarul agreează această variantă de cofinanțare;
-        <br>
-        c) Să fie prezent la data stabilită de comun acord pentru predarea dispozitivului medical; în caz contrar furnizorul de servicii va proceda la transmiterea dispozitivului medical sub formă de colet poştal;
-        <br>
-        d) Să folosească şi să întreţină dispozitivele medicale conform instrucţiunilor furnizorului de servicii;
-        <br>
-        e) Să plătească in conformitate cu cele stipulate la pct. 5.4;
-        <br>
-        f) Să predea furnizorului de servicii proteza provizorie în momentul obţinerii protezei definitive;
-        <br>
-        g) Să prezinte certificatul de garanție în vederea înregistrării tuturor  intervențiilor care au loc în perioada de garanție;
-        <br>
-        h) Să informeze Centrul de Protezare și Ortezare Theranova în cel mai scurt timp de la data apariției, asupra problemelor pe care le identifică pe durata utilizării dispozitivului medical furnizat;
-        <br>
-        i) Să acopere eventualele prejudicii cauzate furnizorului de servicii din culpa sa conform reglementărilor de la pct. 8 ale prezentului contract;
-        <br>
-        j) In cazul in care pacientul dorește o anumita soluție de protezare, acesta isi va asuma răspunderea pentru eventualele prejudicii sau inconveniente ulterioare;
-        <br>
-        k) In cazul in care primeste spre folosinta, in perioada de proba sau pe perioada asigurarii service-ului, anumite componente protetice (picior protetic, articulatie genunchi, mana protetica i-Limb, mana protetica BeBionic etc), acesta este obligat sa le restituie, la finele perioadei respective, in aceeasi stare de functionare ca si cea initiala, orice pagube rezultate urmare a nerestituirii, utilizarii necorespunzatoare a acestora sau din orice alte motive imputabile acestuia, vor fi suportate integral de catre acesta.
-        <br>
-        <br>
+        <div style="page-break-after: always;"></div>
 
-        <b>8. Riscuri contractuale</b>
+        <p><b>*) Anexele la contract:</b></p>
         <br>
-        Beneficiarul răspunde pentru cheltuielile contractate de furnizorul de servicii în vederea confecţionării dispozitivelor medicale în cazul în care solicită rezilierea contractului. În astfel de situaţii, beneficiarul va fi obligat la plata integrală a sumelor investite de către furnizorul de servicii în vederea acoperirii tuturor cheltuielilor și a prejudiciului acestuia.
-        <br>
-        <br>
+        <p>nota de informare și acord prelucrare date personale - anexa nr. 1</p>
+        <p>ofertă de preț - anexa nr. 2</p>
+        <p>fișă individuală de măsurători - anexa nr. 3</p>
+        <p>proces-verbal de predare-primire - anexa nr. 4</p>
+        <p>certificat de garanție - anexa nr. 5</p>
 
-        <b>9. Încetarea contractului</b>
-        <br>
-        Constituie motiv de încetare a prezentului contract următoarele:
-        <br>
-        a) Expirarea duratei pentru care a fost încheiat contractul;
-        <br>
-        b) Acordul părţilor privind încetarea contractului;
-        <br>
-        c) Scopul contractului a fost atins;
-        <br>
-        d) Forţa majoră, dacă este invocată;
-        <br>
-        e) In caz de deces/desfiinţare a uneia din părţile contractante.
-        <br>
-        <br>
-
-        <b>10. Dispoziţii finale</b>
-        <br>
-        Părţile contractante au dreptul, pe durata îndeplinirii prezentului contract, de a conveni modificarea clauzelor acestuia prin act adiţional numai în cazul apariţiei unor  circumstanţe care lezează interesele legitime ale acestora şi care nu au putut fi prevăzute la data încheierii prezentului contract . Prevederile prezentului contract se vor completa cu prevederile legislaţiei în vigoare în domeniu. Limba care guvernează prezentul contract este limba română. Prezentul contract va fi interpretat conform legilor din România. Eventualele litigii se vor soluţiona pe cale amiabilă iar în caz de neînţelegeri de către instanţele judecătoreşti competente de la sediul furnizorului de servicii.
-        <br>
-        <br>
-
-        <b>Toate componentele folosite de S.C. THERANOVA PROTEZARE S.R.L. la confecționarea dispozitivelor medicale sunt certificate și sunt in concordanta cu normele și standardele UE.</b>
-        <br>
-        <b>Beneficiarul a fost informat referitor la posibilitatea apariției unor reacții adverse la anumite produse ce intra in alcătuirea dispozitivelor medicale.</b>
         <br>
         <br>
         <br>
 
-        Subsemnatul <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b> declar ca sunt de acord cu prelucrarea datelor cu caracter personal pentru realizarea obiectului prezentului contract.
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        Beneficiarul este de acord pentru folosirea imaginii lui in scopul unei mai bune  informari a publicului asupra multiplelor posibilitati moderne de protezare/ortezare
-        <br>
-        <br>
-
-        Prezentul act se incheie in 2 exemplare, cate unul de fiecare parte.
-
-        <div style="page-break-after: always"></div>
-        <br>
-        <br>
-        <b>*) Anexele la contract:</b>
-        <br><br>
-        nota de informare si acord prelucrare date personale - anexa nr. 1
-        <br>
-        ofertă de preţ - anexa nr. 2
-        <br>
-        fişă individuală de măsurători - anexa nr. 3
-        <br>
-        proces-verbal de predare-primire - anexa nr. 4
-        <br>
-        certificat de garanţie - anexa nr. 5
-        <br>
-        <br>
-        <br>
-        Data: ......................................................
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Semnătura ......................................................
-        <br>
-        <br>
-        Data: ......................................................
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Semnătura ......................................................
-
-        <br><br><br><br><br><br><br><br><br><br>
-
-        <table style="text-align: center">
+        <table class="no-border">
             <tr>
-                <td width="50%" style="text-align: center">
-                    Furnizor servicii de protezare/ortezare
-                    <br>
-                </td>
-                <td width="50%" style="text-align: center">
-                    Beneficiar
-                </td>
+                <td style="width: 50%;" class="text-left">Data: ......................................................</td>
+                <td style="width: 50%;" class="text-right">Semnătura ......................................................</td>
             </tr>
             <tr>
-                <td style="text-align: center">SC THERANOVA PROTEZARE SRL</td>
-                <td style="text-align: center">{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</td>
+                <td style="width: 50%;" class="text-left">Data: ......................................................</td>
+                <td style="width: 50%;" class="text-right">Semnătura ......................................................</td>
             </tr>
         </table>
 
-        <br><br><br>
-
-        Data: ......................................................
-        <br><br>
-        Localitatea: ......................................................
-        <br><br><br><br><br><br><br><br><br><br>
-    </main>
-
-    <div style="page-break-after: always"></div>
-
-    <main style="">
-        <b>ANEXA NR. 1</b>
         <br>
-        <p style="text-align: center;">
-            <b>NOTA DE INFORMARE SI ACORD PRELUCRARE DATE PERSONALE</b>
-        </p>
-        <p>SC THERANOVA PROTEZARE SRL  cu sediul în Oradea, Str. Eroul Necunoscut Nr. 2 România prelucreaza date cu caracter personal ale persoanelor fizice conform prevederilor legale respectând prevederile Regulamentului (UE) 2016/679 al Parlamentului European şi al Consiliului din 27 aprilie 2016 privind protecţia persoanelor fizice în ceea ce priveşte prelucrarea datelor cu caracter personal şi privind libera circulaţie a acestor date şi de abrogare a Directivei 95/46/CE (Regulamentul general privind protecţia datelor) pus în aplicare prin Legea nr.190/2018 . (Regulamentul general privind protectia datelor – GDPR).</p>
-        <p><b>Datele cu caracter personal prelucrate de catre</b> SC THERANOVA PROTEZARE SRL:</p>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <table class="no-border">
+            <tr>
+                <td width="50%" class="text-center">Furnizor servicii de protezare/ortezare</td>
+                <td width="50%" class="text-center">Beneficiar</td>
+            </tr>
+            <tr>
+                <td class="text-center">SC THERANOVA PROTEZARE SRL</td>
+                <td class="text-center">{{ $numePacient }}</td>
+            </tr>
+        </table>
+
+        <br>
+        <br>
+        <br>
+
+        <p>Data: ......................................................</p>
+        <br>
+        <p>Localitatea: ......................................................</p>
+
+        <div style="page-break-after: always;"></div>
+
+        <p><b>ANEXA NR. 1</b></p>
+        <p class="text-center"><b>NOTA DE INFORMARE SI ACORD PRELUCRARE DATE PERSONALE</b></p>
+        <p>SC THERANOVA PROTEZARE SRL cu sediul în Oradea, Str. Eroul Necunoscut Nr. 2 România prelucrează date cu caracter personal ale persoanelor fizice conform prevederilor legale respectând prevederile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016 privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal și privind libera circulație a acestor date și de abrogare a Directivei 95/46/CE (Regulamentul general privind protecția datelor) pus în aplicare prin Legea nr. 190/2018 (Regulamentul general privind protecția datelor - GDPR).</p>
+
+        <br>
+
+        <p><b>Datele cu caracter personal prelucrate de către</b> SC THERANOVA PROTEZARE SRL:</p>
         <ul>
-            <li>Informatii generale: nume, prenume, adresa de domiciliu, e-mail, telefon, data nasterii, CNP, ID de pacient, loc de munca, certificat de nastere, Copie CI, semnatura, nationalitate, sex, date mama/tata;</li>
-            <li>Date de sanatate sau conexe activitatii SC THERANOVA PROTEZARE SRL  in legatura cu clienti-pacienti;</li>
+            <li>Informații generale: nume, prenume, adresă de domiciliu, e-mail, telefon, data nașterii, CNP, ID de pacient, loc de muncă, certificat de naștere, copie CI, semnătură, naționalitate, sex, date mamă/tată;</li>
+            <li>Date de sănătate sau conexe activității SC THERANOVA PROTEZARE SRL în legătură cu clienți-pacienți;</li>
         </ul>
+
         <p><b>Drepturile persoanelor vizate</b></p>
-        <p>SC THERANOVA PROTEZARE SRL respecta drepturile pe care Legea nr. 190/2018 si Regulamentul UE 2016/679 le confera persoanei fizice vizate, respectiv:</p>
-        <p>(i) dreptul de informare: dreptul de a fi informat cu privire la identitatea operatorului, scopul in care se face prelucrarea datelor, destinatarii sau categoriile de destinatari ai datelor, existenta drepturilor prevazute de lege pentru persoana vizata si conditiile in care pot fi exercitate;</p>
-        <p>(ii) dreptul de acces la datele cu caracter personal: dreptul de a obtine la cerere si in mod gratuit, o data pe an, confirmarea faptului ca datele cu caracter personal sunt sau nu prelucrate de catre SC THERANOVA PROTEZARE SRL  </p>
-        <p>(iii) dreptul de a nu fi supus unei decizii individuale: dreptul de a cere si de a obtine retragerea, anularea sau reevaluarea oricarei decizii care produce efecte juridice in privinta persoanei vizate, adoptata exclusiv pe baza unei prelucrari de date cu caracter personal, efectuata prin mijloace automate, destinata sa evalueze unele aspecte ale evolutiei, comportamentului si performantelor sau orice asemenea caracteristici obtinute de client/pacient in perioada ulterioara montarii/achizitionarii dispozitivelor medicale ori alte asemenea aspecte.</p>
-        <p>(iv) dreptul de a se adresa justitiei: dreptul de a se adresa Autoritatii Nationale de Supraveghere a Prelucrarii Datelor cu Caracter Personal sau justitiei, pentru apararea oricaror drepturi garantate de prevederile legale care au fost incalcate;</p>
-        <p>(v) dreptul la portabilitatea datelor: Persoana vizata are dreptul de a primi datele cu caracter personal care o privesc si pe care le-a furnizat operatorului intr-un format structurat, utilizat in mod curent si care poate fi citit automat si are dreptul de a transmite aceste date altui operator, fara obstacole din partea operatorului caruia i-au fost furnizate datele cu caracter personal;</p>
-        <p>(vi) dreptul la restrictionarea datelor: Persoana vizata are dreptul de a obtine din partea operatorului restrictionarea prelucrarii in cazul in care se aplica unul din urmatoarele cazuri: (a)  persoana vizata contesta exactitatea datelor, pentru o perioada care ii permite operatorului sa verifice exactitatea datelor; (b)  prelucrarea este ilegala, iar persoana vizata se opune stergerii datelor cu caracter personal, solicitand in schimb restrictionarea utilizarii lor; (c)  operatorul nu mai are nevoie de datele cu caracter personal in scopul prelucrarii, dar persoana vizata i le solicita pentru constatarea, exercitarea sau apararea unui drept in instanta; sau (d)  persoana vizata s-a opus prelucrarii pentru intervalul de timp in care se verifica daca drepturile legitime ale operatorului prevaleaza asupra celor ale persoanei vizate.</p>
-        <p>(vii) dreptul la opozitie: In orice moment, persoana vizata are dreptul de a se opune, din motive legate de situatia particulara in care se afla, a datelor cu caracter personal care o privesc, inclusiv crearii de profiluri pe baza . Operatorul nu mai prelucreaza datele cu caracter personal, cu exceptia cazului in care operatorul demonstreaza ca are motive legitime si imperioase care justifica prelucrarea si care prevaleaza asupra intereselor, drepturilor si libertatilor persoanei vizate sau ca scopul este constatarea, exercitarea sau apararea unui drept in instanta.</p>
-        <p>(vi) dreptul la stergerea datelor: Persoana vizata are dreptul de a obtine din partea operatorului stergerea datelor cu caracter personal care o privesc, fara intarzieri nejustificate, iar operatorul are obligatia de a sterge datele cu caracter personal fara intarzieri nejustificate in cazul in care se aplica unul dintre urmatoarele motive: (a)  datele cu caracter personal nu mai sunt necesare pentru indeplinirea scopurilor pentru care au fost colectate sau prelucrate; (b)  persoana vizata isi retrage consimtamantul pe baza caruia are loc prelucrarea si nu exista niciun alt temei juridic pentru prelucrarea; (c)  persoana vizata se opune prelucrarii nu exista motive legitime care sa prevaleze in ceea ce priveste prelucrarea sau persoana vizata se opune prelucrarii); (d)  datele cu caracter personal au fost prelucrate ilegal; (e)  datele cu caracter personal trebuie sterse pentru respectarea unei obligatii legale care revine operatorului in temeiul dreptului Uniunii sau al dreptului intern sub incidenta caruia se afla operatorul; </p>
-        <p>(vix) dreptul la rectificare: Persoana vizata are dreptul de a obtine de la operator, fara intarzieri nejustificate, rectificarea datelor cu caracter personal inexacte care o privesc. Tinandu-se seama de scopurile in care au fost prelucrate datele, persoana vizata are dreptul de a obtine completarea datelor cu caracter personal care sunt incomplete, inclusiv prin furnizarea unei declaratii suplimentare.</p>
-        <p>Drepturile persoanelor vizate vor putea fi exercitate de catre persoana fizica adresand o cerere scrisa, datata si semnata catre SC THERANOVA PROTEZARE SRL , in care se vor mentiona datele personale (inclusiv un numar de telefon) si datele asupra carora se solicita accesul, interventia, motivul justificat si modul de acces, interventie sau datele asupra carora se solicita opozitia si motivul intemeiat si legitim legat de situatia particulara a persoanei. Oricarei cereri i se va atasa o copie xerox, lizibila a actului de identitate al solicitantului.</p>
+        <p>SC THERANOVA PROTEZARE SRL respectă drepturile pe care Legea nr. 190/2018 și Regulamentul UE 2016/679 le conferă persoanei fizice vizate, respectiv:</p>
+        <p>(i) dreptul de informare: dreptul de a fi informat cu privire la identitatea operatorului, scopul în care se face prelucrarea datelor, destinatarii sau categoriile de destinatari ai datelor, existența drepturilor prevăzute de lege pentru persoana vizată și condițiile în care pot fi exercitate;</p>
+        <p>(ii) dreptul de acces la datele cu caracter personal: dreptul de a obține la cerere și în mod gratuit, o dată pe an, confirmarea faptului că datele cu caracter personal sunt sau nu prelucrate de către SC THERANOVA PROTEZARE SRL;</p>
+        <p>(iii) dreptul de a nu fi supus unei decizii individuale: dreptul de a cere și de a obține retragerea, anularea sau reevaluarea oricărei decizii care produce efecte juridice în privința persoanei vizate, adoptată exclusiv pe baza unei prelucrări de date cu caracter personal, efectuată prin mijloace automate, destinată să evalueze unele aspecte ale evoluției, comportamentului și performanțelor sau orice asemenea caracteristici obținute de client/pacient în perioada ulterioară montării/achiziționării dispozitivelor medicale ori alte asemenea aspecte;</p>
+        <p>(iv) dreptul de a se adresa justiției: dreptul de a se adresa Autorității Naționale de Supraveghere a Prelucrării Datelor cu Caracter Personal sau justiției, pentru apărarea oricăror drepturi garantate de prevederile legale care au fost încălcate;</p>
+        <p>(v) dreptul la portabilitatea datelor: persoana vizată are dreptul de a primi datele cu caracter personal care o privesc și pe care le-a furnizat operatorului într-un format structurat, utilizat în mod curent și care poate fi citit automat și are dreptul de a transmite aceste date altui operator, fără obstacole din partea operatorului căruia i-au fost furnizate datele cu caracter personal;</p>
+        <p>(vi) dreptul la restricționarea datelor: persoana vizată are dreptul de a obține din partea operatorului restricționarea prelucrării în cazul în care se aplică unul din următoarele cazuri: (a) persoana vizată contestă exactitatea datelor, pentru o perioadă care îi permite operatorului să verifice exactitatea datelor; (b) prelucrarea este ilegală, iar persoana vizată se opune ștergerii datelor cu caracter personal, solicitând în schimb restricționarea utilizării lor; (c) operatorul nu mai are nevoie de datele cu caracter personal în scopul prelucrării, dar persoana vizată i le solicită pentru constatarea, exercitarea sau apărarea unui drept în instanță; sau (d) persoana vizată s-a opus prelucrării pentru intervalul de timp în care se verifică dacă drepturile legitime ale operatorului prevalează asupra celor ale persoanei vizate;</p>
+        <p>(vii) dreptul la opoziție: în orice moment, persoana vizată are dreptul de a se opune, din motive legate de situația particulară în care se află, prelucrării datelor cu caracter personal care o privesc, inclusiv creării de profiluri pe baza acestora. Operatorul nu mai prelucrează datele cu caracter personal, cu excepția cazului în care operatorul demonstrează că are motive legitime și imperioase care justifică prelucrarea și care prevalează asupra intereselor, drepturilor și libertăților persoanei vizate sau că scopul este constatarea, exercitarea sau apărarea unui drept în instanță;</p>
+        <p>(viii) dreptul la ștergerea datelor: persoana vizată are dreptul de a obține din partea operatorului ștergerea datelor cu caracter personal care o privesc, fără întârzieri nejustificate, iar operatorul are obligația de a șterge datele cu caracter personal fără întârzieri nejustificate în cazul în care se aplică unul dintre următoarele motive: (a) datele cu caracter personal nu mai sunt necesare pentru îndeplinirea scopurilor pentru care au fost colectate sau prelucrate; (b) persoana vizată își retrage consimțământul pe baza căruia are loc prelucrarea și nu există niciun alt temei juridic pentru prelucrare; (c) persoana vizată se opune prelucrării și nu există motive legitime care să prevaleze în ceea ce privește prelucrarea; (d) datele cu caracter personal au fost prelucrate ilegal; (e) datele cu caracter personal trebuie șterse pentru respectarea unei obligații legale care revine operatorului în temeiul dreptului Uniunii sau al dreptului intern sub incidența căruia se află operatorul;</p>
+        <p>(ix) dreptul la rectificare: persoana vizată are dreptul de a obține de la operator, fără întârzieri nejustificate, rectificarea datelor cu caracter personal inexacte care o privesc. Ținându-se seama de scopurile în care au fost prelucrate datele, persoana vizată are dreptul de a obține completarea datelor cu caracter personal care sunt incomplete, inclusiv prin furnizarea unei declarații suplimentare.</p>
+        <p>Drepturile persoanelor vizate vor putea fi exercitate de către persoana fizică adresând o cerere scrisă, datată și semnată către SC THERANOVA PROTEZARE SRL, în care se vor menționa datele personale (inclusiv un număr de telefon) și datele asupra cărora se solicită accesul, intervenția, motivul justificat și modul de acces, intervenție sau datele asupra cărora se solicită opoziția și motivul întemeiat și legitim legat de situația particulară a persoanei. Oricărei cereri i se va atașa o copie xerox, lizibilă, a actului de identitate al solicitantului.</p>
+
         <br>
+
         <p><b>Prelucrarea datelor cu caracter personal</b></p>
-        <p>Prelucrarea si stocarea datelor cu caracter personal este facuta in conditii de siguranta si in scopuri legitime legate in principal de desfasurarea activitatii de prestare a serviciilor de protezare si in subsidiar, pentru reclama, maketing, publicitate, precum si servicii de consultanta si cercetare.</p>
-        <p>Prin completarea formularului de contract si a fisei de client va dati acordul in mod expres si neechivoc ca datele dumneavoastra cu caracter personal sa fie stocate si prelucrate de catre SC THERANOVA PROTEZARE SRL  . SC THERANOVA PROTEZARE SRL  va pastra confidentialitatea acestor informatii, cu exceptia informatiilor solicitate de autoritatile legale competente.</p>
+        <p>Prelucrarea și stocarea datelor cu caracter personal este făcută în condiții de siguranță și în scopuri legitime legate în principal de desfășurarea activității de prestare a serviciilor de protezare și, în subsidiar, pentru reclamă, marketing, publicitate, precum și servicii de consultanță și cercetare.</p>
+        <p>Prin completarea formularului de contract și a fișei de client vă dați acordul în mod expres și neechivoc ca datele dumneavoastră cu caracter personal să fie stocate și prelucrate de către SC THERANOVA PROTEZARE SRL. SC THERANOVA PROTEZARE SRL va păstra confidențialitatea acestor informații, cu excepția informațiilor solicitate de autoritățile legale competente.</p>
+
         <br>
-        <p>Scopul prelucrarii datelor cu caracter personal</p>
-        <p>SC THERANOVA PROTEZARE SRL  va prelucra datele personale cu urmatoarele scopuri: (i) furnizarea de servicii medicale/de protezare; (ii) educatie si cultura; (iii) protectie si asistenta sociala, (iv) cercetare stiintifica, si (v) marketing si publicitate. Persoanele vizate sunt: (i) pacienti / potentiali pacienti ai SC THERANOVA PROTEZARE SRL  , (ii) debitori, (iii) membrii familiei clientilor-pacientilor, (iv), cadre tehnico-medicale (v) cadre didactice, (vi) studenti precum si (vii) persoanele de contact desemnate de catre pacienti/client.</p>
+
+        <p><b>Scopul prelucrării datelor cu caracter personal</b></p>
+        <p>SC THERANOVA PROTEZARE SRL va prelucra datele personale cu următoarele scopuri: (i) furnizarea de servicii medicale/de protezare; (ii) educație și cultură; (iii) protecție și asistență socială; (iv) cercetare științifică; și (v) marketing și publicitate. Persoanele vizate sunt: (i) pacienți/potențiali pacienți ai SC THERANOVA PROTEZARE SRL; (ii) debitori; (iii) membrii familiei clienților-pacienți; (iv) cadre tehnico-medicale; (v) cadre didactice; (vi) studenți, precum și (vii) persoanele de contact desemnate de către pacient/client.</p>
+
         <br>
-        <p><b>Persoanele imputernicite/Destinatari/Operator asociat:</b></p>
-        <p>Datele dumneavoastra cu caracter personal pot fi prelucrate de catre urmatoarele persoane, cu respectarea intocmai a legislatiei privind protectia datelor cu caracter personal:</p>
-        <p>Datele personale prelucrate pot fi dezvaluite urmatorilor destinatari: (i) persoanei vizate (ii) reprezentantilor legali ai persoanei vizate (iii)  operatorilor de date (iv) partenerilor contractuali ai SC THERANOVA PROTEZARE SRL  – Furnizorii de prestari servicii cum ar fi, dar fara a se limita la furnizori de servicii si sisteme IT, partenerii contractuali precum si toate societatile din aceste categorii de destinatari de la care Societatea va contracta servicii si produse si care au luat masuri adecvate de protectie, conform prevederilor legale, pentru a asigura ca acestia isi respecta obligatiile privind protectia datelor cu caracter personal; (v) alte companii din acelasi grup cu SC THERANOVA PROTEZARE SRL  (vi) autoritatilor publice – precum Casa de Asigurari de Sanatate, DSP, autoritatea fiscala, etc. pe baza competentelor acestora prevazute de legea aplicabila, precum si oricare alte autoritati publice care pot solicita astfel de date in temeiul unor dispozitii legale (vii) institutii/centre de recuperare medicala si institutii de educatie; (vii) societatilor de asigurare si reasigurare; (viii) organizatii profesionale; (ix) asociatii si fundatii; (x) mass-media.</p>
+
+        <p><b>Persoanele împuternicite/Destinatari/Operator asociat:</b></p>
+        <p>Datele dumneavoastră cu caracter personal pot fi prelucrate de către următoarele persoane, cu respectarea întocmai a legislației privind protecția datelor cu caracter personal:</p>
+        <p>Datele personale prelucrate pot fi dezvăluite următorilor destinatari: (i) persoanei vizate; (ii) reprezentanților legali ai persoanei vizate; (iii) operatorilor de date; (iv) partenerilor contractuali ai SC THERANOVA PROTEZARE SRL - furnizorii de prestări servicii cum ar fi, dar fără a se limita la furnizori de servicii și sisteme IT, partenerii contractuali precum și toate societățile din aceste categorii de destinatari de la care Societatea va contracta servicii și produse și care au luat măsuri adecvate de protecție, conform prevederilor legale, pentru a asigura că aceștia își respectă obligațiile privind protecția datelor cu caracter personal; (v) alte companii din același grup cu SC THERANOVA PROTEZARE SRL; (vi) autorităților publice - precum Casa de Asigurări de Sănătate, DSP, autoritatea fiscală etc., pe baza competențelor acestora prevăzute de legea aplicabilă, precum și oricăror alte autorități publice care pot solicita astfel de date în temeiul unor dispoziții legale; (vii) instituții/centre de recuperare medicală și instituții de educație; (viii) societăților de asigurare și reasigurare; (ix) organizații profesionale; (x) asociații și fundații; (xi) mass-media.</p>
+
         <br>
+
         <p><b>Transferul datelor cu caracter personal</b></p>
-        <p>Datele personale pot fi dezvaluite unor terte parti, procesatoare de date personale, care se afla in strainatate, respectiv in oricare dintre tarile aflate in cadrul Uniunii Europene. De asemenea, anumite date personale pot fi dezvaluite in scopul raportarii actionarilor/conducerii SC THERANOVA PROTEZARE SRL . In cazul in care datele dumneavoastra se vor transfera catre alte societati din alte tari, in vederea initierii, incheierii si dezvoltarii unor contracte si/sau proiecte cu o asemenea entitate, veti fi informat si se vor aplica garantiile prevazute de art. 44-49 din Regulamentul General privind protectia datelor.</p>
+        <p>Datele personale pot fi dezvăluite unor terțe părți, procesatoare de date personale, care se află în străinătate, respectiv în oricare dintre țările aflate în cadrul Uniunii Europene. De asemenea, anumite date personale pot fi dezvăluite în scopul raportării acționarilor/conducerii SC THERANOVA PROTEZARE SRL. În cazul în care datele dumneavoastră se vor transfera către alte societăți din alte țări, în vederea inițierii, încheierii și dezvoltării unor contracte și/sau proiecte cu o asemenea entitate, veți fi informat și se vor aplica garanțiile prevăzute de art. 44-49 din Regulamentul General privind protecția datelor.</p>
+
         <p><b>Perioada de stocare a datelor cu caracter personal</b></p>
-        <p>SC THERANOVA PROTEZARE SRL  asigura confidentialitatea datelor cu caracter personal prelucrate in conformitate cu acordul exprimat de persoana fizica vizata si conform prevederilor legale. Accesul la informatiile tratate drept confidentiale va fi limitat la acele persoane, care prin natura activitatii desfasurate, este necesar sa ia cunostinta de aceste informatii in scopul ducerii la indeplinire a scopului, raporturilor juridice nascute in relatie cu SC THERANOVA PROTEZARE SRL .Aceste persoane sunt tinute sa respecte caracterul confidential al acestor informatii, asumandu-si la randul lor obligatia de a asigura si pastra confidentialitatea acestor date si informatii si de a le prelucra in conformitate cu cerintele legale. Datele dumneavoastra care sunt necesare in scopuri legate de serviciile medicale/ de protezare vor fi stocate pe durata contractului de prestari servicii medicale/protezare, respectiv pe perioada de timp necesara in vederea indeplinirii obligatiilor legale prevazute de legislatia aplicabila .</p>
-        <p>Datele legate de plati/facturare vor fi stocate pe o perioada de 10 ani, conform Legii nr. 82/1991 privind contabilitatea;</p>
+        <p>SC THERANOVA PROTEZARE SRL asigură confidențialitatea datelor cu caracter personal prelucrate în conformitate cu acordul exprimat de persoana fizică vizată și conform prevederilor legale. Accesul la informațiile tratate drept confidențiale va fi limitat la acele persoane, care prin natura activității desfășurate este necesar să ia cunoștință de aceste informații în scopul ducerii la îndeplinire a scopului, raporturilor juridice născute în relație cu SC THERANOVA PROTEZARE SRL. Aceste persoane sunt ținute să respecte caracterul confidențial al acestor informații, asumându-și la rândul lor obligația de a asigura și păstra confidențialitatea acestor date și informații și de a le prelucra în conformitate cu cerințele legale. Datele dumneavoastră care sunt necesare în scopuri legate de serviciile medicale/de protezare vor fi stocate pe durata contractului de prestări servicii medicale/protezare, respectiv pe perioada de timp necesară în vederea îndeplinirii obligațiilor legale prevăzute de legislația aplicabilă.</p>
+        <p>Datele legate de plăți/facturare vor fi stocate pe o perioadă de 10 ani, conform Legii nr. 82/1991 privind contabilitatea;</p>
         <ul>
-            <li>Datele privind supravegherea video pentru asigurarea securitatii bunurilor si persoanelor, respectiv a inregistrarii apelurilor telefonice se vor stoca pe o perioada de 30 de zile calendaristice, respectiv in conformitate cu temeiurile prevazute de legislatia in vigoare;</li>
-            <li>Datele inregistrarii apelurilor telefonice se vor stoca pe o perioada de 6 luni, respectiv in conformitate cu temeiurile prevazute de legislatia in vigoare, iar documentele incarcate pe site vor fi stocate pentru un termen de 30 de zile, ulterior acestui termen documentele vor fi sterse automat;</li>
-            <li>Prelucrarea datelor in scop de marketing va avea loc pe durata relatiei contractuale cu SC THERANOVA PROTEZARE SRL , precum si dupa incetarea acesteia. In situatia in care persoana vizata isi retrage consimtamantul de marketing direct, datele sale nu vor mai fi prelucrate in acest scop, din momentul retragerii cconsimtamantului.</li>
-            <li>De asemenea, datele persoanei vizate pot fi prelucrate si pe durata existentei unei obligatii legale pentru pastrarea datelor dumneavoastra, respectiv pe durata de existenta a unui alt temei justificativ legal, in conformitate cu exigentele art. 5 din Regulamentul General UE privind protectia datelor.</li>
+            <li>Datele privind supravegherea video pentru asigurarea securității bunurilor și persoanelor, respectiv a înregistrării apelurilor telefonice, se vor stoca pe o perioadă de 30 de zile calendaristice, respectiv în conformitate cu temeiurile prevăzute de legislația în vigoare;</li>
+            <li>Datele înregistrării apelurilor telefonice se vor stoca pe o perioadă de 6 luni, respectiv în conformitate cu temeiurile prevăzute de legislația în vigoare, iar documentele încărcate pe site vor fi stocate pentru un termen de 30 de zile; ulterior acestui termen documentele vor fi șterse automat;</li>
+            <li>Prelucrarea datelor în scop de marketing va avea loc pe durata relației contractuale cu SC THERANOVA PROTEZARE SRL, precum și după încetarea acesteia. În situația în care persoana vizată își retrage consimțământul de marketing direct, datele sale nu vor mai fi prelucrate în acest scop, din momentul retragerii consimțământului;</li>
+            <li>De asemenea, datele persoanei vizate pot fi prelucrate și pe durata existenței unei obligații legale pentru păstrarea datelor dumneavoastră, respectiv pe durata de existență a unui alt temei justificativ legal, în conformitate cu exigențele art. 5 din Regulamentul General UE privind protecția datelor.</li>
         </ul>
-        <p>Datele de contact ale responsabilului cu protectia datelor:____________</p>
-        <p>
-            Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare
-            B.I./C.I. seria {{ substr(($fisaCaz->pacient->serie_numar_buletin ?? ''), 0, 2) }}, nr. {{ preg_replace('/[^0-9]/', '', ($fisaCaz->pacient->serie_numar_buletin)) }},
-            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ? Carbon::parse($fisaCaz->pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }},
-            <b>arat ca am citit si inteles pe deplin continutul informarii de mai sus si sunt de acord in totalitate cu prelucrarea datelor mele personale astfel cum rezulta din Nota de informare de mai sus.</b>
-        </p>
-        <table>
+        <p>Datele de contact ale responsabilului cu protecția datelor: ____________</p>
+
+        <p>Subsemnatul/a <b>{{ $numePacient }}</b>, având următoarele date de identificare B.I./C.I. seria {{ $serieBuletin }}, nr. {{ $numarBuletin }}, eliberat/eliberată la data de {{ $pacient->data_eliberare_buletin ? Carbon::parse($pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }}, <b>arat că am citit și înțeles pe deplin conținutul informării de mai sus și sunt de acord în totalitate cu prelucrarea datelor mele personale astfel cum rezultă din Nota de informare de mai sus.</b></p>
+
+        <table class="no-border mt-12">
             <tr>
-                <td style="width: 80%">Data:</td>
+                <td style="width: 80%;">Data:</td>
                 <td>Nume, prenume</td>
             </tr>
         </table>
-        <br><br>
 
-        <p style="text-align: center;"><b>DECLARATIE DE CONSIMTAMANT</b></p>
         <br>
-        <p>
-            Subsemnatul /a <b>{{ ($fisaCaz->pacient->nume ?? '') . ' ' . ($fisaCaz->pacient->prenume ?? '') }}</b>, avand urmatoarele date de identificare
-            B.I./C.I. seria {{ substr(($fisaCaz->pacient->serie_numar_buletin ?? ''), 0, 2) }}, nr. {{ preg_replace('/[^0-9]/', '', ($fisaCaz->pacient->serie_numar_buletin)) }},
-            eliberat/eliberată la data de {{ $fisaCaz->pacient->data_eliberare_buletin ? Carbon::parse($fisaCaz->pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }},
-            <b>imi exprim consimtamantul in mod expres pentru publicarea/postarea in mediul on-line in vederea promovarii serviciilor incluse in obiectul de activitate al THERANOVA PROTEZARE, cu scop de marketing, publicitate, promovare si arat ca sunt de acord cu publicarea fotografiilor si filmarilor in orice format continand imaginea subsemnatului pe pagini /platforme on-line (Facebook, Instagram, etc ) detinute /administrate de THERANOVA PROTEZARE. Prezentul consimtamant este valabil pana la revocarea expresa a acestuia prin Notificarea scrisa a THERANOVA PROTEZARE.</b>
-        </p>
-        <table>
+        <br>
+
+        <p class="text-center"><b>DECLARATIE DE CONSIMTAMANT</b></p>
+
+        <br>
+
+        <p>Subsemnatul/a <b>{{ $numePacient }}</b>, având următoarele date de identificare B.I./C.I. seria {{ $serieBuletin }}, nr. {{ $numarBuletin }}, eliberat/eliberată la data de {{ $pacient->data_eliberare_buletin ? Carbon::parse($pacient->data_eliberare_buletin)->isoFormat('DD.MM.YYYY') : '' }}, <b>îmi exprim consimțământul în mod expres pentru publicarea/postarea în mediul on-line în vederea promovării serviciilor incluse în obiectul de activitate al THERANOVA PROTEZARE, cu scop de marketing, publicitate, promovare și arăt că sunt de acord cu publicarea fotografiilor și filmărilor în orice format conținând imaginea subsemnatului pe pagini/platforme on-line (Facebook, Instagram etc.) deținute/administrate de THERANOVA PROTEZARE. Prezentul consimțământ este valabil până la revocarea expresă a acestuia prin notificarea scrisă a THERANOVA PROTEZARE.</b></p>
+
+        <table class="no-border mt-12">
             <tr>
-                <td style="width: 80%">Data:</td>
+                <td style="width: 80%;">Data:</td>
                 <td>Nume, prenume</td>
             </tr>
         </table>
 
-
-
-
-
-
-        {{-- Here's the magic. This MUST be inside body tag. Page count / total, centered at bottom of page --}}
         <script type="text/php">
             if (isset($pdf)) {
                 $text = "Pagina {PAGE_NUM} / {PAGE_COUNT}";
@@ -421,8 +437,6 @@
                 $pdf->page_text($x, $y, $text, $font, $size);
             }
         </script>
-
-
     </main>
 </body>
 
