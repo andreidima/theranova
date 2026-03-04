@@ -287,8 +287,11 @@
         <br>
 
         <p>Prezentul act se încheie în 2 exemplare, câte unul de fiecare parte.</p>
+    </main>
 
-        <div style="page-break-after: always;"></div>
+    <div style="page-break-after: always;"></div>
+
+    <main>
 
         <p><b>*) Anexele la contract:</b></p>
         <br>
