@@ -80,6 +80,7 @@ class ConfigurareController extends Controller
             ],
             'min_valoare' => 'required|integer|min:0|max:999999',
             'max_valoare' => 'nullable|integer|min:0|max:999999',
+            'rol_in_fisa' => 'required|in:vanzari,tehnic',
             'bonus_fix' => 'required|integer|min:0|max:999999',
             'bonus_procent' => 'required|integer|min:0|max:100',
             'amputatie' => 'nullable|string|max:150',
@@ -96,6 +97,7 @@ class ConfigurareController extends Controller
             'lucrare_id' => (int) $validated['lucrare_id'],
             'min_valoare' => (int) $validated['min_valoare'],
             'max_valoare' => isset($validated['max_valoare']) ? (int) $validated['max_valoare'] : null,
+            'rol_in_fisa' => (string) $validated['rol_in_fisa'],
             'bonus_fix' => (int) $validated['bonus_fix'],
             'bonus_procent' => (int) $validated['bonus_procent'],
             'amputatie' => $this->normalizeAmputatie($validated['amputatie'] ?? null),
@@ -112,6 +114,7 @@ class ConfigurareController extends Controller
         $validated = $request->validate([
             'min_valoare' => 'required|integer|min:0|max:999999',
             'max_valoare' => 'nullable|integer|min:0|max:999999',
+            'rol_in_fisa' => 'required|in:vanzari,tehnic',
             'bonus_fix' => 'required|integer|min:0|max:999999',
             'bonus_procent' => 'required|integer|min:0|max:100',
             'amputatie' => 'nullable|string|max:150',
@@ -127,6 +130,7 @@ class ConfigurareController extends Controller
         $interval->update([
             'min_valoare' => (int) $validated['min_valoare'],
             'max_valoare' => isset($validated['max_valoare']) ? (int) $validated['max_valoare'] : null,
+            'rol_in_fisa' => (string) $validated['rol_in_fisa'],
             'bonus_fix' => (int) $validated['bonus_fix'],
             'bonus_procent' => (int) $validated['bonus_procent'],
             'amputatie' => $this->normalizeAmputatie($validated['amputatie'] ?? null),

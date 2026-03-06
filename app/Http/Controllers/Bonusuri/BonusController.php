@@ -198,11 +198,6 @@ class BonusController extends Controller
             $valoareOferta = (int) round((float) ($ofertaAcceptata->pret ?? 0));
             $dataPredare = Carbon::parse($fisaCaz->protezare);
             $amputatieFisa = $fisaCaz->latestDateMedicale->amputatie ?? null;
-            $interval = $bonusCalculatorService->gasesteIntervalBonus($lucrare->id, $valoareOferta, $dataPredare, $amputatieFisa);
-
-            if (!$interval) {
-                continue;
-            }
 
             $roluri = [
                 'vanzari' => (int) ($fisaCaz->user_vanzari ?? 0),
@@ -222,9 +217,13 @@ class BonusController extends Controller
                     continue;
                 }
 
-                $bonusFix = (int) $interval->bonus_fix;
-                $bonusProcent = (int) $interval->bonus_procent;
+                $interval = $bonusCalculatorService->gasesteIntervalBonus($lucrare->id, $rol, $valoareOferta, $dataPredare, $amputatieFisa);
+                $bonusFix = $interval ? (int) $interval->bonus_fix : 0;
+                $bonusProcent = $interval ? (int) $interval->bonus_procent : 0;
                 $bonusTotal = $bonusCalculatorService->calculeazaBonusTotal($valoareOferta, $bonusFix, $bonusProcent);
+                $amputatie = $interval
+                    ? ($bonusCalculatorService->normalizeAmputatie($interval->amputatie) ?? 'Toate amputatiile')
+                    : ($bonusCalculatorService->normalizeAmputatie($amputatieFisa) ?? 'Toate amputatiile');
 
                 $rows->push([
                     'fisa_caz_id' => (int) $fisaCaz->id,
@@ -237,7 +236,7 @@ class BonusController extends Controller
                     'rol' => $rol,
                     'lucrare_denumire' => (string) $lucrare->denumire,
                     'lucrare_cod' => (string) ($lucrare->cod ?? ''),
-                    'amputatie' => $bonusCalculatorService->normalizeAmputatie($interval->amputatie) ?? 'Toate amputatiile',
+                    'amputatie' => $amputatie,
                     'valoare_oferta' => $valoareOferta,
                     'bonus_fix' => $bonusFix,
                     'bonus_procent' => $bonusProcent,
@@ -373,15 +372,39 @@ class BonusController extends Controller
                     $localitate = trim((string) ($first['pacient_judet'] ?? ''));
                 }
 
-                $bonusFix = (int) ($first['bonus_fix'] ?? 0);
-                $bonusProcent = (int) ($first['bonus_procent'] ?? 0);
+                $formatBonus = static function (int $bonusFix, int $bonusProcent): string {
+                    if ($bonusFix > 0 && $bonusProcent > 0) {
+                        return "Fix {$bonusFix} + {$bonusProcent}%";
+                    }
+                    if ($bonusFix > 0) {
+                        return (string) $bonusFix;
+                    }
+                    if ($bonusProcent > 0) {
+                        return "{$bonusProcent}%";
+                    }
+
+                    return '';
+                };
+
+                $valoareBonusRm = $rowVanzari
+                    ? $formatBonus((int) ($rowVanzari['bonus_fix'] ?? 0), (int) ($rowVanzari['bonus_procent'] ?? 0))
+                    : '';
+                $valoareBonusTehnic = $rowTehnic
+                    ? $formatBonus((int) ($rowTehnic['bonus_fix'] ?? 0), (int) ($rowTehnic['bonus_procent'] ?? 0))
+                    : '';
                 $valoareBonus = '';
-                if ($bonusFix > 0 && $bonusProcent > 0) {
-                    $valoareBonus = "Fix {$bonusFix} + {$bonusProcent}%";
-                } elseif ($bonusFix > 0) {
-                    $valoareBonus = (string) $bonusFix;
-                } elseif ($bonusProcent > 0) {
-                    $valoareBonus = "{$bonusProcent}%";
+
+                if ($valoareBonusRm !== '' && $valoareBonusTehnic !== '' && $valoareBonusRm === $valoareBonusTehnic) {
+                    $valoareBonus = $valoareBonusRm;
+                } else {
+                    $parts = [];
+                    if ($valoareBonusRm !== '') {
+                        $parts[] = "RM: {$valoareBonusRm}";
+                    }
+                    if ($valoareBonusTehnic !== '') {
+                        $parts[] = "Tehnic: {$valoareBonusTehnic}";
+                    }
+                    $valoareBonus = implode(' | ', $parts);
                 }
 
                 $numePacient = trim((string) ($first['pacient_nume'] ?? '') . ' ' . (string) ($first['pacient_prenume'] ?? ''));

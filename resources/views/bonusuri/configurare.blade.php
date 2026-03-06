@@ -64,6 +64,7 @@
                                         </div>
                                         <div class="small text-muted d-inline-flex align-items-center flex-nowrap gap-1">
                                             <span class="text-nowrap">
+                                                Rol: {{ $interval->rol_in_fisa ? ucfirst($interval->rol_in_fisa) : '-' }} |
                                                 Fix: {{ (int) $interval->bonus_fix }} |
                                                 %: {{ (int) $interval->bonus_procent }} |
                                                 {{ $interval->activ ? 'Activ' : 'Inactiv' }}
@@ -188,6 +189,14 @@
                         <div class="col-6">
                             <label class="form-label mb-1">Max valoare</label>
                             <input type="number" step="1" min="0" name="max_valoare" class="form-control rounded-3">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label mb-1">Rol</label>
+                            <select name="rol_in_fisa" class="form-select rounded-3" required>
+                                <option value="">Alege</option>
+                                <option value="vanzari">Vanzari</option>
+                                <option value="tehnic">Tehnic</option>
+                            </select>
                         </div>
                         <div class="col-6">
                             <label class="form-label mb-1">Bonus fix</label>
@@ -324,6 +333,13 @@
                                 <div class="col-6">
                                     <label class="form-label mb-1">Max valoare</label>
                                     <input type="number" step="1" min="0" name="max_valoare" value="{{ $interval->max_valoare }}" class="form-control rounded-3">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label mb-1">Rol</label>
+                                    <select name="rol_in_fisa" class="form-select rounded-3" required>
+                                        <option value="vanzari" {{ $interval->rol_in_fisa === 'vanzari' ? 'selected' : '' }}>Vanzari</option>
+                                        <option value="tehnic" {{ $interval->rol_in_fisa === 'tehnic' ? 'selected' : '' }}>Tehnic</option>
+                                    </select>
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label mb-1">Bonus fix</label>

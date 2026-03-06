@@ -48,7 +48,7 @@ class BonusCalculatorService
         return $lucrare;
     }
 
-    public function gasesteIntervalBonus(int $lucrareId, int $valoareOferta, Carbon $dataReferinta, ?string $amputatie = null): ?LucrareBonusInterval
+    public function gasesteIntervalBonus(int $lucrareId, string $rolInFisa, int $valoareOferta, Carbon $dataReferinta, ?string $amputatie = null): ?LucrareBonusInterval
     {
         $amputatieNormalizata = $this->normalizeAmputatie($amputatie);
 
@@ -77,6 +77,10 @@ class BonusCalculatorService
                 $query->whereNull('max_valoare')
                     ->orWhere('max_valoare', '>=', $valoareOferta);
             });
+
+        if (Schema::hasColumn('lucrari_bonus_intervale', 'rol_in_fisa')) {
+            $query->where('rol_in_fisa', $rolInFisa);
+        }
 
         if ($amputatieNormalizata !== null) {
             $query->orderByRaw('CASE WHEN amputatie = ? THEN 1 ELSE 0 END DESC', [$amputatieNormalizata]);
