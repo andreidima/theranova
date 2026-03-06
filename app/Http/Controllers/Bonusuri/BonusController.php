@@ -385,6 +385,8 @@ class BonusController extends Controller
                 }
 
                 $numePacient = trim((string) ($first['pacient_nume'] ?? '') . ' ' . (string) ($first['pacient_prenume'] ?? ''));
+                $bonusRm = $rowVanzari ? (int) ($rowVanzari['bonus_total'] ?? 0) : '';
+                $bonusTehnic = $rowTehnic ? (int) ($rowTehnic['bonus_total'] ?? 0) : '';
 
                 return [
                     'nr_crt' => 0,
@@ -397,9 +399,9 @@ class BonusController extends Controller
                     'valoare_cu_tva' => (int) ($first['valoare_oferta'] ?? 0),
                     'valoare_bonus' => $valoareBonus,
                     'rm' => $rowVanzari['user_name'] ?? '',
-                    'bonus_rm' => '',
+                    'bonus_rm' => $bonusRm,
                     'tehnic' => $rowTehnic['user_name'] ?? '',
-                    'bonus_tehnic' => '',
+                    'bonus_tehnic' => $bonusTehnic,
                     'fara_agent' => '',
                     'observatii' => '',
                 ];
