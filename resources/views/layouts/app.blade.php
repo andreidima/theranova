@@ -173,7 +173,7 @@
                                     @if($canTechMigrations)
                                         <li>
                                             <a class="dropdown-item" href="{{ route('tech.migrations.index') }}">
-                                                Migrations
+                                                Database & migrations
                                             </a>
                                         </li>
                                     @endif

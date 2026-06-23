@@ -1,112 +1,387 @@
 @extends ('layouts.app')
 
 @section('content')
-<div class="mx-3 px-3 card mx-auto" style="border-radius: 40px 40px 40px 40px;">
-    <div class="row card-header align-items-center" style="border-radius: 40px 40px 0px 0px;">
-        <div class="col-lg-6">
-            <span class="badge culoare1 fs-5">
-                <i class="fa-solid fa-database me-1"></i>Migrations
-            </span>
-        </div>
-        <div class="col-lg-6 text-end">
-            <form method="POST" action="{{ route('tech.migrations.run-pending') }}" class="d-inline">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-warning text-dark border border-dark rounded-3">
-                    Ruleaza migrari pending
-                </button>
-            </form>
-        </div>
-    </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            @include ('errors')
 
-    <div class="card-body px-3 py-3">
-        @include ('errors')
+            @if (session('mysqldump_output'))
+                <div class="alert alert-secondary shadow-sm">
+                    <div class="fw-bold mb-2">mysqldump test output</div>
+                    <pre class="mb-0 small" style="white-space: pre-wrap">{{ session('mysqldump_output') }}</pre>
+                </div>
+            @endif
 
-        <div class="row mb-3">
-            <div class="col-lg-4">
-                <div class="border rounded-3 p-3 bg-light">
-                    <div><strong>Conexiune DB:</strong> {{ $dbDefaultConnection }}</div>
-                    <div><strong>Baza de date:</strong> {{ $dbName }}</div>
-                    <div><strong>Tabele:</strong> {{ $databaseSummary['table_count'] }}</div>
-                    <div><strong>Coloane:</strong> {{ $databaseSummary['column_count'] }}</div>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header text-white culoare2 d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-database me-1"></i>Database & migrations</span>
+                    <span class="badge bg-light text-dark">{{ $databaseInfo['app_env'] }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6 col-xl-3">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Connection</div>
+                                <div class="fw-bold">{{ $databaseInfo['connection'] }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Database</div>
+                                <div class="fw-bold">{{ $databaseInfo['database'] }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Host</div>
+                                <div class="fw-bold">{{ $databaseInfo['host'] }}:{{ $databaseInfo['port'] }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Tables</div>
+                                <div class="fw-bold">{{ $tables->count() }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mb-0">
+                        <div class="fw-bold mb-1">Important</div>
+                        <div>
+                            Migrarile nu sterg date in mod automat, dar pot modifica sau elimina coloane si tabele daca acel cod exista in fisierele de migrari.
+                            Verifica mereu sectiunea de pending migrations si SQL preview inainte de a rula migrarile.
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-8">
-                <div class="border rounded-3 p-3 bg-light">
-                    <div><strong>Total fisiere migrari:</strong> {{ $migrationFiles->count() }}</div>
-                    <div><strong>Rulate:</strong> {{ $ranMigrations->count() }}</div>
-                    <div><strong>Pending:</strong> {{ $pendingMigrations->count() }}</div>
-                </div>
-            </div>
-        </div>
 
-        @if (!empty($lastMigrateOutput))
-            <div class="mb-3">
-                <div class="alert {{ $lastMigrateStatus === 'failed' ? 'alert-danger' : 'alert-info' }} mb-2">
-                    Ultimul output pentru comanda <code>php artisan migrate</code>.
+            <div class="card shadow-sm mb-4">
+                <div class="card-header text-white culoare2">
+                    <i class="fa-solid fa-code-branch me-1"></i>Migration status
                 </div>
-                <pre class="bg-dark text-white p-3 rounded-3 mb-0" style="max-height: 320px; overflow: auto;">{{ $lastMigrateOutput }}</pre>
-            </div>
-        @endif
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Repo migrations</div>
+                                <div class="fw-bold">{{ $repoMigrations->count() }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Ran in database</div>
+                                <div class="fw-bold">{{ $ranMigrations->count() }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="text-muted small">Pending</div>
+                                <div class="fw-bold">{{ $pendingMigrations->count() }}</div>
+                            </div>
+                        </div>
+                    </div>
 
-        <h5 class="mb-2">Status migrari</h5>
-        <div class="table-responsive rounded-3 mb-4">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th class="culoare2 text-white">Migrare</th>
-                        <th class="culoare2 text-white">Batch</th>
-                        <th class="culoare2 text-white">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($migrationFiles as $migrationName)
-                        @php
-                            $ran = $ranMigrations->get($migrationName);
-                        @endphp
-                        <tr>
-                            <td><code>{{ $migrationName }}</code></td>
-                            <td>{{ $ran->batch ?? '-' }}</td>
-                            <td>
-                                @if ($ran)
-                                    <span class="badge bg-success">Rulata</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">Pending</span>
+                    @if (! $canRunDangerousActions)
+                        <div class="alert alert-info">
+                            Poti inspecta statusul bazei de date, dar actiunile care descarca backup-uri, testeaza mysqldump, ruleaza migrari sau Composer sunt disponibile doar pentru Andrei.
+                        </div>
+                    @endif
+
+                    @if ($dbOnlyMigrations->count())
+                        <div class="alert alert-danger">
+                            <div class="fw-bold mb-1">Migration history mismatch</div>
+                            <div class="mb-2">
+                                Aceste migrari sunt in tabela <code>migrations</code>, dar nu exista in caile de migrari ale proiectului.
+                            </div>
+                            <ul class="mb-0">
+                                @foreach ($dbOnlyMigrations as $migration)
+                                    <li><code>{{ $migration['migration'] }}</code> (batch {{ $migration['batch'] }})</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if ($schemaDumpExists)
+                        <div class="alert alert-success">
+                            <div class="fw-bold mb-1">Schema baseline exists</div>
+                            <div><code>{{ $schemaDumpPath }}</code></div>
+                            <div>Updated: {{ $schemaDumpModifiedAt }} | Size: {{ number_format(($schemaDumpSize ?? 0) / 1024, 1) }} KB</div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning">
+                            Nu exista schema dump in <code>{{ $schemaDumpPath }}</code>.
+                        </div>
+                    @endif
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <form method="POST" action="{{ route('tech.migrations.backup') }}">
+                            @csrf
+                            <button class="btn btn-outline-primary rounded-3" type="submit" @disabled(! $canRunDangerousActions)>
+                                <i class="fa-solid fa-download me-1"></i>Download database backup
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ route('tech.migrations.run-pending') }}">
+                            @csrf
+                            @if ($destructivePendingMigrations->isNotEmpty())
+                                <input type="hidden" name="confirm_destructive_migrations" value="0">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="1" id="confirmDestructiveMigrations" name="confirm_destructive_migrations" @disabled(! $canRunDangerousActions)>
+                                    <label class="form-check-label small" for="confirmDestructiveMigrations">
+                                        Confirm migrari potential distructive
+                                    </label>
+                                </div>
+                            @endif
+                            <button class="btn btn-danger rounded-3" type="submit" @disabled(! $canRunDangerousActions)>
+                                <i class="fa-solid fa-play me-1"></i>Run pending migrations
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ route('tech.migrations.test-mysqldump') }}">
+                            @csrf
+                            <button class="btn btn-outline-secondary rounded-3" type="submit" @disabled(! $canRunDangerousActions)>
+                                <i class="fa-solid fa-vial me-1"></i>Test mysqldump availability
+                            </button>
+                        </form>
+
+                        <span class="align-self-center text-muted small">
+                            Backup-urile SQL sunt pastrate 14 zile. Backup-urile pre-migration nu se sterg dupa download.
+                            Migrations creeaza mai intai un backup DB-only, apoi ruleaza <code>php artisan migrate --force</code>.
+                        </span>
+                    </div>
+
+                    <div class="border rounded-3 p-3 mb-3">
+                        <div class="fw-bold mb-1">Backup location</div>
+                        <div class="small text-muted mb-2">
+                            Disk: <code>{{ $backupDisk }}</code> | Name: <code>{{ $backupName }}</code>
+                        </div>
+                        <div class="mb-3"><code>{{ $backupPath }}</code></div>
+                        <div class="small text-muted mb-3">
+                            Fisierele SQL sunt pastrate aici 14 zile. Linkurile de download sterg fisierul dupa descarcare doar pentru backup-uri manuale; backup-urile pre-migration raman pe server pana la cleanup.
+                        </div>
+
+                        @if ($recentBackups->count())
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Recent backup</th>
+                                            <th>Size</th>
+                                            <th>Modified</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($recentBackups as $backup)
+                                            <tr>
+                                                <td>
+                                                    <code>{{ $backup['filename'] }}</code>
+                                                    <div class="small text-muted"><code>{{ $backup['path'] }}</code></div>
+                                                </td>
+                                                <td>{{ number_format($backup['size'] / 1024, 1) }} KB</td>
+                                                <td>
+                                                    {{ $backup['modified_at'] }}
+                                                    <div>
+                                                        @if ($canRunDangerousActions)
+                                                            <a href="{{ route('tech.migrations.backups.download', ['filename' => $backup['filename']]) }}">
+                                                                {{ $backup['delete_after_download'] ? 'Download si sterge' : 'Download' }}
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted small">Download indisponibil</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-muted small">No temporary SQL backups found yet.</div>
+                        @endif
+                    </div>
+
+                    @if ($pendingMigrations->count())
+                        @if ($destructivePendingMigrations->isNotEmpty())
+                            <div class="alert alert-danger">
+                                <div class="fw-bold mb-1">Potential destructive migrations detected</div>
+                                <div class="mb-2">
+                                    Aceste migrari contin operatii de tip drop, rename, truncate sau raw SQL similar in metoda <code>up()</code>.
+                                    Pentru rulare este necesara bifarea confirmarii de langa butonul de migrate.
+                                </div>
+                                <ul class="mb-0">
+                                    @foreach ($destructivePendingMigrations as $migration)
+                                        <li>
+                                            <code>{{ $migration['filename'] }}</code>
+                                            <span class="text-muted">({{ $migration['destructive_matches']->implode(', ') }})</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <div class="table-responsive mb-3">
+                            <table class="table table-sm table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Pending migration</th>
+                                        <th>File</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($pendingMigrations as $migration)
+                                        <tr>
+                                            <td><code>{{ $migration['migration'] }}</code></td>
+                                            <td><code>{{ $migration['filename'] }}</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <details>
+                                                    <summary class="fw-bold">Vezi codul migrarii</summary>
+                                                    <pre class="bg-light border rounded-3 p-3 small mt-2 mb-0" style="white-space: pre-wrap">{{ $migration['contents'] }}</pre>
+                                                </details>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="alert alert-info">
+                            Nu exista migrari pending in acest moment.
+                        </div>
+                    @endif
+
+                    <div class="mb-3">
+                        <div class="fw-bold mb-2">What pending migrations will do</div>
+                        @if ($pretendError)
+                            <div class="alert alert-danger mb-0">{{ $pretendError }}</div>
+                        @elseif ($pretendOutput)
+                            <pre class="bg-light border rounded-3 p-3 small mb-0" style="white-space: pre-wrap">{{ $pretendOutput }}</pre>
+                        @else
+                            <div class="border rounded-3 p-3 bg-light">No SQL preview available. Usually this means there is nothing to migrate.</div>
+                        @endif
+                    </div>
+
+                    <div class="alert alert-secondary mb-0">
+                        <div class="fw-bold mb-1">Recommended workflow</div>
+                        <div class="mb-1">Existing environment with data: inspect pending migrations here, review the SQL preview, then run migrations.</div>
+                        <div>Fresh empty environment: create the empty database, then run <code>php artisan migrate</code> so Laravel can use the schema baseline and apply newer migrations.</div>
+                    </div>
+
+                    @if ($lastMigrationOutput)
+                        <div class="mt-3">
+                            <div class="fw-bold mb-2">Last migrate output</div>
+                            <pre class="bg-light border rounded-3 p-3 small mb-0" style="white-space: pre-wrap">{{ $lastMigrationOutput }}</pre>
+                        </div>
+                    @endif
+
+                    @if (session('backup_output'))
+                        <div class="mt-3">
+                            <div class="fw-bold mb-2">Pre-migration backup output</div>
+                            @if (session('backup_filename'))
+                                <div class="small text-muted mb-2">Filename: <code>{{ session('backup_filename') }}</code></div>
+                                @if ($canRunDangerousActions)
+                                    <a class="btn btn-outline-primary btn-sm rounded-3 mb-2" href="{{ route('tech.migrations.backups.download', ['filename' => session('backup_filename')]) }}">
+                                        <i class="fa-solid fa-download me-1"></i>Download backup-ul pre-migration
+                                    </a>
                                 @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                            @endif
+                            <pre class="bg-light border rounded-3 p-3 small mb-0" style="white-space: pre-wrap">{{ session('backup_output') }}</pre>
+                        </div>
+                    @endif
+                </div>
+            </div>
 
-        <h5 class="mb-2">Tabele DB</h5>
-        <div class="table-responsive rounded-3">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th class="culoare2 text-white">Nume</th>
-                        <th class="culoare2 text-white">Engine</th>
-                        <th class="culoare2 text-white">Rows</th>
-                        <th class="culoare2 text-white">Collation</th>
-                        <th class="culoare2 text-white">Ultima actualizare</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($tableStatus as $table)
-                        <tr>
-                            <td><code>{{ $table['name'] }}</code></td>
-                            <td>{{ $table['engine'] }}</td>
-                            <td>{{ $table['rows'] }}</td>
-                            <td>{{ $table['collation'] }}</td>
-                            <td>{{ $table['updated_at'] ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Nu am putut citi metadata tabelelor.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header text-white culoare2">
+                    <i class="fa-solid fa-box-open me-1"></i>Composer
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <div class="fw-bold mb-1">Use only after deploying composer files</div>
+                        <div>
+                            This runs <code>composer install --no-dev --optimize-autoloader --no-interaction</code> on the current server,
+                            then clears Laravel optimized caches. If <code>composer.phar</code> exists in the project root, it will use that file.
+                            On shared hosting this may fail if shell execution, memory, outbound requests, or PHP permissions are restricted.
+                        </div>
+                    </div>
+
+                    <div class="border rounded-3 p-3 mb-3">
+                        <div class="fw-bold mb-1">composer.phar</div>
+                        <div><code>{{ $composerPharPath }}</code></div>
+                        <div class="small text-muted">
+                            Status:
+                            @if ($composerPharExists)
+                                found, {{ number_format(($composerPharSize ?? 0) / 1024 / 1024, 2) }} MB
+                            @else
+                                not found
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <form method="POST" action="{{ route('tech.migrations.composer-download') }}">
+                            @csrf
+                            <button class="btn btn-outline-primary rounded-3" type="submit" @disabled(! $canRunDangerousActions)>
+                                <i class="fa-solid fa-download me-1"></i>Download composer.phar
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ route('tech.migrations.composer-install') }}">
+                            @csrf
+                            <button class="btn btn-outline-danger rounded-3" type="submit" @disabled(! $canRunDangerousActions)>
+                                <i class="fa-solid fa-box-open me-1"></i>Run composer install
+                            </button>
+                        </form>
+                    </div>
+
+                    @if ($lastComposerOutput)
+                        <div class="mt-3">
+                            <div class="fw-bold mb-2">Last composer output</div>
+                            <pre class="bg-light border rounded-3 p-3 small mb-0" style="white-space: pre-wrap">{{ $lastComposerOutput }}</pre>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header text-white culoare2">
+                    <i class="fa-solid fa-table me-1"></i>Current tables
+                </div>
+                <div class="card-body">
+                    @if ($tablesError)
+                        <div class="alert alert-danger">{{ $tablesError }}</div>
+                    @elseif ($tables->count())
+                        <div class="accordion" id="databaseTablesAccordion">
+                            @foreach ($tables as $table)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ $loop->index }}">
+                                        <button class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $loop->index }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}" aria-controls="collapse{{ $loop->index }}">
+                                            <span class="me-3"><code>{{ $table['name'] }}</code></span>
+                                            <span class="badge bg-secondary me-2">{{ $table['rows'] }} rows</span>
+                                            <span class="badge bg-light text-dark me-2">{{ count($table['columns']) }} columns</span>
+                                            <span class="text-muted small">{{ $table['engine'] }} | {{ $table['collation'] }}</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ $loop->index }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" aria-labelledby="heading{{ $loop->index }}" data-bs-parent="#databaseTablesAccordion">
+                                        <div class="accordion-body">
+                                            <div class="small text-muted mb-2">Columns</div>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                @foreach ($table['columns'] as $column)
+                                                    <span class="badge bg-light text-dark border">{{ $column }}</span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-muted small">Nu am gasit tabele.</div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>

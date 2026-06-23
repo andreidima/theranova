@@ -115,8 +115,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::middleware('check.tech.access:tech.migrations')->group(function () {
             Route::get('/migrations', [MigrationController::class, 'index'])
                 ->name('migrations.index');
+            Route::post('/migrations/backup', [MigrationController::class, 'backup'])
+                ->name('migrations.backup');
+            Route::get('/migrations/backups/{filename}', [MigrationController::class, 'downloadBackup'])
+                ->name('migrations.backups.download');
+            Route::post('/migrations/test-mysqldump', [MigrationController::class, 'testMysqlDump'])
+                ->name('migrations.test-mysqldump');
             Route::post('/migrations/ruleaza-pending', [MigrationController::class, 'runPending'])
                 ->name('migrations.run-pending');
+            Route::post('/migrations/composer-download', [MigrationController::class, 'downloadComposer'])
+                ->name('migrations.composer-download');
+            Route::post('/migrations/composer-install', [MigrationController::class, 'composerInstall'])
+                ->name('migrations.composer-install');
         });
 
         Route::middleware('check.tech.access:tech.cronjobs')->group(function () {
