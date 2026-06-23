@@ -352,16 +352,28 @@ const ofertaProspectareForm = createApp({
         return {
             produse: (typeof produseProspectare !== 'undefined' && Array.isArray(produseProspectare)) ? produseProspectare : [],
             linii: (typeof ofertaProspectareLiniiVechi !== 'undefined' && Array.isArray(ofertaProspectareLiniiVechi)) ? ofertaProspectareLiniiVechi : [],
+            amputatii: (typeof ofertaProspectareAmputatiiVechi !== 'undefined' && Array.isArray(ofertaProspectareAmputatiiVechi)) ? ofertaProspectareAmputatiiVechi : [],
             decontare_cas: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.decontare_cas : 0) ?? 0),
             buget_disponibil: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.buget_disponibil : 0) ?? 0),
             discount_aditional: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.discount_aditional : 0) ?? 0),
         }
     },
     created: function () {
+        this.amputatii = this.amputatii.map((amputatie) => ({
+            id: amputatie.id ?? null,
+            parte_amputata: amputatie.parte_amputata ?? '',
+            amputatie: amputatie.amputatie ?? '',
+        }));
+
+        if (this.amputatii.length === 0) {
+            this.adaugaAmputatie();
+        }
+
         this.linii = this.linii.map((linie) => ({
             id: linie.id ?? null,
             produs_prospectare_id: linie.produs_prospectare_id ?? null,
             denumire_produs: linie.denumire_produs ?? '',
+            descriere: linie.descriere ?? '',
             cantitate: Number(linie.cantitate ?? 1),
             pret_unitar: Number(linie.pret_unitar ?? 0),
         }));
@@ -386,11 +398,19 @@ const ofertaProspectareForm = createApp({
         },
     },
     methods: {
+        adaugaAmputatie() {
+            this.amputatii.push({
+                id: null,
+                parte_amputata: '',
+                amputatie: '',
+            });
+        },
         adaugaLinie() {
             this.linii.push({
                 id: null,
                 produs_prospectare_id: null,
                 denumire_produs: '',
+                descriere: '',
                 cantitate: 1,
                 pret_unitar: 0,
             });
@@ -404,6 +424,9 @@ const ofertaProspectareForm = createApp({
 
             this.linii[index].produs_prospectare_id = produs.id;
             this.linii[index].pret_unitar = Number(produs.pret_end_user || 0);
+            if (!this.linii[index].descriere) {
+                this.linii[index].descriere = produs.descriere || '';
+            }
         },
         totalLinie(linie) {
             return Number(linie.cantitate || 0) * Number(linie.pret_unitar || 0);

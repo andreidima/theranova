@@ -8,6 +8,7 @@ use App\Models\Cerinta;
 use App\Models\DataMedicala;
 use App\Models\FisaCaz;
 use App\Models\OfertaProspectare;
+use App\Models\OfertaProspectareAmputatie;
 use App\Models\OfertaProspectareLinie;
 use App\Models\Pacient;
 use App\Models\ProdusProspectare;
@@ -90,6 +91,7 @@ class OfertaProspectareController extends Controller
             'valabila_pana_la' => $validated['valabila_pana_la'] ?? Carbon::today()->addDays(14)->toDateString(),
         ]));
 
+        $this->syncAmputatii($oferta, $request->input('amputatii', []));
         $this->syncLinii($oferta, $request->input('linii', []));
         $oferta->recalculeazaTotaluri();
 
@@ -105,7 +107,7 @@ class OfertaProspectareController extends Controller
         $this->authorizeOfferAccess($request, $ofertaProspectare);
         $request->session()->get('ofertaProspectareReturnUrl') ?? $request->session()->put('ofertaProspectareReturnUrl', url()->previous());
 
-        $ofertaProspectare->load(['emitent', 'aprobator', 'linii.produs', 'trimiteri.user', 'pacient', 'fisaCaz']);
+        $ofertaProspectare->load(['emitent', 'aprobator', 'amputatii', 'linii.produs', 'trimiteri.user', 'pacient', 'fisaCaz']);
 
         return view('oferteProspectare.show', [
             'oferta' => $ofertaProspectare,
@@ -139,6 +141,7 @@ class OfertaProspectareController extends Controller
         $validated['aprobata_la'] = null;
 
         $ofertaProspectare->update($this->offerPayload($validated));
+        $this->syncAmputatii($ofertaProspectare, $request->input('amputatii', []));
         $this->syncLinii($ofertaProspectare, $request->input('linii', []));
         $ofertaProspectare->recalculeazaTotaluri();
 
@@ -158,6 +161,7 @@ class OfertaProspectareController extends Controller
         }
 
         $ofertaProspectare->linii()->delete();
+        $ofertaProspectare->amputatii()->delete();
         $ofertaProspectare->trimiteri()->delete();
         $ofertaProspectare->delete();
 
@@ -248,7 +252,7 @@ class OfertaProspectareController extends Controller
     public function pdf(Request $request, OfertaProspectare $ofertaProspectare)
     {
         $this->authorizeOfferAccess($request, $ofertaProspectare);
-        $ofertaProspectare->load(['emitent', 'aprobator', 'linii']);
+        $ofertaProspectare->load(['emitent', 'aprobator', 'amputatii', 'linii']);
 
         $pdf = \PDF::loadView('oferteProspectare.export.pdf', ['oferta' => $ofertaProspectare])
             ->setPaper('a4', 'portrait');
@@ -289,17 +293,6 @@ class OfertaProspectareController extends Controller
         return redirect()->away('https://wa.me/' . $this->normalizePhoneForWhatsapp($ofertaProspectare->telefon) . '?text=' . urlencode($mesaj));
     }
 
-    public function sms(Request $request, OfertaProspectare $ofertaProspectare): RedirectResponse
-    {
-        $this->authorizeOfferAccess($request, $ofertaProspectare);
-        $this->ensureApproved($ofertaProspectare);
-
-        $mesaj = $this->defaultClientMessage($ofertaProspectare);
-        $this->markSent($ofertaProspectare, 'sms_manual', $ofertaProspectare->telefon, $mesaj);
-
-        return back()->with('status', 'Trimiterea SMS a fost marcata manual. Nu exista provider SMS configurat in aplicatie.');
-    }
-
     public function convert(Request $request, OfertaProspectare $ofertaProspectare): RedirectResponse
     {
         $this->authorizeOfferAccess($request, $ofertaProspectare);
@@ -336,15 +329,15 @@ class OfertaProspectareController extends Controller
         ]);
         $this->syncTipLucrareSolicitataId($fisaCaz);
 
+        $primaAmputatie = $ofertaProspectare->amputatii()->first();
+
         if ($this->hasMedicalData($ofertaProspectare)) {
             $fisaCaz->dateMedicale()->save(DataMedicala::make([
                 'greutate' => $ofertaProspectare->greutate,
-                'parte_amputata' => $ofertaProspectare->parte_amputata,
-                'amputatie' => $ofertaProspectare->amputatie,
+                'parte_amputata' => $primaAmputatie->parte_amputata ?? $ofertaProspectare->parte_amputata,
+                'amputatie' => $primaAmputatie->amputatie ?? $ofertaProspectare->amputatie,
                 'nivel_de_activitate' => $ofertaProspectare->nivel_de_activitate,
-                'cauza_amputatiei' => $ofertaProspectare->cauza_amputatiei,
                 'a_mai_purtat_proteza' => $ofertaProspectare->a_mai_purtat_proteza,
-                'observatii' => $ofertaProspectare->descriere_amputatie,
             ]));
         }
 
@@ -405,11 +398,27 @@ class OfertaProspectareController extends Controller
 
     protected function formData(OfertaProspectare $oferta): array
     {
-        $oferta->loadMissing('linii');
+        $oferta->loadMissing(['amputatii', 'linii']);
+
+        $amputatiiFormData = old('amputatii');
+        if (is_null($amputatiiFormData)) {
+            $amputatiiFormData = $oferta->amputatii->map(function ($amputatie) {
+                return $amputatie->only(['id', 'parte_amputata', 'amputatie']);
+            })->toArray();
+        }
+
+        if (empty($amputatiiFormData) && ($oferta->parte_amputata || $oferta->amputatie)) {
+            $amputatiiFormData = [[
+                'id' => null,
+                'parte_amputata' => $oferta->parte_amputata,
+                'amputatie' => $oferta->amputatie,
+            ]];
+        }
 
         return [
             'oferta' => $oferta,
             'produse' => ProdusProspectare::where('activ', true)->orderBy('denumire')->get(),
+            'amputatiiFormData' => $amputatiiFormData,
         ];
     }
 
@@ -426,19 +435,19 @@ class OfertaProspectareController extends Controller
             'valabila_pana_la' => 'nullable|date',
             'tip_lucrare_solicitata' => 'nullable|max:200',
             'greutate' => 'nullable|integer|min:1|max:255',
-            'parte_amputata' => 'nullable|max:100',
-            'amputatie' => 'nullable|max:100',
             'nivel_de_activitate' => 'nullable|max:100',
-            'cauza_amputatiei' => 'nullable|max:100',
             'a_mai_purtat_proteza' => 'nullable|in:0,1',
-            'descriere_amputatie' => 'nullable|max:5000',
             'decontare_cas' => 'nullable|boolean',
             'buget_disponibil' => 'nullable|integer|min:0|max:1000000',
             'discount_aditional' => 'nullable|integer|min:0|max:1000000',
             'observatii_interne' => 'nullable|max:5000',
+            'amputatii.*.id' => 'nullable|integer',
+            'amputatii.*.parte_amputata' => 'nullable|max:100',
+            'amputatii.*.amputatie' => 'nullable|max:100',
             'linii.*.id' => 'nullable|integer',
             'linii.*.produs_prospectare_id' => 'nullable|integer|exists:produse_prospectare,id',
             'linii.*.denumire_produs' => 'nullable|max:255',
+            'linii.*.descriere' => 'nullable|max:5000',
             'linii.*.cantitate' => 'nullable|integer|min:1|max:999',
             'linii.*.pret_unitar' => 'nullable|integer|min:0|max:1000000',
         ]);
@@ -446,10 +455,12 @@ class OfertaProspectareController extends Controller
 
     protected function offerPayload(array $validated): array
     {
-        $payload = Arr::except($validated, ['linii']);
+        $payload = Arr::except($validated, ['amputatii', 'linii']);
         $payload['decontare_cas'] = (bool) ($payload['decontare_cas'] ?? false);
         $payload['buget_disponibil'] = $payload['decontare_cas'] ? ($payload['buget_disponibil'] ?? null) : null;
         $payload['discount_aditional'] = $payload['discount_aditional'] ?? 0;
+        $payload['cauza_amputatiei'] = null;
+        $payload['descriere_amputatie'] = null;
 
         return $payload;
     }
@@ -459,10 +470,56 @@ class OfertaProspectareController extends Controller
         return $request->validate([
             'denumire' => 'required|max:255',
             'cod' => 'nullable|max:100',
+            'descriere' => 'nullable|max:5000',
             'pret_end_user' => 'required|integer|min:0|max:1000000',
             'activ' => 'nullable|boolean',
             'observatii' => 'nullable|max:5000',
         ]);
+    }
+
+    protected function syncAmputatii(OfertaProspectare $oferta, array $amputatii): void
+    {
+        $ids = collect($amputatii)->pluck('id')->filter()->all();
+        if (count($ids)) {
+            $oferta->amputatii()->whereNotIn('id', $ids)->delete();
+        } else {
+            $oferta->amputatii()->delete();
+        }
+
+        $primaAmputatie = null;
+
+        foreach ($amputatii as $amputatie) {
+            $parteAmputata = trim((string) ($amputatie['parte_amputata'] ?? ''));
+            $tipAmputatie = trim((string) ($amputatie['amputatie'] ?? ''));
+
+            if ($parteAmputata === '' && $tipAmputatie === '') {
+                continue;
+            }
+
+            $model = !empty($amputatie['id'])
+                ? $oferta->amputatii()->where('id', $amputatie['id'])->first()
+                : new OfertaProspectareAmputatie(['oferta_prospectare_id' => $oferta->id]);
+
+            if (!$model) {
+                $model = new OfertaProspectareAmputatie(['oferta_prospectare_id' => $oferta->id]);
+            }
+
+            $model->fill([
+                'oferta_prospectare_id' => $oferta->id,
+                'parte_amputata' => $parteAmputata ?: null,
+                'amputatie' => $tipAmputatie ?: null,
+            ]);
+            $model->save();
+
+            $primaAmputatie ??= $model;
+        }
+
+        $oferta->forceFill([
+            'parte_amputata' => $primaAmputatie?->parte_amputata,
+            'amputatie' => $primaAmputatie?->amputatie,
+            'cauza_amputatiei' => null,
+            'descriere_amputatie' => null,
+        ])->save();
     }
 
     protected function syncLinii(OfertaProspectare $oferta, array $linii): void
@@ -508,6 +565,7 @@ class OfertaProspectareController extends Controller
                 'oferta_prospectare_id' => $oferta->id,
                 'produs_prospectare_id' => $produs?->id,
                 'denumire_produs' => $denumire,
+                'descriere' => trim((string) ($linie['descriere'] ?? '')) ?: null,
                 'cantitate' => $cantitate,
                 'pret_unitar' => $pret,
                 'valoare_linie' => $cantitate * $pret,
@@ -604,12 +662,11 @@ class OfertaProspectareController extends Controller
     {
         return collect([
             $oferta->greutate,
+            $oferta->amputatii()->exists() ? 'amputatii' : null,
             $oferta->parte_amputata,
             $oferta->amputatie,
             $oferta->nivel_de_activitate,
-            $oferta->cauza_amputatiei,
             $oferta->a_mai_purtat_proteza,
-            $oferta->descriere_amputatie,
         ])->filter(fn ($value) => $value !== null && $value !== '')->isNotEmpty();
     }
 

@@ -6,14 +6,15 @@
     $liniiFormData = old('linii');
     if (is_null($liniiFormData)) {
         $liniiFormData = $oferta->linii->map(function ($linie) {
-            return $linie->only(['id', 'produs_prospectare_id', 'denumire_produs', 'cantitate', 'pret_unitar', 'valoare_linie']);
+            return $linie->only(['id', 'produs_prospectare_id', 'denumire_produs', 'descriere', 'cantitate', 'pret_unitar', 'valoare_linie']);
         })->toArray();
     }
 @endphp
 
 <script type="application/javascript">
-    const produseProspectare = {!! json_encode($produse->map(fn ($produs) => $produs->only(['id', 'denumire', 'pret_end_user']))) !!};
+    const produseProspectare = {!! json_encode($produse->map(fn ($produs) => $produs->only(['id', 'denumire', 'descriere', 'pret_end_user']))) !!};
     const ofertaProspectareLiniiVechi = {!! json_encode($liniiFormData ?? []) !!};
+    const ofertaProspectareAmputatiiVechi = {!! json_encode($amputatiiFormData ?? []) !!};
     const ofertaProspectareValoriVechi = {!! json_encode([
         'decontare_cas' => (int) old('decontare_cas', $oferta->decontare_cas ? 1 : 0),
         'buget_disponibil' => old('buget_disponibil', $oferta->buget_disponibil ?? 0),
@@ -59,28 +60,15 @@
         </div>
 
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
-            <div class="col-lg-3 mb-4">
+            <div class="col-lg-4 mb-4">
                 <label class="mb-0 ps-3">Tip lucrare solicitata</label>
                 <input type="text" name="tip_lucrare_solicitata" class="form-control bg-white rounded-3" value="{{ old('tip_lucrare_solicitata', $oferta->tip_lucrare_solicitata) }}">
             </div>
-            <div class="col-lg-1 mb-4">
+            <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Greutate</label>
                 <input type="text" name="greutate" class="form-control bg-white rounded-3" value="{{ old('greutate', $oferta->greutate) }}">
             </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Parte amputata</label>
-                <select name="parte_amputata" class="form-select bg-white rounded-3">
-                    <option value=""></option>
-                    @foreach (['Stanga', 'Dreapta', 'Bilateral'] as $value)
-                        <option value="{{ $value }}" {{ old('parte_amputata', $oferta->parte_amputata) === $value ? 'selected' : '' }}>{{ $value }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Amputatie</label>
-                <input type="text" name="amputatie" class="form-control bg-white rounded-3" value="{{ old('amputatie', $oferta->amputatie) }}">
-            </div>
-            <div class="col-lg-2 mb-4">
+            <div class="col-lg-3 mb-4">
                 <label class="mb-0 ps-3">Nivel activitate</label>
                 <select name="nivel_de_activitate" class="form-select bg-white rounded-3">
                     <option value=""></option>
@@ -89,7 +77,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-lg-2 mb-4">
+            <div class="col-lg-3 mb-4">
                 <label class="mb-0 ps-3">A mai purtat</label>
                 <select name="a_mai_purtat_proteza" class="form-select bg-white rounded-3">
                     <option value=""></option>
@@ -97,13 +85,48 @@
                     <option value="1" {{ old('a_mai_purtat_proteza', $oferta->a_mai_purtat_proteza) === 1 || old('a_mai_purtat_proteza', $oferta->a_mai_purtat_proteza) === '1' ? 'selected' : '' }}>DA</option>
                 </select>
             </div>
-            <div class="col-lg-3 mb-4">
-                <label class="mb-0 ps-3">Cauza amputatiei</label>
-                <input type="text" name="cauza_amputatiei" class="form-control bg-white rounded-3" value="{{ old('cauza_amputatiei', $oferta->cauza_amputatiei) }}">
+            <div class="col-lg-12 mb-2 d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Amputatii</span>
+                <button type="button" class="btn btn-sm btn-success text-white rounded-3" @click="adaugaAmputatie">+</button>
             </div>
-            <div class="col-lg-9 mb-4">
-                <label class="mb-0 ps-3">Descriere amputatie / nevoie</label>
-                <textarea name="descriere_amputatie" rows="2" class="form-control bg-white rounded-3">{{ old('descriere_amputatie', $oferta->descriere_amputatie) }}</textarea>
+            <div class="col-lg-12">
+                <div class="row align-items-end mb-2" v-for="(amputatie, index) in amputatii" :key="'amputatie-' + index">
+                    <input type="hidden" :name="'amputatii[' + index + '][id]'" v-model="amputatii[index].id">
+                    <div class="col-lg-4 mb-2">
+                        <label class="mb-0 ps-3">Parte amputata</label>
+                        <select class="form-select bg-white rounded-3" :name="'amputatii[' + index + '][parte_amputata]'" v-model="amputatii[index].parte_amputata">
+                            <option value=""></option>
+                            <option value="Stânga">Stânga</option>
+                            <option value="Dreapta">Dreapta</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <label class="mb-0 ps-3">Amputatie</label>
+                        <select class="form-select bg-white rounded-3" :name="'amputatii[' + index + '][amputatie]'" v-model="amputatii[index].amputatie">
+                            <option value=""></option>
+                            <option value="" disabled style="color:white; background-color: gray;">Membru Inferior</option>
+                            <option value="Parțială picior">Parțială picior</option>
+                            <option value="Gambă">Gambă</option>
+                            <option value="Dezarticulație genunchi">Dezarticulație genunchi</option>
+                            <option value="Coapsă">Coapsă</option>
+                            <option value="Dezarticulație șold">Dezarticulație șold</option>
+                            <option value="" disabled style="color:white; background-color: gray;">Membru superior</option>
+                            <option value="Deget">Deget</option>
+                            <option value="Mână">Mână</option>
+                            <option value="Articulație pumn">Articulație pumn</option>
+                            <option value="Antebraț">Antebraț</option>
+                            <option value="Cot">Cot</option>
+                            <option value="Braț">Braț</option>
+                            <option value="Dezarticulație umăr">Dezarticulație umăr</option>
+                            <option value="" disabled style="color:white; background-color: gray;"></option>
+                            <option value="Sân">Sân</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 mb-2 text-end">
+                        <button type="button" class="btn btn-danger" @click="amputatii.splice(index, 1)" :disabled="amputatii.length === 1">Sterge</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -119,7 +142,7 @@
                 <div class="row align-items-end mb-2" v-for="(linie, index) in linii" :key="'linie-' + index">
                     <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
                     <input type="hidden" :name="'linii[' + index + '][produs_prospectare_id]'" v-model="linii[index].produs_prospectare_id">
-                    <div class="col-lg-5 mb-2">
+                    <div class="col-lg-4 mb-2">
                         <label class="mb-0 ps-3">Produs</label>
                         <input type="text" class="form-control bg-white rounded-3" list="produseProspectareList" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs" @change="alegeProdus(index)">
                     </div>
@@ -137,6 +160,10 @@
                     </div>
                     <div class="col-lg-1 mb-2 text-end">
                         <button type="button" class="btn btn-danger" @click="linii.splice(index, 1)">Sterge</button>
+                    </div>
+                    <div class="col-lg-12 mb-3">
+                        <label class="mb-0 ps-3">Descriere</label>
+                        <textarea class="form-control bg-white rounded-3" rows="2" :name="'linii[' + index + '][descriere]'" v-model="linii[index].descriere"></textarea>
                     </div>
                 </div>
             </div>

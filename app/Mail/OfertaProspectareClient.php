@@ -39,7 +39,7 @@ class OfertaProspectareClient extends Mailable
      */
     public function attachments(): array
     {
-        $oferta = $this->oferta->loadMissing(['emitent', 'aprobator', 'linii']);
+        $oferta = $this->oferta->loadMissing(['emitent', 'aprobator', 'amputatii', 'linii']);
         $pdf = \PDF::loadView('oferteProspectare.export.pdf', ['oferta' => $oferta])
             ->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->set_option('enable_php', true);

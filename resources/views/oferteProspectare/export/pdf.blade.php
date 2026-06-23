@@ -38,16 +38,34 @@
     <table class="no-border">
         <tr>
             <td><b>Tip lucrare:</b> {{ $oferta->tip_lucrare_solicitata }}</td>
-            <td><b>Amputatie:</b> {{ $oferta->amputatie }} {{ $oferta->parte_amputata }}</td>
+            <td><b>Nivel activitate:</b> {{ $oferta->nivel_de_activitate }}</td>
         </tr>
         <tr>
-            <td><b>Nivel activitate:</b> {{ $oferta->nivel_de_activitate }}</td>
-            <td><b>Cauza:</b> {{ $oferta->cauza_amputatiei }}</td>
+            <td><b>Greutate:</b> {{ $oferta->greutate }}</td>
+            <td><b>A mai purtat:</b> {{ is_null($oferta->a_mai_purtat_proteza) ? '' : ($oferta->a_mai_purtat_proteza ? 'DA' : 'NU') }}</td>
         </tr>
     </table>
-    @if($oferta->descriere_amputatie)
-        <p>{{ $oferta->descriere_amputatie }}</p>
-    @endif
+    <table>
+        <thead>
+            <tr>
+                <th>Parte amputata</th>
+                <th>Amputatie</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($oferta->amputatii as $amputatie)
+                <tr>
+                    <td>{{ $amputatie->parte_amputata }}</td>
+                    <td>{{ $amputatie->amputatie }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td>{{ $oferta->parte_amputata }}</td>
+                    <td>{{ $oferta->amputatie }}</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
     <h2>Produse</h2>
     <table>
@@ -62,7 +80,12 @@
         <tbody>
             @foreach($oferta->linii as $linie)
                 <tr>
-                    <td>{{ $linie->denumire_produs }}</td>
+                    <td>
+                        {{ $linie->denumire_produs }}
+                        @if($linie->descriere)
+                            <br><span class="muted">{{ $linie->descriere }}</span>
+                        @endif
+                    </td>
                     <td class="right">{{ $linie->cantitate }}</td>
                     <td class="right">{{ number_format((int) $linie->pret_unitar, 0, ',', '.') }} lei</td>
                     <td class="right">{{ number_format((int) $linie->valoare_linie, 0, ',', '.') }} lei</td>

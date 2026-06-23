@@ -24,11 +24,11 @@
 
         <form method="POST" action="{{ route('oferte-prospectare.produse.store') }}" class="row align-items-end mb-4 px-3">
             @csrf
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <label class="mb-0 ps-3">Denumire</label>
                 <input name="denumire" class="form-control rounded-3" required>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-1">
                 <label class="mb-0 ps-3">Cod</label>
                 <input name="cod" class="form-control rounded-3">
             </div>
@@ -37,6 +37,10 @@
                 <input name="pret_end_user" type="number" min="0" class="form-control rounded-3" required>
             </div>
             <div class="col-lg-3">
+                <label class="mb-0 ps-3">Descriere</label>
+                <input name="descriere" class="form-control rounded-3">
+            </div>
+            <div class="col-lg-2">
                 <label class="mb-0 ps-3">Observatii</label>
                 <input name="observatii" class="form-control rounded-3">
             </div>
@@ -51,6 +55,7 @@
                     <tr>
                         <th class="text-white culoare2">Denumire</th>
                         <th class="text-white culoare2">Cod</th>
+                        <th class="text-white culoare2">Descriere</th>
                         <th class="text-white culoare2">Pret</th>
                         <th class="text-white culoare2">Activ</th>
                         <th class="text-white culoare2 text-end">Actiuni</th>
@@ -61,6 +66,7 @@
                         <tr>
                             <td><input name="denumire" form="produs-update-{{ $produs->id }}" class="form-control rounded-3" value="{{ $produs->denumire }}" required></td>
                             <td><input name="cod" form="produs-update-{{ $produs->id }}" class="form-control rounded-3" value="{{ $produs->cod }}"></td>
+                            <td><textarea name="descriere" form="produs-update-{{ $produs->id }}" class="form-control rounded-3" rows="2">{{ $produs->descriere }}</textarea></td>
                             <td><input name="pret_end_user" form="produs-update-{{ $produs->id }}" type="number" min="0" class="form-control rounded-3" value="{{ $produs->pret_end_user }}" required></td>
                             <td>
                                 <select name="activ" form="produs-update-{{ $produs->id }}" class="form-select rounded-3">
@@ -84,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Nu exista produse.</td>
+                            <td colspan="6" class="text-center">Nu exista produse.</td>
                         </tr>
                     @endforelse
                 </tbody>

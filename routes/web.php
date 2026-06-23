@@ -83,7 +83,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{ofertaProspectare}/export/pdf', [OfertaProspectareController::class, 'pdf'])->name('pdf');
         Route::post('/{ofertaProspectare}/trimite-email', [OfertaProspectareController::class, 'sendEmail'])->name('send-email');
         Route::post('/{ofertaProspectare}/whatsapp', [OfertaProspectareController::class, 'whatsapp'])->name('whatsapp');
-        Route::post('/{ofertaProspectare}/sms', [OfertaProspectareController::class, 'sms'])->name('sms');
         Route::post('/{ofertaProspectare}/converteste', [OfertaProspectareController::class, 'convert'])->name('convert');
     });
     Route::resource('/oferte-prospectare', OfertaProspectareController::class)->parameters(['oferte-prospectare' => 'ofertaProspectare']);

@@ -75,9 +75,13 @@
                             <tr>
                                 <th>Date amputatie</th>
                                 <td colspan="3">
-                                    {{ $oferta->amputatie }} {{ $oferta->parte_amputata }} {{ $oferta->nivel_de_activitate ? '/ Nivel ' . $oferta->nivel_de_activitate : '' }}
-                                    @if($oferta->descriere_amputatie)
-                                        <br>{{ $oferta->descriere_amputatie }}
+                                    @forelse($oferta->amputatii as $amputatie)
+                                        <div>{{ $amputatie->amputatie }} {{ $amputatie->parte_amputata }}</div>
+                                    @empty
+                                        {{ $oferta->amputatie }} {{ $oferta->parte_amputata }}
+                                    @endforelse
+                                    @if($oferta->nivel_de_activitate)
+                                        <div>Nivel {{ $oferta->nivel_de_activitate }}</div>
                                     @endif
                                 </td>
                             </tr>
@@ -118,7 +122,12 @@
                             <tbody>
                                 @foreach($oferta->linii as $linie)
                                     <tr>
-                                        <td>{{ $linie->denumire_produs }}</td>
+                                        <td>
+                                            {{ $linie->denumire_produs }}
+                                            @if($linie->descriere)
+                                                <br><small>{{ $linie->descriere }}</small>
+                                            @endif
+                                        </td>
                                         <td>{{ $linie->cantitate }}</td>
                                         <td>{{ number_format((int) $linie->pret_unitar, 0, ',', '.') }} lei</td>
                                         <td>{{ number_format((int) $linie->valoare_linie, 0, ',', '.') }} lei</td>
@@ -185,10 +194,6 @@
                         <form method="POST" action="{{ route('oferte-prospectare.whatsapp', $oferta) }}" class="mb-2">
                             @csrf
                             <button class="btn btn-primary text-white w-100 rounded-3" type="submit" {{ !$canSend ? 'disabled' : '' }}>Deschide WhatsApp</button>
-                        </form>
-                        <form method="POST" action="{{ route('oferte-prospectare.sms', $oferta) }}">
-                            @csrf
-                            <button class="btn btn-secondary text-white w-100 rounded-3" type="submit" {{ !$canSend ? 'disabled' : '' }}>Marcheaza SMS manual</button>
                         </form>
                     </div>
 

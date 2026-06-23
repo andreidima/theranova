@@ -89,6 +89,11 @@ class OfertaProspectare extends Model
         return $this->hasMany(OfertaProspectareLinie::class, 'oferta_prospectare_id');
     }
 
+    public function amputatii(): HasMany
+    {
+        return $this->hasMany(OfertaProspectareAmputatie::class, 'oferta_prospectare_id');
+    }
+
     public function trimiteri(): HasMany
     {
         return $this->hasMany(OfertaProspectareTrimitere::class, 'oferta_prospectare_id');
