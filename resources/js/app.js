@@ -346,3 +346,73 @@ if (document.getElementById('deciziiCas') != null) {
     deciziiCas.mount('#deciziiCas');
 }
 
+const ofertaProspectareForm = createApp({
+    el: '#ofertaProspectareForm',
+    data() {
+        return {
+            produse: (typeof produseProspectare !== 'undefined' && Array.isArray(produseProspectare)) ? produseProspectare : [],
+            linii: (typeof ofertaProspectareLiniiVechi !== 'undefined' && Array.isArray(ofertaProspectareLiniiVechi)) ? ofertaProspectareLiniiVechi : [],
+            decontare_cas: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.decontare_cas : 0) ?? 0),
+            buget_disponibil: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.buget_disponibil : 0) ?? 0),
+            discount_aditional: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.discount_aditional : 0) ?? 0),
+        }
+    },
+    created: function () {
+        this.linii = this.linii.map((linie) => ({
+            id: linie.id ?? null,
+            produs_prospectare_id: linie.produs_prospectare_id ?? null,
+            denumire_produs: linie.denumire_produs ?? '',
+            cantitate: Number(linie.cantitate ?? 1),
+            pret_unitar: Number(linie.pret_unitar ?? 0),
+        }));
+
+        if (this.linii.length === 0) {
+            this.adaugaLinie();
+        }
+    },
+    computed: {
+        subtotal() {
+            return this.linii.reduce((total, linie) => total + this.totalLinie(linie), 0);
+        },
+        totalDupaCas() {
+            const buget = this.decontare_cas ? Number(this.buget_disponibil || 0) : 0;
+            return Math.max(0, this.subtotal - buget);
+        },
+        total() {
+            return Math.max(0, this.totalDupaCas - Number(this.discount_aditional || 0));
+        },
+        avans() {
+            return Math.round(this.total * 0.7);
+        },
+    },
+    methods: {
+        adaugaLinie() {
+            this.linii.push({
+                id: null,
+                produs_prospectare_id: null,
+                denumire_produs: '',
+                cantitate: 1,
+                pret_unitar: 0,
+            });
+        },
+        alegeProdus(index) {
+            const produs = this.produse.find((produs) => produs.denumire === this.linii[index].denumire_produs);
+            if (!produs) {
+                this.linii[index].produs_prospectare_id = null;
+                return;
+            }
+
+            this.linii[index].produs_prospectare_id = produs.id;
+            this.linii[index].pret_unitar = Number(produs.pret_end_user || 0);
+        },
+        totalLinie(linie) {
+            return Number(linie.cantitate || 0) * Number(linie.pret_unitar || 0);
+        },
+        formatMoney(value) {
+            return new Intl.NumberFormat('ro-RO', { maximumFractionDigits: 0 }).format(Number(value || 0));
+        },
+    }
+});
+if (document.getElementById('ofertaProspectareForm') != null) {
+    ofertaProspectareForm.mount('#ofertaProspectareForm');
+}

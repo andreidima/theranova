@@ -68,6 +68,26 @@
                             </a>
                         </li>
                         <li class="nav-item me-3 dropdown">
+                            <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdownProspectare" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-handshake me-1"></i>
+                                Prospectare
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownProspectare">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('oferte-prospectare.index') }}">
+                                        Oferte prospectare
+                                    </a>
+                                </li>
+                                @if(auth()->user()->hasRole('prospectare.edit') || in_array(auth()->user()->id, [1, 2]))
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('oferte-prospectare.produse.index') }}">
+                                            Produse prospectare
+                                        </a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>
+                        <li class="nav-item me-3 dropdown">
                             <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-calendar-days me-1"></i>
                                 Calendar

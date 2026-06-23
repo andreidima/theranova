@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FisierController;
 use App\Http\Controllers\InformatiiGeneraleController;
 use App\Http\Controllers\ComandaComponentaController;
+use App\Http\Controllers\OfertaProspectareController;
 use App\Http\Controllers\Tech\ImpersonareController;
 use App\Http\Controllers\Tech\MigrationController;
 use App\Http\Controllers\Tech\CronjobDashboardController;
@@ -67,6 +68,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/fise-caz/{fisaCaz}/comenzi-componente/export/pdf', [ComandaComponentaController::class, 'toateExport']);
 
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
+
+    Route::prefix('/oferte-prospectare')->name('oferte-prospectare.')->group(function () {
+        Route::get('/produse', [OfertaProspectareController::class, 'produseIndex'])->name('produse.index');
+        Route::post('/produse', [OfertaProspectareController::class, 'produseStore'])->name('produse.store');
+        Route::patch('/produse/{produs}', [OfertaProspectareController::class, 'produseUpdate'])->name('produse.update');
+        Route::delete('/produse/{produs}', [OfertaProspectareController::class, 'produseDestroy'])->name('produse.destroy');
+
+        Route::post('/{ofertaProspectare}/trimite-la-aprobare', [OfertaProspectareController::class, 'submitForApproval'])->name('submit');
+        Route::post('/{ofertaProspectare}/aproba', [OfertaProspectareController::class, 'approve'])->name('approve');
+        Route::post('/{ofertaProspectare}/cere-modificari', [OfertaProspectareController::class, 'requestChanges'])->name('request-changes');
+        Route::post('/{ofertaProspectare}/respinge', [OfertaProspectareController::class, 'reject'])->name('reject');
+        Route::post('/{ofertaProspectare}/status-client', [OfertaProspectareController::class, 'updateClientStatus'])->name('client-status');
+        Route::get('/{ofertaProspectare}/export/pdf', [OfertaProspectareController::class, 'pdf'])->name('pdf');
+        Route::post('/{ofertaProspectare}/trimite-email', [OfertaProspectareController::class, 'sendEmail'])->name('send-email');
+        Route::post('/{ofertaProspectare}/whatsapp', [OfertaProspectareController::class, 'whatsapp'])->name('whatsapp');
+        Route::post('/{ofertaProspectare}/sms', [OfertaProspectareController::class, 'sms'])->name('sms');
+        Route::post('/{ofertaProspectare}/converteste', [OfertaProspectareController::class, 'convert'])->name('convert');
+    });
+    Route::resource('/oferte-prospectare', OfertaProspectareController::class)->parameters(['oferte-prospectare' => 'ofertaProspectare']);
 
     Route::middleware('check.utile.access')->group(function () {
         Route::resource('/informatii-generale', InformatiiGeneraleController::class)
