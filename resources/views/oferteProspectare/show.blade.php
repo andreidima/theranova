@@ -18,6 +18,13 @@
             <div>
                 <a class="btn btn-sm btn-light rounded-3" href="{{ route('oferte-prospectare.pdf', $oferta) }}" target="_blank">PDF</a>
                 <a class="btn btn-sm btn-primary text-white rounded-3" href="{{ $oferta->path() }}/modifica">Modifica</a>
+                @if($canApprove || auth()->user()->hasRole('stergere'))
+                    <form method="POST" action="{{ $oferta->path() }}" class="d-inline" onsubmit="return confirm('Sigur vrei sa stergi aceasta oferta de prospectare?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger text-white rounded-3">Sterge</button>
+                    </form>
+                @endif
                 <a class="btn btn-sm btn-secondary rounded-3" href="{{ Session::get('ofertaProspectareReturnUrl') ?? route('oferte-prospectare.index') }}">Inapoi</a>
             </div>
         </div>
