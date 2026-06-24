@@ -74,6 +74,7 @@ export default {
                 detail: {
                     name: this.name,
                     product: normalizedProduct,
+                    query: this.query || '',
                 },
             }));
         },

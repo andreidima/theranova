@@ -419,10 +419,11 @@ const ofertaProspectareForm = createApp({
         },
         alegeProdusSelector(index, event) {
             const produs = event?.detail?.product;
+            const query = (event?.detail?.query || '').trim();
             if (!produs) {
                 this.linii[index].produs_prospectare_id = null;
                 this.linii[index].produs_label = '';
-                this.linii[index].denumire_produs = '';
+                this.linii[index].denumire_produs = query;
                 return;
             }
 

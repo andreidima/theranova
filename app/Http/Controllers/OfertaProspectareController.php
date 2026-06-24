@@ -605,6 +605,10 @@ class OfertaProspectareController extends Controller
                 $denumire = $produs->denumire;
             }
             if ($denumire === '') {
+                if (!empty($linie['id'])) {
+                    $oferta->linii()->where('id', $linie['id'])->delete();
+                }
+
                 continue;
             }
 
