@@ -10,6 +10,7 @@
                 'produs_label' => $linie->produs
                     ? $linie->produs->denumire . ' (' . number_format((int) $linie->produs->pret_end_user, 0, ',', '.') . ' lei)'
                     : ($linie->denumire_produs ? $linie->denumire_produs . ' (' . number_format((int) $linie->pret_unitar, 0, ',', '.') . ' lei)' : ''),
+                'produs_descriere_default' => $linie->produs?->descriere ?? '',
             ]);
         })->toArray();
     }
@@ -142,6 +143,7 @@
                 <div class="row align-items-end mb-2" v-for="(linie, index) in linii" :key="'linie-' + index">
                     <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
                     <input type="hidden" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs">
+                    <input type="hidden" :name="'linii[' + index + '][update_product_description_default]'" v-model="linii[index].update_product_description_default">
                     <div class="col-lg-4 mb-2">
                         <label class="mb-0 ps-3">Produs</label>
                         <div @prospect-product-selector:change="alegeProdusSelector(index, $event)">

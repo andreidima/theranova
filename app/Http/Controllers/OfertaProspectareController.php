@@ -498,6 +498,7 @@ class OfertaProspectareController extends Controller
             'linii.*.produs_prospectare_id' => 'nullable|integer|exists:produse_prospectare,id',
             'linii.*.denumire_produs' => 'nullable|max:255',
             'linii.*.descriere' => 'nullable|max:5000',
+            'linii.*.update_product_description_default' => 'nullable|boolean',
             'linii.*.cantitate' => 'nullable|integer|min:1|max:999',
             'linii.*.pret_unitar' => 'nullable|integer|min:0|max:1000000',
         ]);
@@ -626,16 +627,24 @@ class OfertaProspectareController extends Controller
                 $model = new OfertaProspectareLinie(['oferta_prospectare_id' => $oferta->id]);
             }
 
+            $lineDescription = trim((string) ($linie['descriere'] ?? '')) ?: null;
+
             $model->fill([
                 'oferta_prospectare_id' => $oferta->id,
                 'produs_prospectare_id' => $produs?->id,
                 'denumire_produs' => $denumire,
-                'descriere' => trim((string) ($linie['descriere'] ?? '')) ?: null,
+                'descriere' => $lineDescription,
                 'cantitate' => $cantitate,
                 'pret_unitar' => $pret,
                 'valoare_linie' => $cantitate * $pret,
             ]);
             $model->save();
+
+            $shouldPersistDefaultDescription = filter_var($linie['update_product_description_default'] ?? false, FILTER_VALIDATE_BOOLEAN)
+                || ($produs && $produs->descriere === null && $lineDescription !== null);
+            if ($produs && $shouldPersistDefaultDescription && $produs->descriere !== $lineDescription) {
+                $produs->update(['descriere' => $lineDescription]);
+            }
         }
     }
 
