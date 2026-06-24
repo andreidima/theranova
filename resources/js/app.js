@@ -23,6 +23,7 @@ const app = createApp({});
 // app.component('example-component', ExampleComponent);
 
 import VueDatepickerNext from './components/DatePicker.vue';
+import ProspectProductSelector from './components/ProspectProductSelector.vue';
 
 /**
  * The following block of code may be used to automatically register your
@@ -350,7 +351,6 @@ const ofertaProspectareForm = createApp({
     el: '#ofertaProspectareForm',
     data() {
         return {
-            produse: (typeof produseProspectare !== 'undefined' && Array.isArray(produseProspectare)) ? produseProspectare : [],
             linii: (typeof ofertaProspectareLiniiVechi !== 'undefined' && Array.isArray(ofertaProspectareLiniiVechi)) ? ofertaProspectareLiniiVechi : [],
             amputatii: (typeof ofertaProspectareAmputatiiVechi !== 'undefined' && Array.isArray(ofertaProspectareAmputatiiVechi)) ? ofertaProspectareAmputatiiVechi : [],
             decontare_cas: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.decontare_cas : 0) ?? 0),
@@ -373,6 +373,7 @@ const ofertaProspectareForm = createApp({
             id: linie.id ?? null,
             produs_prospectare_id: linie.produs_prospectare_id ?? null,
             denumire_produs: linie.denumire_produs ?? '',
+            produs_label: linie.produs_label ?? '',
             descriere: linie.descriere ?? '',
             cantitate: Number(linie.cantitate ?? 1),
             pret_unitar: Number(linie.pret_unitar ?? 0),
@@ -410,19 +411,24 @@ const ofertaProspectareForm = createApp({
                 id: null,
                 produs_prospectare_id: null,
                 denumire_produs: '',
+                produs_label: '',
                 descriere: '',
                 cantitate: 1,
                 pret_unitar: 0,
             });
         },
-        alegeProdus(index) {
-            const produs = this.produse.find((produs) => produs.denumire === this.linii[index].denumire_produs);
+        alegeProdusSelector(index, event) {
+            const produs = event?.detail?.product;
             if (!produs) {
                 this.linii[index].produs_prospectare_id = null;
+                this.linii[index].produs_label = '';
+                this.linii[index].denumire_produs = '';
                 return;
             }
 
             this.linii[index].produs_prospectare_id = produs.id;
+            this.linii[index].produs_label = produs.label || '';
+            this.linii[index].denumire_produs = produs.denumire || produs.label || '';
             this.linii[index].pret_unitar = Number(produs.pret_end_user || 0);
             if (!this.linii[index].descriere) {
                 this.linii[index].descriere = produs.descriere || '';
@@ -436,6 +442,7 @@ const ofertaProspectareForm = createApp({
         },
     }
 });
+ofertaProspectareForm.component('prospect-product-selector', ProspectProductSelector);
 if (document.getElementById('ofertaProspectareForm') != null) {
     ofertaProspectareForm.mount('#ofertaProspectareForm');
 }

@@ -71,6 +71,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('/oferte-prospectare')->name('oferte-prospectare.')->group(function () {
         Route::get('/produse', [OfertaProspectareController::class, 'produseIndex'])->name('produse.index');
+        Route::get('/produse/select-options', [OfertaProspectareController::class, 'produseSelectOptions'])->name('produse.select-options');
+        Route::post('/produse/quick-store', [OfertaProspectareController::class, 'produseQuickStore'])->name('produse.quick-store');
         Route::post('/produse', [OfertaProspectareController::class, 'produseStore'])->name('produse.store');
         Route::patch('/produse/{produs}', [OfertaProspectareController::class, 'produseUpdate'])->name('produse.update');
         Route::delete('/produse/{produs}', [OfertaProspectareController::class, 'produseDestroy'])->name('produse.destroy');

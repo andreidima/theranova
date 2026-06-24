@@ -6,13 +6,16 @@
     $liniiFormData = old('linii');
     if (is_null($liniiFormData)) {
         $liniiFormData = $oferta->linii->map(function ($linie) {
-            return $linie->only(['id', 'produs_prospectare_id', 'denumire_produs', 'descriere', 'cantitate', 'pret_unitar', 'valoare_linie']);
+            return array_merge($linie->only(['id', 'produs_prospectare_id', 'denumire_produs', 'descriere', 'cantitate', 'pret_unitar', 'valoare_linie']), [
+                'produs_label' => $linie->produs
+                    ? $linie->produs->denumire . ' (' . number_format((int) $linie->produs->pret_end_user, 0, ',', '.') . ' lei)'
+                    : ($linie->denumire_produs ? $linie->denumire_produs . ' (' . number_format((int) $linie->pret_unitar, 0, ',', '.') . ' lei)' : ''),
+            ]);
         })->toArray();
     }
 @endphp
 
 <script type="application/javascript">
-    const produseProspectare = {!! json_encode($produse->map(fn ($produs) => $produs->only(['id', 'denumire', 'descriere', 'pret_end_user']))) !!};
     const ofertaProspectareLiniiVechi = {!! json_encode($liniiFormData ?? []) !!};
     const ofertaProspectareAmputatiiVechi = {!! json_encode($amputatiiFormData ?? []) !!};
     const ofertaProspectareValoriVechi = {!! json_encode([
@@ -136,15 +139,21 @@
                 <button type="button" class="btn btn-sm btn-success text-white rounded-3" @click="adaugaLinie">Adauga produs</button>
             </div>
             <div class="col-lg-12">
-                <datalist id="produseProspectareList">
-                    <option v-for="produs in produse" :value="produs.denumire"></option>
-                </datalist>
                 <div class="row align-items-end mb-2" v-for="(linie, index) in linii" :key="'linie-' + index">
                     <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
-                    <input type="hidden" :name="'linii[' + index + '][produs_prospectare_id]'" v-model="linii[index].produs_prospectare_id">
+                    <input type="hidden" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs">
                     <div class="col-lg-4 mb-2">
                         <label class="mb-0 ps-3">Produs</label>
-                        <input type="text" class="form-control bg-white rounded-3" list="produseProspectareList" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs" @change="alegeProdus(index)">
+                        <div @prospect-product-selector:change="alegeProdusSelector(index, $event)">
+                            <prospect-product-selector
+                                :name="'linii[' + index + '][produs_prospectare_id]'"
+                                search-url="{{ route('oferte-prospectare.produse.select-options') }}"
+                                store-url="{{ route('oferte-prospectare.produse.quick-store') }}"
+                                :initial-product-id="linie.produs_prospectare_id"
+                                :initial-product-label="linie.produs_label"
+                                :can-create="{{ $canManageProduseProspectare ? 'true' : 'false' }}"
+                            ></prospect-product-selector>
+                        </div>
                     </div>
                     <div class="col-lg-2 mb-2">
                         <label class="mb-0 ps-3">Cantitate</label>

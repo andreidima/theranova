@@ -396,9 +396,59 @@ class OfertaProspectareController extends Controller
         return back()->with('status', 'Produsul a fost dezactivat.');
     }
 
+    public function produseSelectOptions(Request $request)
+    {
+        $data = $request->validate([
+            'search' => 'nullable|string|max:150',
+            'id' => 'nullable|integer|exists:produse_prospectare,id',
+            'limit' => 'nullable|integer|min:1|max:50',
+            'page' => 'nullable|integer|min:1',
+        ]);
+
+        $limit = $data['limit'] ?? 25;
+        $page = $data['page'] ?? 1;
+
+        if (!empty($data['id'])) {
+            $produs = ProdusProspectare::findOrFail($data['id']);
+
+            return response()->json([
+                'results' => [$this->formatProdusProspectareOption($produs)],
+            ]);
+        }
+
+        $search = $data['search'] ?? null;
+        $paginator = ProdusProspectare::query()
+            ->where('activ', true)
+            ->when($search, fn ($query) => $query->where('denumire', 'like', '%' . $search . '%'))
+            ->orderBy('denumire')
+            ->simplePaginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'results' => $paginator->getCollection()
+                ->map(fn ($produs) => $this->formatProdusProspectareOption($produs))
+                ->values(),
+            'pagination' => [
+                'current_page' => $paginator->currentPage(),
+                'next_page' => $paginator->hasMorePages() ? $paginator->currentPage() + 1 : null,
+                'has_more' => $paginator->hasMorePages(),
+            ],
+        ]);
+    }
+
+    public function produseQuickStore(Request $request)
+    {
+        $this->authorizeApproval($request);
+
+        $produs = ProdusProspectare::create($this->validateProduct($request));
+
+        return response()->json([
+            'produs' => $this->formatProdusProspectareOption($produs),
+        ], 201);
+    }
+
     protected function formData(OfertaProspectare $oferta): array
     {
-        $oferta->loadMissing(['amputatii', 'linii']);
+        $oferta->loadMissing(['amputatii', 'linii.produs']);
 
         $amputatiiFormData = old('amputatii');
         if (is_null($amputatiiFormData)) {
@@ -417,8 +467,8 @@ class OfertaProspectareController extends Controller
 
         return [
             'oferta' => $oferta,
-            'produse' => ProdusProspectare::where('activ', true)->orderBy('denumire')->get(),
             'amputatiiFormData' => $amputatiiFormData,
+            'canManageProduseProspectare' => $this->canApprove(request()->user()),
         ];
     }
 
@@ -475,6 +525,17 @@ class OfertaProspectareController extends Controller
             'activ' => 'nullable|boolean',
             'observatii' => 'nullable|max:5000',
         ]);
+    }
+
+    protected function formatProdusProspectareOption(ProdusProspectare $produs): array
+    {
+        return [
+            'id' => $produs->id,
+            'label' => $produs->denumire . ' (' . number_format((int) $produs->pret_end_user, 0, ',', '.') . ' lei)',
+            'denumire' => $produs->denumire,
+            'descriere' => $produs->descriere,
+            'pret_end_user' => (int) $produs->pret_end_user,
+        ];
     }
 
     protected function syncAmputatii(OfertaProspectare $oferta, array $amputatii): void
