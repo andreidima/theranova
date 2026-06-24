@@ -13,8 +13,8 @@
                 <div class="col-lg-6">
                     <input type="text" class="form-control rounded-3" name="search" placeholder="Denumire" value="{{ $search }}">
                 </div>
-                <button class="btn btn-sm btn-primary text-white col-md-2 me-2 rounded-3" type="submit">Cauta</button>
-                <a class="btn btn-sm btn-secondary text-white col-md-2 rounded-3" href="{{ route('oferte-prospectare.produse.index') }}">Reseteaza</a>
+                <button class="btn btn-sm btn-primary text-white col-md-2 me-2 rounded-3 d-inline-flex align-items-center justify-content-center py-0" style="line-height: 1.2;" type="submit">Cauta</button>
+                <a class="btn btn-sm btn-secondary text-white col-md-2 rounded-3 d-inline-flex align-items-center justify-content-center py-0" style="line-height: 1.2;" href="{{ route('oferte-prospectare.produse.index') }}">Reseteaza</a>
             </form>
         </div>
     </div>
@@ -81,10 +81,10 @@
                                     @method('PATCH')
                                     <button class="btn btn-sm btn-primary text-white rounded-3" type="submit">Salveaza</button>
                                 </form>
-                                <form method="POST" action="{{ route('oferte-prospectare.produse.destroy', $produs) }}" class="d-inline">
+                                <form method="POST" action="{{ route('oferte-prospectare.produse.destroy', $produs) }}" class="d-inline" onsubmit="return confirm('{{ $produs->linii_oferta_count ? 'Produsul este folosit in oferte si va fi doar dezactivat. Continui?' : 'Sigur vrei sa stergi acest produs?' }}');">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-danger text-white rounded-3" type="submit">Dezactiveaza</button>
+                                    <button class="btn btn-sm btn-danger text-white rounded-3" type="submit">{{ $produs->linii_oferta_count ? 'Dezactiveaza' : 'Sterge' }}</button>
                                 </form>
                             </td>
                         </tr>

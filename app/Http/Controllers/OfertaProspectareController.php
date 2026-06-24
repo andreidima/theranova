@@ -360,6 +360,7 @@ class OfertaProspectareController extends Controller
     public function produseIndex(Request $request): View
     {
         $produse = ProdusProspectare::query()
+            ->withCount('liniiOferta')
             ->when($request->search, fn ($query, $search) => $query->where('denumire', 'like', '%' . $search . '%'))
             ->orderByDesc('activ')
             ->orderBy('denumire')
@@ -391,9 +392,16 @@ class OfertaProspectareController extends Controller
     public function produseDestroy(Request $request, ProdusProspectare $produs): RedirectResponse
     {
         $this->authorizeApproval($request);
+
+        if (!$produs->liniiOferta()->exists()) {
+            $produs->delete();
+
+            return back()->with('status', 'Produsul a fost sters.');
+        }
+
         $produs->update(['activ' => false]);
 
-        return back()->with('status', 'Produsul a fost dezactivat.');
+        return back()->with('status', 'Produsul este folosit in oferte si a fost doar dezactivat.');
     }
 
     public function produseSelectOptions(Request $request)

@@ -2,6 +2,10 @@
 
 @php
     use App\Models\OfertaProspectare;
+
+    $canDeleteOffersFromIndex = auth()->user()->hasRole('stergere')
+        || in_array(auth()->id(), [1, 2], true)
+        || auth()->user()->hasRole('prospectare.edit');
 @endphp
 
 @section('content')
@@ -47,10 +51,10 @@
                             @endforeach
                         </select>
                     </div>
-                    <button class="btn btn-sm btn-primary text-white col-md-3 me-3 border border-dark rounded-3 d-inline-flex align-items-center justify-content-center py-1" type="submit">
+                    <button class="btn btn-sm btn-primary text-white col-md-3 me-3 border border-dark rounded-3 d-inline-flex align-items-center justify-content-center py-0" type="submit" style="line-height: 1.2;">
                         <i class="fas fa-search text-white me-1"></i>Cauta
                     </button>
-                    <a class="btn btn-sm btn-secondary text-white col-md-3 border border-dark rounded-3 d-inline-flex align-items-center justify-content-center py-1" href="{{ route('oferte-prospectare.index') }}">
+                    <a class="btn btn-sm btn-secondary text-white col-md-3 border border-dark rounded-3 d-inline-flex align-items-center justify-content-center py-0" style="line-height: 1.2;" href="{{ route('oferte-prospectare.index') }}">
                         <i class="far fa-trash-alt text-white me-1"></i>Reseteaza
                     </a>
                 </div>
@@ -105,6 +109,13 @@
                                 <a href="{{ $oferta->path() }}"><span class="badge bg-success">Vizualizeaza</span></a>
                                 <a href="{{ $oferta->path() }}/modifica"><span class="badge bg-primary">Modifica</span></a>
                                 <a href="{{ route('oferte-prospectare.pdf', $oferta) }}" target="_blank"><span class="badge bg-secondary">PDF</span></a>
+                                @if($canDeleteOffersFromIndex)
+                                    <form method="POST" action="{{ $oferta->path() }}" class="d-inline" onsubmit="return confirm('Sigur vrei sa stergi aceasta oferta de prospectare?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="badge bg-danger border-0">Sterge</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
