@@ -47,10 +47,10 @@
                             @endforeach
                         </select>
                     </div>
-                    <button class="btn btn-sm btn-primary text-white col-md-3 me-3 border border-dark rounded-3" type="submit">
+                    <button class="btn btn-sm btn-primary text-white col-md-3 me-3 border border-dark rounded-3 d-inline-flex align-items-center justify-content-center py-1" type="submit">
                         <i class="fas fa-search text-white me-1"></i>Cauta
                     </button>
-                    <a class="btn btn-sm btn-secondary text-white col-md-3 border border-dark rounded-3" href="{{ route('oferte-prospectare.index') }}">
+                    <a class="btn btn-sm btn-secondary text-white col-md-3 border border-dark rounded-3 d-inline-flex align-items-center justify-content-center py-1" href="{{ route('oferte-prospectare.index') }}">
                         <i class="far fa-trash-alt text-white me-1"></i>Reseteaza
                     </a>
                 </div>
