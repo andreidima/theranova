@@ -1,16 +1,40 @@
 @csrf
 
 @php
+    use App\Models\ProdusProspectare;
     use Carbon\Carbon;
+
+    $formatProdusProspectareLabel = function ($produs): string {
+        return $produs->denumire . ' (' . number_format((int) $produs->pret_end_user, 0, ',', '.') . ' lei)';
+    };
 
     $liniiFormData = old('linii');
     if (is_null($liniiFormData)) {
-        $liniiFormData = $oferta->linii->map(function ($linie) {
+        $liniiFormData = $oferta->linii->map(function ($linie) use ($formatProdusProspectareLabel) {
             return array_merge($linie->only(['id', 'produs_prospectare_id', 'denumire_produs', 'descriere', 'cantitate', 'pret_unitar', 'valoare_linie']), [
                 'produs_label' => $linie->produs
-                    ? $linie->produs->denumire . ' (' . number_format((int) $linie->produs->pret_end_user, 0, ',', '.') . ' lei)'
+                    ? $formatProdusProspectareLabel($linie->produs)
                     : ($linie->denumire_produs ? $linie->denumire_produs . ' (' . number_format((int) $linie->pret_unitar, 0, ',', '.') . ' lei)' : ''),
                 'produs_descriere_default' => $linie->produs?->descriere ?? '',
+            ]);
+        })->toArray();
+    } else {
+        $produseIds = collect($liniiFormData)->pluck('produs_prospectare_id')->filter()->unique()->values();
+        $produseById = $produseIds->isNotEmpty()
+            ? ProdusProspectare::whereIn('id', $produseIds)->get()->keyBy('id')
+            : collect();
+
+        $liniiFormData = collect($liniiFormData)->map(function ($linie) use ($produseById, $formatProdusProspectareLabel) {
+            $produs = !empty($linie['produs_prospectare_id'])
+                ? $produseById->get((int) $linie['produs_prospectare_id'])
+                : null;
+            $denumire = trim((string) ($linie['denumire_produs'] ?? ''));
+
+            return array_merge($linie, [
+                'produs_label' => $produs
+                    ? $formatProdusProspectareLabel($produs)
+                    : ($linie['produs_label'] ?? $denumire),
+                'produs_descriere_default' => $produs?->descriere ?? ($linie['produs_descriere_default'] ?? ''),
             ]);
         })->toArray();
     }
