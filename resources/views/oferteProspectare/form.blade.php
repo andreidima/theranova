@@ -144,6 +144,7 @@
                     <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
                     <input type="hidden" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs">
                     <input type="hidden" :name="'linii[' + index + '][update_product_description_default]'" v-model="linii[index].update_product_description_default">
+                    <input type="hidden" :name="'linii[' + index + '][add_product_to_nomenclator]'" v-model="linii[index].add_product_to_nomenclator">
                     <div class="col-lg-4 mb-2">
                         <label class="mb-0 ps-3">Produs</label>
                         <div @prospect-product-selector:change="alegeProdusSelector(index, $event)">

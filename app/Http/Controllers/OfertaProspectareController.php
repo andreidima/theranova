@@ -499,6 +499,7 @@ class OfertaProspectareController extends Controller
             'linii.*.denumire_produs' => 'nullable|max:255',
             'linii.*.descriere' => 'nullable|max:5000',
             'linii.*.update_product_description_default' => 'nullable|boolean',
+            'linii.*.add_product_to_nomenclator' => 'nullable|boolean',
             'linii.*.cantitate' => 'nullable|integer|min:1|max:999',
             'linii.*.pret_unitar' => 'nullable|integer|min:0|max:1000000',
         ]);
@@ -618,6 +619,16 @@ class OfertaProspectareController extends Controller
             if ($pret <= 0 && $produs) {
                 $pret = (int) $produs->pret_end_user;
             }
+            $lineDescription = trim((string) ($linie['descriere'] ?? '')) ?: null;
+
+            if (!$produs && filter_var($linie['add_product_to_nomenclator'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                $produs = ProdusProspectare::create([
+                    'denumire' => $denumire,
+                    'descriere' => $lineDescription,
+                    'pret_end_user' => $pret,
+                    'activ' => true,
+                ]);
+            }
 
             $model = !empty($linie['id'])
                 ? $oferta->linii()->where('id', $linie['id'])->first()
@@ -626,8 +637,6 @@ class OfertaProspectareController extends Controller
             if (!$model) {
                 $model = new OfertaProspectareLinie(['oferta_prospectare_id' => $oferta->id]);
             }
-
-            $lineDescription = trim((string) ($linie['descriere'] ?? '')) ?: null;
 
             $model->fill([
                 'oferta_prospectare_id' => $oferta->id,
