@@ -8,6 +8,7 @@ use App\Models\Cerinta;
 use App\Models\DataMedicala;
 use App\Models\FisaCaz;
 use App\Models\OfertaProspectare;
+use App\Models\OfertaProspectareAdaosInterval;
 use App\Models\OfertaProspectareAmputatie;
 use App\Models\OfertaProspectareLinie;
 use App\Models\Pacient;
@@ -361,7 +362,12 @@ class OfertaProspectareController extends Controller
     {
         $produse = ProdusProspectare::query()
             ->withCount('liniiOferta')
-            ->when($request->search, fn ($query, $search) => $query->where('denumire', 'like', '%' . $search . '%'))
+            ->when($request->search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('denumire', 'like', '%' . $search . '%')
+                        ->orWhere('cod', 'like', '%' . $search . '%');
+                });
+            })
             ->orderByDesc('activ')
             ->orderBy('denumire')
             ->paginate(50)
@@ -370,6 +376,7 @@ class OfertaProspectareController extends Controller
         return view('oferteProspectare.produse', [
             'produse' => $produse,
             'search' => $request->search,
+            'canManageProduseProspectare' => $this->canApprove($request->user()),
         ]);
     }
 
@@ -427,7 +434,12 @@ class OfertaProspectareController extends Controller
         $search = $data['search'] ?? null;
         $paginator = ProdusProspectare::query()
             ->where('activ', true)
-            ->when($search, fn ($query) => $query->where('denumire', 'like', '%' . $search . '%'))
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('denumire', 'like', '%' . $search . '%')
+                        ->orWhere('cod', 'like', '%' . $search . '%');
+                });
+            })
             ->orderBy('denumire')
             ->simplePaginate($limit, ['*'], 'page', $page);
 
@@ -476,6 +488,9 @@ class OfertaProspectareController extends Controller
         return [
             'oferta' => $oferta,
             'amputatiiFormData' => $amputatiiFormData,
+            'adaosIntervale' => OfertaProspectareAdaosInterval::active()
+                ->orderByDesc('valoare_min')
+                ->get(['valoare_min', 'valoare_max', 'procent']),
             'canManageProduseProspectare' => $this->canApprove(request()->user()),
         ];
     }
@@ -497,6 +512,7 @@ class OfertaProspectareController extends Controller
             'a_mai_purtat_proteza' => 'nullable|in:0,1',
             'decontare_cas' => 'nullable|boolean',
             'buget_disponibil' => 'nullable|integer|min:0|max:1000000',
+            'total_oferta' => 'nullable|integer|min:0|max:10000000',
             'discount_aditional' => 'nullable|integer|min:0|max:1000000',
             'observatii_interne' => 'nullable|max:5000',
             'amputatii.*.id' => 'nullable|integer',
@@ -505,11 +521,6 @@ class OfertaProspectareController extends Controller
             'linii.*.id' => 'nullable|integer',
             'linii.*.produs_prospectare_id' => 'nullable|integer|exists:produse_prospectare,id',
             'linii.*.denumire_produs' => 'nullable|max:255',
-            'linii.*.descriere' => 'nullable|max:5000',
-            'linii.*.update_product_description_default' => 'nullable|boolean',
-            'linii.*.add_product_to_nomenclator' => 'nullable|boolean',
-            'linii.*.cantitate' => 'nullable|integer|min:1|max:999',
-            'linii.*.pret_unitar' => 'nullable|integer|min:0|max:1000000',
         ]);
     }
 
@@ -518,6 +529,7 @@ class OfertaProspectareController extends Controller
         $payload = Arr::except($validated, ['amputatii', 'linii']);
         $payload['decontare_cas'] = (bool) ($payload['decontare_cas'] ?? false);
         $payload['buget_disponibil'] = $payload['decontare_cas'] ? ($payload['buget_disponibil'] ?? null) : null;
+        $payload['total_oferta'] = $payload['total_oferta'] ?? 0;
         $payload['discount_aditional'] = $payload['discount_aditional'] ?? 0;
         $payload['cauza_amputatiei'] = null;
         $payload['descriere_amputatie'] = null;
@@ -527,24 +539,32 @@ class OfertaProspectareController extends Controller
 
     protected function validateProduct(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'denumire' => 'required|max:255',
             'cod' => 'nullable|max:100',
-            'descriere' => 'nullable|max:5000',
-            'pret_end_user' => 'required|integer|min:0|max:1000000',
             'activ' => 'nullable|boolean',
             'observatii' => 'nullable|max:5000',
         ]);
+
+        $validated['descriere'] = null;
+        $validated['pret_end_user'] = 0;
+        $validated['activ'] = (bool) ($validated['activ'] ?? true);
+
+        return $validated;
     }
 
     protected function formatProdusProspectareOption(ProdusProspectare $produs): array
     {
+        $label = $produs->denumire;
+        if ($produs->cod) {
+            $label .= ' (' . $produs->cod . ')';
+        }
+
         return [
             'id' => $produs->id,
-            'label' => $produs->denumire . ' (' . number_format((int) $produs->pret_end_user, 0, ',', '.') . ' lei)',
+            'label' => $label,
             'denumire' => $produs->denumire,
-            'descriere' => $produs->descriere,
-            'pret_end_user' => (int) $produs->pret_end_user,
+            'cod' => $produs->cod,
         ];
     }
 
@@ -622,22 +642,6 @@ class OfertaProspectareController extends Controller
                 continue;
             }
 
-            $cantitate = max(1, (int) ($linie['cantitate'] ?? 1));
-            $pret = (int) ($linie['pret_unitar'] ?? 0);
-            if ($pret <= 0 && $produs) {
-                $pret = (int) $produs->pret_end_user;
-            }
-            $lineDescription = trim((string) ($linie['descriere'] ?? '')) ?: null;
-
-            if (!$produs && filter_var($linie['add_product_to_nomenclator'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
-                $produs = ProdusProspectare::create([
-                    'denumire' => $denumire,
-                    'descriere' => $lineDescription,
-                    'pret_end_user' => $pret,
-                    'activ' => true,
-                ]);
-            }
-
             $model = !empty($linie['id'])
                 ? $oferta->linii()->where('id', $linie['id'])->first()
                 : new OfertaProspectareLinie(['oferta_prospectare_id' => $oferta->id]);
@@ -650,18 +654,12 @@ class OfertaProspectareController extends Controller
                 'oferta_prospectare_id' => $oferta->id,
                 'produs_prospectare_id' => $produs?->id,
                 'denumire_produs' => $denumire,
-                'descriere' => $lineDescription,
-                'cantitate' => $cantitate,
-                'pret_unitar' => $pret,
-                'valoare_linie' => $cantitate * $pret,
+                'descriere' => null,
+                'cantitate' => 1,
+                'pret_unitar' => 0,
+                'valoare_linie' => 0,
             ]);
             $model->save();
-
-            $shouldPersistDefaultDescription = filter_var($linie['update_product_description_default'] ?? false, FILTER_VALIDATE_BOOLEAN)
-                || ($produs && $produs->descriere === null && $lineDescription !== null);
-            if ($produs && $shouldPersistDefaultDescription && $produs->descriere !== $lineDescription) {
-                $produs->update(['descriere' => $lineDescription]);
-            }
         }
     }
 

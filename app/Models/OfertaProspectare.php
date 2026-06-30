@@ -101,12 +101,19 @@ class OfertaProspectare extends Model
 
     public function recalculeazaTotaluri(): void
     {
-        $subtotal = (int) $this->linii()->sum('valoare_linie');
+        $subtotal = max(0, (int) ($this->total_oferta ?? 0));
+        $intervalAdaos = OfertaProspectareAdaosInterval::forTotal($subtotal)->first();
+        $procentAdaos = $intervalAdaos ? (float) $intervalAdaos->procent : 0;
+        $valoareAdaos = (int) round($subtotal * $procentAdaos / 100);
+        $totalCuAdaos = $subtotal + $valoareAdaos;
         $bugetCas = $this->decontare_cas ? (int) ($this->buget_disponibil ?? 0) : 0;
-        $dupaDecontare = max(0, $subtotal - $bugetCas);
+        $dupaDecontare = max(0, $totalCuAdaos - $bugetCas);
         $total = max(0, $dupaDecontare - (int) ($this->discount_aditional ?? 0));
 
         $this->forceFill([
+            'total_oferta' => $subtotal,
+            'valoare_adaos' => $valoareAdaos,
+            'procent_adaos' => $procentAdaos,
             'subtotal' => $subtotal,
             'valoare_dupa_decontare' => $dupaDecontare,
             'valoare_totala' => $total,

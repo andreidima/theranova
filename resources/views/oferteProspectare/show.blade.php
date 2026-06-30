@@ -113,40 +113,45 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th class="text-white culoare2">#</th>
                                     <th class="text-white culoare2">Produs</th>
-                                    <th class="text-white culoare2">Cantitate</th>
-                                    <th class="text-white culoare2">Pret</th>
-                                    <th class="text-white culoare2">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($oferta->linii as $linie)
                                     <tr>
-                                        <td>
-                                            {{ $linie->denumire_produs }}
-                                            @if($linie->descriere)
-                                                <br><small>{{ $linie->descriere }}</small>
-                                            @endif
-                                        </td>
-                                        <td>{{ $linie->cantitate }}</td>
-                                        <td>{{ number_format((int) $linie->pret_unitar, 0, ',', '.') }} lei</td>
-                                        <td>{{ number_format((int) $linie->valoare_linie, 0, ',', '.') }} lei</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $linie->denumire_produs }}</td>
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <th colspan="3" class="text-end">Subtotal</th>
-                                    <th>{{ number_format((int) $oferta->subtotal, 0, ',', '.') }} lei</th>
+                                    <th class="text-end">Total oferta</th>
+                                    <th>{{ number_format((int) ($oferta->total_oferta ?? $oferta->subtotal), 0, ',', '.') }} lei</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="3" class="text-end">Discount</th>
+                                    <th class="text-end">Adaos</th>
+                                    <th>{{ number_format((float) ($oferta->procent_adaos ?? 0), 2, ',', '.') }}% / {{ number_format((int) ($oferta->valoare_adaos ?? 0), 0, ',', '.') }} lei</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-end">Total cu adaos</th>
+                                    <th>{{ number_format((int) (($oferta->total_oferta ?? $oferta->subtotal) + ($oferta->valoare_adaos ?? 0)), 0, ',', '.') }} lei</th>
+                                </tr>
+                                @if($oferta->decontare_cas)
+                                    <tr>
+                                        <th class="text-end">Buget CAS</th>
+                                        <th>-{{ number_format((int) $oferta->buget_disponibil, 0, ',', '.') }} lei</th>
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <th class="text-end">Discount</th>
                                     <th>{{ number_format((int) $oferta->discount_aditional, 0, ',', '.') }} lei</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="3" class="text-end">Suma de plata</th>
+                                    <th class="text-end">Suma de plata</th>
                                     <th>{{ number_format((int) $oferta->valoare_totala, 0, ',', '.') }} lei</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="3" class="text-end">Avans 70%</th>
+                                    <th class="text-end">Avans 70%</th>
                                     <th>{{ number_format((int) $oferta->valoare_avans, 0, ',', '.') }} lei</th>
                                 </tr>
                             </tbody>

@@ -5,17 +5,16 @@
     use Carbon\Carbon;
 
     $formatProdusProspectareLabel = function ($produs): string {
-        return $produs->denumire . ' (' . number_format((int) $produs->pret_end_user, 0, ',', '.') . ' lei)';
+        return $produs->denumire . ($produs->cod ? ' (' . $produs->cod . ')' : '');
     };
 
     $liniiFormData = old('linii');
     if (is_null($liniiFormData)) {
         $liniiFormData = $oferta->linii->map(function ($linie) use ($formatProdusProspectareLabel) {
-            return array_merge($linie->only(['id', 'produs_prospectare_id', 'denumire_produs', 'descriere', 'cantitate', 'pret_unitar', 'valoare_linie']), [
+            return array_merge($linie->only(['id', 'produs_prospectare_id', 'denumire_produs']), [
                 'produs_label' => $linie->produs
                     ? $formatProdusProspectareLabel($linie->produs)
-                    : ($linie->denumire_produs ? $linie->denumire_produs . ' (' . number_format((int) $linie->pret_unitar, 0, ',', '.') . ' lei)' : ''),
-                'produs_descriere_default' => $linie->produs?->descriere ?? '',
+                    : ($linie->denumire_produs ?: ''),
             ]);
         })->toArray();
     } else {
@@ -34,7 +33,6 @@
                 'produs_label' => $produs
                     ? $formatProdusProspectareLabel($produs)
                     : ($linie['produs_label'] ?? $denumire),
-                'produs_descriere_default' => $produs?->descriere ?? ($linie['produs_descriere_default'] ?? ''),
             ]);
         })->toArray();
     }
@@ -46,8 +44,10 @@
     const ofertaProspectareValoriVechi = {!! json_encode([
         'decontare_cas' => (int) old('decontare_cas', $oferta->decontare_cas ? 1 : 0),
         'buget_disponibil' => old('buget_disponibil', $oferta->buget_disponibil ?? 0),
+        'total_oferta' => old('total_oferta', $oferta->total_oferta ?? $oferta->subtotal ?? 0),
         'discount_aditional' => old('discount_aditional', $oferta->discount_aditional ?? 0),
     ]) !!};
+    const ofertaProspectareAdaosIntervale = {!! json_encode($adaosIntervale ?? []) !!};
 </script>
 
 <div class="row mb-0 px-3 d-flex" id="ofertaProspectareForm">
@@ -167,9 +167,7 @@
                 <div class="row align-items-end mb-2" v-for="(linie, index) in linii" :key="'linie-' + index">
                     <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
                     <input type="hidden" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs">
-                    <input type="hidden" :name="'linii[' + index + '][update_product_description_default]'" v-model="linii[index].update_product_description_default">
-                    <input type="hidden" :name="'linii[' + index + '][add_product_to_nomenclator]'" v-model="linii[index].add_product_to_nomenclator">
-                    <div class="col-lg-4 mb-2">
+                    <div class="col-lg-10 mb-2">
                         <label class="mb-0 ps-3">Produs</label>
                         <div @prospect-product-selector:change="alegeProdusSelector(index, $event)">
                             <prospect-product-selector
@@ -182,30 +180,26 @@
                             ></prospect-product-selector>
                         </div>
                     </div>
-                    <div class="col-lg-2 mb-2">
-                        <label class="mb-0 ps-3">Cantitate</label>
-                        <input type="number" min="1" class="form-control bg-white rounded-3" :name="'linii[' + index + '][cantitate]'" v-model.number="linii[index].cantitate">
-                    </div>
-                    <div class="col-lg-2 mb-2">
-                        <label class="mb-0 ps-3">Pret unitar</label>
-                        <input type="number" min="0" class="form-control bg-white rounded-3" :name="'linii[' + index + '][pret_unitar]'" v-model.number="linii[index].pret_unitar">
-                    </div>
-                    <div class="col-lg-2 mb-2">
-                        <label class="mb-0 ps-3">Total</label>
-                        <div class="form-control bg-light rounded-3">@{{ formatMoney(totalLinie(linie)) }} lei</div>
-                    </div>
-                    <div class="col-lg-1 mb-2 text-end">
+                    <div class="col-lg-2 mb-2 text-end">
                         <button type="button" class="btn btn-danger" @click="linii.splice(index, 1)">Sterge</button>
-                    </div>
-                    <div class="col-lg-12 mb-3">
-                        <label class="mb-0 ps-3">Descriere</label>
-                        <textarea class="form-control bg-white rounded-3" rows="2" :name="'linii[' + index + '][descriere]'" v-model="linii[index].descriere"></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
+            <div class="col-lg-2 mb-4">
+                <label class="mb-0 ps-3">Total oferta</label>
+                <input type="number" min="0" name="total_oferta" class="form-control bg-white rounded-3" v-model.number="total_oferta">
+            </div>
+            <div class="col-lg-2 mb-4">
+                <label class="mb-0 ps-3">Adaos</label>
+                <div class="form-control bg-light rounded-3">@{{ adaos_procent }}% / @{{ formatMoney(adaos_valoare) }} lei</div>
+            </div>
+            <div class="col-lg-2 mb-4">
+                <label class="mb-0 ps-3">Total cu adaos</label>
+                <div class="form-control bg-light rounded-3">@{{ formatMoney(totalCuAdaos) }} lei</div>
+            </div>
             <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Decontare CAS</label>
                 <input type="hidden" name="decontare_cas" value="0">
@@ -221,10 +215,6 @@
             <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Discount aditional</label>
                 <input type="number" min="0" name="discount_aditional" class="form-control bg-white rounded-3" v-model.number="discount_aditional">
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Subtotal</label>
-                <div class="form-control bg-light rounded-3">@{{ formatMoney(subtotal) }} lei</div>
             </div>
             <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Suma de plata</label>

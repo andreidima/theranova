@@ -353,21 +353,11 @@ const ofertaProspectareForm = createApp({
         return {
             linii: (typeof ofertaProspectareLiniiVechi !== 'undefined' && Array.isArray(ofertaProspectareLiniiVechi)) ? ofertaProspectareLiniiVechi : [],
             amputatii: (typeof ofertaProspectareAmputatiiVechi !== 'undefined' && Array.isArray(ofertaProspectareAmputatiiVechi)) ? ofertaProspectareAmputatiiVechi : [],
+            adaosIntervale: (typeof ofertaProspectareAdaosIntervale !== 'undefined' && Array.isArray(ofertaProspectareAdaosIntervale)) ? ofertaProspectareAdaosIntervale : [],
             decontare_cas: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.decontare_cas : 0) ?? 0),
             buget_disponibil: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.buget_disponibil : 0) ?? 0),
+            total_oferta: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.total_oferta : 0) ?? 0),
             discount_aditional: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.discount_aditional : 0) ?? 0),
-        }
-    },
-    mounted: function () {
-        const form = this.$el.closest('form');
-        if (form) {
-            form.addEventListener('submit', this.prepareProductNomenclatorUpdates);
-        }
-    },
-    beforeUnmount: function () {
-        const form = this.$el.closest('form');
-        if (form) {
-            form.removeEventListener('submit', this.prepareProductNomenclatorUpdates);
         }
     },
     created: function () {
@@ -386,12 +376,6 @@ const ofertaProspectareForm = createApp({
             produs_prospectare_id: linie.produs_prospectare_id ?? null,
             denumire_produs: linie.denumire_produs ?? '',
             produs_label: linie.produs_label ?? '',
-            produs_descriere_default: linie.produs_descriere_default ?? '',
-            update_product_description_default: Number(linie.update_product_description_default ?? 0),
-            add_product_to_nomenclator: Number(linie.add_product_to_nomenclator ?? 0),
-            descriere: linie.descriere ?? '',
-            cantitate: Number(linie.cantitate ?? 1),
-            pret_unitar: Number(linie.pret_unitar ?? 0),
         }));
 
         if (this.linii.length === 0) {
@@ -400,11 +384,30 @@ const ofertaProspectareForm = createApp({
     },
     computed: {
         subtotal() {
-            return this.linii.reduce((total, linie) => total + this.totalLinie(linie), 0);
+            return Math.max(0, Number(this.total_oferta || 0));
+        },
+        adaosInterval() {
+            return this.adaosIntervale.find((interval) => {
+                const min = Number(interval.valoare_min || 0);
+                const max = interval.valoare_max === null || interval.valoare_max === undefined || interval.valoare_max === ''
+                    ? null
+                    : Number(interval.valoare_max);
+
+                return this.subtotal >= min && (max === null || this.subtotal <= max);
+            }) || null;
+        },
+        adaos_procent() {
+            return Number(this.adaosInterval?.procent || 0);
+        },
+        adaos_valoare() {
+            return Math.round(this.subtotal * this.adaos_procent / 100);
+        },
+        totalCuAdaos() {
+            return this.subtotal + this.adaos_valoare;
         },
         totalDupaCas() {
             const buget = this.decontare_cas ? Number(this.buget_disponibil || 0) : 0;
-            return Math.max(0, this.subtotal - buget);
+            return Math.max(0, this.totalCuAdaos - buget);
         },
         total() {
             return Math.max(0, this.totalDupaCas - Number(this.discount_aditional || 0));
@@ -427,12 +430,6 @@ const ofertaProspectareForm = createApp({
                 produs_prospectare_id: null,
                 denumire_produs: '',
                 produs_label: '',
-                produs_descriere_default: '',
-                update_product_description_default: 0,
-                add_product_to_nomenclator: 0,
-                descriere: '',
-                cantitate: 1,
-                pret_unitar: 0,
             });
         },
         alegeProdusSelector(index, event) {
@@ -442,68 +439,12 @@ const ofertaProspectareForm = createApp({
                 this.linii[index].produs_prospectare_id = null;
                 this.linii[index].produs_label = '';
                 this.linii[index].denumire_produs = query;
-                this.linii[index].produs_descriere_default = '';
-                this.linii[index].update_product_description_default = 0;
-                this.linii[index].add_product_to_nomenclator = 0;
                 return;
             }
 
             this.linii[index].produs_prospectare_id = produs.id;
             this.linii[index].produs_label = produs.label || '';
             this.linii[index].denumire_produs = produs.denumire || produs.label || '';
-            this.linii[index].produs_descriere_default = produs.descriere || '';
-            this.linii[index].update_product_description_default = 0;
-            this.linii[index].add_product_to_nomenclator = 0;
-            this.linii[index].pret_unitar = Number(produs.pret_end_user || 0);
-            if (!this.linii[index].descriere) {
-                this.linii[index].descriere = produs.descriere || '';
-            }
-        },
-        normalizeDescription(value) {
-            return (value || '').trim();
-        },
-        prepareProductNomenclatorUpdates() {
-            const form = this.$el.closest('form');
-            const setLineFlagInput = (index, name, value) => {
-                const input = form?.querySelector(`[name="linii[${index}][${name}]"]`);
-                if (input) {
-                    input.value = String(value);
-                }
-            };
-
-            this.linii.forEach((linie, index) => {
-                linie.update_product_description_default = 0;
-                linie.add_product_to_nomenclator = 0;
-                setLineFlagInput(index, 'update_product_description_default', 0);
-                setLineFlagInput(index, 'add_product_to_nomenclator', 0);
-            });
-
-            this.linii.forEach((linie, index) => {
-                if (linie.produs_prospectare_id) {
-                    const typedDescription = this.normalizeDescription(linie.descriere);
-                    const defaultDescription = this.normalizeDescription(linie.produs_descriere_default);
-                    if (typedDescription === defaultDescription) {
-                        return;
-                    }
-
-                    const confirmed = window.confirm('Urmeaza sa adaugi un produs existent cu o descriere diferita. Doresti sa actualizezi descrierea?');
-                    linie.update_product_description_default = confirmed ? 1 : 0;
-                    setLineFlagInput(index, 'update_product_description_default', linie.update_product_description_default);
-                    return;
-                }
-
-                const typedName = (linie.denumire_produs || '').trim();
-                if (typedName === '') {
-                    return;
-                }
-
-                const confirmed = window.confirm('Produsul "' + typedName + '" nu este selectat din nomenclator. Doresti sa il adaugi in nomenclator?');
-                linie.add_product_to_nomenclator = confirmed ? 1 : 0;
-                setLineFlagInput(index, 'add_product_to_nomenclator', linie.add_product_to_nomenclator);
-            });
-        },
-        totalLinie(linie) {
-            return Number(linie.cantitate || 0) * Number(linie.pret_unitar || 0);
         },
         formatMoney(value) {
             return new Intl.NumberFormat('ro-RO', { maximumFractionDigits: 0 }).format(Number(value || 0));

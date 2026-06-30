@@ -52,8 +52,7 @@ export default {
         emptyCreateForm(overrides = {}) {
             return {
                 denumire: '',
-                descriere: '',
-                pret_end_user: '',
+                cod: '',
                 activ: true,
                 ...overrides,
             };
@@ -64,8 +63,7 @@ export default {
                     id: String(product.id),
                     label: product.label || '',
                     denumire: product.denumire || '',
-                    descriere: product.descriere ?? null,
-                    pret_end_user: product.pret_end_user ?? 0,
+                    cod: product.cod || '',
                 }
                 : null;
 
@@ -169,7 +167,9 @@ export default {
 
             this.createErrors = {};
             this.fetchError = null;
-            this.createForm = this.emptyCreateForm();
+            this.createForm = this.emptyCreateForm({
+                denumire: (this.query || '').trim(),
+            });
 
             if (!this.$refs.createModal) {
                 return;
@@ -221,7 +221,7 @@ export default {
                 type="text"
                 class="form-control bg-white rounded-start-3"
                 v-model="query"
-                placeholder="Cauta dupa denumire..."
+                placeholder="Cauta dupa denumire sau cod..."
                 autocomplete="off"
                 @focus="handleFocus"
                 @input="handleInput"
@@ -258,7 +258,7 @@ export default {
                 @mousedown.prevent="selectProduct(product)"
             >
                 {{ product.label }}
-                <small v-if="product.descriere" class="d-block text-muted">{{ product.descriere }}</small>
+                <small v-if="product.cod" class="d-block text-muted">Cod: {{ product.cod }}</small>
             </button>
         </div>
 
@@ -293,29 +293,15 @@ export default {
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <label class="form-label">Pret end-user<span class="text-danger">*</span></label>
+                                    <label class="form-label">Cod</label>
                                     <input
-                                        v-model="createForm.pret_end_user"
-                                        type="number"
-                                        min="0"
-                                        step="1"
+                                        v-model="createForm.cod"
+                                        type="text"
                                         class="form-control bg-white rounded-3"
-                                        :class="{ 'is-invalid': createErrors.pret_end_user }"
+                                        :class="{ 'is-invalid': createErrors.cod }"
                                     />
-                                    <div v-if="createErrors.pret_end_user" class="invalid-feedback">
-                                        {{ createErrors.pret_end_user?.[0] }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label class="form-label">Descriere</label>
-                                    <textarea
-                                        v-model="createForm.descriere"
-                                        class="form-control bg-white rounded-3"
-                                        rows="3"
-                                        :class="{ 'is-invalid': createErrors.descriere }"
-                                    ></textarea>
-                                    <div v-if="createErrors.descriere" class="invalid-feedback">
-                                        {{ createErrors.descriere?.[0] }}
+                                    <div v-if="createErrors.cod" class="invalid-feedback">
+                                        {{ createErrors.cod?.[0] }}
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
