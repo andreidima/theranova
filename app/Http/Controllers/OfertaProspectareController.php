@@ -376,13 +376,12 @@ class OfertaProspectareController extends Controller
         return view('oferteProspectare.produse', [
             'produse' => $produse,
             'search' => $request->search,
-            'canManageProduseProspectare' => $this->canApprove($request->user()),
+            'canManageProduseProspectare' => true,
         ]);
     }
 
     public function produseStore(Request $request): RedirectResponse
     {
-        $this->authorizeApproval($request);
         ProdusProspectare::create($this->validateProduct($request));
 
         return back()->with('status', 'Produsul a fost adaugat.');
@@ -390,7 +389,6 @@ class OfertaProspectareController extends Controller
 
     public function produseUpdate(Request $request, ProdusProspectare $produs): RedirectResponse
     {
-        $this->authorizeApproval($request);
         $produs->update($this->validateProduct($request));
 
         return back()->with('status', 'Produsul a fost modificat.');
@@ -398,8 +396,6 @@ class OfertaProspectareController extends Controller
 
     public function produseDestroy(Request $request, ProdusProspectare $produs): RedirectResponse
     {
-        $this->authorizeApproval($request);
-
         if (!$produs->liniiOferta()->exists()) {
             $produs->delete();
 
@@ -457,8 +453,6 @@ class OfertaProspectareController extends Controller
 
     public function produseQuickStore(Request $request)
     {
-        $this->authorizeApproval($request);
-
         $produs = ProdusProspectare::create($this->validateProduct($request));
 
         return response()->json([
@@ -468,8 +462,6 @@ class OfertaProspectareController extends Controller
 
     public function adaosIndex(Request $request): View
     {
-        $this->authorizeApproval($request);
-
         $intervale = OfertaProspectareAdaosInterval::query()
             ->orderBy('valoare_min')
             ->orderByRaw('valoare_max is null')
@@ -483,8 +475,6 @@ class OfertaProspectareController extends Controller
 
     public function adaosStore(Request $request): RedirectResponse
     {
-        $this->authorizeApproval($request);
-
         $validated = $this->validateAdaosInterval($request);
         if ($error = $this->adaosIntervalError($validated)) {
             return back()->withInput()->withErrors($error);
@@ -497,8 +487,6 @@ class OfertaProspectareController extends Controller
 
     public function adaosUpdate(Request $request, OfertaProspectareAdaosInterval $adaosInterval): RedirectResponse
     {
-        $this->authorizeApproval($request);
-
         $validated = $this->validateAdaosInterval($request);
         if ($error = $this->adaosIntervalError($validated, $adaosInterval->id)) {
             return back()->withInput()->withErrors($error);
@@ -511,8 +499,6 @@ class OfertaProspectareController extends Controller
 
     public function adaosDestroy(Request $request, OfertaProspectareAdaosInterval $adaosInterval): RedirectResponse
     {
-        $this->authorizeApproval($request);
-
         $adaosInterval->delete();
 
         return back()->with('status', 'Intervalul de adaos a fost sters.');
@@ -543,7 +529,7 @@ class OfertaProspectareController extends Controller
             'adaosIntervale' => OfertaProspectareAdaosInterval::active()
                 ->orderByDesc('valoare_min')
                 ->get(['valoare_min', 'valoare_max', 'procent']),
-            'canManageProduseProspectare' => $this->canApprove(request()->user()),
+            'canManageProduseProspectare' => true,
         ];
     }
 
