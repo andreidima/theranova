@@ -371,7 +371,8 @@ const ofertaProspectareForm = createApp({
             this.adaugaAmputatie();
         }
 
-        this.linii = this.linii.map((linie) => ({
+        this.linii = this.linii.map((linie, index) => ({
+            row_key: linie.row_key || `existing-${linie.id || index}-${Date.now()}`,
             id: linie.id ?? null,
             produs_prospectare_id: linie.produs_prospectare_id ?? null,
             denumire_produs: linie.denumire_produs ?? '',
@@ -426,11 +427,15 @@ const ofertaProspectareForm = createApp({
         },
         adaugaLinie() {
             this.linii.push({
+                row_key: `new-${Date.now()}-${Math.random().toString(36).slice(2)}`,
                 id: null,
                 produs_prospectare_id: null,
                 denumire_produs: '',
                 produs_label: '',
             });
+        },
+        stergeLinie(index) {
+            this.linii.splice(index, 1);
         },
         alegeProdusSelector(index, event) {
             const produs = event?.detail?.product;

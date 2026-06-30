@@ -164,7 +164,7 @@
                 <button type="button" class="btn btn-sm btn-success text-white rounded-3" @click="adaugaLinie">Adauga produs</button>
             </div>
             <div class="col-lg-12">
-                <div class="row align-items-end mb-2" v-for="(linie, index) in linii" :key="'linie-' + index">
+                <div class="row align-items-start mb-2" v-for="(linie, index) in linii" :key="linie.row_key">
                     <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
                     <input type="hidden" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs">
                     <div class="col-lg-10 mb-2">
@@ -180,8 +180,8 @@
                             ></prospect-product-selector>
                         </div>
                     </div>
-                    <div class="col-lg-2 mb-2 text-end">
-                        <button type="button" class="btn btn-danger" @click="linii.splice(index, 1)">Sterge</button>
+                    <div class="col-lg-2 mb-2 d-flex align-items-center justify-content-end" style="padding-top: 1.45rem;">
+                        <button type="button" class="btn btn-danger" @click="stergeLinie(index)">Sterge</button>
                     </div>
                 </div>
             </div>

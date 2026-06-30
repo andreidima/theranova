@@ -77,6 +77,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::patch('/produse/{produs}', [OfertaProspectareController::class, 'produseUpdate'])->name('produse.update');
         Route::delete('/produse/{produs}', [OfertaProspectareController::class, 'produseDestroy'])->name('produse.destroy');
 
+        Route::get('/adaos', [OfertaProspectareController::class, 'adaosIndex'])->name('adaos.index');
+        Route::post('/adaos', [OfertaProspectareController::class, 'adaosStore'])->name('adaos.store');
+        Route::patch('/adaos/{adaosInterval}', [OfertaProspectareController::class, 'adaosUpdate'])->name('adaos.update');
+        Route::delete('/adaos/{adaosInterval}', [OfertaProspectareController::class, 'adaosDestroy'])->name('adaos.destroy');
+
         Route::post('/{ofertaProspectare}/trimite-la-aprobare', [OfertaProspectareController::class, 'submitForApproval'])->name('submit');
         Route::post('/{ofertaProspectare}/aproba', [OfertaProspectareController::class, 'approve'])->name('approve');
         Route::post('/{ofertaProspectare}/cere-modificari', [OfertaProspectareController::class, 'requestChanges'])->name('request-changes');

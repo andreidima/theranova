@@ -466,6 +466,58 @@ class OfertaProspectareController extends Controller
         ], 201);
     }
 
+    public function adaosIndex(Request $request): View
+    {
+        $this->authorizeApproval($request);
+
+        $intervale = OfertaProspectareAdaosInterval::query()
+            ->orderBy('valoare_min')
+            ->orderByRaw('valoare_max is null')
+            ->orderBy('valoare_max')
+            ->paginate(50);
+
+        return view('oferteProspectare.adaos', [
+            'intervale' => $intervale,
+        ]);
+    }
+
+    public function adaosStore(Request $request): RedirectResponse
+    {
+        $this->authorizeApproval($request);
+
+        $validated = $this->validateAdaosInterval($request);
+        if ($error = $this->adaosIntervalError($validated)) {
+            return back()->withInput()->withErrors($error);
+        }
+
+        OfertaProspectareAdaosInterval::create($validated);
+
+        return back()->with('status', 'Intervalul de adaos a fost adaugat.');
+    }
+
+    public function adaosUpdate(Request $request, OfertaProspectareAdaosInterval $adaosInterval): RedirectResponse
+    {
+        $this->authorizeApproval($request);
+
+        $validated = $this->validateAdaosInterval($request);
+        if ($error = $this->adaosIntervalError($validated, $adaosInterval->id)) {
+            return back()->withInput()->withErrors($error);
+        }
+
+        $adaosInterval->update($validated);
+
+        return back()->with('status', 'Intervalul de adaos a fost modificat.');
+    }
+
+    public function adaosDestroy(Request $request, OfertaProspectareAdaosInterval $adaosInterval): RedirectResponse
+    {
+        $this->authorizeApproval($request);
+
+        $adaosInterval->delete();
+
+        return back()->with('status', 'Intervalul de adaos a fost sters.');
+    }
+
     protected function formData(OfertaProspectare $oferta): array
     {
         $oferta->loadMissing(['amputatii', 'linii.produs']);
@@ -551,6 +603,51 @@ class OfertaProspectareController extends Controller
         $validated['activ'] = (bool) ($validated['activ'] ?? true);
 
         return $validated;
+    }
+
+    protected function validateAdaosInterval(Request $request): array
+    {
+        $validated = $request->validate([
+            'valoare_min' => 'required|integer|min:0|max:10000000',
+            'valoare_max' => 'nullable|integer|min:0|max:10000000',
+            'procent' => 'required|numeric|min:0|max:100',
+            'activ' => 'nullable|boolean',
+        ]);
+
+        $validated['valoare_max'] = $validated['valoare_max'] ?? null;
+        $validated['activ'] = (bool) ($validated['activ'] ?? false);
+
+        return $validated;
+    }
+
+    protected function adaosIntervalError(array $interval, ?int $ignoreId = null): ?array
+    {
+        $min = (int) $interval['valoare_min'];
+        $max = is_null($interval['valoare_max']) ? null : (int) $interval['valoare_max'];
+
+        if (!is_null($max) && $max < $min) {
+            return ['valoare_max' => 'Valoarea maxima trebuie sa fie mai mare sau egala cu valoarea minima.'];
+        }
+
+        if (!$interval['activ']) {
+            return null;
+        }
+
+        $overlapExists = OfertaProspectareAdaosInterval::query()
+            ->active()
+            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->where('valoare_min', '<=', $max ?? PHP_INT_MAX)
+            ->where(function ($query) use ($min) {
+                $query->whereNull('valoare_max')
+                    ->orWhere('valoare_max', '>=', $min);
+            })
+            ->exists();
+
+        if ($overlapExists) {
+            return ['valoare_min' => 'Exista deja un interval activ care se suprapune cu acesta.'];
+        }
+
+        return null;
     }
 
     protected function formatProdusProspectareOption(ProdusProspectare $produs): array

@@ -83,6 +83,13 @@
                                         Produse prospectare
                                     </a>
                                 </li>
+                                @if(auth()->user()->hasRole('prospectare.edit') || in_array(auth()->user()->id, [1, 2]))
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('oferte-prospectare.adaos.index') }}">
+                                            Adaos ofertare
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
                         <li class="nav-item me-3 dropdown">
