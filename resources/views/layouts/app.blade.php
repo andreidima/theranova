@@ -80,7 +80,7 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="{{ route('oferte-prospectare.produse.index') }}">
-                                        Produse prospectare
+                                        Nomenclator produse prospectare
                                     </a>
                                 </li>
                                 @if(auth()->user()->hasRole('prospectare.edit') || in_array(auth()->user()->id, [1, 2]))

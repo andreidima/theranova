@@ -5,7 +5,7 @@
     <div class="row card-header align-items-center" style="border-radius: 40px 40px 0 0;">
         <div class="col-lg-3">
             <span class="badge culoare1 fs-5">
-                <i class="fa-solid fa-boxes-stacked me-1"></i>Produse prospectare
+                <i class="fa-solid fa-boxes-stacked me-1"></i>Nomenclator produse prospectare
             </span>
         </div>
         <div class="col-lg-6">
