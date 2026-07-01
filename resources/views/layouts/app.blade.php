@@ -79,6 +79,16 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item" href="{{ route('oferte-prospectare.clienti.index') }}">
+                                        Clienti prospectare
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('oferte-prospectare.configuratoare.index') }}">
+                                        Configuratoare prospectare
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="{{ route('oferte-prospectare.produse.index') }}">
                                         Nomenclator produse prospectare
                                     </a>

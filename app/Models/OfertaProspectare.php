@@ -79,6 +79,11 @@ class OfertaProspectare extends Model
         return $this->belongsTo(Pacient::class, 'pacient_id');
     }
 
+    public function clientProspectare(): BelongsTo
+    {
+        return $this->belongsTo(ClientProspectare::class, 'client_prospectare_id');
+    }
+
     public function fisaCaz(): BelongsTo
     {
         return $this->belongsTo(FisaCaz::class, 'fisa_caz_id');
@@ -99,12 +104,23 @@ class OfertaProspectare extends Model
         return $this->hasMany(OfertaProspectareTrimitere::class, 'oferta_prospectare_id');
     }
 
+    public function variante(): HasMany
+    {
+        return $this->hasMany(OfertaProspectareVarianta::class, 'oferta_prospectare_id')->orderBy('ordine')->orderBy('id');
+    }
+
     public function recalculeazaTotaluri(): void
     {
+        if ($this->variante()->exists()) {
+            $this->recalculeazaTotaluriDinVariante();
+
+            return;
+        }
+
         $subtotal = max(0, (int) ($this->total_oferta ?? 0));
         $intervalAdaos = OfertaProspectareAdaosInterval::forTotal($subtotal)->first();
         $procentAdaos = $intervalAdaos ? (float) $intervalAdaos->procent : 0;
-        $valoareAdaos = (int) round($subtotal * $procentAdaos / 100);
+        $valoareAdaos = $intervalAdaos ? (int) ($intervalAdaos->valoare_adaos ?? 0) : (int) round($subtotal * $procentAdaos / 100);
         $totalCuAdaos = $subtotal + $valoareAdaos;
         $bugetCas = $this->decontare_cas ? (int) ($this->buget_disponibil ?? 0) : 0;
         $dupaDecontare = max(0, $totalCuAdaos - $bugetCas);
@@ -118,6 +134,48 @@ class OfertaProspectare extends Model
             'valoare_dupa_decontare' => $dupaDecontare,
             'valoare_totala' => $total,
             'valoare_avans' => (int) round($total * 0.7),
+        ])->save();
+    }
+
+    protected function recalculeazaTotaluriDinVariante(): void
+    {
+        $bugetCas = $this->decontare_cas ? (int) ($this->buget_disponibil ?? 0) : 0;
+        $primaVarianta = null;
+
+        $this->variante()->with('componente')->get()->each(function (OfertaProspectareVarianta $varianta) use ($bugetCas, &$primaVarianta) {
+            $subtotalCalculat = (int) $varianta->componente->sum('pret');
+            $subtotal = is_null($varianta->total_manual) ? $subtotalCalculat : (int) $varianta->total_manual;
+            $intervalAdaos = OfertaProspectareAdaosInterval::forCategorieAndTotal($varianta->categorie, $subtotal)->first();
+            $adaos = $intervalAdaos ? (int) ($intervalAdaos->valoare_adaos ?? 0) : 0;
+            $dupaDecontare = max(0, $subtotal + $adaos - $bugetCas);
+            $discount = $varianta->discount_tip === 'procent'
+                ? (int) round($dupaDecontare * (int) $varianta->discount_valoare / 100)
+                : (int) $varianta->discount_valoare;
+            $total = max(0, $dupaDecontare - $discount);
+
+            $varianta->forceFill([
+                'subtotal_calculat' => $subtotalCalculat,
+                'valoare_adaos' => $adaos,
+                'valoare_dupa_decontare' => $dupaDecontare,
+                'valoare_totala' => $total,
+                'valoare_avans' => (int) round($total * 0.7),
+            ])->save();
+
+            $primaVarianta ??= $varianta->fresh();
+        });
+
+        $primaVarianta ??= $this->variante()->orderBy('ordine')->orderBy('id')->first();
+
+        $this->forceFill([
+            'total_oferta' => (int) ($primaVarianta->total_manual ?? $primaVarianta->subtotal_calculat ?? 0),
+            'valoare_adaos' => (int) ($primaVarianta->valoare_adaos ?? 0),
+            'procent_adaos' => 0,
+            'discount_aditional' => (int) ($primaVarianta->discount_valoare ?? 0),
+            'discount_tip' => $primaVarianta->discount_tip ?? 'valoare',
+            'subtotal' => (int) ($primaVarianta->subtotal_calculat ?? 0),
+            'valoare_dupa_decontare' => (int) ($primaVarianta->valoare_dupa_decontare ?? 0),
+            'valoare_totala' => (int) ($primaVarianta->valoare_totala ?? 0),
+            'valoare_avans' => (int) ($primaVarianta->valoare_avans ?? 0),
         ])->save();
     }
 }

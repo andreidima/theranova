@@ -353,7 +353,17 @@ const ofertaProspectareForm = createApp({
         return {
             linii: (typeof ofertaProspectareLiniiVechi !== 'undefined' && Array.isArray(ofertaProspectareLiniiVechi)) ? ofertaProspectareLiniiVechi : [],
             amputatii: (typeof ofertaProspectareAmputatiiVechi !== 'undefined' && Array.isArray(ofertaProspectareAmputatiiVechi)) ? ofertaProspectareAmputatiiVechi : [],
+            variante: (typeof ofertaProspectareVarianteVechi !== 'undefined' && Array.isArray(ofertaProspectareVarianteVechi)) ? ofertaProspectareVarianteVechi : [],
+            clientiProspectare: (typeof ofertaProspectareClienti !== 'undefined' && Array.isArray(ofertaProspectareClienti)) ? ofertaProspectareClienti : [],
+            configuratoare: (typeof ofertaProspectareConfiguratoare !== 'undefined' && Array.isArray(ofertaProspectareConfiguratoare)) ? ofertaProspectareConfiguratoare : [],
             adaosIntervale: (typeof ofertaProspectareAdaosIntervale !== 'undefined' && Array.isArray(ofertaProspectareAdaosIntervale)) ? ofertaProspectareAdaosIntervale : [],
+            client_prospectare_id: String((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.client_prospectare_id : '') ?? ''),
+            nume_client: (typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.nume_client : '') ?? '',
+            telefon: (typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.telefon : '') ?? '',
+            email: (typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.email : '') ?? '',
+            sursa: (typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.sursa : '') ?? '',
+            localitate: (typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.localitate : '') ?? '',
+            judet: (typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.judet : '') ?? '',
             decontare_cas: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.decontare_cas : 0) ?? 0),
             buget_disponibil: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.buget_disponibil : 0) ?? 0),
             total_oferta: Number((typeof ofertaProspectareValoriVechi !== 'undefined' ? ofertaProspectareValoriVechi.total_oferta : 0) ?? 0),
@@ -381,6 +391,22 @@ const ofertaProspectareForm = createApp({
 
         if (this.linii.length === 0) {
             this.adaugaLinie();
+        }
+
+        this.variante = this.variante.map((varianta, index) => ({
+            row_key: varianta.row_key || `varianta-${varianta.id || index}-${Date.now()}`,
+            id: varianta.id ?? null,
+            configurator_id: varianta.configurator_id ? Number(varianta.configurator_id) : '',
+            titlu: varianta.titlu ?? '',
+            categorie: varianta.categorie ?? '',
+            selected_component_ids: (varianta.selected_component_ids || []).map((id) => Number(id)),
+            total_manual: varianta.total_manual ?? '',
+            discount_tip: varianta.discount_tip || 'valoare',
+            discount_valoare: Number(varianta.discount_valoare || 0),
+        }));
+
+        if (this.variante.length === 0) {
+            this.adaugaVarianta();
         }
     },
     computed: {
@@ -437,6 +463,35 @@ const ofertaProspectareForm = createApp({
         stergeLinie(index) {
             this.linii.splice(index, 1);
         },
+        adaugaVarianta() {
+            this.variante.push({
+                row_key: `varianta-new-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+                id: null,
+                configurator_id: this.configuratoare[0]?.id || '',
+                titlu: '',
+                categorie: this.configuratoare[0]?.categorie || '',
+                selected_component_ids: [],
+                total_manual: '',
+                discount_tip: 'valoare',
+                discount_valoare: 0,
+            });
+        },
+        stergeVarianta(index) {
+            this.variante.splice(index, 1);
+        },
+        selecteazaClient() {
+            const client = this.clientiProspectare.find((client) => String(client.id) === String(this.client_prospectare_id));
+            if (!client) {
+                return;
+            }
+
+            this.nume_client = client.nume || '';
+            this.telefon = client.telefon || '';
+            this.email = client.email || '';
+            this.localitate = client.localitate || '';
+            this.judet = client.judet || '';
+            this.sursa = client.sursa || '';
+        },
         alegeProdusSelector(index, event) {
             const produs = event?.detail?.product;
             const query = (event?.detail?.query || '').trim();
@@ -450,6 +505,61 @@ const ofertaProspectareForm = createApp({
             this.linii[index].produs_prospectare_id = produs.id;
             this.linii[index].produs_label = produs.label || '';
             this.linii[index].denumire_produs = produs.denumire || produs.label || '';
+        },
+        configuratorVarianta(varianta) {
+            return this.configuratoare.find((configurator) => Number(configurator.id) === Number(varianta.configurator_id)) || null;
+        },
+        categorieVarianta(varianta) {
+            return this.configuratorVarianta(varianta)?.categorie || varianta.categorie || '';
+        },
+        componenteVarianta(varianta) {
+            const configurator = this.configuratorVarianta(varianta);
+            if (!configurator) {
+                return [];
+            }
+
+            const ids = (varianta.selected_component_ids || []).map((id) => Number(id));
+            return configurator.grupuri
+                .flatMap((grup) => grup.componente || [])
+                .filter((componenta) => ids.includes(Number(componenta.id)));
+        },
+        subtotalVarianta(varianta) {
+            return this.componenteVarianta(varianta).reduce((total, componenta) => total + Number(componenta.pret || 0), 0);
+        },
+        bazaVarianta(varianta) {
+            return varianta.total_manual === '' || varianta.total_manual === null || typeof varianta.total_manual === 'undefined'
+                ? this.subtotalVarianta(varianta)
+                : Number(varianta.total_manual || 0);
+        },
+        adaosVarianta(varianta) {
+            const baza = this.bazaVarianta(varianta);
+            const categorie = this.categorieVarianta(varianta);
+            const matchingIntervals = this.adaosIntervale.filter((interval) => {
+                const min = Number(interval.valoare_min || 0);
+                const max = interval.valoare_max === null || interval.valoare_max === undefined || interval.valoare_max === ''
+                    ? null
+                    : Number(interval.valoare_max);
+                const sameCategory = (interval.categorie || '') === (categorie || '') || !interval.categorie;
+
+                return sameCategory && baza >= min && (max === null || baza <= max);
+            });
+            const interval = matchingIntervals.find((interval) => (interval.categorie || '') === (categorie || ''))
+                || matchingIntervals[0];
+
+            return Number(interval?.valoare_adaos || 0);
+        },
+        dupaCasVarianta(varianta) {
+            const buget = this.decontare_cas ? Number(this.buget_disponibil || 0) : 0;
+            return Math.max(0, this.bazaVarianta(varianta) + this.adaosVarianta(varianta) - buget);
+        },
+        discountVarianta(varianta) {
+            const valoare = Number(varianta.discount_valoare || 0);
+            return varianta.discount_tip === 'procent'
+                ? Math.round(this.dupaCasVarianta(varianta) * valoare / 100)
+                : valoare;
+        },
+        totalVarianta(varianta) {
+            return Math.max(0, this.dupaCasVarianta(varianta) - this.discountVarianta(varianta));
         },
         formatMoney(value) {
             return new Intl.NumberFormat('ro-RO', { maximumFractionDigits: 0 }).format(Number(value || 0));

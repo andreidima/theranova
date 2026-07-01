@@ -67,55 +67,96 @@
         </tbody>
     </table>
 
-    <h2>Produse</h2>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 40px;">#</th>
-                <th>Produs</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($oferta->linii as $linie)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $linie->denumire_produs }}</td>
-                </tr>
-            @endforeach
-            <tr>
-                <td class="right"><b>Total oferta</b></td>
-                <td class="right">{{ number_format((int) ($oferta->total_oferta ?? $oferta->subtotal), 0, ',', '.') }} lei</td>
-            </tr>
-            <tr>
-                <td class="right"><b>Adaos</b></td>
-                <td class="right">{{ number_format((float) ($oferta->procent_adaos ?? 0), 2, ',', '.') }}% / {{ number_format((int) ($oferta->valoare_adaos ?? 0), 0, ',', '.') }} lei</td>
-            </tr>
-            <tr>
-                <td class="right"><b>Total cu adaos</b></td>
-                <td class="right">{{ number_format((int) (($oferta->total_oferta ?? $oferta->subtotal) + ($oferta->valoare_adaos ?? 0)), 0, ',', '.') }} lei</td>
-            </tr>
-            @if($oferta->decontare_cas)
-                <tr>
-                    <td class="right"><b>Buget CAS</b></td>
-                    <td class="right">-{{ number_format((int) $oferta->buget_disponibil, 0, ',', '.') }} lei</td>
-                </tr>
+    <h2>Variante oferta</h2>
+    @if($oferta->variante->isNotEmpty())
+        @foreach($oferta->variante as $varianta)
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="4">
+                            {{ $varianta->titlu ?: 'Varianta ' . $loop->iteration }}
+                            @if($varianta->configurator_denumire)
+                                / {{ $varianta->configurator_denumire }}
+                            @endif
+                            @if($varianta->categorie)
+                                / {{ $varianta->categorie }}
+                            @endif
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Componenta</th>
+                        <th>Producator</th>
+                        <th class="right">Pret</th>
+                        <th class="right">Totaluri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($varianta->componente as $componenta)
+                        <tr>
+                            <td>{{ $componenta->denumire }}</td>
+                            <td>{{ $componenta->producator }}</td>
+                            <td class="right">{{ number_format((int) $componenta->pret, 0, ',', '.') }} lei</td>
+                            <td></td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td colspan="3" class="right"><b>Total calculat</b></td>
+                        <td class="right">{{ number_format((int) $varianta->subtotal_calculat, 0, ',', '.') }} lei</td>
+                    </tr>
+                    @if(!is_null($varianta->total_manual))
+                        <tr>
+                            <td colspan="3" class="right"><b>Total manual</b></td>
+                            <td class="right">{{ number_format((int) $varianta->total_manual, 0, ',', '.') }} lei</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td colspan="3" class="right"><b>Adaos</b></td>
+                        <td class="right">{{ number_format((int) $varianta->valoare_adaos, 0, ',', '.') }} lei</td>
+                    </tr>
+                    @if($oferta->decontare_cas)
+                        <tr>
+                            <td colspan="3" class="right"><b>Buget CAS</b></td>
+                            <td class="right">-{{ number_format((int) $oferta->buget_disponibil, 0, ',', '.') }} lei</td>
+                        </tr>
+                    @endif
+                    @if($varianta->discount_valoare)
+                        <tr>
+                            <td colspan="3" class="right"><b>Discount {{ $varianta->discount_tip === 'procent' ? '(' . $varianta->discount_valoare . '%)' : '' }}</b></td>
+                            <td class="right">-{{ number_format((int) ($varianta->discount_tip === 'procent' ? round($varianta->valoare_dupa_decontare * $varianta->discount_valoare / 100) : $varianta->discount_valoare), 0, ',', '.') }} lei</td>
+                        </tr>
+                    @endif
+                    <tr class="total">
+                        <td colspan="3" class="right">Suma de plata</td>
+                        <td class="right">{{ number_format((int) $varianta->valoare_totala, 0, ',', '.') }} lei</td>
+                    </tr>
+                    <tr class="total">
+                        <td colspan="3" class="right">Avans estimat 70%</td>
+                        <td class="right">{{ number_format((int) $varianta->valoare_avans, 0, ',', '.') }} lei</td>
+                    </tr>
+                </tbody>
+            </table>
+            @if($varianta->configurator?->text_pdf)
+                <p>{{ $varianta->configurator->text_pdf }}</p>
             @endif
-            @if($oferta->discount_aditional)
+        @endforeach
+    @else
+        <table>
+            <thead>
                 <tr>
-                    <td class="right"><b>Discount aditional</b></td>
-                    <td class="right">-{{ number_format((int) $oferta->discount_aditional, 0, ',', '.') }} lei</td>
+                    <th style="width: 40px;">#</th>
+                    <th>Produs</th>
                 </tr>
-            @endif
-            <tr class="total">
-                <td class="right">Suma de plata</td>
-                <td class="right">{{ number_format((int) $oferta->valoare_totala, 0, ',', '.') }} lei</td>
-            </tr>
-            <tr class="total">
-                <td class="right">Avans estimat 70%</td>
-                <td class="right">{{ number_format((int) $oferta->valoare_avans, 0, ',', '.') }} lei</td>
-            </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach($oferta->linii as $linie)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $linie->denumire_produs }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 
     <p class="muted">
         Oferta este emisa de {{ $oferta->emitent->name ?? 'Theranova' }} si este valabila in limita termenului mentionat mai sus.

@@ -19,16 +19,20 @@
         <form method="POST" action="{{ route('oferte-prospectare.adaos.store') }}" class="row align-items-end mb-4 px-3">
             @csrf
             <div class="col-lg-3">
+                <label class="mb-0 ps-3">Categorie</label>
+                <input name="categorie" class="form-control rounded-3" value="{{ old('categorie') }}" placeholder="Gamba / Coapsa">
+            </div>
+            <div class="col-lg-2">
                 <label class="mb-0 ps-3">Valoare minima</label>
                 <input name="valoare_min" type="number" min="0" class="form-control rounded-3" value="{{ old('valoare_min') }}" required>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-2">
                 <label class="mb-0 ps-3">Valoare maxima</label>
                 <input name="valoare_max" type="number" min="0" class="form-control rounded-3" value="{{ old('valoare_max') }}" placeholder="Fara limita">
             </div>
             <div class="col-lg-2">
-                <label class="mb-0 ps-3">Adaos %</label>
-                <input name="procent" type="number" min="0" max="100" step="0.01" class="form-control rounded-3" value="{{ old('procent') }}" required>
+                <label class="mb-0 ps-3">Adaos fix</label>
+                <input name="valoare_adaos" type="number" min="0" class="form-control rounded-3" value="{{ old('valoare_adaos') }}" required>
             </div>
             <div class="col-lg-2">
                 <label class="mb-0 ps-3">Activ</label>
@@ -48,7 +52,8 @@
                     <tr>
                         <th class="text-white culoare2">Valoare minima</th>
                         <th class="text-white culoare2">Valoare maxima</th>
-                        <th class="text-white culoare2">Adaos %</th>
+                        <th class="text-white culoare2">Adaos fix</th>
+                        <th class="text-white culoare2">Categorie</th>
                         <th class="text-white culoare2">Activ</th>
                         <th class="text-white culoare2 text-end">Actiuni</th>
                     </tr>
@@ -63,7 +68,10 @@
                                 <input name="valoare_max" form="adaos-update-{{ $interval->id }}" type="number" min="0" class="form-control rounded-3" value="{{ $interval->valoare_max }}" placeholder="Fara limita">
                             </td>
                             <td>
-                                <input name="procent" form="adaos-update-{{ $interval->id }}" type="number" min="0" max="100" step="0.01" class="form-control rounded-3" value="{{ $interval->procent }}" required>
+                                <input name="valoare_adaos" form="adaos-update-{{ $interval->id }}" type="number" min="0" class="form-control rounded-3" value="{{ $interval->valoare_adaos }}" required>
+                            </td>
+                            <td>
+                                <input name="categorie" form="adaos-update-{{ $interval->id }}" class="form-control rounded-3" value="{{ $interval->categorie }}">
                             </td>
                             <td>
                                 <select name="activ" form="adaos-update-{{ $interval->id }}" class="form-select rounded-3">
@@ -86,7 +94,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Nu exista intervale de adaos.</td>
+                            <td colspan="6" class="text-center">Nu exista intervale de adaos.</td>
                         </tr>
                     @endforelse
                 </tbody>

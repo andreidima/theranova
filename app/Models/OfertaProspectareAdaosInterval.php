@@ -15,6 +15,7 @@ class OfertaProspectareAdaosInterval extends Model
     protected $casts = [
         'activ' => 'boolean',
         'procent' => 'decimal:2',
+        'valoare_adaos' => 'integer',
     ];
 
     public function scopeActive(Builder $query): Builder
@@ -32,5 +33,16 @@ class OfertaProspectareAdaosInterval extends Model
                     ->orWhere('valoare_max', '>=', $total);
             })
             ->orderByDesc('valoare_min');
+    }
+
+    public function scopeForCategorieAndTotal(Builder $query, ?string $categorie, int $total): Builder
+    {
+        return $query
+            ->forTotal($total)
+            ->where(function (Builder $query) use ($categorie) {
+                $query->where('categorie', $categorie)
+                    ->orWhereNull('categorie');
+            })
+            ->orderByRaw('categorie is null');
     }
 }

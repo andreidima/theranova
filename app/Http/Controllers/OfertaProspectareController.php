@@ -5,14 +5,19 @@ namespace App\Http\Controllers;
 use App\Mail\OfertaProspectareAdminNotification;
 use App\Mail\OfertaProspectareClient;
 use App\Models\Cerinta;
+use App\Models\ClientProspectare;
 use App\Models\DataMedicala;
 use App\Models\FisaCaz;
 use App\Models\OfertaProspectare;
 use App\Models\OfertaProspectareAdaosInterval;
 use App\Models\OfertaProspectareAmputatie;
 use App\Models\OfertaProspectareLinie;
+use App\Models\OfertaProspectareVarianta;
 use App\Models\Pacient;
 use App\Models\ProdusProspectare;
+use App\Models\ProspectareConfigurator;
+use App\Models\ProspectareConfiguratorComponenta;
+use App\Models\ProspectareConfiguratorGrup;
 use App\Models\User;
 use App\Services\BonusCalculatorService;
 use Carbon\Carbon;
@@ -91,9 +96,13 @@ class OfertaProspectareController extends Controller
             'data_ofertei' => $validated['data_ofertei'] ?? Carbon::today()->toDateString(),
             'valabila_pana_la' => $validated['valabila_pana_la'] ?? Carbon::today()->addDays(14)->toDateString(),
         ]));
+        $this->syncClientProspectareDinOferta($oferta);
 
         $this->syncAmputatii($oferta, $request->input('amputatii', []));
-        $this->syncLinii($oferta, $request->input('linii', []));
+        if ($request->has('linii')) {
+            $this->syncLinii($oferta, $request->input('linii', []));
+        }
+        $this->syncVariante($oferta, $request->input('variante', []));
         $oferta->recalculeazaTotaluri();
 
         if ($action === 'submit') {
@@ -108,7 +117,7 @@ class OfertaProspectareController extends Controller
         $this->authorizeOfferAccess($request, $ofertaProspectare);
         $request->session()->get('ofertaProspectareReturnUrl') ?? $request->session()->put('ofertaProspectareReturnUrl', url()->previous());
 
-        $ofertaProspectare->load(['emitent', 'aprobator', 'amputatii', 'linii.produs', 'trimiteri.user', 'pacient', 'fisaCaz']);
+        $ofertaProspectare->load(['emitent', 'aprobator', 'amputatii', 'linii.produs', 'variante.componente', 'trimiteri.user', 'pacient', 'fisaCaz', 'clientProspectare']);
 
         return view('oferteProspectare.show', [
             'oferta' => $ofertaProspectare,
@@ -142,8 +151,12 @@ class OfertaProspectareController extends Controller
         $validated['aprobata_la'] = null;
 
         $ofertaProspectare->update($this->offerPayload($validated));
+        $this->syncClientProspectareDinOferta($ofertaProspectare);
         $this->syncAmputatii($ofertaProspectare, $request->input('amputatii', []));
-        $this->syncLinii($ofertaProspectare, $request->input('linii', []));
+        if ($request->has('linii')) {
+            $this->syncLinii($ofertaProspectare, $request->input('linii', []));
+        }
+        $this->syncVariante($ofertaProspectare, $request->input('variante', []));
         $ofertaProspectare->recalculeazaTotaluri();
 
         if ($action === 'submit') {
@@ -162,6 +175,10 @@ class OfertaProspectareController extends Controller
         }
 
         $ofertaProspectare->linii()->delete();
+        $ofertaProspectare->variante()->with('componente')->get()->each(function (OfertaProspectareVarianta $varianta) {
+            $varianta->componente()->delete();
+            $varianta->delete();
+        });
         $ofertaProspectare->amputatii()->delete();
         $ofertaProspectare->trimiteri()->delete();
         $ofertaProspectare->delete();
@@ -173,8 +190,8 @@ class OfertaProspectareController extends Controller
     {
         $this->authorizeOfferAccess($request, $ofertaProspectare);
 
-        if (!$ofertaProspectare->linii()->exists()) {
-            return back()->with('error', 'Adauga cel putin un produs inainte de trimiterea la aprobare.');
+        if (!$ofertaProspectare->linii()->exists() && !$ofertaProspectare->variante()->exists()) {
+            return back()->with('error', 'Adauga cel putin o varianta de oferta inainte de trimiterea la aprobare.');
         }
 
         $ofertaProspectare->update([
@@ -253,7 +270,7 @@ class OfertaProspectareController extends Controller
     public function pdf(Request $request, OfertaProspectare $ofertaProspectare)
     {
         $this->authorizeOfferAccess($request, $ofertaProspectare);
-        $ofertaProspectare->load(['emitent', 'aprobator', 'amputatii', 'linii']);
+        $ofertaProspectare->load(['emitent', 'aprobator', 'amputatii', 'linii', 'variante.componente', 'variante.configurator']);
 
         $pdf = \PDF::loadView('oferteProspectare.export.pdf', ['oferta' => $ofertaProspectare])
             ->setPaper('a4', 'portrait');
@@ -356,6 +373,126 @@ class OfertaProspectareController extends Controller
         ]);
 
         return redirect($fisaCaz->path())->with('status', 'Oferta a fost convertita in pacient si fisa caz.');
+    }
+
+    public function clientiIndex(Request $request): View
+    {
+        $clienti = ClientProspectare::query()
+            ->when($request->search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('nume', 'like', '%' . $search . '%')
+                        ->orWhere('telefon', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderByDesc('activ')
+            ->orderBy('nume')
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('oferteProspectare.clienti', [
+            'clienti' => $clienti,
+            'search' => $request->search,
+            'surseProspectare' => $this->surseProspectare(),
+            'judeteRomania' => $this->judeteRomania(),
+        ]);
+    }
+
+    public function clientiStore(Request $request): RedirectResponse
+    {
+        ClientProspectare::create($this->validateClientProspectare($request));
+
+        return back()->with('status', 'Clientul a fost adaugat.');
+    }
+
+    public function clientiUpdate(Request $request, ClientProspectare $client): RedirectResponse
+    {
+        $client->update($this->validateClientProspectare($request));
+
+        return back()->with('status', 'Clientul a fost modificat.');
+    }
+
+    public function clientiDestroy(Request $request, ClientProspectare $client): RedirectResponse
+    {
+        $client->update(['activ' => false]);
+
+        return back()->with('status', 'Clientul a fost dezactivat.');
+    }
+
+    public function configuratoareIndex(Request $request): View
+    {
+        $configuratoare = ProspectareConfigurator::with('grupuri.componente')
+            ->orderByDesc('activ')
+            ->orderBy('denumire')
+            ->paginate(20);
+
+        return view('oferteProspectare.configuratoare', [
+            'configuratoare' => $configuratoare,
+        ]);
+    }
+
+    public function configuratoareStore(Request $request): RedirectResponse
+    {
+        ProspectareConfigurator::create($this->validateConfigurator($request));
+
+        return back()->with('status', 'Configuratorul a fost adaugat.');
+    }
+
+    public function configuratoareUpdate(Request $request, ProspectareConfigurator $configurator): RedirectResponse
+    {
+        $configurator->update($this->validateConfigurator($request));
+
+        return back()->with('status', 'Configuratorul a fost modificat.');
+    }
+
+    public function configuratoareDestroy(Request $request, ProspectareConfigurator $configurator): RedirectResponse
+    {
+        $configurator->update(['activ' => false]);
+
+        return back()->with('status', 'Configuratorul a fost dezactivat.');
+    }
+
+    public function configuratorGrupStore(Request $request, ProspectareConfigurator $configurator): RedirectResponse
+    {
+        $configurator->grupuri()->create($this->validateConfiguratorGrup($request));
+
+        return back()->with('status', 'Grupul a fost adaugat.');
+    }
+
+    public function configuratorGrupUpdate(Request $request, ProspectareConfiguratorGrup $grup): RedirectResponse
+    {
+        $grup->update($this->validateConfiguratorGrup($request));
+
+        return back()->with('status', 'Grupul a fost modificat.');
+    }
+
+    public function configuratorGrupDestroy(Request $request, ProspectareConfiguratorGrup $grup): RedirectResponse
+    {
+        $grup->componente()->delete();
+        $grup->delete();
+
+        return back()->with('status', 'Grupul a fost sters.');
+    }
+
+    public function configuratorComponentaStore(Request $request, ProspectareConfiguratorGrup $grup): RedirectResponse
+    {
+        $grup->componente()->create($this->validateConfiguratorComponenta($request));
+
+        return back()->with('status', 'Componenta a fost adaugata.');
+    }
+
+    public function configuratorComponentaUpdate(Request $request, ProspectareConfiguratorComponenta $componenta): RedirectResponse
+    {
+        $componenta->update($this->validateConfiguratorComponenta($request));
+
+        return back()->with('status', 'Componenta a fost modificata.');
+    }
+
+    public function configuratorComponentaDestroy(Request $request, ProspectareConfiguratorComponenta $componenta): RedirectResponse
+    {
+        $componenta->update(['activ' => false]);
+
+        return back()->with('status', 'Componenta a fost dezactivata.');
     }
 
     public function produseIndex(Request $request): View
@@ -506,7 +643,7 @@ class OfertaProspectareController extends Controller
 
     protected function formData(OfertaProspectare $oferta): array
     {
-        $oferta->loadMissing(['amputatii', 'linii.produs']);
+        $oferta->loadMissing(['amputatii', 'linii.produs', 'variante.componente']);
 
         $amputatiiFormData = old('amputatii');
         if (is_null($amputatiiFormData)) {
@@ -523,13 +660,61 @@ class OfertaProspectareController extends Controller
             ]];
         }
 
+        $varianteFormData = old('variante');
+        if (is_null($varianteFormData)) {
+            $varianteFormData = $oferta->variante->map(function ($varianta) {
+                return [
+                    'id' => $varianta->id,
+                    'configurator_id' => $varianta->configurator_id,
+                    'titlu' => $varianta->titlu,
+                    'categorie' => $varianta->categorie,
+                    'selected_component_ids' => $varianta->componente->pluck('componenta_id')->filter()->map(fn ($id) => (int) $id)->values()->all(),
+                    'total_manual' => $varianta->total_manual,
+                    'discount_tip' => $varianta->discount_tip ?: 'valoare',
+                    'discount_valoare' => $varianta->discount_valoare,
+                ];
+            })->toArray();
+        }
+
+        $clientiProspectare = ClientProspectare::where('activ', true)
+            ->orderBy('nume')
+            ->get(['id', 'nume', 'telefon', 'email', 'localitate', 'judet', 'sursa']);
+
+        $configuratoare = ProspectareConfigurator::with(['grupuri.componente' => fn ($query) => $query->where('activ', true)])
+            ->where('activ', true)
+            ->orderBy('denumire')
+            ->get()
+            ->map(function (ProspectareConfigurator $configurator) {
+                return [
+                    'id' => $configurator->id,
+                    'denumire' => $configurator->denumire,
+                    'categorie' => $configurator->categorie,
+                    'grupuri' => $configurator->grupuri->map(fn ($grup) => [
+                        'id' => $grup->id,
+                        'denumire' => $grup->denumire,
+                        'componente' => $grup->componente->map(fn ($componenta) => [
+                            'id' => $componenta->id,
+                            'denumire' => $componenta->denumire,
+                            'producator' => $componenta->producator,
+                            'pret' => (int) $componenta->pret,
+                        ])->values(),
+                    ])->values(),
+                ];
+            })
+            ->values();
+
         return [
             'oferta' => $oferta,
             'amputatiiFormData' => $amputatiiFormData,
+            'varianteFormData' => $varianteFormData,
+            'clientiProspectare' => $clientiProspectare,
+            'configuratoareProspectare' => $configuratoare,
             'adaosIntervale' => OfertaProspectareAdaosInterval::active()
                 ->orderByDesc('valoare_min')
-                ->get(['valoare_min', 'valoare_max', 'procent']),
+                ->get(['categorie', 'valoare_min', 'valoare_max', 'valoare_adaos', 'procent']),
             'canManageProduseProspectare' => true,
+            'surseProspectare' => $this->surseProspectare(),
+            'judeteRomania' => $this->judeteRomania(),
         ];
     }
 
@@ -537,6 +722,7 @@ class OfertaProspectareController extends Controller
     {
         return $request->validate([
             'nume_client' => 'required|max:255',
+            'client_prospectare_id' => 'nullable|integer|exists:clienti_prospectare,id',
             'telefon' => 'required|max:100',
             'email' => 'nullable|max:255|email:rfc,dns',
             'localitate' => 'nullable|max:200',
@@ -559,16 +745,26 @@ class OfertaProspectareController extends Controller
             'linii.*.id' => 'nullable|integer',
             'linii.*.produs_prospectare_id' => 'nullable|integer|exists:produse_prospectare,id',
             'linii.*.denumire_produs' => 'nullable|max:255',
+            'variante.*.id' => 'nullable|integer',
+            'variante.*.configurator_id' => 'nullable|integer|exists:prospectare_configuratoare,id',
+            'variante.*.titlu' => 'nullable|max:255',
+            'variante.*.categorie' => 'nullable|max:150',
+            'variante.*.selected_component_ids' => 'nullable|array',
+            'variante.*.selected_component_ids.*' => 'nullable|integer|exists:prospectare_configurator_componente,id',
+            'variante.*.total_manual' => 'nullable|integer|min:0|max:10000000',
+            'variante.*.discount_tip' => 'nullable|in:valoare,procent',
+            'variante.*.discount_valoare' => 'nullable|integer|min:0|max:10000000',
         ]);
     }
 
     protected function offerPayload(array $validated): array
     {
-        $payload = Arr::except($validated, ['amputatii', 'linii']);
+        $payload = Arr::except($validated, ['amputatii', 'linii', 'variante']);
         $payload['decontare_cas'] = (bool) ($payload['decontare_cas'] ?? false);
         $payload['buget_disponibil'] = $payload['decontare_cas'] ? ($payload['buget_disponibil'] ?? null) : null;
         $payload['total_oferta'] = $payload['total_oferta'] ?? 0;
         $payload['discount_aditional'] = $payload['discount_aditional'] ?? 0;
+        $payload['discount_tip'] = $payload['discount_tip'] ?? 'valoare';
         $payload['cauza_amputatiei'] = null;
         $payload['descriere_amputatie'] = null;
 
@@ -591,16 +787,73 @@ class OfertaProspectareController extends Controller
         return $validated;
     }
 
+    protected function validateClientProspectare(Request $request): array
+    {
+        $validated = $request->validate([
+            'nume' => 'required|max:255',
+            'telefon' => 'nullable|max:100',
+            'email' => 'nullable|max:255|email:rfc,dns',
+            'localitate' => 'nullable|max:200',
+            'judet' => 'nullable|max:200',
+            'sursa' => 'nullable|max:100',
+            'activ' => 'nullable|boolean',
+        ]);
+
+        $validated['activ'] = (bool) ($validated['activ'] ?? true);
+
+        return $validated;
+    }
+
+    protected function validateConfigurator(Request $request): array
+    {
+        $validated = $request->validate([
+            'denumire' => 'required|max:255',
+            'categorie' => 'nullable|max:150',
+            'text_pdf' => 'nullable|max:10000',
+            'activ' => 'nullable|boolean',
+        ]);
+
+        $validated['activ'] = (bool) ($validated['activ'] ?? true);
+
+        return $validated;
+    }
+
+    protected function validateConfiguratorGrup(Request $request): array
+    {
+        return $request->validate([
+            'denumire' => 'required|max:255',
+            'ordine' => 'nullable|integer|min:0|max:999',
+        ]);
+    }
+
+    protected function validateConfiguratorComponenta(Request $request): array
+    {
+        $validated = $request->validate([
+            'denumire' => 'required|max:255',
+            'producator' => 'nullable|max:255',
+            'pret' => 'nullable|integer|min:0|max:10000000',
+            'ordine' => 'nullable|integer|min:0|max:999',
+            'activ' => 'nullable|boolean',
+        ]);
+
+        $validated['pret'] = $validated['pret'] ?? 0;
+        $validated['activ'] = (bool) ($validated['activ'] ?? true);
+
+        return $validated;
+    }
+
     protected function validateAdaosInterval(Request $request): array
     {
         $validated = $request->validate([
+            'categorie' => 'nullable|max:150',
             'valoare_min' => 'required|integer|min:0|max:10000000',
             'valoare_max' => 'nullable|integer|min:0|max:10000000',
-            'procent' => 'required|numeric|min:0|max:100',
+            'valoare_adaos' => 'required|integer|min:0|max:10000000',
             'activ' => 'nullable|boolean',
         ]);
 
         $validated['valoare_max'] = $validated['valoare_max'] ?? null;
+        $validated['procent'] = 0;
         $validated['activ'] = (bool) ($validated['activ'] ?? false);
 
         return $validated;
@@ -622,6 +875,9 @@ class OfertaProspectareController extends Controller
         $overlapExists = OfertaProspectareAdaosInterval::query()
             ->active()
             ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->where(function ($query) use ($interval) {
+                $query->where('categorie', $interval['categorie'] ?? null);
+            })
             ->where('valoare_min', '<=', $max ?? PHP_INT_MAX)
             ->where(function ($query) use ($min) {
                 $query->whereNull('valoare_max')
@@ -746,6 +1002,119 @@ class OfertaProspectareController extends Controller
         }
     }
 
+    protected function syncClientProspectareDinOferta(OfertaProspectare $oferta): void
+    {
+        if (!$oferta->nume_client) {
+            return;
+        }
+
+        $payload = [
+            'nume' => $oferta->nume_client,
+            'telefon' => $oferta->telefon,
+            'email' => $oferta->email,
+            'localitate' => $oferta->localitate,
+            'judet' => $oferta->judet,
+            'sursa' => $oferta->sursa,
+            'activ' => true,
+        ];
+
+        if ($oferta->client_prospectare_id) {
+            ClientProspectare::where('id', $oferta->client_prospectare_id)->update($payload);
+
+            return;
+        }
+
+        $client = null;
+        if ($oferta->telefon || $oferta->email) {
+            $client = ClientProspectare::query()
+                ->when($oferta->telefon, fn ($query) => $query->where('telefon', $oferta->telefon))
+                ->when(!$oferta->telefon && $oferta->email, fn ($query) => $query->where('email', $oferta->email))
+                ->first();
+        }
+
+        if ($client) {
+            $client->update($payload);
+        } else {
+            $client = ClientProspectare::create($payload);
+        }
+
+        $oferta->forceFill(['client_prospectare_id' => $client->id])->save();
+    }
+
+    protected function syncVariante(OfertaProspectare $oferta, array $variante): void
+    {
+        $ids = collect($variante)->pluck('id')->filter()->all();
+        if (count($ids)) {
+            $oferta->variante()->whereNotIn('id', $ids)->get()->each(function (OfertaProspectareVarianta $varianta) {
+                $varianta->componente()->delete();
+                $varianta->delete();
+            });
+        } else {
+            $oferta->variante()->get()->each(function (OfertaProspectareVarianta $varianta) {
+                $varianta->componente()->delete();
+                $varianta->delete();
+            });
+        }
+
+        foreach ($variante as $index => $varianta) {
+            $componentIds = collect($varianta['selected_component_ids'] ?? [])->filter()->map(fn ($id) => (int) $id)->unique()->values();
+            $configurator = !empty($varianta['configurator_id'])
+                ? ProspectareConfigurator::find($varianta['configurator_id'])
+                : null;
+            $titlu = trim((string) ($varianta['titlu'] ?? ''));
+
+            if (!$configurator && $titlu === '' && $componentIds->isEmpty()) {
+                if (!empty($varianta['id'])) {
+                    $oferta->variante()->where('id', $varianta['id'])->get()->each(function (OfertaProspectareVarianta $model) {
+                        $model->componente()->delete();
+                        $model->delete();
+                    });
+                }
+
+                continue;
+            }
+
+            $model = !empty($varianta['id'])
+                ? $oferta->variante()->where('id', $varianta['id'])->first()
+                : new OfertaProspectareVarianta(['oferta_prospectare_id' => $oferta->id]);
+
+            if (!$model) {
+                $model = new OfertaProspectareVarianta(['oferta_prospectare_id' => $oferta->id]);
+            }
+
+            $categorie = trim((string) ($varianta['categorie'] ?? '')) ?: ($configurator?->categorie);
+
+            $model->fill([
+                'oferta_prospectare_id' => $oferta->id,
+                'configurator_id' => $configurator?->id,
+                'titlu' => $titlu ?: ('Varianta ' . ($index + 1)),
+                'configurator_denumire' => $configurator?->denumire,
+                'categorie' => $categorie ?: null,
+                'total_manual' => isset($varianta['total_manual']) && $varianta['total_manual'] !== '' ? (int) $varianta['total_manual'] : null,
+                'discount_tip' => $varianta['discount_tip'] ?? 'valoare',
+                'discount_valoare' => (int) ($varianta['discount_valoare'] ?? 0),
+                'ordine' => $index,
+            ]);
+            $model->save();
+            $model->componente()->delete();
+
+            $components = ProspectareConfiguratorComponenta::whereIn('id', $componentIds->all())->get()->keyBy('id');
+            foreach ($componentIds as $componentId) {
+                $componenta = $components->get($componentId);
+                if (!$componenta) {
+                    continue;
+                }
+
+                $model->componente()->create([
+                    'componenta_id' => $componenta->id,
+                    'denumire' => $componenta->denumire,
+                    'producator' => $componenta->producator,
+                    'pret' => (int) $componenta->pret,
+                ]);
+            }
+        }
+    }
+
     protected function authorizeOfferAccess(Request $request, OfertaProspectare $oferta): void
     {
         if ($this->canViewAll($request->user()) || (int) $oferta->user_emitent_id === (int) $request->user()->id) {
@@ -840,6 +1209,23 @@ class OfertaProspectareController extends Controller
             $oferta->nivel_de_activitate,
             $oferta->a_mai_purtat_proteza,
         ])->filter(fn ($value) => $value !== null && $value !== '')->isNotEmpty();
+    }
+
+    protected function surseProspectare(): array
+    {
+        return ['Site', 'Whatsapp', 'Facebook', 'Recomandare'];
+    }
+
+    protected function judeteRomania(): array
+    {
+        return [
+            'Alba', 'Arad', 'Arges', 'Bacau', 'Bihor', 'Bistrita-Nasaud', 'Botosani', 'Brasov',
+            'Braila', 'Bucuresti', 'Buzau', 'Caras-Severin', 'Calarasi', 'Cluj', 'Constanta',
+            'Covasna', 'Dambovita', 'Dolj', 'Galati', 'Giurgiu', 'Gorj', 'Harghita', 'Hunedoara',
+            'Ialomita', 'Iasi', 'Ilfov', 'Maramures', 'Mehedinti', 'Mures', 'Neamt', 'Olt',
+            'Prahova', 'Satu Mare', 'Salaj', 'Sibiu', 'Suceava', 'Teleorman', 'Timis', 'Tulcea',
+            'Vaslui', 'Valcea', 'Vrancea',
+        ];
     }
 
     protected function syncTipLucrareSolicitataId(FisaCaz $fisaCaz): void

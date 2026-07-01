@@ -41,7 +41,17 @@
 <script type="application/javascript">
     const ofertaProspectareLiniiVechi = {!! json_encode($liniiFormData ?? []) !!};
     const ofertaProspectareAmputatiiVechi = {!! json_encode($amputatiiFormData ?? []) !!};
+    const ofertaProspectareVarianteVechi = {!! json_encode($varianteFormData ?? []) !!};
+    const ofertaProspectareClienti = {!! json_encode($clientiProspectare ?? []) !!};
+    const ofertaProspectareConfiguratoare = {!! json_encode($configuratoareProspectare ?? []) !!};
     const ofertaProspectareValoriVechi = {!! json_encode([
+        'client_prospectare_id' => old('client_prospectare_id', $oferta->client_prospectare_id),
+        'nume_client' => old('nume_client', $oferta->nume_client),
+        'telefon' => old('telefon', $oferta->telefon),
+        'email' => old('email', $oferta->email),
+        'sursa' => old('sursa', $oferta->sursa),
+        'localitate' => old('localitate', $oferta->localitate),
+        'judet' => old('judet', $oferta->judet),
         'decontare_cas' => (int) old('decontare_cas', $oferta->decontare_cas ? 1 : 0),
         'buget_disponibil' => old('buget_disponibil', $oferta->buget_disponibil ?? 0),
         'total_oferta' => old('total_oferta', $oferta->total_oferta ?? $oferta->subtotal ?? 0),
@@ -54,28 +64,47 @@
     <div class="col-lg-12 px-4 py-2 mb-0">
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
             <div class="col-lg-4 mb-4">
+                <label class="mb-0 ps-3">Client din nomenclator</label>
+                <select name="client_prospectare_id" class="form-select bg-white rounded-3" v-model="client_prospectare_id" @change="selecteazaClient">
+                    <option value=""></option>
+                    <option v-for="client in clientiProspectare" :key="'client-' + client.id" :value="String(client.id)">
+                        @{{ client.nume }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-lg-4 mb-4">
                 <label class="mb-0 ps-3">Nume client<span class="text-danger">*</span></label>
-                <input type="text" name="nume_client" class="form-control bg-white rounded-3" value="{{ old('nume_client', $oferta->nume_client) }}" required>
+                <input type="text" name="nume_client" class="form-control bg-white rounded-3" v-model="nume_client" required>
             </div>
             <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Telefon<span class="text-danger">*</span></label>
-                <input type="text" name="telefon" class="form-control bg-white rounded-3" value="{{ old('telefon', $oferta->telefon) }}" required>
+                <input type="text" name="telefon" class="form-control bg-white rounded-3" v-model="telefon" required>
             </div>
-            <div class="col-lg-3 mb-4">
+            <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Email</label>
-                <input type="email" name="email" class="form-control bg-white rounded-3" value="{{ old('email', $oferta->email) }}">
+                <input type="email" name="email" class="form-control bg-white rounded-3" v-model="email">
             </div>
             <div class="col-lg-3 mb-4">
                 <label class="mb-0 ps-3">Sursa</label>
-                <input type="text" name="sursa" class="form-control bg-white rounded-3" value="{{ old('sursa', $oferta->sursa) }}">
+                <select name="sursa" class="form-select bg-white rounded-3" v-model="sursa">
+                    <option value=""></option>
+                    @foreach($surseProspectare as $sursa)
+                        <option value="{{ $sursa }}">{{ $sursa }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-lg-3 mb-4">
                 <label class="mb-0 ps-3">Localitate</label>
-                <input type="text" name="localitate" class="form-control bg-white rounded-3" value="{{ old('localitate', $oferta->localitate) }}">
+                <input type="text" name="localitate" class="form-control bg-white rounded-3" v-model="localitate">
             </div>
             <div class="col-lg-3 mb-4">
                 <label class="mb-0 ps-3">Judet<span class="text-danger">*</span></label>
-                <input type="text" name="judet" class="form-control bg-white rounded-3" value="{{ old('judet', $oferta->judet) }}" required>
+                <select name="judet" class="form-select bg-white rounded-3" v-model="judet" required>
+                    <option value=""></option>
+                    @foreach($judeteRomania as $judet)
+                        <option value="{{ $judet }}">{{ $judet }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-lg-3 mb-4">
                 <label class="mb-0 ps-3">Data ofertei</label>
@@ -158,48 +187,7 @@
             </div>
         </div>
 
-        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
-            <div class="col-lg-12 mb-3 d-flex justify-content-between align-items-center">
-                <span class="fw-bold">Produse</span>
-                <button type="button" class="btn btn-sm btn-success text-white rounded-3" @click="adaugaLinie">Adauga produs</button>
-            </div>
-            <div class="col-lg-12">
-                <div class="row align-items-start mb-2" v-for="(linie, index) in linii" :key="linie.row_key">
-                    <input type="hidden" :name="'linii[' + index + '][id]'" v-model="linii[index].id">
-                    <input type="hidden" :name="'linii[' + index + '][denumire_produs]'" v-model="linii[index].denumire_produs">
-                    <div class="col-lg-10 mb-2">
-                        <label class="mb-0 ps-3">Produs</label>
-                        <div @prospect-product-selector:change="alegeProdusSelector(index, $event)">
-                            <prospect-product-selector
-                                :name="'linii[' + index + '][produs_prospectare_id]'"
-                                search-url="{{ route('oferte-prospectare.produse.select-options') }}"
-                                store-url="{{ route('oferte-prospectare.produse.quick-store') }}"
-                                :initial-product-id="linie.produs_prospectare_id"
-                                :initial-product-label="linie.produs_label"
-                                :can-create="{{ $canManageProduseProspectare ? 'true' : 'false' }}"
-                            ></prospect-product-selector>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 mb-2 d-flex align-items-center justify-content-end" style="padding-top: 1.45rem;">
-                        <button type="button" class="btn btn-danger" @click="stergeLinie(index)">Sterge</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row mb-4 pt-2 rounded-3 justify-content-center align-items-end" style="border:1px solid #e9ecef; border-left:0.25rem darkcyan solid; background-color:rgb(241, 250, 250)">
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Total oferta</label>
-                <input type="number" min="0" name="total_oferta" class="form-control bg-white rounded-3" v-model.number="total_oferta">
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Adaos</label>
-                <div class="form-control bg-light rounded-3">@{{ adaos_procent }}% / @{{ formatMoney(adaos_valoare) }} lei</div>
-            </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Total cu adaos</label>
-                <div class="form-control bg-light rounded-3">@{{ formatMoney(totalCuAdaos) }} lei</div>
-            </div>
             <div class="col-lg-2 mb-4">
                 <label class="mb-0 ps-3">Decontare CAS</label>
                 <input type="hidden" name="decontare_cas" value="0">
@@ -212,17 +200,93 @@
                 <label class="mb-0 ps-3">Buget disponibil</label>
                 <input type="number" min="0" name="buget_disponibil" class="form-control bg-white rounded-3" v-model.number="buget_disponibil">
             </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Discount aditional</label>
-                <input type="number" min="0" name="discount_aditional" class="form-control bg-white rounded-3" v-model.number="discount_aditional">
+        </div>
+
+        <div class="row mb-4 pt-2 rounded-3" style="border:1px solid #e9ecef; border-left:0.25rem #e66800 solid; background-color:#fff9f5">
+            <div class="col-lg-12 mb-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Variante oferta</span>
+                <button type="button" class="btn btn-sm btn-success text-white rounded-3" @click="adaugaVarianta">Adauga varianta</button>
             </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Suma de plata</label>
-                <div class="form-control bg-light rounded-3">@{{ formatMoney(total) }} lei</div>
+            <div class="col-lg-12" v-if="configuratoare.length === 0">
+                <div class="alert alert-warning mb-3">Nu exista configuratoare active. Adauga configuratoare in meniul Prospectare.</div>
             </div>
-            <div class="col-lg-2 mb-4">
-                <label class="mb-0 ps-3">Avans 70%</label>
-                <div class="form-control bg-light rounded-3">@{{ formatMoney(avans) }} lei</div>
+            <div class="col-lg-12">
+                <div class="border rounded-3 p-3 mb-3 bg-white" v-for="(varianta, vIndex) in variante" :key="varianta.row_key">
+                    <input type="hidden" :name="'variante[' + vIndex + '][id]'" v-model="varianta.id">
+                    <input type="hidden" :name="'variante[' + vIndex + '][categorie]'" :value="categorieVarianta(varianta)">
+                    <div class="row align-items-end">
+                        <div class="col-lg-3 mb-3">
+                            <label class="mb-0 ps-3">Titlu varianta</label>
+                            <input type="text" class="form-control rounded-3" :name="'variante[' + vIndex + '][titlu]'" v-model="varianta.titlu">
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label class="mb-0 ps-3">Configurator</label>
+                            <select class="form-select rounded-3" :name="'variante[' + vIndex + '][configurator_id]'" v-model.number="varianta.configurator_id">
+                                <option value=""></option>
+                                <option v-for="configurator in configuratoare" :key="'config-' + configurator.id" :value="configurator.id">
+                                    @{{ configurator.denumire }}@{{ configurator.categorie ? ' - ' + configurator.categorie : '' }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 mb-3">
+                            <label class="mb-0 ps-3">Discount</label>
+                            <select class="form-select rounded-3" :name="'variante[' + vIndex + '][discount_tip]'" v-model="varianta.discount_tip">
+                                <option value="valoare">Valoare</option>
+                                <option value="procent">Procent</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 mb-3">
+                            <label class="mb-0 ps-3">Valoare discount</label>
+                            <input type="number" min="0" class="form-control rounded-3" :name="'variante[' + vIndex + '][discount_valoare]'" v-model.number="varianta.discount_valoare">
+                        </div>
+                        <div class="col-lg-1 mb-3 text-end">
+                            <button type="button" class="btn btn-danger" @click="stergeVarianta(vIndex)" :disabled="variante.length === 1">Sterge</button>
+                        </div>
+                    </div>
+
+                    <div v-if="configuratorVarianta(varianta)">
+                        <div class="row" v-for="grup in configuratorVarianta(varianta).grupuri" :key="'grup-' + varianta.row_key + '-' + grup.id">
+                            <div class="col-lg-12">
+                                <div class="fw-bold border-bottom mt-2 mb-2">@{{ grup.denumire }}</div>
+                            </div>
+                            <div class="col-lg-4 mb-2" v-for="componenta in grup.componente" :key="'componenta-' + varianta.row_key + '-' + componenta.id">
+                                <label class="border rounded-3 p-2 d-block h-100">
+                                    <input type="checkbox" class="form-check-input me-1" :name="'variante[' + vIndex + '][selected_component_ids][]'" :value="componenta.id" v-model="varianta.selected_component_ids">
+                                    <b>@{{ componenta.denumire }}</b>
+                                    <span class="d-block text-muted" v-if="componenta.producator">@{{ componenta.producator }}</span>
+                                    <span class="d-block">@{{ formatMoney(componenta.pret) }} lei</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-end mt-3">
+                        <div class="col-lg-2 mb-2">
+                            <label class="mb-0 ps-3">Total calculat</label>
+                            <div class="form-control bg-light rounded-3">@{{ formatMoney(subtotalVarianta(varianta)) }} lei</div>
+                        </div>
+                        <div class="col-lg-2 mb-2">
+                            <label class="mb-0 ps-3">Total manual</label>
+                            <input type="number" min="0" class="form-control rounded-3" :name="'variante[' + vIndex + '][total_manual]'" v-model.number="varianta.total_manual">
+                        </div>
+                        <div class="col-lg-2 mb-2">
+                            <label class="mb-0 ps-3">Adaos</label>
+                            <div class="form-control bg-light rounded-3">@{{ formatMoney(adaosVarianta(varianta)) }} lei</div>
+                        </div>
+                        <div class="col-lg-2 mb-2">
+                            <label class="mb-0 ps-3">Dupa CAS</label>
+                            <div class="form-control bg-light rounded-3">@{{ formatMoney(dupaCasVarianta(varianta)) }} lei</div>
+                        </div>
+                        <div class="col-lg-2 mb-2">
+                            <label class="mb-0 ps-3">Suma de plata</label>
+                            <div class="form-control bg-light rounded-3">@{{ formatMoney(totalVarianta(varianta)) }} lei</div>
+                        </div>
+                        <div class="col-lg-2 mb-2">
+                            <label class="mb-0 ps-3">Avans 70%</label>
+                            <div class="form-control bg-light rounded-3">@{{ formatMoney(Math.round(totalVarianta(varianta) * 0.7)) }} lei</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

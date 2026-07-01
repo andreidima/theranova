@@ -70,6 +70,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/utilizatori', UserController::class)->parameters(['utilizatori' => 'user']);
 
     Route::prefix('/oferte-prospectare')->name('oferte-prospectare.')->group(function () {
+        Route::get('/clienti', [OfertaProspectareController::class, 'clientiIndex'])->name('clienti.index');
+        Route::post('/clienti', [OfertaProspectareController::class, 'clientiStore'])->name('clienti.store');
+        Route::patch('/clienti/{client}', [OfertaProspectareController::class, 'clientiUpdate'])->name('clienti.update');
+        Route::delete('/clienti/{client}', [OfertaProspectareController::class, 'clientiDestroy'])->name('clienti.destroy');
+
+        Route::get('/configuratoare', [OfertaProspectareController::class, 'configuratoareIndex'])->name('configuratoare.index');
+        Route::post('/configuratoare', [OfertaProspectareController::class, 'configuratoareStore'])->name('configuratoare.store');
+        Route::patch('/configuratoare/{configurator}', [OfertaProspectareController::class, 'configuratoareUpdate'])->name('configuratoare.update');
+        Route::delete('/configuratoare/{configurator}', [OfertaProspectareController::class, 'configuratoareDestroy'])->name('configuratoare.destroy');
+        Route::post('/configuratoare/{configurator}/grupuri', [OfertaProspectareController::class, 'configuratorGrupStore'])->name('configuratoare.grupuri.store');
+        Route::patch('/configuratoare/grupuri/{grup}', [OfertaProspectareController::class, 'configuratorGrupUpdate'])->name('configuratoare.grupuri.update');
+        Route::delete('/configuratoare/grupuri/{grup}', [OfertaProspectareController::class, 'configuratorGrupDestroy'])->name('configuratoare.grupuri.destroy');
+        Route::post('/configuratoare/grupuri/{grup}/componente', [OfertaProspectareController::class, 'configuratorComponentaStore'])->name('configuratoare.componente.store');
+        Route::patch('/configuratoare/componente/{componenta}', [OfertaProspectareController::class, 'configuratorComponentaUpdate'])->name('configuratoare.componente.update');
+        Route::delete('/configuratoare/componente/{componenta}', [OfertaProspectareController::class, 'configuratorComponentaDestroy'])->name('configuratoare.componente.destroy');
+
         Route::get('/produse', [OfertaProspectareController::class, 'produseIndex'])->name('produse.index');
         Route::get('/produse/select-options', [OfertaProspectareController::class, 'produseSelectOptions'])->name('produse.select-options');
         Route::post('/produse/quick-store', [OfertaProspectareController::class, 'produseQuickStore'])->name('produse.quick-store');
